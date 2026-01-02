@@ -1,0 +1,57 @@
+[gd_scene load_steps=10 format=3 uid="uid://ex22mf26lsid"]
+
+[ext_resource type="Script" uid="uid://b3iqpgjb0vtvl" path="res://Scripts/agent_base.gd" id="1_rpqav"]
+[ext_resource type="Script" uid="uid://cjjdaf7vlfs4k" path="res://Scripts/agent_animate.gd" id="2_gntrk"]
+[ext_resource type="SpriteFrames" uid="uid://cvmbb1xtbmxsv" path="res://Art/SpriteFrames/Player.tres" id="3_bhhdu"]
+[ext_resource type="Script" uid="uid://58qm17emnwvd" path="res://Scripts/agent_move.gd" id="5_5ixxa"]
+[ext_resource type="Script" uid="uid://cfiw0qaxe8jxd" path="res://Scripts/player_controls.gd" id="6_nn08x"]
+[ext_resource type="Script" uid="uid://c2guvnr3dtafe" path="res://Scripts/health.gd" id="7_52ee3"]
+[ext_resource type="PackedScene" uid="uid://6it7l8b8yxs" path="res://Scenes/weapon_sword.tscn" id="7_bhhdu"]
+[ext_resource type="PackedScene" uid="uid://dsnaij5h7mltt" path="res://Scenes/player_interact.tscn" id="8_bhhdu"]
+
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_kyqiw"]
+radius = 26.0
+height = 82.0
+
+[node name="Player" type="CharacterBody2D" node_paths=PackedStringArray("health", "interaction", "movement", "controls", "animation", "attack") groups=["Attackable", "Player"]]
+collision_layer = 4
+collision_mask = 143
+script = ExtResource("1_rpqav")
+player = 1
+health = NodePath("Health")
+interaction = NodePath("PlayerInteract")
+movement = NodePath("AgentMovement")
+controls = NodePath("PlayerControls")
+animation = NodePath("AgentAnimate")
+attack = NodePath("WeaponSword")
+current_role = &"player"
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("CapsuleShape2D_kyqiw")
+
+[node name="AgentAnimate" type="Node" parent="." node_paths=PackedStringArray("sprite")]
+script = ExtResource("2_gntrk")
+sprite = NodePath("../AnimatedSprite2D")
+metadata/_custom_type_script = "uid://cjjdaf7vlfs4k"
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+position = Vector2(0.499996, -0.499995)
+scale = Vector2(2.81, 2.81)
+sprite_frames = ExtResource("3_bhhdu")
+animation = &"walk"
+
+[node name="AgentMovement" type="Node" parent="."]
+script = ExtResource("5_5ixxa")
+metadata/_custom_type_script = "uid://58qm17emnwvd"
+
+[node name="PlayerControls" type="Node2D" parent="."]
+script = ExtResource("6_nn08x")
+metadata/_custom_type_script = "uid://cfiw0qaxe8jxd"
+
+[node name="Health" type="Node" parent="."]
+script = ExtResource("7_52ee3")
+metadata/_custom_type_script = "uid://c2guvnr3dtafe"
+
+[node name="WeaponSword" parent="." instance=ExtResource("7_bhhdu")]
+
+[node name="PlayerInteract" parent="." instance=ExtResource("8_bhhdu")]

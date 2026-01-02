@@ -1,0 +1,75 @@
+[gd_scene load_steps=12 format=3 uid="uid://dvgilnkmeqdfu"]
+
+[ext_resource type="Script" uid="uid://b3iqpgjb0vtvl" path="res://Scripts/agent_base.gd" id="1_fhmuk"]
+[ext_resource type="SpriteFrames" uid="uid://bgouc0jxjgtus" path="res://Art/SpriteFrames/Archer_Red.tres" id="2_fhmuk"]
+[ext_resource type="Script" uid="uid://cjjdaf7vlfs4k" path="res://Scripts/agent_animate.gd" id="3_5bpow"]
+[ext_resource type="Script" uid="uid://58qm17emnwvd" path="res://Scripts/agent_move.gd" id="4_euce6"]
+[ext_resource type="Script" uid="uid://c2guvnr3dtafe" path="res://Scripts/health.gd" id="5_87h5s"]
+[ext_resource type="Script" uid="uid://cf3jwbm3206s5" path="res://Scripts/minion_pathfinding.gd" id="7_0lcm4"]
+[ext_resource type="Script" uid="uid://bi15gddmxujcs" path="res://Scripts/agent_tracking.gd" id="8_tcsy7"]
+[ext_resource type="PackedScene" uid="uid://o3i1hye0kspv" path="res://Scenes/weapon_bow.tscn" id="9_fhmuk"]
+[ext_resource type="Script" uid="uid://drugelqbde4x8" path="res://Scripts/tactical_archer.gd" id="9_jhg76"]
+
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_ta2g1"]
+radius = 23.0
+height = 74.0
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_65o65"]
+radius = 500.0
+
+[node name="Archer" type="CharacterBody2D" node_paths=PackedStringArray("health", "movement", "pathfinding", "animation", "attack", "detection", "tactical") groups=["Attackable", "Interactable", "Minions"]]
+collision_layer = 16
+collision_mask = 143
+script = ExtResource("1_fhmuk")
+health = NodePath("Health")
+movement = NodePath("AgentMovement")
+pathfinding = NodePath("MinionPathfinding")
+animation = NodePath("AgentAnimate")
+attack = NodePath("WeaponBow")
+detection = NodePath("AgentDetection")
+tactical = NodePath("TacticalArcher")
+current_role = &"archer"
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("CapsuleShape2D_ta2g1")
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+sprite_frames = ExtResource("2_fhmuk")
+animation = &"walk"
+
+[node name="NavigationAgent2D" type="NavigationAgent2D" parent="."]
+
+[node name="AgentAnimate" type="Node" parent="." node_paths=PackedStringArray("sprite")]
+script = ExtResource("3_5bpow")
+sprite = NodePath("../AnimatedSprite2D")
+metadata/_custom_type_script = "uid://cjjdaf7vlfs4k"
+
+[node name="AgentMovement" type="Node" parent="."]
+script = ExtResource("4_euce6")
+max_speed = 200.0
+can_meander = true
+metadata/_custom_type_script = "uid://58qm17emnwvd"
+
+[node name="Health" type="Node" parent="."]
+script = ExtResource("5_87h5s")
+metadata/_custom_type_script = "uid://c2guvnr3dtafe"
+
+[node name="MinionPathfinding" type="Node" parent="." node_paths=PackedStringArray("nav_agent")]
+script = ExtResource("7_0lcm4")
+nav_agent = NodePath("../NavigationAgent2D")
+
+[node name="AgentDetection" type="Area2D" parent="." node_paths=PackedStringArray("my_agent")]
+collision_layer = 32
+collision_mask = 1023
+script = ExtResource("8_tcsy7")
+my_agent = NodePath("..")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="AgentDetection"]
+shape = SubResource("CircleShape2D_65o65")
+debug_color = Color(0.498544, 0.546397, 0.554583, 0.42)
+
+[node name="WeaponBow" parent="." instance=ExtResource("9_fhmuk")]
+
+[node name="TacticalArcher" type="Node" parent="."]
+script = ExtResource("9_jhg76")
+metadata/_custom_type_script = "uid://drugelqbde4x8"
