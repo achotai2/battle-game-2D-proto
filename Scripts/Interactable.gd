@@ -19,6 +19,8 @@ var _active_interactor: Node2D = null
 func can_interact(interactor: Node2D) -> bool:
 	if _disabled:
 		return false
+	if _active_interactor != null and _active_interactor != interactor:
+		return false
 
 	var interactor_team := _get_team_id(interactor)
 	if not allows_neutral and interactor_team == 0:
