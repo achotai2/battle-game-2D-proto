@@ -24,11 +24,9 @@ signal attack_started(target: Node2D)
 @onready var cooldown: Timer = $cooldown
 @onready var attack_delay: Timer = $AttackDelay
 
-var my_player: int = 0
 var _owner_agent: Node2D = null
 var _current_target: Node2D = null
 var _projectile_parent: Node = null
-var _player_controls_activated: bool = false
 
 
 func _ready() -> void:
@@ -47,20 +45,18 @@ func _ready() -> void:
 	_projectile_parent = _resolve_projectile_parent()
 
 
-func set_player(owner_agent: Node2D, player: int) -> void:
+func set_player(owner_agent: Node2D) -> void:
 	_owner_agent = owner_agent
-	my_player = player
-	tracking.set_myself(owner_agent, player)
+	tracking.set_myself(owner_agent)
 
 
-func player_controls_activated() -> void:
-	_player_controls_activated = true
+func stop_delay_timer() -> void:
+	# Called by tactical player node
 	attack_delay.stop() # prevent firing while player is moving
 
 
-func player_controls_deactivated() -> void:
-	_player_controls_activated = false
-	# Restart attack and check if target in range.
+func restart_attack() -> void:
+	# Called by tactical player node
 	if _current_target == null and tracking.get_target():
 		_current_target = tracking.get_target()
 	_try_attack()
@@ -84,8 +80,6 @@ func _try_attack() -> void:
 	if not cooldown.is_stopped():
 		return
 	if not attack_delay.is_stopped():
-		return
-	if _player_controls_activated:
 		return
 
 	# Optional: only fire if we have a projectile scene
@@ -130,7 +124,7 @@ func _on_attack_delay_timeout() -> void:
 	# Supports different projectile scenes with different scripts.
 	var atk := AttackData.new()
 	atk.attack_power = attack_power
-	atk.attacker_player = my_player
+	atk.attacker_player = _owner_agent.return_player()
 	atk.attacker = _owner_agent
 	atk.source = self
 

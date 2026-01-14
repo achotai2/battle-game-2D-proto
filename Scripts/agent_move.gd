@@ -14,17 +14,33 @@ var meander: bool = false
 @export_range(0.0, 200.0, 0.5) var accel: float = 0.0
 
 var _current_velocity: Vector2 = Vector2.ZERO
+var _use_velocity: bool
+var _desired_velocity: Vector2
+var _desired_direction: Vector2
+
+
+func _physics_process(delta: float) -> void:
+	# Convert intent -> movement with the correct delta
+	if _use_velocity:
+		move_with_velocity(_desired_velocity, delta)
+	else:
+		move_in_direction(_desired_direction, delta)
 
 
 # --- Public control API ---
 
-func freeze() -> void:
+func freeze(_target: Node2D) -> void:
+	# Called by attack when attack is started
 	frozen = true
 	_current_velocity = Vector2.ZERO
 	iMoved.emit(Vector2.ZERO)
 
+
 func un_freeze() -> void:
+	# Called to unfreeze movement.
+	# Can be called by signal from agent animation when a frozen animation is finished.
 	frozen = false
+
 
 func make_meander() -> void:
 	if can_meander:
@@ -34,7 +50,7 @@ func stop_meander() -> void:
 	meander = false
 
 
-# --- Movement entry points (called by Agent) ---
+# --- Movement entry points ---
 
 # Preferred: already-scaled velocity (pathfinding + avoidance)
 func move_with_velocity(desired_velocity: Vector2, delta: float) -> void:
@@ -58,6 +74,18 @@ func move_with_velocity(desired_velocity: Vector2, delta: float) -> void:
 		_current_velocity = v
 
 	iMoved.emit(_current_velocity)
+
+
+func on_pf_desired_velocity(v: Vector2) -> void:
+	# Called on signal from pathfinding.
+	_desired_velocity = v  # store as intent
+	_use_velocity = true
+
+
+func player_controlled_movement(dir: Vector2) -> void:
+	# Called by controls when movement keys pressed.
+	_desired_direction = dir
+	_use_velocity = false
 
 
 # Convenience: direction in (unit or not)

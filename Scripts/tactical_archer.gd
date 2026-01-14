@@ -9,7 +9,6 @@ class_name TacticalArcher
 ## This node does NOT fire the weapon. Weapon attacks whenever target is in its own range.
 ## This node only produces movement intent for AgentBase -> MinionPathfinding.
 
-signal chase_target(target: Node2D)           # optional (not used here)
 signal move_to_position(pos: Vector2)         # AgentBase should map to pathfinding.set_move_target_position(pos)
 signal resume_patrol()
 
@@ -20,15 +19,12 @@ signal resume_patrol()
 @export_range(0.05, 1.0, 0.05) var update_rate: float = 0.20
 @export var keep_line_of_fire: bool = true     # simple: bias sideways movement a bit
 
-var castle: Node2D = null
 var _target: Node2D = null
 var _agent: Node2D = null
 var _timer: Timer
 
 
 func _ready() -> void:
-	_agent = get_parent() as Node2D
-
 	_timer = Timer.new()
 	_timer.one_shot = false
 	_timer.wait_time = update_rate
@@ -36,11 +32,12 @@ func _ready() -> void:
 	add_child(_timer)
 
 
-func set_castle(c: Node) -> void:
-	castle = c as Node2D
+func set_agent(agent: Node2D) -> void:
+	_agent = agent
 
 
 func set_target(t: Node2D) -> void:
+	# Called by detection node. Found a target.
 	_target = t if is_instance_valid(t) else null
 
 	if _target != null:
@@ -52,10 +49,25 @@ func set_target(t: Node2D) -> void:
 		resume_patrol.emit()
 
 
+func attack_finished() -> void:
+	# Called by signal from animation when attack animation finishes.
+	if is_instance_valid(_agent) and is_instance_valid(_agent.movement):
+		_agent.movement.un_freeze()
+
+
 func clear_target() -> void:
+	# Called by detection node. Clear the target.
 	_target = null
 	_timer.stop()
 	resume_patrol.emit()
+
+
+func detection_refreshed(t: Node2D) -> void:
+	# Called by detection node.
+	if t != null:
+		set_target(t)
+	else:
+		clear_target()
 
 
 func _on_tick() -> void:

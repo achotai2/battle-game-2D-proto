@@ -1,7 +1,7 @@
 [gd_scene load_steps=11 format=3 uid="uid://mvfvmj8qom4v"]
 
 [ext_resource type="Script" uid="uid://b3iqpgjb0vtvl" path="res://Scripts/agent_base.gd" id="1_r0ip0"]
-[ext_resource type="SpriteFrames" uid="uid://c6s4civsu8axa" path="res://Art/SpriteFrames/Worker_Red.tres" id="2_r0ip0"]
+[ext_resource type="SpriteFrames" uid="uid://iwhusndso2py" path="res://Art/SpriteFrames/Worker_Blue.tres" id="2_r0ip0"]
 [ext_resource type="Script" uid="uid://cjjdaf7vlfs4k" path="res://Scripts/agent_animate.gd" id="3_r0j7o"]
 [ext_resource type="Script" uid="uid://58qm17emnwvd" path="res://Scripts/agent_move.gd" id="4_8gahr"]
 [ext_resource type="Script" uid="uid://c2guvnr3dtafe" path="res://Scripts/health.gd" id="5_ddptx"]
@@ -16,7 +16,7 @@ height = 74.0
 [sub_resource type="CircleShape2D" id="CircleShape2D_65o65"]
 radius = 500.0
 
-[node name="Worker" type="CharacterBody2D" node_paths=PackedStringArray("health", "movement", "pathfinding", "animation", "attack", "detection", "tactical") groups=["Attackable", "Interactable", "Minions", "Workers"]]
+[node name="Worker" type="CharacterBody2D" node_paths=PackedStringArray("health", "movement", "pathfinding", "animation", "detection", "tactical") groups=["Attackable", "Interactable", "Minions", "Workers"]]
 collision_layer = 16
 collision_mask = 143
 script = ExtResource("1_r0ip0")
@@ -24,7 +24,6 @@ health = NodePath("Health")
 movement = NodePath("AgentMovement")
 pathfinding = NodePath("MinionPathfinding")
 animation = NodePath("AgentAnimate")
-attack = NodePath("")
 detection = NodePath("AgentDetection")
 tactical = NodePath("TacticalWorker")
 current_role = &"worker"
@@ -34,7 +33,7 @@ shape = SubResource("CapsuleShape2D_ta2g1")
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
 sprite_frames = ExtResource("2_r0ip0")
-animation = &"walk"
+animation = &"work"
 
 [node name="NavigationAgent2D" type="NavigationAgent2D" parent="."]
 

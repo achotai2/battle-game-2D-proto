@@ -16,10 +16,8 @@ signal attack_started(target: Node2D)
 @onready var cooldown: Timer = $cooldown
 @onready var attack_delay: Timer = $AttackDelay
 
-var my_player: int = 0
 var _owner_agent: Node
 var _current_target: Node2D = null
-var _player_controls_activated: bool = false
 
 
 func _ready() -> void:
@@ -36,20 +34,17 @@ func _ready() -> void:
 	attack_delay.timeout.connect(_on_attack_delay_timeout)
 
 
-func set_player(owner_agent: Node2D, player: int) -> void:
-	my_player = player
+func set_player(owner_agent: Node2D) -> void:
 	_owner_agent = owner_agent
-	tracking.set_myself(owner_agent, player)
+	tracking.set_myself(owner_agent)
 
 
-func player_controls_activated() -> void:
-	_player_controls_activated = true
+func stop_delay_timer() -> void:
+	# Called by tactical player node
 	attack_delay.stop() # prevent firing while player is moving
 
 
-func player_controls_deactivated() -> void:
-	_player_controls_activated = false
-	# Restart attack and check if target in range.
+func restart_attack() -> void:
 	if _current_target == null and tracking.get_target():
 		_current_target = tracking.get_target()
 	_try_attack()
@@ -74,8 +69,6 @@ func _try_attack() -> void:
 		return
 	if not attack_delay.is_stopped():
 		return
-	if _player_controls_activated:
-		return
 
 	cooldown.start()
 	attack_delay.start()
@@ -99,7 +92,7 @@ func _on_attack_delay_timeout() -> void:
 
 	var atk := AttackData.new()
 	atk.attack_power = attack_power
-	atk.attacker_player = my_player
+	atk.attacker_player = _owner_agent.return_player()
 	atk.attacker = _owner_agent
 	atk.source = self
 

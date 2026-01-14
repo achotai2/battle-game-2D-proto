@@ -9,7 +9,6 @@ signal resume_patrol()
 @export var flee_margin: float = 99999.0
 @export_range(0.05, 2.0, 0.05) var flee_update: float = 0.25
 
-var castle: Node2D = null
 var _target: Node2D = null
 var _agent: Node2D = null
 var _timer: Timer
@@ -25,13 +24,13 @@ func _ready() -> void:
 	add_child(_timer)
 
 
-func set_castle(c: Node) -> void:
-	castle = c as Node2D
+func set_agent(agent: Node2D) -> void:
+	_agent = agent
 
 	# If we gain a castle at any time, immediately run home.
-	if is_instance_valid(castle):
+	if is_instance_valid(_agent.return_castle()):
 		_timer.stop()
-		chase_target.emit(castle)
+		chase_target.emit(_agent.return_castle())
 	elif _target != null:
 		_start_flee()
 	else:
@@ -39,11 +38,12 @@ func set_castle(c: Node) -> void:
 
 
 func set_target(t: Node2D) -> void:
+	# Called by detection node. Found a target.
 	_target = t if is_instance_valid(t) else null
 
-	if is_instance_valid(castle):
+	if is_instance_valid(_agent.return_castle()):
 		_timer.stop()
-		chase_target.emit(castle)
+		chase_target.emit(_agent.return_castle())
 		return
 
 	if _target != null:
@@ -53,14 +53,29 @@ func set_target(t: Node2D) -> void:
 		resume_patrol.emit()
 
 
+func attack_finished() -> void:
+	# Called by signal from animation when attack animation finishes.
+	if is_instance_valid(_agent) and is_instance_valid(_agent.movement):
+		_agent.movement.un_freeze()
+
+
 func clear_target() -> void:
+	# Called by detection node. Clear the target.
 	_target = null
 	_timer.stop()
 
-	if is_instance_valid(castle):
-		chase_target.emit(castle)
+	if is_instance_valid(_agent.return_castle()):
+		chase_target.emit(_agent.return_castle())
 	else:
 		resume_patrol.emit()
+
+
+func detection_refreshed(t: Node2D) -> void:
+	# Called by detection node.
+	if t != null:
+		set_target(t)
+	else:
+		clear_target()
 
 
 func _start_flee() -> void:
@@ -71,9 +86,9 @@ func _start_flee() -> void:
 
 func _on_flee_tick() -> void:
 	# If we have a castle, always prioritize running home.
-	if is_instance_valid(castle):
+	if is_instance_valid(_agent.return_castle()):
 		_timer.stop()
-		chase_target.emit(castle)
+		chase_target.emit(_agent.return_castle())
 		return
 
 	if _agent == null or not is_instance_valid(_agent):

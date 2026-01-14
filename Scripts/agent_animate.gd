@@ -1,13 +1,15 @@
 extends Node
 class_name AgentAnimate
 
-signal animationFinished
+signal actionAnimationFinished
 
 @export var sprite: AnimatedSprite2D
 @export_range(0, 3, 0.1) var damageVisualTime: float = 0.2
 
 var damageTimer := Timer.new()
 var attacking: bool = false
+
+var _my_agent: Node2D = null
 
 
 # Called when the node enters the scene tree for the first time.
@@ -37,17 +39,22 @@ func _update_damage_visual() -> void:
 
 
 func _animation_finished() -> void:
+	if attacking or sprite.animation == &"work":
+		actionAnimationFinished.emit()
+
 	if is_instance_valid(sprite):
 		attacking = false
 		sprite.play("idle")
 	
-	animationFinished.emit()
-
 
 func _on_timer_timeout() -> void:
 	if is_instance_valid(sprite) and is_instance_valid(sprite.material):
 		sprite.material.set_shader_parameter("progress", 0)
 #		animation.position = Vector2(0, 0)
+
+
+func set_my_agent(ag: Node2D) -> void:
+	_my_agent = ag
 
 
 #func _health_connect() -> void:
@@ -80,12 +87,12 @@ func _show_heal() -> void:
 	pass
 
 
-func play_attack(target_position: Vector2, my_position: Vector2) -> void:
+func play_attack(target: Node2D) -> void:
 	if not is_instance_valid(sprite) or sprite.sprite_frames == null:
 		return
 
 	attacking = true
-	var dir := my_position.direction_to(target_position)
+	var dir: Vector2 = _my_agent.return_position().direction_to(target.return_position())
 	var frames := sprite.sprite_frames
 
 	var variant := "attack1"
@@ -137,3 +144,11 @@ func cancel_action_state() -> void:
 	attacking = false
 	# optionally stop attack anim
 	sprite.stop()
+
+
+func do_work() -> void:
+	# Called by tactical worker when work is performed.
+	var frames := sprite.sprite_frames
+
+	if frames.has_animation("work"):
+		sprite.play("work")

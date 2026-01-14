@@ -20,7 +20,6 @@ enum TargetKind { ATTACKABLE, INTERACTABLE }
 @export_enum("Nearest", "Strongest", "Lowest Health", "Buildings") var target_bias: String = "Nearest"
 @export_range(0.05, 5.0, 0.05) var targeting_update: float = 0.5
 
-var my_player: int = 0
 var dont_target: Node2D = null
 
 # Candidate set + list
@@ -49,9 +48,8 @@ func _ready() -> void:
 # Public API
 # -------------------------
 
-func set_myself(agent: Node2D, player: int) -> void:
+func set_myself(agent: Node2D) -> void:
 	my_agent = agent
-	my_player = player
 
 	dont_target = null if targets_self else agent
 	if dont_target:
@@ -131,7 +129,7 @@ func _on_candidate_tree_exited(body: Node2D) -> void:
 # -------------------------
 
 func _team_allowed(p: int) -> bool:
-	if p == my_player:
+	if p == my_agent.return_player():
 		return target_same_team
 	if p == 0:
 		return target_neutral

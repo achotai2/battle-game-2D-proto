@@ -2,30 +2,6 @@
 
 [ext_resource type="Texture2D" uid="uid://cntrbufep07xb" path="res://Tiny Swords (Update 010)/Factions/Knights/Troops/Pawn/Blue/Pawn_Blue.png" id="1_of1m1"]
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_r0ip0"]
-atlas = ExtResource("1_of1m1")
-region = Rect2(0, 384, 192, 192)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_kdem7"]
-atlas = ExtResource("1_of1m1")
-region = Rect2(192, 384, 192, 192)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_3l6ct"]
-atlas = ExtResource("1_of1m1")
-region = Rect2(384, 384, 192, 192)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_7r3ll"]
-atlas = ExtResource("1_of1m1")
-region = Rect2(576, 384, 192, 192)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_opxt8"]
-atlas = ExtResource("1_of1m1")
-region = Rect2(768, 384, 192, 192)
-
-[sub_resource type="AtlasTexture" id="AtlasTexture_8i62a"]
-atlas = ExtResource("1_of1m1")
-region = Rect2(960, 384, 192, 192)
-
 [sub_resource type="AtlasTexture" id="AtlasTexture_isdj1"]
 atlas = ExtResource("1_of1m1")
 region = Rect2(0, 576, 192, 192)
@@ -146,31 +122,32 @@ region = Rect2(768, 192, 192, 192)
 atlas = ExtResource("1_of1m1")
 region = Rect2(960, 192, 192, 192)
 
+[sub_resource type="AtlasTexture" id="AtlasTexture_r0ip0"]
+atlas = ExtResource("1_of1m1")
+region = Rect2(0, 384, 192, 192)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_kdem7"]
+atlas = ExtResource("1_of1m1")
+region = Rect2(192, 384, 192, 192)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_3l6ct"]
+atlas = ExtResource("1_of1m1")
+region = Rect2(384, 384, 192, 192)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_7r3ll"]
+atlas = ExtResource("1_of1m1")
+region = Rect2(576, 384, 192, 192)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_opxt8"]
+atlas = ExtResource("1_of1m1")
+region = Rect2(768, 384, 192, 192)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_8i62a"]
+atlas = ExtResource("1_of1m1")
+region = Rect2(960, 384, 192, 192)
+
 [resource]
 animations = [{
-"frames": [{
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_r0ip0")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_kdem7")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_3l6ct")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_7r3ll")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_opxt8")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_8i62a")
-}],
-"loop": true,
-"name": &"attack1",
-"speed": 5.0
-}, {
 "frames": [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_isdj1")
@@ -191,7 +168,7 @@ animations = [{
 "texture": SubResource("AtlasTexture_pktuc")
 }],
 "loop": true,
-"name": &"attack2",
+"name": &"attack1",
 "speed": 5.0
 }, {
 "frames": [{
@@ -284,5 +261,28 @@ animations = [{
 }],
 "loop": true,
 "name": &"walk",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_r0ip0")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_kdem7")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_3l6ct")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_7r3ll")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_opxt8")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_8i62a")
+}],
+"loop": true,
+"name": &"work",
 "speed": 5.0
 }]

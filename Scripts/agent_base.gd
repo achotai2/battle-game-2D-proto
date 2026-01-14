@@ -20,53 +20,64 @@ class_name AgentBase
 @export var tactical: Node = null
 @export var current_role: StringName
 
-var _desired_velocity: Vector2
-var _desired_direction: Vector2
-var _use_velocity: bool
-
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
-	if is_instance_valid(interaction):
-		interaction.noInteractTarget.connect(_no_interact_target)
-		interaction.set_player(self, player)
+	#if is_instance_valid(interaction):
+	#	interaction.noInteractTarget.connect(_no_interact_target)
+	#	interaction.set_player(self, player)
 
-	if is_instance_valid(interact):
-		interact.update_time_step(false, false)
-		interact.interactionFinished.connect(_interaction_finished)
+	#if is_instance_valid(interact):
+	#	interact.update_time_step(false, false)
+	#	interact.interactionFinished.connect(_interaction_finished)
 
+	#if is_instance_valid(task):
+	#	task.returnedCarry.connect(_returned_carry)
+
+	# Connect signals for ANIMATION node.
 	if is_instance_valid(animation):
-		animation.animationFinished.connect(_animation_finished)
+		animation.set_my_agent(self)
 
+	# Connect signals for MOVEMENT node.
 	if is_instance_valid(movement):
-		movement.iMoved.connect(_agent_moved)
+		movement.connect("iMoved", Callable(self, "_agent_moved"))
 		
-	if is_instance_valid(pathfinding):
-		pathfinding.desired_velocity.connect(_on_pf_desired_velocity)
+		if is_instance_valid(animation):
+			movement.connect("iMoved", Callable(animation, "agent_moved"))
 
+	# Connect signals for PATHFINDING node.
+	if is_instance_valid(pathfinding) and is_instance_valid(movement):
+		pathfinding.connect("desired_velocity", Callable(movement, "on_pf_desired_velocity"))
+
+	# Connect signals for player CONTROLS node.
 	if is_instance_valid(controls):
-		controls.buildEngaged.connect(_build_engaged)
-		controls.buildReleased.connect(_build_released)
-		controls.moveAgent.connect(_controlled_movement)
-		
-	if is_instance_valid(attack):
-		attack.attack_started.connect(_attack_started)
-		attack.set_player(self, player)
+		if is_instance_valid(interaction):
+			controls.connect("buildEngaged", Callable(interaction, "interaction_engaged"))
+			controls.connect("buildReleased", Callable(interaction, "interaction_released"))
 
+		if is_instance_valid(tactical):
+			if tactical.has_method("player_controls_activated"):
+				controls.connect("buildEngaged", Callable(tactical, "player_controls_activated"))
+			if tactical.has_method("player_movement_activated"):
+				controls.connect("moveAgent", Callable(tactical, "player_movement_activated"))
+			if tactical.has_method("player_controls_deactivated"):
+				controls.connect("buildReleased", Callable(tactical, "player_controls_deactivated"))
+
+		if is_instance_valid(movement):
+			controls.connect("moveAgent", Callable(movement, "player_controlled_movement"))
+
+	# Connect signals for  ATTACK node.	
+	_attack_signals()
+
+	# Connect signals for DETECTION node.
 	if is_instance_valid(detection):
-		detection.target_changed.connect(_detected_target)
-		detection.target_lost.connect(_detected_lost)
-		detection.target_refreshed.connect(_detected_refreshed)
-		detection.set_myself(self, player)
+		detection.set_myself(self)
+	_detection_signals()
 
-	if is_instance_valid(task):
-		task.returnedCarry.connect(_returned_carry)
-		
-	if is_instance_valid(tactical):
-		tactical.chase_target.connect(_on_chase_target)
-		tactical.resume_patrol.connect(_on_resume_patrol)
-		tactical.move_to_position.connect(_on_move_to_position)
-		
+	# Connect signals for TACTICAL node.	
+	_tactical_signals()
+
+	# Connect signals for HEALTH node.	
 	if is_instance_valid(health):
 		health.damaged.connect(_im_damaged)
 		health.died.connect(_im_dead)
@@ -88,37 +99,139 @@ func _physics_process(_delta: float) -> void:
 		# Update pathfinding information.
 		pathfinding.tick(global_position, movement.return_speed(), _delta)
 
-	if is_instance_valid(movement):
-		# Convert intent -> movement with the correct delta
-		if _use_velocity:
-			movement.move_with_velocity(_desired_velocity, _delta)
-		else:
-			movement.move_in_direction(_desired_direction, _delta)
-
 	move_and_slide()
 
 
-func _take_damage() -> void:
-	if is_instance_valid(animation):
-		animation.show_damage()
+func _attack_signals() -> void:
+	# Connect signals for ATTACK node.
+	# These get their own function because they are called in apply_role also.
+# COULD THINK ABOUT COMBINING TACTICAL AND ATTACK, AS THEY SHOULD ALWAYS BE CONNECTED PROBABLY.
+	if is_instance_valid(attack):
+		attack.set_player(self)
+
+		if is_instance_valid(animation) and attack.has_signal("attack_started"):
+			attack.connect("attack_started", Callable(animation, "play_attack"))
+
+		if is_instance_valid(movement) and attack.has_signal("attack_started"):
+			attack.connect("attack_started", Callable(movement, "freeze"))
 
 
-func _returned_carry() -> void:
-	# Called when a carried object is detected to have been returned to castle.
-	carrying.delete_me()
-	if is_instance_valid(gold):
-		gold.pickup_gold(1)
-	carrying = null
+func _attack_disconnect_signals() -> void:
+	# Disconnect signals for old ATTACK node.
+	# These get their own function because they are called in apply_role also.
+# COULD THINK ABOUT COMBINING TACTICAL AND ATTACK, AS THEY SHOULD ALWAYS BE CONNECTED PROBABLY.
+	if is_instance_valid(attack):
+		if is_instance_valid(animation) and attack.has_signal("attack_started"):
+			attack.disconnect("attack_started", Callable(animation, "play_attack"))
+
+		if is_instance_valid(movement) and attack.has_signal("attack_started"):
+			attack.disconnect("attack_started", Callable(movement, "freeze"))
 
 
-func _interaction_finished(interactingPlayer: int) -> void:
-	# Called when player interacts with minion. Should cancel task and assign the follow task for the player.
-	if !carrying:
-		if is_instance_valid(task):
-			task.remove_me(self)
+func _detection_signals() -> void:
+	# Connect signals for DETECTION node.
+	# These get their own function because they are called in apply_role also.
+	if not is_instance_valid(detection) or not is_instance_valid(tactical):
+		return
+
+	if tactical.has_method("set_target"):
+		detection.connect("target_changed", Callable(tactical, "set_target"))
+
+	if tactical.has_method("clear_target"):
+		detection.connect("target_lost", Callable(tactical, "clear_target"))
+
+	if tactical.has_method("detection_refreshed"):
+		detection.connect("target_refreshed", Callable(tactical, "detection_refreshed"))
+
+
+func _detection_disconnect_signals() -> void:
+	# Disconnects signals for DETECTION node to old TACTICAL node.
+	# These get their own function because they are called in apply_role also.
+	if not is_instance_valid(detection) or not is_instance_valid(tactical):
+		return
+
+	if tactical.has_method("set_target"):
+		detection.disconnect("target_changed", Callable(tactical, "set_target"))
+
+	if tactical.has_method("clear_target"):
+		detection.disconnect("target_lost", Callable(tactical, "clear_target"))
+
+	if tactical.has_method("detection_refreshed"):
+		detection.disconnect("target_refreshed", Callable(tactical, "detection_refreshed"))
+
+
+func _tactical_signals() -> void:
+	# Connect signals for TACTICAL node.	
+	if not is_instance_valid(tactical):
+		return
+
+	if tactical.has_method("set_agent"):
+		tactical.call("set_agent", self)
+
+	if is_instance_valid(animation) and tactical.has_method("attack_finished"):
+		animation.connect("actionAnimationFinished", Callable(tactical, "attack_finished"))
+
+	if tactical.has_signal("chase_target"):
+		if is_instance_valid(pathfinding):
+			tactical.connect("chase_target", Callable(pathfinding, "stop_meander"))
+			tactical.connect("chase_target", Callable(pathfinding, "set_chase_target"))
+
+		if is_instance_valid(movement):
+			tactical.connect("chase_target", Callable(movement, "stop_meander"))
+
+	if tactical.has_signal("resume_patrol"):
+		if is_instance_valid(pathfinding):
+			tactical.connect("resume_patrol", Callable(pathfinding, "clear_target"))
+			tactical.connect("resume_patrol", Callable(pathfinding, "stop_meander"))
+
+		if is_instance_valid(movement):
+			tactical.connect("resume_patrol", Callable(movement, "make_meander"))
+
+	if tactical.has_signal("move_to_position"):
+		if is_instance_valid(pathfinding):
+			tactical.connect("move_to_position", Callable(pathfinding, "stop_meander"))
+			tactical.connect("move_to_position", Callable(pathfinding, "set_move_target_position"))
+
+		if is_instance_valid(movement):
+			tactical.connect("move_to_position", Callable(movement, "stop_meander"))
+
+
+func _tactical_disconnect_signals() -> void:
+	# Disconnects signals for old TACTICAL node.	
+	if not is_instance_valid(tactical):
+		return
+
+	if is_instance_valid(animation) and tactical.has_method("attack_finished"):
+		animation.disconnect("actionAnimationFinished", Callable(tactical, "attack_finished"))
+
+	if tactical.has_signal("chase_target"):
+		if is_instance_valid(pathfinding):
+			tactical.disconnect("chase_target", Callable(pathfinding, "stop_meander"))
+			tactical.disconnect("chase_target", Callable(pathfinding, "set_chase_target"))
+
+		if is_instance_valid(movement):
+			tactical.disconnect("chase_target", Callable(movement, "stop_meander"))
+
+	if tactical.has_signal("resume_patrol"):
+		if is_instance_valid(pathfinding):
+			tactical.disconnect("resume_patrol", Callable(pathfinding, "clear_target"))
+			tactical.disconnect("resume_patrol", Callable(pathfinding, "stop_meander"))
+
+		if is_instance_valid(movement):
+			tactical.disconnect("resume_patrol", Callable(movement, "make_meander"))
+
+	if tactical.has_signal("move_to_position"):
+		if is_instance_valid(pathfinding):
+			tactical.disconnect("move_to_position", Callable(pathfinding, "stop_meander"))
+			tactical.disconnect("move_to_position", Callable(pathfinding, "set_move_target_position"))
+
+		if is_instance_valid(movement):
+			tactical.disconnect("move_to_position", Callable(movement, "stop_meander"))
 
 
 func _im_damaged() -> void:
+#	if is_instance_valid(animation):
+#		animation.show_damage()
 	pass
 
 
@@ -129,126 +242,34 @@ func _im_dead() -> void:
 		apply_role("peasant", player)
 
 
-func _take_heal() -> void:
-	if is_instance_valid(animation):
-		animation.show_heal()
-
-
-func _no_interact_target() -> void:
-	if is_instance_valid(gold):
-		gold.drop_gold(1)
-
-
-func _animation_finished() -> void:
-	# Called by agent_animate to unfreeze movement when animation finished.
-	if is_instance_valid(movement):
-		movement.un_freeze()
-
-
 func _agent_moved(vel: Vector2) -> void:
-	if is_instance_valid(animation):
-		animation.agent_moved(vel)
-		
+	# Called by signal from movement when movement occurs.
 	self.velocity = vel
 
 
-func _build_engaged() -> void:
-	# Called by controls when build button depressed.
-	if is_instance_valid(interaction):
-		interaction.interaction_engaged()
-
-	# Tell attack to stop attacking while build engaged.
-	if is_instance_valid(attack):
-		attack.player_controls_activated()
+#func _take_heal() -> void:
+#	if is_instance_valid(animation):
+#		animation.show_heal()
 
 
-func _build_released() -> void:
-	# Called by controls when build button released.
-	if is_instance_valid(interaction):
-		interaction.interaction_released()
-
-	# Tell attack to stop attacking while build engaged.
-	if is_instance_valid(attack):
-		attack.player_controls_deactivated()
+#func _no_interact_target() -> void:
+#	if is_instance_valid(gold):
+#		gold.drop_gold(1)
 
 
-func _controlled_movement(dir: Vector2) -> void:
-	# Called by controls when movement keys pressed.
-	if is_instance_valid(movement):
-		_desired_direction = dir
-		_use_velocity = false
-
-	# Tell attack to stop attacking if moving, or restart attacking if not moving.
-	if is_instance_valid(attack):
-		if dir == Vector2.ZERO:
-			attack.player_controls_deactivated()
-		else:
-			attack.player_controls_activated()
+#func _returned_carry() -> void:
+#	# Called when a carried object is detected to have been returned to castle.
+#	carrying.delete_me()
+#	if is_instance_valid(gold):
+#		gold.pickup_gold(1)
+#	carrying = null
 
 
-func _on_pf_desired_velocity(v: Vector2) -> void:
-	_desired_velocity = v  # store as intent
-	_use_velocity = true
-
-
-func _attack_started(target) -> void:
-	if is_instance_valid(animation):
-		animation.play_attack(target.return_position(), self.return_position())
-
-	if is_instance_valid(movement):
-		movement.freeze()
-
-
-func _detected_target(target: Node2D) -> void:
-	# Called by detection node.
-	# Found an target, pass this on to tactical.
-	if is_instance_valid(tactical):
-		tactical.set_target(target)
-
-
-func _detected_lost() -> void:
-	# Called by detection node.
-	if is_instance_valid(tactical):
-		tactical.clear_target()
-
-
-func _detected_refreshed(target: Node2D) -> void:
-	# Called by detection node.
-	if is_instance_valid(tactical):
-		if target != null:
-			tactical.set_target(target)
-		else:
-			tactical.clear_target()
-
-
-func _on_chase_target(t: Node2D) -> void:
-	# Called by signal from tactical.
-	if is_instance_valid(pathfinding):
-		pathfinding.set_meander(false)
-		pathfinding.set_chase_target(t)
-
-	if is_instance_valid(movement):
-		movement.stop_meander()
-
-
-func _on_resume_patrol() -> void:
-	# Called by signal from tactical.
-	if is_instance_valid(pathfinding):
-		pathfinding.clear_target()
-		pathfinding.set_meander(true)
-
-	if is_instance_valid(movement):
-		movement.make_meander()
-
-
-func _on_move_to_position(pos: Vector2) -> void:
-	# Called by signal from tactical.
-	if is_instance_valid(pathfinding):
-		pathfinding.set_meander(false)
-		pathfinding.set_move_target_position(pos)
-
-	if is_instance_valid(movement):
-		movement.stop_meander()
+#func _interaction_finished(interactingPlayer: int) -> void:
+#	# Called when player interacts with minion. Should cancel task and assign the follow task for the player.
+#	if !carrying:
+#		if is_instance_valid(task):
+#			task.remove_me(self)
 
 
 ##################
@@ -266,10 +287,13 @@ func apply_role(role: StringName, p: int) -> void:
 
 	# --- remove old role-dependent nodes ---
 	if is_instance_valid(attack):
+		_attack_disconnect_signals()
 		attack.queue_free()
 		attack = null
 
 	if is_instance_valid(tactical):
+		_tactical_disconnect_signals()
+		_detection_disconnect_signals()
 		tactical.queue_free()
 		tactical = null
 
@@ -279,31 +303,20 @@ func apply_role(role: StringName, p: int) -> void:
 		attack = weapon_scene.instantiate()
 		add_child(attack)
 
-		# Configure
-		if attack.has_method("set_player"):
-			attack.call("set_player", self, player)
-
-		# Signals (weapon -> agent)
-		if attack.has_signal("attack_started"):
-			attack.connect("attack_started", Callable(self, "_attack_started"))
-
+		# Configure attack signals
+		_attack_signals()
+	
 	# --- add new tactical (Script) ---
 	var tactical_script: Script = UnitRoles.get_tactical(role)
 	if tactical_script != null:
 		tactical = tactical_script.new()
 		add_child(tactical)
 
-		# Optional configuration
-		if tactical.has_method("set_castle"):
-			tactical.call("set_castle", castle)
+		# Configure tactical signals.
+		_tactical_signals()
 
-		# Signals (tactical -> agent)
-		if tactical.has_signal("chase_target"):
-			tactical.connect("chase_target", Callable(self, "_on_chase_target"))
-		if tactical.has_signal("move_to_position"):
-			tactical.connect("move_to_position", Callable(self, "_on_move_to_position"))
-		if tactical.has_signal("resume_patrol"):
-			tactical.connect("resume_patrol", Callable(self, "_on_resume_patrol"))
+		# Reconfigure the signals from detection to tactical.
+		_detection_signals()
 
 	# --- visuals ---
 	var frames: SpriteFrames = UnitRoles.get_frames(role, player)
@@ -316,20 +329,20 @@ func apply_role(role: StringName, p: int) -> void:
 
 	current_role = role
 
-	# --- tracking refresh (optional) ---
-	if is_instance_valid(detection):
-		detection.refresh()
-
-	if is_instance_valid(pathfinding):
-		pathfinding.clear_target()
-
+	# --- tracking refresh ---
 	# Cancel transient action states when swapping role
 	if is_instance_valid(movement):
 		movement.un_freeze()
 
+	if is_instance_valid(pathfinding):
+		pathfinding.clear_target()
+
+	if is_instance_valid(detection):
+		detection.refresh()
+
 	# If you have flags on animation like `attacking`, clear them too
 	if is_instance_valid(animation) and animation.has_method("cancel_action_state"):
-		animation.call("cancel_action_state")	
+		animation.call("cancel_action_state")
 
 
 func return_player() -> int:
@@ -344,67 +357,75 @@ func return_velocity() -> Vector2:
 	return self.velocity
 
 
-func is_idle() -> bool:
-	return true
+#func is_idle() -> bool:
+#	return true
 
 
 func return_castle() -> Node:
 	return castle
 
 
-func spawned_this_resource(spawned: Node) -> void:
-	pass
+# Called externally to update castle agent is assigned to.
+func set_castle(new_castle: Node) -> void:
+	castle = new_castle
+
+	if is_instance_valid(tactical) and tactical.has_method("switch_job_board"):
+		tactical.call("switch_job_board", castle)
 
 
-func return_health() -> int:
-	return 100 
+#func spawned_this_resource(spawned: Node) -> void:
+#	pass
+
+
+#func return_health() -> int:
+#	return 100 
 	#if is_instance_valid(health):
 		#return health.return_health()
 	#else:
 		#return 0
 
 
-func delete_me() -> void:
-	if is_instance_valid(task):
-		task.remove_me(self)
-	self.queue_free()
+#func delete_me() -> void:
+#	if is_instance_valid(task):
+#		task.remove_me(self)
+#	self.queue_free()
 
 
-func return_to_castle() -> void:
-	if is_instance_valid(castle):
-		castle.give_me_task(self)
+#func return_to_castle() -> void:
+#	if is_instance_valid(castle):
+#		castle.give_me_task(self)
 
 
 # Called by resource _body_entered when picked up by this agent.
-func carry_me(thing: Node) -> void:
-	thing.reparent(self)
-	carrying = thing
-	thing.global_position = self.global_position
+#func carry_me(thing: Node) -> void:
+#	thing.reparent(self)
+#	carrying = thing
+#	thing.global_position = self.global_position
 
 
-func set_player(newPlayer: int, newCastle: Node, goldAmount: int) -> void:
-	#playerUpdate.emit(newPlayer)
-	player = newPlayer
-	castle = newCastle
-	if is_instance_valid(gold):
-		gold.pickup_gold(goldAmount)
+#func set_player(newPlayer: int, newCastle: Node, goldAmount: int) -> void:
+#	#playerUpdate.emit(newPlayer)
+#	player = newPlayer
+#	castle = newCastle
+#	if is_instance_valid(gold):
+#		gold.pickup_gold(goldAmount)
 
 
 # PROBABLY BEST TO MOVE INTO SEPARATE BASES
-func task_command(taskType: String, taskPlayer: int) -> void:
-	# Called by tasks
-	if self.is_in_group("Goblins") and taskType == "Gold":
-		if is_instance_valid(gold):
-			gold.pickup_gold(-1)
-		set_player(taskPlayer, get_parent().get_closest_castle(taskPlayer, return_position()), 0)
-
-	elif self.is_in_group("Goblins") and taskType == "Spawn":
-		delete_me()
+#func task_command(taskType: String, taskPlayer: int) -> void:
+#	# Called by tasks
+#	if self.is_in_group("Goblins") and taskType == "Gold":
+#		if is_instance_valid(gold):
+#			gold.pickup_gold(-1)
+#		set_player(taskPlayer, get_parent().get_closest_castle(taskPlayer, return_position()), 0)
+#
+#	elif self.is_in_group("Goblins") and taskType == "Spawn":
+#		delete_me()
 
 
 # Called by spawns when a unit is spawned from this unit.
-func return_my_gold() -> int:
-	if is_instance_valid(gold):
-		return gold.return_gold()
-	else:
-		return 0
+#func return_my_gold() -> int:
+#	if is_instance_valid(gold):
+#		return gold.return_gold()
+#	else:
+#		return 0

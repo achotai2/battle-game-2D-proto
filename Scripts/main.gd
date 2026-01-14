@@ -23,4 +23,5 @@ func _update_gold_label(gold: int) -> void:
 
 
 func _change_minion() -> void:
-	$Units/Soldier.apply_role('peasant', 2)
+#	$Units/Soldier.apply_role('peasant', 2)
+	pass

@@ -1,0 +1,26 @@
+[gd_scene load_steps=5 format=3 uid="uid://so0ngwg160ke"]
+
+[ext_resource type="Script" uid="uid://cjbrsf0fmsehe" path="res://Scripts/building_base.gd" id="1_3p7p4"]
+[ext_resource type="Texture2D" uid="uid://bo1itj23k76yd" path="res://Tiny Swords (Update 010)/Factions/Knights/Buildings/House/House_Construction.png" id="1_7aoon"]
+[ext_resource type="Script" uid="uid://qumqy1omy72i" path="res://Scripts/worksite.gd" id="2_coeoc"]
+
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_coeoc"]
+radius = 47.999996
+height = 110.0
+
+[node name="Barracks" type="StaticBody2D" node_paths=PackedStringArray("worksite")]
+script = ExtResource("1_3p7p4")
+worksite = NodePath("WorkSite")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+rotation = 1.5707964
+shape = SubResource("CapsuleShape2D_coeoc")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+position = Vector2(0, -36)
+texture = ExtResource("1_7aoon")
+
+[node name="WorkSite" type="Node2D" parent="." node_paths=PackedStringArray("my_boss")]
+script = ExtResource("2_coeoc")
+my_boss = NodePath("..")
+metadata/_custom_type_script = "uid://qumqy1omy72i"

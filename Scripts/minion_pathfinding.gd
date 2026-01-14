@@ -66,14 +66,14 @@ func _ready() -> void:
 # Public API
 # -------------------------
 
-func set_meander(enabled: bool) -> void:
-	meander_enabled = enabled
-	if enabled:
-		start_patrol()
-	else:
-		# Only clear if we were patrolling; otherwise leave current mode alone
-		if _mode == Mode.PATROL:
-			clear_target()
+func start_meander() -> void:
+	meander_enabled = true
+	start_patrol()
+
+func stop_meander() -> void:
+	# Only clear if we were patrolling; otherwise leave current mode alone
+	if _mode == Mode.PATROL:
+		clear_target()
 
 
 func set_move_target_position(pos: Vector2) -> void:

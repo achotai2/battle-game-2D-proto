@@ -1,4 +1,4 @@
-[gd_scene load_steps=10 format=3 uid="uid://ex22mf26lsid"]
+[gd_scene load_steps=11 format=3 uid="uid://ex22mf26lsid"]
 
 [ext_resource type="Script" uid="uid://b3iqpgjb0vtvl" path="res://Scripts/agent_base.gd" id="1_rpqav"]
 [ext_resource type="Script" uid="uid://cjjdaf7vlfs4k" path="res://Scripts/agent_animate.gd" id="2_gntrk"]
@@ -8,12 +8,13 @@
 [ext_resource type="Script" uid="uid://c2guvnr3dtafe" path="res://Scripts/health.gd" id="7_52ee3"]
 [ext_resource type="PackedScene" uid="uid://6it7l8b8yxs" path="res://Scenes/weapon_sword.tscn" id="7_bhhdu"]
 [ext_resource type="PackedScene" uid="uid://dsnaij5h7mltt" path="res://Scenes/player_interact.tscn" id="8_bhhdu"]
+[ext_resource type="Script" uid="uid://chpltba3g3wmy" path="res://Scripts/tactical_player.gd" id="9_megsn"]
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_kyqiw"]
 radius = 26.0
 height = 82.0
 
-[node name="Player" type="CharacterBody2D" node_paths=PackedStringArray("health", "interaction", "movement", "controls", "animation", "attack") groups=["Attackable", "Player"]]
+[node name="Player" type="CharacterBody2D" node_paths=PackedStringArray("health", "interaction", "movement", "controls", "animation", "attack", "tactical") groups=["Attackable", "Player"]]
 collision_layer = 4
 collision_mask = 143
 script = ExtResource("1_rpqav")
@@ -24,6 +25,7 @@ movement = NodePath("AgentMovement")
 controls = NodePath("PlayerControls")
 animation = NodePath("AgentAnimate")
 attack = NodePath("WeaponSword")
+tactical = NodePath("TacticalPlayer")
 current_role = &"player"
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
@@ -55,3 +57,7 @@ metadata/_custom_type_script = "uid://c2guvnr3dtafe"
 [node name="WeaponSword" parent="." instance=ExtResource("7_bhhdu")]
 
 [node name="PlayerInteract" parent="." instance=ExtResource("8_bhhdu")]
+
+[node name="TacticalPlayer" type="Node" parent="."]
+script = ExtResource("9_megsn")
+metadata/_custom_type_script = "uid://chpltba3g3wmy"

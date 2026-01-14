@@ -1,0 +1,22 @@
+git add .
+git commit -m "Rebuilt Main scene with player, world, interaction"
+git push
+
+
+
+
+Problem: Tactics should handle attack messages.
+- I don't neccessarily want animation telling movement to unfreeze when animation_finished triggers. This could cause conflicts later.
+- I want tactical to handle attacks. Weapon tells tactical there is a target and sends attack info, tactical decides what to do.
+- Player tactical can also handle freezing attacks when moving, and passing on controls messages to movement maybe.
+- Tactical could then handle unfreeze actions upon animation finished maybe.
+Solution
+- Move attack signal to tactical, and have it make the decision and pass on message to animation, target, movement, etc.
+- animation_finished signal from animation goes back to tactical for analysis to unfreeze movement.
+- Player controls sends signal to player tactical which handles freezing and unfreezing movement.
+
+
+Problem: Does signaling make sense for stable command structure?
+- Perhaps better to move to function commands.
+- Nodes can get the node they want to command from the agent, and then call a function in that node.
+- Instead of sending signals they just run a function command.

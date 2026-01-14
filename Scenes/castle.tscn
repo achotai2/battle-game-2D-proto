@@ -1,17 +1,30 @@
-[gd_scene load_steps=3 format=3 uid="uid://56ng42k13bnj"]
+[gd_scene load_steps=6 format=3 uid="uid://56ng42k13bnj"]
 
 [ext_resource type="Texture2D" uid="uid://d4hqu3k4e8pts" path="res://Tiny Swords (Update 010)/Factions/Knights/Buildings/Castle/Castle_Blue.png" id="1_ayoda"]
+[ext_resource type="Script" uid="uid://beretwk1vqwgm" path="res://Scripts/castle.gd" id="1_p6e6l"]
+[ext_resource type="Script" uid="uid://ba0yfy3sv1ht2" path="res://Scripts/castle_job_board.gd" id="2_r1mkv"]
+
+[sub_resource type="PhysicsMaterial" id="PhysicsMaterial_r1mkv"]
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_r1mkv"]
 radius = 54.0
-height = 290.0
+height = 334.0
 
-[node name="Castle" type="StaticBody2D"]
-
-[node name="Sprite2D" type="Sprite2D" parent="."]
-texture = ExtResource("1_ayoda")
+[node name="Castle" type="StaticBody2D" node_paths=PackedStringArray("job_board") groups=["Attackable", "Buildings", "Interactable"]]
+position = Vector2(0, -72)
+physics_material_override = SubResource("PhysicsMaterial_r1mkv")
+script = ExtResource("1_p6e6l")
+player = null
+job_board = NodePath("CastleJobBoard")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 position = Vector2(0, 72)
 rotation = 1.5707964
 shape = SubResource("CapsuleShape2D_r1mkv")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+texture = ExtResource("1_ayoda")
+
+[node name="CastleJobBoard" type="Node" parent="."]
+script = ExtResource("2_r1mkv")
+metadata/_custom_type_script = "uid://ba0yfy3sv1ht2"
