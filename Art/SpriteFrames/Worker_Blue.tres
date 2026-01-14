@@ -167,9 +167,9 @@ animations = [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_pktuc")
 }],
-"loop": true,
+"loop": false,
 "name": &"attack1",
-"speed": 5.0
+"speed": 15.0
 }, {
 "frames": [{
 "duration": 1.0,
@@ -213,7 +213,7 @@ animations = [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_3jkag")
 }],
-"loop": true,
+"loop": false,
 "name": &"carryWalk",
 "speed": 5.0
 }, {
@@ -259,7 +259,7 @@ animations = [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_slroi")
 }],
-"loop": true,
+"loop": false,
 "name": &"walk",
 "speed": 5.0
 }, {
@@ -282,7 +282,7 @@ animations = [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_8i62a")
 }],
-"loop": true,
+"loop": false,
 "name": &"work",
-"speed": 5.0
+"speed": 15.0
 }]

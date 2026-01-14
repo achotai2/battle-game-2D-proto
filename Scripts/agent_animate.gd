@@ -8,6 +8,7 @@ signal actionAnimationFinished
 
 var damageTimer := Timer.new()
 var attacking: bool = false
+var working: bool = false
 
 var _my_agent: Node2D = null
 
@@ -39,11 +40,12 @@ func _update_damage_visual() -> void:
 
 
 func _animation_finished() -> void:
-	if attacking or sprite.animation == &"work":
+	if attacking or working:
 		actionAnimationFinished.emit()
 
 	if is_instance_valid(sprite):
 		attacking = false
+		working = false
 		sprite.play("idle")
 	
 
@@ -65,7 +67,7 @@ func set_my_agent(ag: Node2D) -> void:
 
 func agent_moved(velocity: Vector2) -> void:
 # Called by Agent when movement occurs, to run animation.
-	if sprite and !attacking:
+	if sprite and not attacking and not working:
 		if velocity != Vector2(0, 0):
 			sprite.play("walk")
 
@@ -131,6 +133,7 @@ func set_sprite_frames(frames: SpriteFrames) -> void:
 
 	# Reset animation state safely
 	attacking = false
+	working = false
 	#sprite.flip_h = false
 
 	# Pick a safe default animation
@@ -141,14 +144,16 @@ func set_sprite_frames(frames: SpriteFrames) -> void:
 
 
 func cancel_action_state() -> void:
+	# Called by apply_role in agent.
 	attacking = false
+	working = false
 	# optionally stop attack anim
 	sprite.stop()
 
 
 func do_work() -> void:
 	# Called by tactical worker when work is performed.
+	working = true
 	var frames := sprite.sprite_frames
-
 	if frames.has_animation("work"):
 		sprite.play("work")

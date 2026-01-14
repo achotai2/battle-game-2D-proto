@@ -341,8 +341,8 @@ func apply_role(role: StringName, p: int) -> void:
 		detection.refresh()
 
 	# If you have flags on animation like `attacking`, clear them too
-	if is_instance_valid(animation) and animation.has_method("cancel_action_state"):
-		animation.call("cancel_action_state")
+	if is_instance_valid(animation):
+		animation.cancel_action_state()
 
 
 func return_player() -> int:

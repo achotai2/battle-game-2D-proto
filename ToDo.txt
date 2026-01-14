@@ -1,8 +1,10 @@
+Start work:
+git pull
+
+Finish work:
 git add .
 git commit -m "Rebuilt Main scene with player, world, interaction"
 git push
-
-
 
 
 Problem: Tactics should handle attack messages.
