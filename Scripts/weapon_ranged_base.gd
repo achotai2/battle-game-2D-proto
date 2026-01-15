@@ -166,4 +166,5 @@ func _resolve_projectile_parent() -> Node:
 
 
 func attack_animation_finished() -> void:
-	movement.un_freeze()
+	if is_instance_valid(movement):
+		movement.unfreeze(AgentMovement.LOCK_ATTACK)

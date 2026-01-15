@@ -251,7 +251,7 @@ func apply_role(role: StringName, p: int) -> void:
 	# --- tracking refresh ---
 	# Cancel transient action states when swapping role
 	if is_instance_valid(movement):
-		movement.un_freeze()
+		movement.clear_freeze_locks([AgentMovement.LOCK_STUN])
 
 	if is_instance_valid(pathfinding):
 		pathfinding.clear_target()
