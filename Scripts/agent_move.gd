@@ -4,7 +4,6 @@ class_name AgentMovement
 @export_range(0, 500, 10) var max_speed: float = 300.0
 @export_range(0, 500, 10) var meander_speed: float = 50.0
 
-@export var frozen: bool = false
 @export var can_meander: bool = false
 @export var agent: Node2D = null
 @export var animation: AgentAnimate = null
@@ -18,6 +17,13 @@ var _use_velocity: bool
 var _desired_velocity: Vector2
 var _desired_direction: Vector2
 var _action_state: int = 0
+
+const LOCK_ATTACK := &"attack"
+const LOCK_INTERACT := &"interact"
+const LOCK_WORK := &"work"
+const LOCK_STUN := &"stun"
+
+var _freeze_locks: Dictionary = {}
 
 const ACTION_NONE := 0
 const ACTION_ATTACK := 1
@@ -51,18 +57,38 @@ func set_animation(anim: AgentAnimate) -> void:
 			animation.interactAnimationFinished.connect(_on_interact_animation_finished)
 
 
-func freeze(_target: Node2D) -> void:
-	# Called by attack when attack is started
-	frozen = true
+func is_frozen() -> bool:
+	return _freeze_locks.size() > 0
+
+
+func freeze(reason: StringName = &"generic") -> void:
+	# Called by action start or external systems.
+	_freeze_locks[reason] = true
 	_current_velocity = Vector2.ZERO
 	_notify_moved(Vector2.ZERO)
 
 
-func un_freeze() -> void:
+func unfreeze(reason: StringName = &"generic") -> void:
 	# Called to unfreeze movement.
 	# Can be called by signal from agent animation when a frozen animation is finished.
-	frozen = false
+	_freeze_locks.erase(reason)
+	if reason == LOCK_ATTACK or reason == LOCK_WORK or reason == LOCK_INTERACT or reason == &"generic":
+		_action_state = ACTION_NONE
+
+
+func clear_freeze_locks(keep: Array[StringName] = []) -> void:
+	for lock in _freeze_locks.keys():
+		if not keep.has(lock):
+			_freeze_locks.erase(lock)
 	_action_state = ACTION_NONE
+
+
+func debug_freeze_locks() -> Array[StringName]:
+	return _freeze_locks.keys()
+
+
+func _to_string() -> String:
+	return "AgentMovement locks=%s" % [debug_freeze_locks()]
 
 
 func make_meander() -> void:
@@ -76,51 +102,51 @@ func stop_meander() -> void:
 func start_attack(target: Node2D) -> bool:
 	if _action_state != ACTION_NONE and _action_state != ACTION_ATTACK:
 		return false
-	if _action_state == ACTION_ATTACK and frozen:
+	if _action_state == ACTION_ATTACK and is_frozen():
 		return true
 
 	_action_state = ACTION_ATTACK
-	freeze(target)
+	freeze(LOCK_ATTACK)
 	var started := false
 	if is_instance_valid(animation):
 		started = animation.play_attack(target)
 
 	if not started:
-		un_freeze()
+		unfreeze(LOCK_ATTACK)
 	return started
 
 
 func start_work() -> bool:
 	if _action_state != ACTION_NONE and _action_state != ACTION_WORK:
 		return false
-	if _action_state == ACTION_WORK and frozen:
+	if _action_state == ACTION_WORK and is_frozen():
 		return true
 
 	_action_state = ACTION_WORK
-	freeze(null)
+	freeze(LOCK_WORK)
 	var started := false
 	if is_instance_valid(animation):
 		started = animation.play_work()
 
 	if not started:
-		un_freeze()
+		unfreeze(LOCK_WORK)
 	return started
 
 
 func start_interaction() -> bool:
 	if _action_state != ACTION_NONE and _action_state != ACTION_INTERACT:
 		return false
-	if _action_state == ACTION_INTERACT and frozen:
+	if _action_state == ACTION_INTERACT and is_frozen():
 		return true
 
 	_action_state = ACTION_INTERACT
-	freeze(null)
+	freeze(LOCK_INTERACT)
 	var started := false
 	if is_instance_valid(animation):
 		started = animation.play_work()
 
 	if not started:
-		un_freeze()
+		unfreeze(LOCK_INTERACT)
 	return started
 
 
@@ -128,7 +154,7 @@ func start_interaction() -> bool:
 
 # Preferred: already-scaled velocity (pathfinding + avoidance)
 func move_with_velocity(desired_velocity: Vector2, delta: float) -> void:
-	if frozen:
+	if is_frozen():
 		_current_velocity = Vector2.ZERO
 		_notify_moved(Vector2.ZERO)
 		return
@@ -171,6 +197,8 @@ func move_in_direction(direction: Vector2, delta: float) -> void:
 
 
 func return_speed() -> float:
+	if is_frozen():
+		return 0.0
 	if meander:
 		return meander_speed
 	else:
@@ -183,12 +211,15 @@ func set_my_agent(owner_agent: Node2D) -> void:
 
 func _on_attack_animation_finished() -> void:
 	if _action_state == ACTION_ATTACK:
-		un_freeze()
+		unfreeze(LOCK_ATTACK)
 
 
 func _on_interact_animation_finished() -> void:
 	if _action_state == ACTION_WORK or _action_state == ACTION_INTERACT:
-		un_freeze()
+		if _action_state == ACTION_WORK:
+			unfreeze(LOCK_WORK)
+		else:
+			unfreeze(LOCK_INTERACT)
 
 
 func _notify_moved(vel: Vector2) -> void:

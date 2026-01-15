@@ -109,4 +109,5 @@ func _on_attack_delay_timeout() -> void:
 
 
 func attack_animation_finished() -> void:
-	movement.un_freeze()
+	if is_instance_valid(movement):
+		movement.unfreeze(AgentMovement.LOCK_ATTACK)
