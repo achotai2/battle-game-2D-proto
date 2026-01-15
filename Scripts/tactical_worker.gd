@@ -131,6 +131,7 @@ func _on_think() -> void:
 		_move_to_position(wp)
 		_work_timer.stop()
 	else:
+		_halt_movement_for_work()
 		if _work_timer.is_stopped():
 			_work_timer.start()
 
@@ -161,6 +162,7 @@ func _on_work_tick() -> void:
 	_apply_work(_site, work_amount_per_hit)
 
 	# Freeze movement while work animation runs.
+	_halt_movement_for_work()
 	if is_instance_valid(movement):
 		movement.start_work()
 	elif is_instance_valid(_agent.movement):
@@ -247,3 +249,10 @@ func _resume_patrol() -> void:
 	if is_instance_valid(movement):
 		movement.make_meander()
 	resume_patrol.emit()
+
+
+func _halt_movement_for_work() -> void:
+	if is_instance_valid(pathfinding):
+		pathfinding.clear_target()
+	if is_instance_valid(movement):
+		movement.stop_meander()
