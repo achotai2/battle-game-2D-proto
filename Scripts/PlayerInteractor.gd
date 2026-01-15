@@ -154,7 +154,7 @@ func _try_start_interaction() -> void:
 
 	_is_interacting = true
 	if freeze_movement and is_instance_valid(movement):
-		movement.freeze(owner_node)
+		movement.start_interaction()
 
 	_current_target.begin_interact(owner_node)
 	interaction_started.emit(_current_target)
@@ -172,8 +172,6 @@ func _finish_interaction() -> void:
 	_is_interacting = false
 
 	var owner_node := _get_interactor_node()
-	if freeze_movement and is_instance_valid(movement):
-		movement.un_freeze()
 
 	if _current_target != null and is_instance_valid(_current_target) and owner_node != null:
 		if _interaction_timer.is_stopped():

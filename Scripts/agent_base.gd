@@ -61,9 +61,6 @@ func _assign_weapon_refs() -> void:
 	if is_instance_valid(animation) and _node_has_property(attack, &"animation"):
 		attack.set("animation", animation)
 
-		if attack.has_method("attack_animation_finished") and not animation.attackAnimationFinished.is_connected(attack.attack_animation_finished):
-			animation.attackAnimationFinished.connect(attack.attack_animation_finished)
-
 	if is_instance_valid(movement) and _node_has_property(attack, &"movement"):
 		attack.set("movement", movement)
 
@@ -71,9 +68,6 @@ func _assign_weapon_refs() -> void:
 func _disconnect_weapon_signals() -> void:
 	if not is_instance_valid(attack):
 		return
-
-	if attack.has_method("attack_animation_finished") and animation.attackAnimationFinished.is_connected(attack.attack_animation_finished):
-		animation.attackAnimationFinished.disconnect(attack.attack_animation_finished)
 
 
 func _assign_animation_refs() -> void:
@@ -96,7 +90,9 @@ func _assign_movement_refs() -> void:
 	elif _node_has_property(movement, &"agent"):
 		movement.set("agent", self)
 
-	if _node_has_property(movement, &"animation"):
+	if movement.has_method("set_animation"):
+		movement.call("set_animation", animation)
+	elif _node_has_property(movement, &"animation"):
 		movement.set("animation", animation)
 
 
@@ -112,7 +108,9 @@ func _assign_controls_refs() -> void:
 	if not is_instance_valid(controls):
 		return
 
-	if _node_has_property(controls, &"interactor"):
+	if controls.has_method("set_interactor"):
+		controls.call("set_interactor", interactor)
+	elif _node_has_property(controls, &"interactor"):
 		controls.set("interactor", interactor)
 
 	if _node_has_property(controls, &"attackNode"):
