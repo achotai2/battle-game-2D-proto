@@ -9,10 +9,12 @@
 radius = 47.999996
 height = 110.0
 
-[node name="Barracks" type="StaticBody2D" node_paths=PackedStringArray("buildWorksite", "interactable")]
+[node name="Barracks" type="StaticBody2D" node_paths=PackedStringArray("visual", "interactable", "worksite")]
 script = ExtResource("1_3p7p4")
-buildWorksite = NodePath("WorkSite")
+building_type = &"barracks"
+visual = NodePath("Sprite2D")
 interactable = NodePath("Interactable")
+worksite = NodePath("WorkSite")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 rotation = 1.5707964

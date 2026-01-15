@@ -43,6 +43,9 @@ signal work_completed(site: WorkSite)
 ## If false, this site will attempt to act as "single worker at a time" by tracking _reserved_by.
 ## Note: the JobBoard also has one_worker_per_site; you can use either or both.
 
+@export var enabled: bool = true
+## Whether this WorkSite is currently active and available for workers.
+
 
 # -------------------------
 # Runtime state
@@ -66,7 +69,7 @@ var _reserved_by: TacticalWorker = null
 func _ready() -> void:
 	## Called when the node enters the scene tree.
 	## If auto_register is enabled, we locate the castle/job board and register this site as available work.
-	if auto_register:
+	if auto_register and enabled:
 		_resolve_castle_and_register()
 
 
@@ -83,6 +86,8 @@ func _exit_tree() -> void:
 func needs_work() -> bool:
 	## Returns whether this work site still requires work.
 	## The JobBoard uses this to decide if the job is still valid.
+	if not enabled:
+		return false
 	return _work_done < total_work
 
 
@@ -104,7 +109,7 @@ func apply_work(amount: float, worker: TacticalWorker) -> void:
 	## - ignores work if already completed
 	## - clamps negative work to 0
 	## - completes the site once total_work reached
-	if not needs_work():
+	if not enabled or not needs_work():
 		return
 
 	var safe_amount: float = maxf(amount, 0.0)
@@ -158,7 +163,8 @@ func refresh_registration() -> void:
 	##
 	## It ensures we unregister from any previous job board, then re-register on the new one.
 	_unregister_from_job_board()
-	_resolve_castle_and_register()
+	if enabled:
+		_resolve_castle_and_register()
 
 
 func get_progress_ratio() -> float:
@@ -171,8 +177,23 @@ func get_progress_ratio() -> float:
 func assign_boss(boss: Node2D) -> void:
 	my_boss = boss
 
-	if auto_register:
+	if auto_register and enabled:
 		_resolve_castle_and_register()
+
+
+func set_enabled(new_enabled: bool) -> void:
+	if enabled == new_enabled:
+		return
+	enabled = new_enabled
+	if not enabled:
+		_unregister_from_job_board()
+		_reserved_by = null
+	elif auto_register:
+		_resolve_castle_and_register()
+
+
+func reset_progress() -> void:
+	_work_done = 0.0
 
 
 # -------------------------
@@ -180,6 +201,8 @@ func assign_boss(boss: Node2D) -> void:
 # -------------------------
 
 func _resolve_castle_and_register() -> void:
+	if not enabled:
+		return
 	# First make sure we unregister if board was already registered.
 	_unregister_from_job_board()
 

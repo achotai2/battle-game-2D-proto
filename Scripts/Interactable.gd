@@ -88,3 +88,9 @@ func _disable_interaction() -> void:
 	_disabled = true
 	set_deferred("monitoring", false)
 	set_deferred("monitorable", false)
+
+
+func set_enabled(enabled: bool) -> void:
+	_disabled = not enabled
+	set_deferred("monitoring", enabled)
+	set_deferred("monitorable", enabled)
