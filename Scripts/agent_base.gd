@@ -19,6 +19,11 @@ class_name AgentBase
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
+	_connect_all_refs()
+	apply_role(current_role, player)
+
+
+func _connect_all_refs() -> void:
 	# Connect signals for ANIMATION node.
 	_assign_animation_refs()
 
@@ -42,8 +47,6 @@ func _ready() -> void:
 
 	# Connect signals for HEALTH node.	
 	_assign_health_refs()
-	
-	apply_role(current_role, player)
 
 
 func _physics_process(_delta: float) -> void:
@@ -109,10 +112,8 @@ func _assign_pathfinding_refs() -> void:
 func _assign_controls_refs() -> void:
 	if not is_instance_valid(controls):
 		return
-
-	if controls.has_method("set_interactor"):
-		controls.call("set_interactor", interactor)
-	elif _node_has_property(controls, &"interactor"):
+	
+	if _node_has_property(controls, &"interactor"):
 		controls.set("interactor", interactor)
 
 	if _node_has_property(controls, &"attackNode"):
@@ -222,20 +223,11 @@ func apply_role(role: StringName, p: int) -> void:
 		attack = weapon_scene.instantiate()
 		add_child(attack)
 
-		# Configure attack signals
-		_assign_weapon_refs()
-
 	# --- add new tactical (Script) ---
 	var tactical_script: Script = UnitRoles.get_tactical(role)
 	if tactical_script != null:
 		tactical = tactical_script.new()
 		add_child(tactical)
-
-		# Configure tactical refs.
-		_assign_tactical_refs()
-		_assign_animation_refs()
-		_assign_detection_refs()
-		_assign_controls_refs()
 
 	# --- visuals ---
 	var frames: SpriteFrames = UnitRoles.get_frames(role, player)
@@ -247,6 +239,9 @@ func apply_role(role: StringName, p: int) -> void:
 		add_to_group(g)
 
 	current_role = role
+
+	# Configure all refs.
+	_connect_all_refs()
 
 	# --- tracking refresh ---
 	# Cancel transient action states when swapping role
