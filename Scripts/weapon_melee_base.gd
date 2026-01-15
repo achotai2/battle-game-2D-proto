@@ -72,10 +72,10 @@ func _try_attack() -> void:
 
 	cooldown.start()
 	attack_delay.start()
-	if is_instance_valid(animation):
-		animation.play_attack(_current_target)
 	if is_instance_valid(movement):
-		movement.freeze(_current_target)
+		movement.start_attack(_current_target)
+	elif is_instance_valid(animation):
+		animation.play_attack(_current_target)
 
 
 func _on_attack_delay_timeout() -> void:

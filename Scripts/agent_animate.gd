@@ -93,9 +93,9 @@ func _show_heal() -> void:
 	pass
 
 
-func play_attack(target: Node2D) -> void:
+func play_attack(target: Node2D) -> bool:
 	if not is_instance_valid(sprite) or sprite.sprite_frames == null:
-		return
+		return false
 
 	attacking = true
 	var dir: Vector2 = _my_agent.return_position().direction_to(target.return_position())
@@ -120,6 +120,8 @@ func play_attack(target: Node2D) -> void:
 
 	if anim != "":
 		sprite.play(anim)
+		return true
+	return false
 
 
 func set_sprite_frames(frames: SpriteFrames) -> void:
@@ -155,9 +157,14 @@ func cancel_action_state() -> void:
 	sprite.stop()
 
 
-func do_work() -> void:
-	# Called by tactical worker when work is performed.
-	working = true
+func play_work() -> bool:
+	# Called by tactical worker / interaction when work is performed.
+	if not is_instance_valid(sprite) or sprite.sprite_frames == null:
+		return false
+
 	var frames := sprite.sprite_frames
 	if frames.has_animation("work"):
+		working = true
 		sprite.play("work")
+		return true
+	return false

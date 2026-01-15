@@ -162,9 +162,9 @@ func _on_work_tick() -> void:
 
 	# Freeze movement while work animation runs.
 	if is_instance_valid(movement):
-		movement.freeze(null)
+		movement.start_work()
 	elif is_instance_valid(_agent.movement):
-		_agent.movement.freeze(null)
+		_agent.movement.start_work()
 
 	# If completed, release and request another
 	if not _site_needs_work(_site):
@@ -223,11 +223,6 @@ func _get_work_position(site: WorkSite) -> Vector2:
 
 func _apply_work(site: WorkSite, amount: float) -> void:
 	site.apply_work(amount, self)		# Let site know work has been applied.
-	if is_instance_valid(animation):
-		animation.do_work()
-	elif is_instance_valid(_agent) and is_instance_valid(_agent.animation):
-		var animation: AgentAnimate = _agent.animation
-		animation.do_work()
 
 
 func _site_needs_work(site: WorkSite) -> bool:

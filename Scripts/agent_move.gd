@@ -17,6 +17,12 @@ var _current_velocity: Vector2 = Vector2.ZERO
 var _use_velocity: bool
 var _desired_velocity: Vector2
 var _desired_direction: Vector2
+var _action_state: int = 0
+
+const ACTION_NONE := 0
+const ACTION_ATTACK := 1
+const ACTION_WORK := 2
+const ACTION_INTERACT := 3
 
 
 func _physics_process(delta: float) -> void:
@@ -29,6 +35,22 @@ func _physics_process(delta: float) -> void:
 
 # --- Public control API ---
 
+func set_animation(anim: AgentAnimate) -> void:
+	if is_instance_valid(animation):
+		if animation.attackAnimationFinished.is_connected(_on_attack_animation_finished):
+			animation.attackAnimationFinished.disconnect(_on_attack_animation_finished)
+		if animation.interactAnimationFinished.is_connected(_on_interact_animation_finished):
+			animation.interactAnimationFinished.disconnect(_on_interact_animation_finished)
+
+	animation = anim
+
+	if is_instance_valid(animation):
+		if not animation.attackAnimationFinished.is_connected(_on_attack_animation_finished):
+			animation.attackAnimationFinished.connect(_on_attack_animation_finished)
+		if not animation.interactAnimationFinished.is_connected(_on_interact_animation_finished):
+			animation.interactAnimationFinished.connect(_on_interact_animation_finished)
+
+
 func freeze(_target: Node2D) -> void:
 	# Called by attack when attack is started
 	frozen = true
@@ -40,6 +62,7 @@ func un_freeze() -> void:
 	# Called to unfreeze movement.
 	# Can be called by signal from agent animation when a frozen animation is finished.
 	frozen = false
+	_action_state = ACTION_NONE
 
 
 func make_meander() -> void:
@@ -48,6 +71,57 @@ func make_meander() -> void:
 
 func stop_meander() -> void:
 	meander = false
+
+
+func start_attack(target: Node2D) -> bool:
+	if _action_state != ACTION_NONE and _action_state != ACTION_ATTACK:
+		return false
+	if _action_state == ACTION_ATTACK and frozen:
+		return true
+
+	_action_state = ACTION_ATTACK
+	freeze(target)
+	var started := false
+	if is_instance_valid(animation):
+		started = animation.play_attack(target)
+
+	if not started:
+		un_freeze()
+	return started
+
+
+func start_work() -> bool:
+	if _action_state != ACTION_NONE and _action_state != ACTION_WORK:
+		return false
+	if _action_state == ACTION_WORK and frozen:
+		return true
+
+	_action_state = ACTION_WORK
+	freeze(null)
+	var started := false
+	if is_instance_valid(animation):
+		started = animation.play_work()
+
+	if not started:
+		un_freeze()
+	return started
+
+
+func start_interaction() -> bool:
+	if _action_state != ACTION_NONE and _action_state != ACTION_INTERACT:
+		return false
+	if _action_state == ACTION_INTERACT and frozen:
+		return true
+
+	_action_state = ACTION_INTERACT
+	freeze(null)
+	var started := false
+	if is_instance_valid(animation):
+		started = animation.play_work()
+
+	if not started:
+		un_freeze()
+	return started
 
 
 # --- Movement entry points ---
@@ -105,6 +179,16 @@ func return_speed() -> float:
 
 func set_my_agent(owner_agent: Node2D) -> void:
 	agent = owner_agent
+
+
+func _on_attack_animation_finished() -> void:
+	if _action_state == ACTION_ATTACK:
+		un_freeze()
+
+
+func _on_interact_animation_finished() -> void:
+	if _action_state == ACTION_WORK or _action_state == ACTION_INTERACT:
+		un_freeze()
 
 
 func _notify_moved(vel: Vector2) -> void:
