@@ -18,6 +18,8 @@ signal resume_patrol()
 @export var reposition_step: float = 140.0     # how far to step when adjusting position
 @export_range(0.05, 1.0, 0.05) var update_rate: float = 0.20
 @export var keep_line_of_fire: bool = true     # simple: bias sideways movement a bit
+@export var movement: AgentMovement = null
+@export var pathfinding: MinionPathfinding = null
 
 var _target: Node2D = null
 var _agent: Node2D = null
@@ -46,12 +48,14 @@ func set_target(t: Node2D) -> void:
 		_on_tick()
 	else:
 		_timer.stop()
-		resume_patrol.emit()
+		_resume_patrol()
 
 
 func attack_finished() -> void:
 	# Called by signal from animation when attack animation finishes.
-	if is_instance_valid(_agent) and is_instance_valid(_agent.movement):
+	if is_instance_valid(movement):
+		movement.un_freeze()
+	elif is_instance_valid(_agent) and is_instance_valid(_agent.movement):
 		_agent.movement.un_freeze()
 
 
@@ -59,7 +63,7 @@ func clear_target() -> void:
 	# Called by detection node. Clear the target.
 	_target = null
 	_timer.stop()
-	resume_patrol.emit()
+	_resume_patrol()
 
 
 func detection_refreshed(t: Node2D) -> void:
@@ -76,7 +80,7 @@ func _on_tick() -> void:
 
 	if _target == null or not is_instance_valid(_target):
 		_timer.stop()
-		resume_patrol.emit()
+		_resume_patrol()
 		return
 
 	var my_pos := _agent.global_position
@@ -115,4 +119,22 @@ func _on_tick() -> void:
 		desired_dir = (desired_dir + perp * 0.35 * side).normalized()
 
 	var dest := my_pos + desired_dir * reposition_step
+	_move_to_position(dest)
+
+
+func _move_to_position(dest: Vector2) -> void:
+	if is_instance_valid(pathfinding):
+		pathfinding.stop_meander()
+		pathfinding.set_move_target_position(dest)
+	if is_instance_valid(movement):
+		movement.stop_meander()
 	move_to_position.emit(dest)
+
+
+func _resume_patrol() -> void:
+	if is_instance_valid(pathfinding):
+		pathfinding.clear_target()
+		pathfinding.stop_meander()
+	if is_instance_valid(movement):
+		movement.make_meander()
+	resume_patrol.emit()

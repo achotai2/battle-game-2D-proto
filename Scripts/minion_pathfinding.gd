@@ -5,6 +5,7 @@ signal desired_velocity(v: Vector2)
 signal nav_finished
 
 @export var nav_agent: NavigationAgent2D
+@export var movement: AgentMovement = null
 
 # --- Repath tuning ---
 @export_range(0.05, 2.0, 0.05) var repath_interval: float = 0.25
@@ -102,13 +103,13 @@ func clear_target() -> void:
 	_target_node = null
 	_stuck_accum = 0.0
 	_patrol_pause_timer.stop()
-	emit_signal("desired_velocity", Vector2.ZERO)
+	_send_desired_velocity(Vector2.ZERO)
 
 
 # Call from Agent._physics_process(delta)
 func tick(my_pos: Vector2, max_speed: float, delta: float) -> void:
 	if not is_instance_valid(nav_agent) or max_speed <= 0.0:
-		emit_signal("desired_velocity", Vector2.ZERO)
+		_send_desired_velocity(Vector2.ZERO)
 		return
 
 	# If meander enabled, patrol mode should be active unless something else overrides it.
@@ -117,7 +118,7 @@ func tick(my_pos: Vector2, max_speed: float, delta: float) -> void:
 		start_patrol()
 
 	if _mode == Mode.NONE:
-		emit_signal("desired_velocity", Vector2.ZERO)
+		_send_desired_velocity(Vector2.ZERO)
 		return
 
 	# --- stuck detection ---
@@ -135,7 +136,7 @@ func tick(my_pos: Vector2, max_speed: float, delta: float) -> void:
 
 	# --- finished? ---
 	if nav_agent.is_navigation_finished():
-		emit_signal("desired_velocity", Vector2.ZERO)
+		_send_desired_velocity(Vector2.ZERO)
 		# Patrol: upon arrival, pause then pick a new point
 		if _mode == Mode.PATROL and not _patrol_pause_timer.is_stopped():
 			return
@@ -150,7 +151,7 @@ func tick(my_pos: Vector2, max_speed: float, delta: float) -> void:
 	var next_pos := nav_agent.get_next_path_position()
 	var to_next := next_pos - my_pos
 	if to_next.length_squared() < 0.0001:
-		emit_signal("desired_velocity", Vector2.ZERO)
+		_send_desired_velocity(Vector2.ZERO)
 		return
 
 	var desired := to_next.normalized() * max_speed
@@ -236,8 +237,15 @@ func _pick_new_patrol_point(force: bool) -> void:
 
 
 func _on_velocity_computed(safe_velocity: Vector2) -> void:
-	emit_signal("desired_velocity", safe_velocity)
+	_send_desired_velocity(safe_velocity)
 
 
 func _on_nav_finished() -> void:
 	emit_signal("nav_finished")
+
+
+func _send_desired_velocity(velocity: Vector2) -> void:
+	emit_signal("desired_velocity", velocity)
+
+	if is_instance_valid(movement):
+		movement.on_pf_desired_velocity(velocity)

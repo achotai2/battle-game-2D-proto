@@ -10,6 +10,9 @@ signal resume_patrol()
 @export var blast_think: bool = true
 
 @export_range(0.05, 1.0, 0.05) var think_interval: float = 1.0
+@export var movement: AgentMovement = null
+@export var pathfinding: MinionPathfinding = null
+@export var animation: AgentAnimate = null
 
 var _agent: Node2D
 
@@ -53,7 +56,7 @@ func set_agent(my_agent: Node2D) -> void:
 	# If we have no board, just idle/patrol
 	if _job_board == null:
 		_clear_site(true)
-		resume_patrol.emit()
+		_resume_patrol()
 		return
 
 	# Immediately announce we're idle to get a job assigned
@@ -62,13 +65,15 @@ func set_agent(my_agent: Node2D) -> void:
 
 func attack_finished() -> void:
 	# Called by signal from animation when attack animation finishes.
-	if is_instance_valid(_agent) and is_instance_valid(_agent.movement):
+	if is_instance_valid(movement):
+		movement.un_freeze()
+	elif is_instance_valid(_agent) and is_instance_valid(_agent.movement):
 		_agent.movement.un_freeze()
 
 
 func clear_task() -> void:
 	_clear_site(true)
-	resume_patrol.emit()
+	_resume_patrol()
 	notify_idle()
 
 
@@ -87,7 +92,7 @@ func assign_job(site: WorkSite) -> void:
 
 	_site = site
 	_work_timer.stop()
-	move_to_position.emit(_get_work_position(_site))
+	_move_to_position(_get_work_position(_site))
 
 
 # Worker -> board: "I'm available"
@@ -131,7 +136,7 @@ func _on_think() -> void:
 	# Move toward site if not in range
 	var wp := _get_work_position(_site)
 	if _agent.return_position().distance_squared_to(wp) > (work_range * work_range):
-		move_to_position.emit(wp)
+		_move_to_position(wp)
 		_work_timer.stop()
 	else:
 		if _work_timer.is_stopped():
@@ -164,7 +169,9 @@ func _on_work_tick() -> void:
 	_apply_work(_site, work_amount_per_hit)
 
 	# Freeze movement while work animation runs.
-	if is_instance_valid(_agent.movement):
+	if is_instance_valid(movement):
+		movement.freeze(null)
+	elif is_instance_valid(_agent.movement):
 		_agent.movement.freeze(null)
 
 	# If completed, release and request another
@@ -224,7 +231,9 @@ func _get_work_position(site: WorkSite) -> Vector2:
 
 func _apply_work(site: WorkSite, amount: float) -> void:
 	site.apply_work(amount, self)		# Let site know work has been applied.
-	if is_instance_valid(_agent) and is_instance_valid(_agent.animation):
+	if is_instance_valid(animation):
+		animation.do_work()
+	elif is_instance_valid(_agent) and is_instance_valid(_agent.animation):
 		var animation: AgentAnimate = _agent.animation
 		animation.do_work()
 
@@ -233,3 +242,21 @@ func _site_needs_work(site: WorkSite) -> bool:
 	if site == null or not is_instance_valid(site):
 		return false
 	return bool(site.needs_work())
+
+
+func _move_to_position(pos: Vector2) -> void:
+	if is_instance_valid(pathfinding):
+		pathfinding.stop_meander()
+		pathfinding.set_move_target_position(pos)
+	if is_instance_valid(movement):
+		movement.stop_meander()
+	move_to_position.emit(pos)
+
+
+func _resume_patrol() -> void:
+	if is_instance_valid(pathfinding):
+		pathfinding.clear_target()
+		pathfinding.stop_meander()
+	if is_instance_valid(movement):
+		movement.make_meander()
+	resume_patrol.emit()

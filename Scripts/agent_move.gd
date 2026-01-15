@@ -8,6 +8,8 @@ signal iMoved(velocity: Vector2)
 
 @export var frozen: bool = false
 @export var can_meander: bool = false
+@export var agent: Node2D = null
+@export var animation: AgentAnimate = null
 var meander: bool = false
 
 # Optional smoothing (helps crowd jitter)
@@ -33,7 +35,7 @@ func freeze(_target: Node2D) -> void:
 	# Called by attack when attack is started
 	frozen = true
 	_current_velocity = Vector2.ZERO
-	iMoved.emit(Vector2.ZERO)
+	_notify_moved(Vector2.ZERO)
 
 
 func un_freeze() -> void:
@@ -56,7 +58,7 @@ func stop_meander() -> void:
 func move_with_velocity(desired_velocity: Vector2, delta: float) -> void:
 	if frozen:
 		_current_velocity = Vector2.ZERO
-		iMoved.emit(Vector2.ZERO)
+		_notify_moved(Vector2.ZERO)
 		return
 
 	var speed_cap := meander_speed if meander else max_speed
@@ -73,7 +75,7 @@ func move_with_velocity(desired_velocity: Vector2, delta: float) -> void:
 	else:
 		_current_velocity = v
 
-	iMoved.emit(_current_velocity)
+	_notify_moved(_current_velocity)
 
 
 func on_pf_desired_velocity(v: Vector2) -> void:
@@ -101,3 +103,21 @@ func return_speed() -> float:
 		return meander_speed
 	else:
 		return max_speed
+
+
+func set_my_agent(owner_agent: Node2D) -> void:
+	agent = owner_agent
+
+
+func set_animation(anim: AgentAnimate) -> void:
+	animation = anim
+
+
+func _notify_moved(vel: Vector2) -> void:
+	iMoved.emit(vel)
+
+	if is_instance_valid(agent):
+		agent.velocity = vel
+
+	if is_instance_valid(animation):
+		animation.agent_moved(vel)
