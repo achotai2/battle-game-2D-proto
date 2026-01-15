@@ -1,8 +1,6 @@
 extends Node
 class_name WeaponMelee
 
-signal attack_started(target: Node2D)
-
 @export_range(0, 1000, 1) var damage: int = 10
 @export_range(0, 1000, 1) var heal: int = 0
 
@@ -11,6 +9,8 @@ signal attack_started(target: Node2D)
 @export var affects_opposing: bool = true
 @export var affects_neutral: bool = false
 @export var attack_power: int = 10
+@export var animation: AgentAnimate = null
+@export var movement: AgentMovement = null
 
 @onready var tracking: AgentTracking = $AgentTracking
 @onready var cooldown: Timer = $cooldown
@@ -72,7 +72,10 @@ func _try_attack() -> void:
 
 	cooldown.start()
 	attack_delay.start()
-	attack_started.emit(_current_target)
+	if is_instance_valid(animation):
+		animation.play_attack(_current_target)
+	if is_instance_valid(movement):
+		movement.freeze(_current_target)
 
 
 func _on_attack_delay_timeout() -> void:

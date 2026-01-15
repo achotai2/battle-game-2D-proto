@@ -66,7 +66,7 @@ func _ready() -> void:
 		if is_instance_valid(movement):
 			controls.connect("move_agent", Callable(movement, "player_controlled_movement"))
 
-	# Connect signals for  ATTACK node.	
+	# Configure ATTACK node.	
 	_attack_signals()
 
 	# Connect signals for DETECTION node.
@@ -108,24 +108,6 @@ func _attack_signals() -> void:
 # COULD THINK ABOUT COMBINING TACTICAL AND ATTACK, AS THEY SHOULD ALWAYS BE CONNECTED PROBABLY.
 	if is_instance_valid(attack):
 		attack.set_player(self)
-
-		if is_instance_valid(animation) and attack.has_signal("attack_started"):
-			attack.connect("attack_started", Callable(animation, "play_attack"))
-
-		if is_instance_valid(movement) and attack.has_signal("attack_started"):
-			attack.connect("attack_started", Callable(movement, "freeze"))
-
-
-func _attack_disconnect_signals() -> void:
-	# Disconnect signals for old ATTACK node.
-	# These get their own function because they are called in apply_role also.
-# COULD THINK ABOUT COMBINING TACTICAL AND ATTACK, AS THEY SHOULD ALWAYS BE CONNECTED PROBABLY.
-	if is_instance_valid(attack):
-		if is_instance_valid(animation) and attack.has_signal("attack_started"):
-			attack.disconnect("attack_started", Callable(animation, "play_attack"))
-
-		if is_instance_valid(movement) and attack.has_signal("attack_started"):
-			attack.disconnect("attack_started", Callable(movement, "freeze"))
 
 
 func _detection_signals() -> void:
@@ -287,7 +269,6 @@ func apply_role(role: StringName, p: int) -> void:
 
 	# --- remove old role-dependent nodes ---
 	if is_instance_valid(attack):
-		_attack_disconnect_signals()
 		attack.queue_free()
 		attack = null
 
