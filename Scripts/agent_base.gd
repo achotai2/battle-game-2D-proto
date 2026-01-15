@@ -215,6 +215,9 @@ func apply_role(role: StringName, p: int) -> void:
 		attack = null
 
 	if is_instance_valid(tactical):
+		if tactical.has_method("has_task") and tactical.call("has_task"):
+			if tactical.has_method("clear_task"):
+				tactical.call("clear_task")
 		_clear_tactical_refs()
 		tactical.queue_free()
 		tactical = null
