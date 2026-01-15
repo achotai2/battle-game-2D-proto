@@ -18,6 +18,7 @@ class_name WeaponMelee
 
 var _owner_agent: Node
 var _current_target: Node2D = null
+var _attack_paused: bool = false
 
 
 func _ready() -> void:
@@ -41,10 +42,13 @@ func set_player(owner_agent: Node2D) -> void:
 
 func pause_attack() -> void:
 	# Called by controls player node
+	_attack_paused = true
+	cooldown.stop()
 	attack_delay.stop() # prevent firing while player is moving
 
 
 func restart_attack() -> void:
+	_attack_paused = false
 	if _current_target == null and tracking.get_target():
 		_current_target = tracking.get_target()
 	_try_attack()
@@ -60,6 +64,8 @@ func _on_target_lost() -> void:
 
 
 func _try_attack() -> void:
+	if _attack_paused:
+		return
 	if _current_target == null:
 		return
 	if not is_instance_valid(_current_target):
