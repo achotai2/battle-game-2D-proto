@@ -20,7 +20,7 @@ var _visuals := {
 }
 
 var _work_required := {
-	BARRACKS: 20.0,
+	BARRACKS: 2.0,
 }
 
 var _interact_modes := {
@@ -41,7 +41,7 @@ var _spawn_configs := {
 
 func get_frames(building_type: StringName, state: int, player: int) -> Resource:
 	if _visuals.has(building_type) and _visuals[building_type].has(state):
-		var options := _visuals[building_type][state]
+		var options = _visuals[building_type][state]
 		if options.has(player):
 			return options[player]
 		return options.get(1, null)

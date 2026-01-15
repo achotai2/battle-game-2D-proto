@@ -123,7 +123,6 @@ func _update_prompt() -> void:
 	var percent_left: float = 1.0
 	if not _interaction_timer.is_stopped():
 		percent_left = _interaction_timer.time_left / _current_target.get_interaction_time()
-		print(percent_left)
 	_prompt.set_base_position(anchor_position, percent_left)
 	_show_prompt()
 
