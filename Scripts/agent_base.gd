@@ -108,6 +108,25 @@ func _attack_signals() -> void:
 # COULD THINK ABOUT COMBINING TACTICAL AND ATTACK, AS THEY SHOULD ALWAYS BE CONNECTED PROBABLY.
 	if is_instance_valid(attack):
 		attack.set_player(self)
+		_assign_weapon_refs()
+
+
+func _assign_weapon_refs() -> void:
+	if not is_instance_valid(attack):
+		return
+
+	if is_instance_valid(animation) and _weapon_has_property(attack, &"animation"):
+		attack.set("animation", animation)
+
+	if is_instance_valid(movement) and _weapon_has_property(attack, &"movement"):
+		attack.set("movement", movement)
+
+
+func _weapon_has_property(weapon: Object, property_name: StringName) -> bool:
+	for prop in weapon.get_property_list():
+		if prop.name == property_name:
+			return true
+	return false
 
 
 func _detection_signals() -> void:
