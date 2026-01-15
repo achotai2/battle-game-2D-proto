@@ -50,7 +50,7 @@ func set_player(owner_agent: Node2D) -> void:
 	tracking.set_myself(owner_agent)
 
 
-func stop_delay_timer() -> void:
+func pause_attack() -> void:
 	# Called by tactical player node
 	attack_delay.stop() # prevent firing while player is moving
 
@@ -157,3 +157,7 @@ func _resolve_projectile_parent() -> Node:
 		return scene.get_node("Projectiles")
 
 	return scene
+
+
+func attack_animation_finished() -> void:
+	movement.un_freeze()

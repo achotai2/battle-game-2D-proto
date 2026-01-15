@@ -63,14 +63,6 @@ func set_agent(my_agent: Node2D) -> void:
 	notify_idle()
 
 
-func attack_finished() -> void:
-	# Called by signal from animation when attack animation finishes.
-	if is_instance_valid(movement):
-		movement.un_freeze()
-	elif is_instance_valid(_agent) and is_instance_valid(_agent.movement):
-		_agent.movement.un_freeze()
-
-
 func clear_task() -> void:
 	_clear_site(true)
 	_resume_patrol()

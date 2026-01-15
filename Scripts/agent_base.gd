@@ -4,95 +4,47 @@ class_name AgentBase
 ## Player number (0 = neutral).
 @export var player: int = 0
 @export var health: Health = null
-@export var interaction: Node = null
+@export var interactor: PlayerInteractor = null
 @export var movement: AgentMovement = null
 @export var pathfinding: MinionPathfinding = null
 @export var controls: PlayerControls = null
 @export var animation: AgentAnimate = null
 @export var attack: Node = null
-@export var interact: Node = null
-@export var gold: Node = null
-@export var base: Node = null
-@export var task: MinionTask = null
+@export var interactable: Node = null
 @export var detection: Area2D = null
 @export var castle: Node = null
-@export var carrying: Node = null
 @export var tactical: Node = null
 @export var current_role: StringName
 
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
-	#if is_instance_valid(interaction):
-	#	interaction.noInteractTarget.connect(_no_interact_target)
-	#	interaction.set_player(self, player)
-
-	#if is_instance_valid(interact):
-	#	interact.update_time_step(false, false)
-	#	interact.interactionFinished.connect(_interaction_finished)
-
-	#if is_instance_valid(task):
-	#	task.returnedCarry.connect(_returned_carry)
-
 	# Connect signals for ANIMATION node.
-	if is_instance_valid(animation):
-		animation.set_my_agent(self)
-		_assign_animation_refs()
+	_assign_animation_refs()
 
 	# Connect signals for MOVEMENT node.
-	if is_instance_valid(movement):
-		_assign_movement_refs()
+	_assign_movement_refs()
 
 	# Connect signals for PATHFINDING node.
-	if is_instance_valid(pathfinding):
-		_assign_pathfinding_refs()
+	_assign_pathfinding_refs()
 
 	# Connect signals for player CONTROLS node.
-	if is_instance_valid(controls):
-		if is_instance_valid(interaction):
-			controls.connect("interact_engaged", Callable(interaction, "interaction_engaged"))
-			controls.connect("interact_released", Callable(interaction, "interaction_released"))
-
-		if is_instance_valid(tactical):
-			if tactical.has_method("player_controls_activated"):
-				controls.connect("interact_engaged", Callable(tactical, "player_controls_activated"))
-			if tactical.has_method("player_movement_activated"):
-				controls.connect("move_agent", Callable(tactical, "player_movement_activated"))
-			if tactical.has_method("player_controls_deactivated"):
-				controls.connect("interact_released", Callable(tactical, "player_controls_deactivated"))
-
-		if is_instance_valid(movement):
-			controls.connect("move_agent", Callable(movement, "player_controlled_movement"))
+	_assign_controls_refs()
 
 	# Configure ATTACK node.	
-	_attack_signals()
+	_assign_weapon_refs()
 
 	# Connect signals for DETECTION node.
-	if is_instance_valid(detection):
-		detection.set_myself(self)
 	_assign_detection_refs()
 
 	# Connect signals for TACTICAL node.	
 	_assign_tactical_refs()
 
 	# Connect signals for HEALTH node.	
-	if is_instance_valid(health):
-		health.damaged.connect(_im_damaged)
-		health.died.connect(_im_dead)
-
+	_assign_health_refs()
+	
 
 func _physics_process(_delta: float) -> void:
-# THIS CHANGE SHOULDNT HAPPEN EVERY TIME STEP, INSTEAD TRIGGER IT WHEN THESE STATES CHANGE.
-	#if !is_instance_valid(task) and is_instance_valid(detection) and !detection.has_target() and is_instance_valid(movement):
-		## If there's no task or target then unit can meander, assuming it can_meander.
-		#if movement.make_meander():
-			#pathfinding.set_meander(true)
-		#else:
-			#pathfinding.set_meander(false)
-	#else:
-		#movement.give_task()
-		#pathfinding.set_meander(false)
-
 	if is_instance_valid(pathfinding) and is_instance_valid(movement):
 		# Update pathfinding information.
 		pathfinding.tick(global_position, movement.return_speed(), _delta)
@@ -100,29 +52,35 @@ func _physics_process(_delta: float) -> void:
 	move_and_slide()
 
 
-func _attack_signals() -> void:
-	# Connect signals for ATTACK node.
-	# These get their own function because they are called in apply_role also.
-# COULD THINK ABOUT COMBINING TACTICAL AND ATTACK, AS THEY SHOULD ALWAYS BE CONNECTED PROBABLY.
-	if is_instance_valid(attack):
-		attack.set_player(self)
-		_assign_weapon_refs()
-
-
 func _assign_weapon_refs() -> void:
 	if not is_instance_valid(attack):
 		return
 
+	attack.set_player(self)
+
 	if is_instance_valid(animation) and _node_has_property(attack, &"animation"):
 		attack.set("animation", animation)
+
+		if attack.has_method("attack_animation_finished") and not animation.attackAnimationFinished.is_connected(attack.attack_animation_finished):
+			animation.attackAnimationFinished.connect(attack.attack_animation_finished)
 
 	if is_instance_valid(movement) and _node_has_property(attack, &"movement"):
 		attack.set("movement", movement)
 
 
+func _disconnect_weapon_signals() -> void:
+	if not is_instance_valid(attack):
+		return
+
+	if attack.has_method("attack_animation_finished") and animation.attackAnimationFinished.is_connected(attack.attack_animation_finished):
+		animation.attackAnimationFinished.disconnect(attack.attack_animation_finished)
+
+
 func _assign_animation_refs() -> void:
 	if not is_instance_valid(animation):
 		return
+
+	animation.set_my_agent(self)
 
 	if _node_has_property(animation, &"tactical"):
 		animation.set("tactical", tactical)
@@ -134,6 +92,7 @@ func _assign_movement_refs() -> void:
 
 	if movement.has_method("set_my_agent"):
 		movement.call("set_my_agent", self)
+		
 	elif _node_has_property(movement, &"agent"):
 		movement.set("agent", self)
 
@@ -149,9 +108,25 @@ func _assign_pathfinding_refs() -> void:
 		pathfinding.set("movement", movement)
 
 
+func _assign_controls_refs() -> void:
+	if not is_instance_valid(controls):
+		return
+
+	if _node_has_property(controls, &"interactor"):
+		controls.set("interactor", interactor)
+
+	if _node_has_property(controls, &"attackNode"):
+		controls.set("attackNode", attack)
+
+	if _node_has_property(controls, &"movement"):
+		controls.set("movement", movement)
+
+
 func _assign_detection_refs() -> void:
 	if not is_instance_valid(detection):
 		return
+
+	detection.set_myself(self)
 
 	if _node_has_property(detection, &"tactical"):
 		detection.set("tactical", tactical)
@@ -172,6 +147,16 @@ func _assign_tactical_refs() -> void:
 
 	if _node_has_property(tactical, &"animation"):
 		tactical.set("animation", animation)
+
+
+func _assign_health_refs() -> void:
+	if not is_instance_valid(health):
+		return
+
+	if not health.damaged.is_connected(_im_damaged):
+		health.damaged.connect(_im_damaged)
+	if not health.died.is_connected(_im_dead):
+		health.died.connect(_im_dead)
 
 
 func _clear_tactical_refs() -> void:
@@ -207,31 +192,6 @@ func _agent_moved(vel: Vector2) -> void:
 	self.velocity = vel
 
 
-#func _take_heal() -> void:
-#	if is_instance_valid(animation):
-#		animation.show_heal()
-
-
-#func _no_interact_target() -> void:
-#	if is_instance_valid(gold):
-#		gold.drop_gold(1)
-
-
-#func _returned_carry() -> void:
-#	# Called when a carried object is detected to have been returned to castle.
-#	carrying.delete_me()
-#	if is_instance_valid(gold):
-#		gold.pickup_gold(1)
-#	carrying = null
-
-
-#func _interaction_finished(interactingPlayer: int) -> void:
-#	# Called when player interacts with minion. Should cancel task and assign the follow task for the player.
-#	if !carrying:
-#		if is_instance_valid(task):
-#			task.remove_me(self)
-
-
 ##################
 # External called.
 ##################
@@ -247,6 +207,7 @@ func apply_role(role: StringName, p: int) -> void:
 
 	# --- remove old role-dependent nodes ---
 	if is_instance_valid(attack):
+		_disconnect_weapon_signals()
 		attack.queue_free()
 		attack = null
 
@@ -262,8 +223,8 @@ func apply_role(role: StringName, p: int) -> void:
 		add_child(attack)
 
 		# Configure attack signals
-		_attack_signals()
-	
+		_assign_weapon_refs()
+
 	# --- add new tactical (Script) ---
 	var tactical_script: Script = UnitRoles.get_tactical(role)
 	if tactical_script != null:
@@ -274,6 +235,7 @@ func apply_role(role: StringName, p: int) -> void:
 		_assign_tactical_refs()
 		_assign_animation_refs()
 		_assign_detection_refs()
+		_assign_controls_refs()
 
 	# --- visuals ---
 	var frames: SpriteFrames = UnitRoles.get_frames(role, player)

@@ -1,9 +1,9 @@
 extends Node
 class_name PlayerControls
 
-signal move_agent(direction: Vector2)
-
 @export var interactor: PlayerInteractor
+@export var attackNode: Node
+@export var movement: AgentMovement
 @export var emit_zero_direction: bool = true
 @export var deadzone: float = 0.15
 @export var attack: StringName = &"attack"
@@ -32,10 +32,17 @@ func _physics_process(_delta: float) -> void:
 	# Emit only on change, or always (your choice)
 	if emit_zero_direction:
 		if dir != _last_dir:
-			move_agent.emit(dir)
+			if is_instance_valid(movement):
+				movement.player_controlled_movement(dir)
 	else:
 		if dir != Vector2.ZERO and dir != _last_dir:
-			move_agent.emit(dir)
+			if is_instance_valid(movement):
+				movement.player_controlled_movement(dir)
+
+	if dir != Vector2.ZERO:
+		_pause_attack()
+	else:
+		_unpause_attack()
 
 	_last_dir = dir
 
@@ -44,6 +51,17 @@ func _unhandled_input(event: InputEvent) -> void:
 	# Discrete actions here so UI can consume input first
 	if event.is_action_pressed(interact) and is_instance_valid(interactor):
 		interactor.interaction_pressed()
-		
+		_pause_attack()
 	elif event.is_action_released(interact):
 		interactor.interaction_released()
+		_unpause_attack()
+
+
+func _pause_attack() -> void:
+	if is_instance_valid(attack):
+		attackNode.pause_attack()
+
+
+func _unpause_attack() -> void:
+	if is_instance_valid(attack):
+		attackNode.restart_attack()

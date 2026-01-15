@@ -9,9 +9,6 @@ class_name TacticalArcher
 ## This node does NOT fire the weapon. Weapon attacks whenever target is in its own range.
 ## This node only produces movement intent for AgentBase -> MinionPathfinding.
 
-signal move_to_position(pos: Vector2)         # AgentBase should map to pathfinding.set_move_target_position(pos)
-signal resume_patrol()
-
 @export var preferred_range: float = 220.0     # ideal spacing
 @export var min_range: float = 160.0           # if closer than this, retreat
 @export var max_range: float = 280.0           # if farther than this, advance
@@ -49,14 +46,6 @@ func set_target(t: Node2D) -> void:
 	else:
 		_timer.stop()
 		_resume_patrol()
-
-
-func attack_finished() -> void:
-	# Called by signal from animation when attack animation finishes.
-	if is_instance_valid(movement):
-		movement.un_freeze()
-	elif is_instance_valid(_agent) and is_instance_valid(_agent.movement):
-		_agent.movement.un_freeze()
 
 
 func clear_target() -> void:
@@ -128,7 +117,6 @@ func _move_to_position(dest: Vector2) -> void:
 		pathfinding.set_move_target_position(dest)
 	if is_instance_valid(movement):
 		movement.stop_meander()
-	move_to_position.emit(dest)
 
 
 func _resume_patrol() -> void:
@@ -137,4 +125,3 @@ func _resume_patrol() -> void:
 		pathfinding.stop_meander()
 	if is_instance_valid(movement):
 		movement.make_meander()
-	resume_patrol.emit()

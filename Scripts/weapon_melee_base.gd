@@ -39,8 +39,8 @@ func set_player(owner_agent: Node2D) -> void:
 	tracking.set_myself(owner_agent)
 
 
-func stop_delay_timer() -> void:
-	# Called by tactical player node
+func pause_attack() -> void:
+	# Called by controls player node
 	attack_delay.stop() # prevent firing while player is moving
 
 
@@ -100,3 +100,7 @@ func _on_attack_delay_timeout() -> void:
 	atk.source = self
 
 	h.apply_hit(atk)
+
+
+func attack_animation_finished() -> void:
+	movement.un_freeze()

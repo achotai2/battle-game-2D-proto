@@ -24,7 +24,6 @@ texture = ExtResource("1_7aoon")
 [node name="WorkSite" type="Node2D" parent="." node_paths=PackedStringArray("my_boss")]
 script = ExtResource("2_coeoc")
 my_boss = NodePath("..")
-auto_register = false
 metadata/_custom_type_script = "uid://qumqy1omy72i"
 
 [node name="Interactable" parent="." instance=ExtResource("4_87o8n")]

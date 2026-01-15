@@ -1,11 +1,11 @@
 extends Node
 class_name AgentAnimate
 
-signal actionAnimationFinished
+signal interactAnimationFinished
+signal attackAnimationFinished
 
 @export var sprite: AnimatedSprite2D
 @export_range(0, 3, 0.1) var damageVisualTime: float = 0.2
-@export var tactical: Node = null
 
 var damageTimer := Timer.new()
 var attacking: bool = false
@@ -41,9 +41,11 @@ func _update_damage_visual() -> void:
 
 
 func _animation_finished() -> void:
-	if attacking or working:
-		actionAnimationFinished.emit()
-		_notify_action_finished()
+	if attacking:
+		attackAnimationFinished.emit()
+
+	if working:
+		interactAnimationFinished.emit()
 
 	if is_instance_valid(sprite):
 		attacking = false
@@ -159,8 +161,3 @@ func do_work() -> void:
 	var frames := sprite.sprite_frames
 	if frames.has_animation("work"):
 		sprite.play("work")
-
-
-func _notify_action_finished() -> void:
-	if is_instance_valid(tactical) and tactical.has_method("attack_finished"):
-		tactical.call("attack_finished")

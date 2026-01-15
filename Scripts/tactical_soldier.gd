@@ -51,14 +51,6 @@ func set_agent(my_agent: Node2D) -> void:
 	_agent = my_agent
 
 
-func attack_finished() -> void:
-	# Called by signal from animation when attack animation finishes.
-	if is_instance_valid(movement):
-		movement.un_freeze()
-	elif is_instance_valid(_agent) and is_instance_valid(_agent.movement):
-		_agent.movement.un_freeze()
-
-
 func _chase_target(target: Node2D) -> void:
 	if is_instance_valid(pathfinding):
 		pathfinding.stop_meander()

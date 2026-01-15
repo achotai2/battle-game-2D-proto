@@ -1,8 +1,6 @@
 extends Node
 class_name AgentMovement
 
-signal iMoved(velocity: Vector2)
-
 @export_range(0, 500, 10) var max_speed: float = 300.0
 @export_range(0, 500, 10) var meander_speed: float = 50.0
 
@@ -109,13 +107,7 @@ func set_my_agent(owner_agent: Node2D) -> void:
 	agent = owner_agent
 
 
-func set_animation(anim: AgentAnimate) -> void:
-	animation = anim
-
-
 func _notify_moved(vel: Vector2) -> void:
-	iMoved.emit(vel)
-
 	if is_instance_valid(agent):
 		agent.velocity = vel
 
