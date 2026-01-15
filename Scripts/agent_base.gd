@@ -107,6 +107,8 @@ func _assign_pathfinding_refs() -> void:
 
 	if _node_has_property(pathfinding, &"movement"):
 		pathfinding.set("movement", movement)
+	if _node_has_property(pathfinding, &"assigned_castle"):
+		pathfinding.set("assigned_castle", castle)
 
 
 func _assign_controls_refs() -> void:
@@ -282,6 +284,8 @@ func return_castle() -> Node:
 # Called externally to update castle agent is assigned to.
 func set_castle(new_castle: Node) -> void:
 	castle = new_castle
+	if is_instance_valid(pathfinding) and _node_has_property(pathfinding, &"assigned_castle"):
+		pathfinding.set("assigned_castle", castle)
 
 	if is_instance_valid(tactical) and tactical.has_method("switch_job_board"):
 		tactical.call("switch_job_board", castle)

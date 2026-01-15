@@ -72,6 +72,7 @@ func start_meander() -> void:
 	start_patrol()
 
 func stop_meander() -> void:
+	meander_enabled = false
 	# Only clear if we were patrolling; otherwise leave current mode alone
 	if _mode == Mode.PATROL:
 		clear_target()
