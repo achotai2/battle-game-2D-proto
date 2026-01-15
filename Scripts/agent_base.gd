@@ -37,17 +37,15 @@ func _ready() -> void:
 	# Connect signals for ANIMATION node.
 	if is_instance_valid(animation):
 		animation.set_my_agent(self)
+		_assign_animation_refs()
 
 	# Connect signals for MOVEMENT node.
 	if is_instance_valid(movement):
-		movement.connect("iMoved", Callable(self, "_agent_moved"))
-		
-		if is_instance_valid(animation):
-			movement.connect("iMoved", Callable(animation, "agent_moved"))
+		_assign_movement_refs()
 
 	# Connect signals for PATHFINDING node.
-	if is_instance_valid(pathfinding) and is_instance_valid(movement):
-		pathfinding.connect("desired_velocity", Callable(movement, "on_pf_desired_velocity"))
+	if is_instance_valid(pathfinding):
+		_assign_pathfinding_refs()
 
 	# Connect signals for player CONTROLS node.
 	if is_instance_valid(controls):
@@ -66,16 +64,16 @@ func _ready() -> void:
 		if is_instance_valid(movement):
 			controls.connect("move_agent", Callable(movement, "player_controlled_movement"))
 
-	# Connect signals for  ATTACK node.	
+	# Configure ATTACK node.	
 	_attack_signals()
 
 	# Connect signals for DETECTION node.
 	if is_instance_valid(detection):
 		detection.set_myself(self)
-	_detection_signals()
+	_assign_detection_refs()
 
 	# Connect signals for TACTICAL node.	
-	_tactical_signals()
+	_assign_tactical_refs()
 
 	# Connect signals for HEALTH node.	
 	if is_instance_valid(health):
@@ -108,125 +106,87 @@ func _attack_signals() -> void:
 # COULD THINK ABOUT COMBINING TACTICAL AND ATTACK, AS THEY SHOULD ALWAYS BE CONNECTED PROBABLY.
 	if is_instance_valid(attack):
 		attack.set_player(self)
-
-		if is_instance_valid(animation) and attack.has_signal("attack_started"):
-			attack.connect("attack_started", Callable(animation, "play_attack"))
-
-		if is_instance_valid(movement) and attack.has_signal("attack_started"):
-			attack.connect("attack_started", Callable(movement, "freeze"))
+		_assign_weapon_refs()
 
 
-func _attack_disconnect_signals() -> void:
-	# Disconnect signals for old ATTACK node.
-	# These get their own function because they are called in apply_role also.
-# COULD THINK ABOUT COMBINING TACTICAL AND ATTACK, AS THEY SHOULD ALWAYS BE CONNECTED PROBABLY.
-	if is_instance_valid(attack):
-		if is_instance_valid(animation) and attack.has_signal("attack_started"):
-			attack.disconnect("attack_started", Callable(animation, "play_attack"))
-
-		if is_instance_valid(movement) and attack.has_signal("attack_started"):
-			attack.disconnect("attack_started", Callable(movement, "freeze"))
-
-
-func _detection_signals() -> void:
-	# Connect signals for DETECTION node.
-	# These get their own function because they are called in apply_role also.
-	if not is_instance_valid(detection) or not is_instance_valid(tactical):
+func _assign_weapon_refs() -> void:
+	if not is_instance_valid(attack):
 		return
 
-	if tactical.has_method("set_target"):
-		detection.connect("target_changed", Callable(tactical, "set_target"))
+	if is_instance_valid(animation) and _node_has_property(attack, &"animation"):
+		attack.set("animation", animation)
 
-	if tactical.has_method("clear_target"):
-		detection.connect("target_lost", Callable(tactical, "clear_target"))
-
-	if tactical.has_method("detection_refreshed"):
-		detection.connect("target_refreshed", Callable(tactical, "detection_refreshed"))
+	if is_instance_valid(movement) and _node_has_property(attack, &"movement"):
+		attack.set("movement", movement)
 
 
-func _detection_disconnect_signals() -> void:
-	# Disconnects signals for DETECTION node to old TACTICAL node.
-	# These get their own function because they are called in apply_role also.
-	if not is_instance_valid(detection) or not is_instance_valid(tactical):
+func _assign_animation_refs() -> void:
+	if not is_instance_valid(animation):
 		return
 
-	if tactical.has_method("set_target"):
-		detection.disconnect("target_changed", Callable(tactical, "set_target"))
-
-	if tactical.has_method("clear_target"):
-		detection.disconnect("target_lost", Callable(tactical, "clear_target"))
-
-	if tactical.has_method("detection_refreshed"):
-		detection.disconnect("target_refreshed", Callable(tactical, "detection_refreshed"))
+	if _node_has_property(animation, &"tactical"):
+		animation.set("tactical", tactical)
 
 
-func _tactical_signals() -> void:
-	# Connect signals for TACTICAL node.	
+func _assign_movement_refs() -> void:
+	if not is_instance_valid(movement):
+		return
+
+	if movement.has_method("set_my_agent"):
+		movement.call("set_my_agent", self)
+	elif _node_has_property(movement, &"agent"):
+		movement.set("agent", self)
+
+	if _node_has_property(movement, &"animation"):
+		movement.set("animation", animation)
+
+
+func _assign_pathfinding_refs() -> void:
+	if not is_instance_valid(pathfinding):
+		return
+
+	if _node_has_property(pathfinding, &"movement"):
+		pathfinding.set("movement", movement)
+
+
+func _assign_detection_refs() -> void:
+	if not is_instance_valid(detection):
+		return
+
+	if _node_has_property(detection, &"tactical"):
+		detection.set("tactical", tactical)
+
+
+func _assign_tactical_refs() -> void:
 	if not is_instance_valid(tactical):
 		return
 
 	if tactical.has_method("set_agent"):
 		tactical.call("set_agent", self)
 
-	if is_instance_valid(animation) and tactical.has_method("attack_finished"):
-		animation.connect("actionAnimationFinished", Callable(tactical, "attack_finished"))
+	if _node_has_property(tactical, &"movement"):
+		tactical.set("movement", movement)
 
-	if tactical.has_signal("chase_target"):
-		if is_instance_valid(pathfinding):
-			tactical.connect("chase_target", Callable(pathfinding, "stop_meander"))
-			tactical.connect("chase_target", Callable(pathfinding, "set_chase_target"))
+	if _node_has_property(tactical, &"pathfinding"):
+		tactical.set("pathfinding", pathfinding)
 
-		if is_instance_valid(movement):
-			tactical.connect("chase_target", Callable(movement, "stop_meander"))
-
-	if tactical.has_signal("resume_patrol"):
-		if is_instance_valid(pathfinding):
-			tactical.connect("resume_patrol", Callable(pathfinding, "clear_target"))
-			tactical.connect("resume_patrol", Callable(pathfinding, "stop_meander"))
-
-		if is_instance_valid(movement):
-			tactical.connect("resume_patrol", Callable(movement, "make_meander"))
-
-	if tactical.has_signal("move_to_position"):
-		if is_instance_valid(pathfinding):
-			tactical.connect("move_to_position", Callable(pathfinding, "stop_meander"))
-			tactical.connect("move_to_position", Callable(pathfinding, "set_move_target_position"))
-
-		if is_instance_valid(movement):
-			tactical.connect("move_to_position", Callable(movement, "stop_meander"))
+	if _node_has_property(tactical, &"animation"):
+		tactical.set("animation", animation)
 
 
-func _tactical_disconnect_signals() -> void:
-	# Disconnects signals for old TACTICAL node.	
-	if not is_instance_valid(tactical):
-		return
+func _clear_tactical_refs() -> void:
+	if is_instance_valid(animation) and _node_has_property(animation, &"tactical"):
+		animation.set("tactical", null)
 
-	if is_instance_valid(animation) and tactical.has_method("attack_finished"):
-		animation.disconnect("actionAnimationFinished", Callable(tactical, "attack_finished"))
+	if is_instance_valid(detection) and _node_has_property(detection, &"tactical"):
+		detection.set("tactical", null)
 
-	if tactical.has_signal("chase_target"):
-		if is_instance_valid(pathfinding):
-			tactical.disconnect("chase_target", Callable(pathfinding, "stop_meander"))
-			tactical.disconnect("chase_target", Callable(pathfinding, "set_chase_target"))
 
-		if is_instance_valid(movement):
-			tactical.disconnect("chase_target", Callable(movement, "stop_meander"))
-
-	if tactical.has_signal("resume_patrol"):
-		if is_instance_valid(pathfinding):
-			tactical.disconnect("resume_patrol", Callable(pathfinding, "clear_target"))
-			tactical.disconnect("resume_patrol", Callable(pathfinding, "stop_meander"))
-
-		if is_instance_valid(movement):
-			tactical.disconnect("resume_patrol", Callable(movement, "make_meander"))
-
-	if tactical.has_signal("move_to_position"):
-		if is_instance_valid(pathfinding):
-			tactical.disconnect("move_to_position", Callable(pathfinding, "stop_meander"))
-			tactical.disconnect("move_to_position", Callable(pathfinding, "set_move_target_position"))
-
-		if is_instance_valid(movement):
-			tactical.disconnect("move_to_position", Callable(movement, "stop_meander"))
+func _node_has_property(node: Object, property_name: StringName) -> bool:
+	for prop in node.get_property_list():
+		if prop.name == property_name:
+			return true
+	return false
 
 
 func _im_damaged() -> void:
@@ -287,13 +247,11 @@ func apply_role(role: StringName, p: int) -> void:
 
 	# --- remove old role-dependent nodes ---
 	if is_instance_valid(attack):
-		_attack_disconnect_signals()
 		attack.queue_free()
 		attack = null
 
 	if is_instance_valid(tactical):
-		_tactical_disconnect_signals()
-		_detection_disconnect_signals()
+		_clear_tactical_refs()
 		tactical.queue_free()
 		tactical = null
 
@@ -312,11 +270,10 @@ func apply_role(role: StringName, p: int) -> void:
 		tactical = tactical_script.new()
 		add_child(tactical)
 
-		# Configure tactical signals.
-		_tactical_signals()
-
-		# Reconfigure the signals from detection to tactical.
-		_detection_signals()
+		# Configure tactical refs.
+		_assign_tactical_refs()
+		_assign_animation_refs()
+		_assign_detection_refs()
 
 	# --- visuals ---
 	var frames: SpriteFrames = UnitRoles.get_frames(role, player)

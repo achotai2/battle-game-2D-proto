@@ -7,9 +7,11 @@
 [sub_resource type="CircleShape2D" id="CircleShape2D_72ito"]
 radius = 351.0
 
-[node name="WeaponBow" type="Node2D"]
+[node name="WeaponBow" type="Node2D" node_paths=PackedStringArray("animation", "movement")]
 script = ExtResource("1_fl1el")
 projectile_scene = ExtResource("2_hace3")
+animation = NodePath("../AgentAnimate")
+movement = NodePath("../AgentMovement")
 
 [node name="cooldown" type="Timer" parent="."]
 one_shot = true

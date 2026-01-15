@@ -9,6 +9,7 @@ enum TargetKind { ATTACKABLE, INTERACTABLE }
 
 @export var my_agent: Node2D
 @export var target_kind: TargetKind = TargetKind.ATTACKABLE
+@export var tactical: Node = null
 
 # Team filters (works for any number of teams; 0 = neutral)
 @export var target_same_team: bool = false
@@ -188,10 +189,13 @@ func _reselect_target() -> void:
 		_current_target = best
 		if _current_target:
 			target_changed.emit(_current_target)
+			_notify_tactical_target_changed(_current_target)
 		else:
 			target_lost.emit()
+			_notify_tactical_target_lost()
 			
 	target_refreshed.emit(_current_target)
+	_notify_tactical_target_refreshed(_current_target)
 
 
 func _is_better(a: Node2D, b: Node2D) -> bool:
@@ -243,3 +247,18 @@ func _health_value(n: Node) -> float:
 		return float(h.call("get_health"))
 
 	return INF
+
+
+func _notify_tactical_target_changed(target: Node2D) -> void:
+	if is_instance_valid(tactical) and tactical.has_method("set_target"):
+		tactical.call("set_target", target)
+
+
+func _notify_tactical_target_lost() -> void:
+	if is_instance_valid(tactical) and tactical.has_method("clear_target"):
+		tactical.call("clear_target")
+
+
+func _notify_tactical_target_refreshed(target: Node2D) -> void:
+	if is_instance_valid(tactical) and tactical.has_method("detection_refreshed"):
+		tactical.call("detection_refreshed", target)

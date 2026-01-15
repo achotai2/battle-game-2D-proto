@@ -3,6 +3,7 @@ class_name TacticalPlayer
 
 var _player_controls_activated: bool = false
 var _agent: Node2D = null
+@export var movement: AgentMovement = null
 
 
 # Called when the node enters the scene tree for the first time.
@@ -44,5 +45,7 @@ func set_agent(my_agent: Node2D) -> void:
 
 func attack_finished() -> void:
 	# Called by signal from animation when attack animation finishes.
-	if is_instance_valid(_agent) and is_instance_valid(_agent.movement):
+	if is_instance_valid(movement):
+		movement.un_freeze()
+	elif is_instance_valid(_agent) and is_instance_valid(_agent.movement):
 		_agent.movement.un_freeze()
