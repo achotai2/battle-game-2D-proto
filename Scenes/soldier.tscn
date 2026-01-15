@@ -39,8 +39,9 @@ animation = &"idle"
 
 [node name="NavigationAgent2D" type="NavigationAgent2D" parent="."]
 
-[node name="AgentAnimate" type="Node" parent="."]
+[node name="AgentAnimate" type="Node" parent="." node_paths=PackedStringArray("sprite")]
 script = ExtResource("2_eqink")
+sprite = NodePath("../AnimatedSprite2D")
 metadata/_custom_type_script = "uid://cjjdaf7vlfs4k"
 
 [node name="AgentMovement" type="Node" parent="." node_paths=PackedStringArray("agent", "animation")]
@@ -62,11 +63,12 @@ script = ExtResource("8_4g45u")
 nav_agent = NodePath("../NavigationAgent2D")
 movement = NodePath("../AgentMovement")
 
-[node name="AgentDetection" type="Area2D" parent="." node_paths=PackedStringArray("my_agent")]
+[node name="AgentDetection" type="Area2D" parent="." node_paths=PackedStringArray("my_agent", "tactical")]
 collision_layer = 32
 collision_mask = 1023
 script = ExtResource("9_dxyvq")
 my_agent = NodePath("..")
+tactical = NodePath("../TacticalSoldier")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="AgentDetection"]
 shape = SubResource("CircleShape2D_65o65")

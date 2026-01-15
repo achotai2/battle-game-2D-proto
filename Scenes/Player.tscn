@@ -13,24 +13,25 @@
 radius = 26.0
 height = 82.0
 
-[node name="Player" type="CharacterBody2D" node_paths=PackedStringArray("health", "movement", "controls", "animation", "attack", "tactical") groups=["Attackable", "Player"]]
+[node name="Player" type="CharacterBody2D" node_paths=PackedStringArray("health", "interactor", "movement", "controls", "animation", "attack") groups=["Attackable", "Player"]]
 collision_layer = 4
 collision_mask = 143
 script = ExtResource("1_rpqav")
 player = 1
 health = NodePath("Health")
+interactor = NodePath("PlayerInteractor")
 movement = NodePath("AgentMovement")
 controls = NodePath("PlayerControls")
 animation = NodePath("AgentAnimate")
 attack = NodePath("WeaponSword")
-tactical = NodePath("")
 current_role = &"player"
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 shape = SubResource("CapsuleShape2D_kyqiw")
 
-[node name="AgentAnimate" type="Node" parent="."]
+[node name="AgentAnimate" type="Node" parent="." node_paths=PackedStringArray("sprite")]
 script = ExtResource("2_gntrk")
+sprite = NodePath("../AnimatedSprite2D")
 metadata/_custom_type_script = "uid://cjjdaf7vlfs4k"
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
@@ -45,9 +46,11 @@ agent = NodePath("..")
 animation = NodePath("../AgentAnimate")
 metadata/_custom_type_script = "uid://58qm17emnwvd"
 
-[node name="PlayerControls" type="Node2D" parent="." node_paths=PackedStringArray("interactor")]
+[node name="PlayerControls" type="Node2D" parent="." node_paths=PackedStringArray("interactor", "attackNode", "movement")]
 script = ExtResource("6_nn08x")
 interactor = NodePath("../PlayerInteractor")
+attackNode = NodePath("../WeaponSword")
+movement = NodePath("../AgentMovement")
 metadata/_custom_type_script = "uid://cfiw0qaxe8jxd"
 
 [node name="Health" type="Node" parent="."]

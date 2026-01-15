@@ -16,7 +16,7 @@ height = 74.0
 [sub_resource type="CircleShape2D" id="CircleShape2D_65o65"]
 radius = 500.0
 
-[node name="Soldier" type="CharacterBody2D" node_paths=PackedStringArray("health", "movement", "pathfinding", "animation", "detection", "tactical") groups=["Attackable", "Interactable", "Minions"]]
+[node name="Peasant" type="CharacterBody2D" node_paths=PackedStringArray("health", "movement", "pathfinding", "animation", "detection", "tactical") groups=["Attackable", "Interactable", "Minions"]]
 collision_layer = 16
 collision_mask = 143
 script = ExtResource("1_wen5c")
@@ -37,15 +37,17 @@ animation = &"idle"
 
 [node name="NavigationAgent2D" type="NavigationAgent2D" parent="."]
 
-[node name="AgentAnimate" type="Node" parent="."]
+[node name="AgentAnimate" type="Node" parent="." node_paths=PackedStringArray("sprite")]
 script = ExtResource("3_t6mam")
+sprite = NodePath("../AnimatedSprite2D")
 metadata/_custom_type_script = "uid://cjjdaf7vlfs4k"
 
-[node name="AgentMovement" type="Node" parent="." node_paths=PackedStringArray("agent")]
+[node name="AgentMovement" type="Node" parent="." node_paths=PackedStringArray("agent", "animation")]
 script = ExtResource("4_kqf48")
 max_speed = 200.0
 can_meander = true
 agent = NodePath("..")
+animation = NodePath("../AgentAnimate")
 metadata/_custom_type_script = "uid://58qm17emnwvd"
 
 [node name="Health" type="Node" parent="."]
@@ -57,11 +59,12 @@ script = ExtResource("7_8tq67")
 nav_agent = NodePath("../NavigationAgent2D")
 movement = NodePath("../AgentMovement")
 
-[node name="AgentDetection" type="Area2D" parent="." node_paths=PackedStringArray("my_agent")]
+[node name="AgentDetection" type="Area2D" parent="." node_paths=PackedStringArray("my_agent", "tactical")]
 collision_layer = 32
 collision_mask = 1023
 script = ExtResource("8_3pkjs")
 my_agent = NodePath("..")
+tactical = NodePath("../TacticalPeasant")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="AgentDetection"]
 shape = SubResource("CircleShape2D_65o65")

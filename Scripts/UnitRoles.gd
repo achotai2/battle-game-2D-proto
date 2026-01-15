@@ -1,6 +1,7 @@
 extends Node
 
 
+const PLAYER := &"player"
 const PEASANT := &"peasant"
 const SOLDIER := &"soldier"
 const ARCHER := &"archer"
@@ -8,6 +9,10 @@ const WORKER := &"worker"
 
 
 var role_groups := {
+	PLAYER: [
+		&"Attackable",
+		&"Player",
+	],
 	PEASANT: [
 		&"Minions",
 		&"Peasants",
@@ -37,6 +42,10 @@ func get_role_groups(role: StringName) -> Array:
 
 # role -> player -> SpriteFrames
 var frames := {
+	PLAYER: {
+		1: preload("res://Art/SpriteFrames/Player.tres"),
+		2: preload("res://Art/SpriteFrames/Player.tres"),
+	},
 	PEASANT: {
 		1: preload("res://Art/SpriteFrames/Peasant_Blue.tres"),
 		2: preload("res://Art/SpriteFrames/Peasant_Red.tres"),
@@ -63,6 +72,7 @@ func get_frames(role: StringName, player: int) -> SpriteFrames:
 
 
 var weapons := {
+	PLAYER: preload("res://Scenes/weapon_sword.tscn"),
 	SOLDIER: preload("res://Scenes/weapon_sword.tscn"),
 	ARCHER: preload("res://Scenes/weapon_bow.tscn"),
 }

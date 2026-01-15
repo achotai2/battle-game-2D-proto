@@ -560,22 +560,26 @@ navigation_polygon = SubResource("NavigationPolygon_fvkhu")
 [node name="Player" parent="Units" instance=ExtResource("2_bo1nx")]
 position = Vector2(499, 83)
 
-[node name="Worker" parent="Units" node_paths=PackedStringArray("castle") instance=ExtResource("4_jjvhh")]
-position = Vector2(373, 166)
-player = 1
-castle = NodePath("../../Castle")
-
 [node name="Soldier" parent="Units" instance=ExtResource("7_6bp64")]
-position = Vector2(137, 384)
+position = Vector2(172, 362)
+player = 1
+
+[node name="Soldier2" parent="Units" instance=ExtResource("7_6bp64")]
+position = Vector2(291, 101)
 player = 2
 
 [node name="Archer" parent="Units" instance=ExtResource("8_344ge")]
-position = Vector2(157, 208)
+position = Vector2(142, 166)
 player = 1
 
 [node name="Archer2" parent="Units" instance=ExtResource("8_344ge")]
-position = Vector2(346, 350)
+position = Vector2(337, 248)
 player = 2
+
+[node name="Worker" parent="Units" node_paths=PackedStringArray("castle") instance=ExtResource("4_jjvhh")]
+position = Vector2(605, 135)
+player = 1
+castle = NodePath("../../Castle")
 
 [node name="Castle" parent="." instance=ExtResource("5_kry3j")]
 position = Vector2(597, 289)

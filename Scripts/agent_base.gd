@@ -43,6 +43,8 @@ func _ready() -> void:
 	# Connect signals for HEALTH node.	
 	_assign_health_refs()
 	
+	apply_role(current_role, player)
+
 
 func _physics_process(_delta: float) -> void:
 	if is_instance_valid(pathfinding) and is_instance_valid(movement):
