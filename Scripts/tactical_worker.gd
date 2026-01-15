@@ -116,6 +116,7 @@ func _on_think() -> void:
 	# If no job, keep advertising idle occasionally (in case board missed it)
 	if _site == null or not is_instance_valid(_site):
 		_work_timer.stop()
+		_ensure_patrol()
 		notify_idle()
 		return
 
@@ -256,3 +257,10 @@ func _halt_movement_for_work() -> void:
 		pathfinding.clear_target()
 	if is_instance_valid(movement):
 		movement.stop_meander()
+
+
+func _ensure_patrol() -> void:
+	var pf_meander := is_instance_valid(pathfinding) and pathfinding.meander_enabled
+	var move_meander := is_instance_valid(movement) and movement.meander
+	if not pf_meander and not move_meander:
+		_resume_patrol()

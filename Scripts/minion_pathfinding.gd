@@ -21,6 +21,7 @@ signal nav_finished
 # --- Patrol / meander ---
 @export var assigned_castle: Node2D
 @export_range(0.0, 2000.0, 10.0) var patrol_radius: float = 250.0
+@export_range(0.0, 200.0, 1.0) var patrol_arrival_radius: float = 24.0
 @export_range(0.0, 10.0, 0.1) var patrol_pause_seconds: float = 0.5
 @export_range(1, 20, 1) var patrol_pick_attempts: int = 8
 
@@ -136,6 +137,16 @@ func tick(my_pos: Vector2, max_speed: float, delta: float) -> void:
 		_refresh_target_and_repath(true)
 
 	# --- finished? ---
+	if _mode == Mode.PATROL and _is_patrol_target_reached(my_pos):
+		_send_desired_velocity(Vector2.ZERO)
+		if not _patrol_pause_timer.is_stopped():
+			return
+		if patrol_pause_seconds > 0.0:
+			_patrol_pause_timer.start(patrol_pause_seconds)
+		else:
+			_pick_new_patrol_point(true)
+		return
+
 	if nav_agent.is_navigation_finished():
 		_send_desired_velocity(Vector2.ZERO)
 		# Patrol: upon arrival, pause then pick a new point
@@ -235,6 +246,12 @@ func _pick_new_patrol_point(force: bool) -> void:
 
 	# Fallback: just stand near castle
 	_set_target_pos(center)
+
+
+func _is_patrol_target_reached(my_pos: Vector2) -> bool:
+	if patrol_arrival_radius <= 0.0:
+		return nav_agent.is_navigation_finished()
+	return my_pos.distance_squared_to(_target_pos) <= patrol_arrival_radius * patrol_arrival_radius
 
 
 func _on_velocity_computed(safe_velocity: Vector2) -> void:
