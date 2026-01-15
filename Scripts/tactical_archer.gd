@@ -122,6 +122,6 @@ func _move_to_position(dest: Vector2) -> void:
 func _resume_patrol() -> void:
 	if is_instance_valid(pathfinding):
 		pathfinding.clear_target()
-		pathfinding.stop_meander()
+		pathfinding.start_meander()
 	if is_instance_valid(movement):
 		movement.make_meander()
