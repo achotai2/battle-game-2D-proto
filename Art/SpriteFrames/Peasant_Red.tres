@@ -1,6 +1,6 @@
 [gd_resource type="SpriteFrames" load_steps=33 format=3 uid="uid://b16w7vlo5c8qt"]
 
-[ext_resource type="Texture2D" uid="uid://dub2acnqe6471" path="res://Tiny Swords (Update 010)/Factions/Goblins/Troops/Torch/Red/Torch_Red.png" id="1_jouxi"]
+[ext_resource type="Texture2D" uid="uid://dub2acnqe6471" path="res://Art/Tiny Swords (Update 010)/Factions/Goblins/Troops/Torch/Red/Torch_Red.png" id="1_jouxi"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_81nti"]
 atlas = ExtResource("1_jouxi")

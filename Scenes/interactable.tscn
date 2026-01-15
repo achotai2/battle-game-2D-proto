@@ -1,0 +1,20 @@
+[gd_scene load_steps=3 format=3 uid="uid://d1275k0u0fsn"]
+
+[ext_resource type="Script" uid="uid://ccjoime5gxir4" path="res://Scripts/Interactable.gd" id="1_8s6bd"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_pmsje"]
+radius = 98.02041
+
+[node name="Interactable" type="Area2D" node_paths=PackedStringArray("prompt_anchor")]
+collision_layer = 32
+collision_mask = 32
+script = ExtResource("1_8s6bd")
+icon_type = &"E"
+prompt_anchor = NodePath("PromptAnchor")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("CircleShape2D_pmsje")
+debug_color = Color(0.099311404, 0.6314879, 0.42991528, 0.41960785)
+
+[node name="PromptAnchor" type="Marker2D" parent="."]
+position = Vector2(0, -78)

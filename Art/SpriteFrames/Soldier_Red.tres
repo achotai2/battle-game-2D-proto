@@ -1,6 +1,6 @@
 [gd_resource type="SpriteFrames" load_steps=50 format=3 uid="uid://rc30dymytbcd"]
 
-[ext_resource type="Texture2D" uid="uid://biml5bwe1u70h" path="res://Tiny Swords (Update 010)/Factions/Knights/Troops/Warrior/Red/Warrior_Red.png" id="1_1v210"]
+[ext_resource type="Texture2D" uid="uid://biml5bwe1u70h" path="res://Art/Tiny Swords (Update 010)/Factions/Knights/Troops/Warrior/Red/Warrior_Red.png" id="1_1v210"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_jruje"]
 atlas = ExtResource("1_1v210")

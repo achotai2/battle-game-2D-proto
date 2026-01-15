@@ -3,6 +3,7 @@ class_name BuildingBase
 
 @export var castle: Node2D
 @export var worksite: WorkSite
+@export var player: int = 0
 
 
 func _ready() -> void:

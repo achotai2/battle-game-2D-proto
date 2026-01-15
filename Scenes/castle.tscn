@@ -1,6 +1,6 @@
 [gd_scene load_steps=6 format=3 uid="uid://56ng42k13bnj"]
 
-[ext_resource type="Texture2D" uid="uid://d4hqu3k4e8pts" path="res://Tiny Swords (Update 010)/Factions/Knights/Buildings/Castle/Castle_Blue.png" id="1_ayoda"]
+[ext_resource type="Texture2D" uid="uid://d4hqu3k4e8pts" path="res://Art/Tiny Swords (Update 010)/Factions/Knights/Buildings/Castle/Castle_Blue.png" id="1_ayoda"]
 [ext_resource type="Script" uid="uid://beretwk1vqwgm" path="res://Scripts/castle.gd" id="1_p6e6l"]
 [ext_resource type="Script" uid="uid://ba0yfy3sv1ht2" path="res://Scripts/castle_job_board.gd" id="2_r1mkv"]
 

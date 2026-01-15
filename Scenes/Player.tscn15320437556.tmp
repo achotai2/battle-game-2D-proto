@@ -64,3 +64,6 @@ metadata/_custom_type_script = "uid://chpltba3g3wmy"
 [node name="PlayerInteractor" parent="." node_paths=PackedStringArray("movement") instance=ExtResource("9_yoq75")]
 position = Vector2(0, -1)
 movement = NodePath("../AgentMovement")
+interact_action = null
+freeze_movement = null
+use_interactable_timing = true

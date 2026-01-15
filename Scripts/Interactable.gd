@@ -3,12 +3,13 @@ class_name Interactable
 
 signal interaction_started(interactor: Node2D)
 signal interaction_finished(interactor: Node2D)
+signal interaction_suspended(interactor: Node2D)
 
-@export var interaction_time: float = 0.0
+@export var interaction_time: float = 1.0
 @export var one_shot: bool = false
 @export var requires_same_team: bool = false
 @export var allows_neutral: bool = true
-@export var priority: int = 0
+@export var my_priority: int = 0
 @export var icon_type: StringName = &""
 @export var prompt_anchor: Node2D
 
@@ -52,6 +53,14 @@ func finish_interact(interactor: Node2D) -> void:
 	if one_shot:
 		_disable_interaction()
 	interaction_finished.emit(interactor)
+
+
+func suspend_interact(interactor: Node2D) -> void:
+	if _active_interactor != interactor:
+		return
+
+	_active_interactor = null
+	interaction_suspended.emit(interactor)
 
 
 func get_interaction_time() -> float:

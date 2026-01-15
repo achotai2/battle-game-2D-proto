@@ -1,30 +1,49 @@
-extends Node2D
+extends Node
 class_name PlayerControls
 
-signal buildEngaged
-signal buildReleased
-signal moveAgent(direction: Vector2)
+signal move_agent(direction: Vector2)
 
-# Called when the node enters the scene tree for the first time.
-func _ready() -> void:
-	call_deferred("_connect_objects")
+@export var interactor: PlayerInteractor
+@export var emit_zero_direction: bool = true
+@export var deadzone: float = 0.15
+@export var attack: StringName = &"attack"
+@export var move_left: StringName = &"move_left"
+@export var move_right: StringName = &"move_right"
+@export var move_up: StringName = &"move_up"
+@export var move_down: StringName = &"move_down"
+@export var interact: StringName = &"interact"
 
-
-# Called every frame. 'delta' is the elapsed time since the previous frame.
-func _process(_delta: float) -> void:
-	# Get player input.
-	if Input.is_action_just_pressed("build"):
-		buildEngaged.emit()
-	elif Input.is_action_just_released("build"):
-		buildReleased.emit()
-
-	# Get the input direction and handle the movement/deceleration.
-	var directionX := Input.get_axis("move_left", "move_right")
-	var directionY := Input.get_axis("move_up", "move_down")
-	moveAgent.emit(Vector2(directionX, directionY))
+var _last_dir: Vector2 = Vector2.ZERO
 
 
-func _connect_objects() -> void:
-	var objectsNode = get_tree().get_first_node_in_group("Objects")
-	if is_instance_valid(objectsNode):
-		objectsNode.connect_spawn_click(self)
+func _physics_process(_delta: float) -> void:
+	# Continuous movement belongs in physics tick
+	var x: float = Input.get_axis(move_left, move_right)
+	var y: float = Input.get_axis(move_up, move_down)
+
+	var dir := Vector2(x, y)
+
+	# Optional deadzone (helps analog sticks; harmless for keyboard)
+	if dir.length() < deadzone:
+		dir = Vector2.ZERO
+	else:
+		dir = dir.normalized()
+
+	# Emit only on change, or always (your choice)
+	if emit_zero_direction:
+		if dir != _last_dir:
+			move_agent.emit(dir)
+	else:
+		if dir != Vector2.ZERO and dir != _last_dir:
+			move_agent.emit(dir)
+
+	_last_dir = dir
+
+
+func _unhandled_input(event: InputEvent) -> void:
+	# Discrete actions here so UI can consume input first
+	if event.is_action_pressed(interact) and is_instance_valid(interactor):
+		interactor.interaction_pressed()
+		
+	elif event.is_action_released(interact):
+		interactor.interaction_released()

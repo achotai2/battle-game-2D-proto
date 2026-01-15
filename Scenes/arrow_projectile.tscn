@@ -1,7 +1,7 @@
 [gd_scene load_steps=7 format=3 uid="uid://ddlh76nm5b4gr"]
 
 [ext_resource type="Script" uid="uid://6x83wimk0ald" path="res://Scripts/projectile.gd" id="1_k1g7c"]
-[ext_resource type="Texture2D" uid="uid://cwx6s3dniriph" path="res://Tiny Swords (Update 010)/Factions/Knights/Troops/Archer/Arrow/Arrow.png" id="2_l22lk"]
+[ext_resource type="Texture2D" uid="uid://cwx6s3dniriph" path="res://Art/Tiny Swords (Update 010)/Factions/Knights/Troops/Archer/Arrow/Arrow.png" id="2_l22lk"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_h5x2m"]
 atlas = ExtResource("2_l22lk")

@@ -52,19 +52,19 @@ func _ready() -> void:
 	# Connect signals for player CONTROLS node.
 	if is_instance_valid(controls):
 		if is_instance_valid(interaction):
-			controls.connect("buildEngaged", Callable(interaction, "interaction_engaged"))
-			controls.connect("buildReleased", Callable(interaction, "interaction_released"))
+			controls.connect("interact_engaged", Callable(interaction, "interaction_engaged"))
+			controls.connect("interact_released", Callable(interaction, "interaction_released"))
 
 		if is_instance_valid(tactical):
 			if tactical.has_method("player_controls_activated"):
-				controls.connect("buildEngaged", Callable(tactical, "player_controls_activated"))
+				controls.connect("interact_engaged", Callable(tactical, "player_controls_activated"))
 			if tactical.has_method("player_movement_activated"):
-				controls.connect("moveAgent", Callable(tactical, "player_movement_activated"))
+				controls.connect("move_agent", Callable(tactical, "player_movement_activated"))
 			if tactical.has_method("player_controls_deactivated"):
-				controls.connect("buildReleased", Callable(tactical, "player_controls_deactivated"))
+				controls.connect("interact_released", Callable(tactical, "player_controls_deactivated"))
 
 		if is_instance_valid(movement):
-			controls.connect("moveAgent", Callable(movement, "player_controlled_movement"))
+			controls.connect("move_agent", Callable(movement, "player_controlled_movement"))
 
 	# Connect signals for  ATTACK node.	
 	_attack_signals()

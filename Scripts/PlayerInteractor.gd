@@ -4,19 +4,18 @@ class_name PlayerInteractor
 signal target_changed(target: Interactable)
 signal interaction_started(target: Interactable)
 signal interaction_finished(target: Interactable)
+signal interaction_suspended(target: Interactable)
 
 @export var sensor: Area2D
 @export var prompt_scene: PackedScene
 @export var prompt_parent: Node
 @export var movement: AgentMovement
-@export var animation: AgentAnimate
 @export var interact_action: StringName = &"interact"
 @export var freeze_movement: bool = true
-@export var use_interactable_timing: bool = false
 
 var _nearby: Array[Interactable] = []
 var _current_target: Interactable = null
-var _prompt: Node2D = null
+var _prompt: InteractPrompt = null
 var _interaction_timer: Timer
 var _is_interacting: bool = false
 
@@ -42,17 +41,23 @@ func _ready() -> void:
 func _process(_delta: float) -> void:
 	if _is_interacting:
 		_update_prompt()
-		return
+		return	# Don't allow selecting new target if interacting.
 
+	# Select new best target.
 	var best := _select_best_target()
 	if best != _current_target:
 		_set_target(best)
 	_update_prompt()
 
 
-func _unhandled_input(event: InputEvent) -> void:
-	if event.is_action_pressed(interact_action):
-		_try_start_interaction()
+func interaction_pressed() -> void:
+# Called by player controls node.
+	_try_start_interaction()
+
+
+func interaction_released() -> void:
+# Called by player controls node.
+	_finish_interaction()
 
 
 func _setup_prompt() -> void:
@@ -103,6 +108,7 @@ func _set_target(target: Interactable) -> void:
 		_hide_prompt()
 	else:
 		_show_prompt()
+
 	target_changed.emit(_current_target)
 
 
@@ -114,10 +120,11 @@ func _update_prompt() -> void:
 		return
 
 	var anchor_position := _current_target.get_prompt_position()
-	if _prompt.has_method("set_base_position"):
-		_prompt.call("set_base_position", anchor_position)
-	else:
-		_prompt.global_position = anchor_position
+	var percent_left: float = 1.0
+	if not _interaction_timer.is_stopped():
+		percent_left = _interaction_timer.time_left / _current_target.get_interaction_time()
+		print(percent_left)
+	_prompt.set_base_position(anchor_position, percent_left)
 	_show_prompt()
 
 
@@ -152,14 +159,11 @@ func _try_start_interaction() -> void:
 	_current_target.begin_interact(owner_node)
 	interaction_started.emit(_current_target)
 
-	if use_interactable_timing:
-		_current_target.interaction_finished.connect(_on_target_finished, CONNECT_ONE_SHOT)
+	var duration := _current_target.get_interaction_time()
+	if duration <= 0.0:
+		_finish_interaction()
 	else:
-		var duration := _current_target.get_interaction_time()
-		if duration <= 0.0:
-			_finish_interaction()
-		else:
-			_interaction_timer.start(duration)
+		_interaction_timer.start(duration)
 
 
 func _finish_interaction() -> void:
@@ -172,26 +176,17 @@ func _finish_interaction() -> void:
 		movement.un_freeze()
 
 	if _current_target != null and is_instance_valid(_current_target) and owner_node != null:
-		_current_target.finish_interact(owner_node)
-	interaction_finished.emit(_current_target)
-
-
-func _finalize_interaction() -> void:
-	if not _is_interacting:
-		return
-	_is_interacting = false
-
-	if freeze_movement and is_instance_valid(movement):
-		movement.un_freeze()
-	interaction_finished.emit(_current_target)
+		if _interaction_timer.is_stopped():
+			_current_target.finish_interact(owner_node)
+			interaction_finished.emit(_current_target)
+		else:
+			_current_target.suspend_interact(owner_node)
+			_interaction_timer.stop()
+			interaction_suspended.emit(_current_target)
 
 
 func _on_interaction_timeout() -> void:
 	_finish_interaction()
-
-
-func _on_target_finished(_interactor: Node2D) -> void:
-	_finalize_interaction()
 
 
 func _on_area_entered(area: Area2D) -> void:
