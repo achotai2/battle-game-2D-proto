@@ -6,19 +6,117 @@ git add .
 git commit -m "Rebuilt Main scene with player, world, interaction"
 git push
 
+Refactor my worker/job system in Godot 4 so task acquisition/execution is moved OUT of TacticalWorker and into a dedicated worker-task node. The new node should: advertise availability, communicate with CastleJobBoard, accept/abandon jobs, command AgentMovement to move to the site, and once in range LOCK the worker into working (no meander flicker). Fix the current bug where workers arrive at the site but start meandering, run back, meander again, and only occasionally work.
 
-Problem: Tactics should handle attack messages.
-- I don't neccessarily want animation telling movement to unfreeze when animation_finished triggers. This could cause conflicts later.
-- I want tactical to handle attacks. Weapon tells tactical there is a target and sends attack info, tactical decides what to do.
-- Player tactical can also handle freezing attacks when moving, and passing on controls messages to movement maybe.
-- Tactical could then handle unfreeze actions upon animation finished maybe.
-Solution
-- Move attack signal to tactical, and have it make the decision and pass on message to animation, target, movement, etc.
-- animation_finished signal from animation goes back to tactical for analysis to unfreeze movement.
-- Player controls sends signal to player tactical which handles freezing and unfreezing movement.
+CONTEXT / CURRENT PROBLEM
+- Workers currently request jobs / manage sites in TacticalWorker and also rely on Movement’s idle-meander.
+- Result: once a worker reaches a site, it may briefly have “no movement order” (or loses it), so Movement auto-meanders (prio 0), causing the worker to drift away and re-approach repeatedly.
+- I want: once within work range, worker should STOP moving and WORK repeatedly until the site is complete or invalid. No meander once job is accepted.
+- I want to generalize the tasker so that it can be used on other minions, not just workers. 
 
+NEW DESIGN
+Create a new node script to attach to worker units (agents):
+- class_name MinionTasker (or MinionJobAgent)
+- Responsibilities:
+  1) Register with a JobBoard (from castle) as an available worker. Removing communication with job task board away from tactical_worker.gd
+  2) Request a job when idle (with a think timer).
+  3) When assigned a site, command movement to go to that site.
+  4) When in range, stop issuing movement commands and trigger a work action loop.
+  5) Hold a “job lock” freeze movement order so the unit never falls into idle-meander while it has a job.
+  6) Release job when complete/invalid and return to idle.
 
-Problem: Does signaling make sense for stable command structure?
-- Perhaps better to move to function commands.
-- Nodes can get the node they want to command from the agent, and then call a function in that node.
-- Instead of sending signals they just run a function command.
+CRITICAL BEHAVIOR CHANGE (to fix meander flicker)
+- While the worker has an active job (even after arriving), MinionTasker must keep a movement order active at a higher priority than meander (priority=5).
+- When in work range, it should clear movement velocity (command_move_velocity(Vector2.ZERO, 5)) OR clear order with higher prio so it does NOT drop to idle-meander. Easiest: keep an explicit “HOLD” order at priority 5 while working, or keep sending zero-velocity commands at priority 5.
+- Also: when in work range, worker should freeze via Movement’s lock system and run the work animation/hit loop:
+  - movement.start_work() (uses LOCK_WORK, freezes movement)
+  - repeat on a timer until site completes
+- While frozen for work, do NOT allow Movement to switch to meander. Freeze already makes velocity zero; but ensure we still keep “job active” state so on unfreeze it resumes work instead of meandering.
+
+MODULE INTERFACES
+A) Movement command APIs exist (from previous refactor):
+- movement.command_move_to_position(pos, priority)
+- movement.command_chase_target(node, priority)
+- movement.command_move_velocity(vel, priority)
+- movement.clear_movement_order(priority) (clears only if priority > current)
+- movement.start_work() -> bool (plays animation + freezes)
+- movement.is_frozen() and freeze locks exist
+- Movement auto-meanders only if it has no order and can_meander=true (priority=0 meander)
+
+B) JobBoard API (CastleJobBoard.gd)
+- request_job(worker: Node2D) -> Node2D (site)
+- release_job(site: Node2D, worker: Node2D) -> void
+- Sites implement:
+  - needs_work() -> bool (optional but preferred)
+  - get_work_position() -> Vector2 (optional)
+  - apply_work(amount: float, worker: Node2D) -> void  (or take_work)
+  - optionally reserve/unreserve already supported by JobBoard
+
+IMPLEMENT MinionTasker.gd
+- Node attached to worker agent. It should export:
+  - @export var agent: Node2D
+  - @export var movement: AgentMovement
+  - @export var castle: Node2D
+  - @export var work_range: float = 28.0
+  - @export var work_interval: float = 0.35
+  - @export var work_amount: float = 1.0
+  - @export_range(...) var think_interval: float = 0.25
+- Internal:
+  - var _job_board: CastleJobBoard (or Node)
+  - var _site: Node2D = null
+  - var _state enum { IDLE, MOVING, WORKING }
+  - timers: think_timer, work_timer
+  - const JOB_PRIORITY := 5
+
+- Responsibilities:
+  1) set_castle(castle): resolve job board (castle.get_job_board or castle.get_node("JobBoard") or castle itself if it has request_job)
+  2) IDLE:
+	 - periodically request job
+	 - if got a site: set _state=MOVING, command_move_to_position(work_pos, JOB_PRIORITY)
+  3) MOVING:
+	 - keep commanding move_to_position(work_pos, JOB_PRIORITY) on think ticks (refresh) so order never drops.
+	 - if within range -> transition to WORKING:
+		- command_move_velocity(Vector2.ZERO, JOB_PRIORITY) (so we keep an active order)
+		- start work loop: work_timer.start()
+  4) WORKING:
+	 - stop sending path commands; keep “hold position” command each think tick: command_move_velocity(Vector2.ZERO, JOB_PRIORITY)
+	 - On work_timer:
+		- if site invalid or done -> release and go IDLE
+		- else call movement.start_work() (freezes movement + plays animation). If start_work() returns true:
+			- when animation finishes Movement unfreezes automatically via its internal signals
+			- then apply_work() once per timer tick (or apply_work only if start_work succeeded)
+		- Ensure worker remains in WORKING state until complete; never allow meander while WORKING.
+  5) Completion/abandon:
+	 - job_board.release_job(_site, agent)
+	 - _site=null; state=IDLE; stop work_timer
+	 - optionally clear movement order by issuing command_move_velocity(Vector2.ZERO, JOB_PRIORITY) briefly or clear with priority > current (e.g. 6) so Movement can meander again.
+
+- Site helpers:
+  - func _get_work_pos(site)->Vector2
+  - func _site_needs_work(site)->bool
+  - func _apply_work(site, amount)->void
+
+IMPORTANT: Prevent auto-meander while working
+- While _site != null, MinionTasker MUST maintain an active order at priority 5 (either move_to_position while traveling or zero-velocity hold while working).
+- Do NOT call movement.clear_movement_order(5) because it only clears if > current; use priority 6 for clears if needed.
+
+UPDATE OTHER FILES
+1) Remove/disable TacticalWorker logic:
+- Delete TacticalWorker node usage for worker units OR make it no-op.
+- Worker units should instead have MinionTasker node attached and wired.
+
+2) Update building/WorkSite registration:
+- Keep worksites registering with CastleJobBoard as before.
+- No change needed other than ensuring sites have stable get_work_position/apply_work/needs_work.
+
+3) AgentBase wiring:
+- Ensure MinionTasker gets references (agent/movement/castle) either by export in inspector or set via apply_role / set_castle.
+- If castle changes, MinionTasker should:
+  - release current job to old board
+  - resolve new board
+  - request new job
+
+DELIVERABLES
+- New MinionTasker.gd implementing the above state machine and timers.
+- Project-wide updates to remove TacticalWorker from workers and attach MinionTasker.
+- Fix the meander flicker by ensuring workers keep a priority 5 movement and “job lock” by freezing movement while they have a job and by freezing + working when in range.

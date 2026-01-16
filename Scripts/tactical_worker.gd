@@ -89,7 +89,7 @@ func assign_job(site: WorkSite) -> void:
 # Worker -> board: "I'm available"
 func notify_idle() -> void:
 	if is_instance_valid(_job_board):
-		_job_board.worker_idle(self)
+		_job_board.minion_idle(self)
 
 
 
@@ -182,13 +182,13 @@ func switch_job_board(new_castle: Node2D) -> void:
 
 	# Unregister from old board
 	if is_instance_valid(_job_board):
-		_job_board.unregister_worker(self)
+		_job_board.unregister_minion(self)
 
 	_job_board = _resolve_job_board(new_castle)
 
 	# Register with new board
 	if is_instance_valid(_job_board):
-		_job_board.register_worker(self)
+		_job_board.register_minion(self)
 
 	# Immediately announce we're idle to get a job assigned
 	notify_idle()
