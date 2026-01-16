@@ -7,7 +7,7 @@ class_name CastleJobBoard
 var _sites: Array[WorkSite] = []
 var _reserved_by: Dictionary = {} # site: minion
 
-var _idle_minions: Array[Node] = []
+var _idle_minions: Array[WorkSiteWorker] = []
 
 
 func _ready() -> void:
@@ -49,7 +49,7 @@ func _on_site_exited(site: WorkSite) -> void:
 # minions
 # -------------------------
 
-func register_minion(minion: Node) -> void:
+func register_minion(minion: WorkSiteWorker) -> void:
 	if minion == null or not is_instance_valid(minion):
 		return
 
@@ -57,7 +57,7 @@ func register_minion(minion: Node) -> void:
 	minion.tree_exited.connect(_on_minion_exited.bind(minion), CONNECT_ONE_SHOT)
 
 
-func unregister_minion(minion: Node) -> void:
+func unregister_minion(minion: WorkSiteWorker) -> void:
 	# Remove from idle list if present
 	var idx := _idle_minions.find(minion)
 	if idx != -1:
@@ -75,7 +75,7 @@ func _on_minion_exited(minion: Node) -> void:
 	unregister_minion(minion)
 
 
-func minion_idle(minion: Node) -> void:
+func minion_idle(minion: WorkSiteWorker) -> void:
 	if minion == null or not is_instance_valid(minion):
 		return
 	if not _idle_minions.has(minion):
@@ -83,16 +83,16 @@ func minion_idle(minion: Node) -> void:
 	_assign_if_possible()
 
 
-func register_worker(minion: Node) -> void:
+func register_worker(minion: WorkSiteWorker) -> void:
 	register_minion(minion)
 
 
-func unregister_worker(minion: Node) -> void:
+func unregister_worker(minion: WorkSiteWorker) -> void:
 	unregister_minion(minion)
 
 
 # minion calls this when abandoning/completing a job
-func release_job(site: WorkSite, minion: Node) -> void:
+func release_job(site: WorkSite, minion: WorkSiteWorker) -> void:
 	if site == null:
 		return
 	if _reserved_by.get(site) == minion:
@@ -100,7 +100,7 @@ func release_job(site: WorkSite, minion: Node) -> void:
 	_assign_if_possible()
 
 
-func request_job(minion: Node) -> WorkSite:
+func request_job(minion: WorkSiteWorker) -> WorkSite:
 	if minion == null or not is_instance_valid(minion):
 		return null
 
@@ -136,7 +136,7 @@ func _assign_if_possible() -> void:
 		w.assign_job(site)
 
 
-func _pick_best_site_for_minion(minion: Node) -> WorkSite:
+func _pick_best_site_for_minion(minion: WorkSiteWorker) -> WorkSite:
 	var best: WorkSite = null
 	var best_score: float = INF
 
@@ -163,7 +163,7 @@ func _pick_best_site_for_minion(minion: Node) -> WorkSite:
 # Internals
 # -------------------------
 
-func _reserve(site: WorkSite, minion: Node) -> void:
+func _reserve(site: WorkSite, minion: WorkSiteWorker) -> void:
 	_reserved_by[site] = minion
 	site.reserve(minion)
 
