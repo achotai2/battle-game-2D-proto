@@ -6,7 +6,7 @@
 [ext_resource type="Script" uid="uid://58qm17emnwvd" path="res://Scripts/agent_move.gd" id="4_8gahr"]
 [ext_resource type="Script" uid="uid://c2guvnr3dtafe" path="res://Scripts/health.gd" id="5_ddptx"]
 [ext_resource type="Script" uid="uid://cf3jwbm3206s5" path="res://Scripts/minion_pathfinding.gd" id="7_7va4a"]
-[ext_resource type="Script" uid="uid://cjkde0ltdx5i0" path="res://Scripts/tactical_worker.gd" id="8_ca3ot"]
+[ext_resource type="Script" uid="uid://d1ucmtjtmh4hm" path="res://Scripts/minion_tasker.gd" id="8_ca3ot"]
 [ext_resource type="Script" uid="uid://bi15gddmxujcs" path="res://Scripts/agent_tracking.gd" id="8_kdem7"]
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_ta2g1"]
@@ -25,7 +25,7 @@ movement = NodePath("AgentMovement")
 pathfinding = NodePath("MinionPathfinding")
 animation = NodePath("AgentAnimate")
 detection = NodePath("AgentDetection")
-tactical = NodePath("TacticalWorker")
+tactical = NodePath("MinionTasker")
 current_role = &"worker"
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
@@ -64,15 +64,13 @@ collision_layer = 32
 collision_mask = 1023
 script = ExtResource("8_kdem7")
 my_agent = NodePath("..")
-tactical = NodePath("../TacticalWorker")
+tactical = NodePath("../MinionTasker")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="AgentDetection"]
 shape = SubResource("CircleShape2D_65o65")
 debug_color = Color(0.498544, 0.546397, 0.554583, 0.42)
 
-[node name="TacticalWorker" type="Node" parent="." node_paths=PackedStringArray("movement", "pathfinding", "animation")]
+[node name="MinionTasker" type="Node" parent="." node_paths=PackedStringArray("movement")]
 script = ExtResource("8_ca3ot")
 movement = NodePath("../AgentMovement")
-pathfinding = NodePath("../MinionPathfinding")
-animation = NodePath("../AgentAnimate")
-metadata/_custom_type_script = "uid://cjkde0ltdx5i0"
+metadata/_custom_type_script = "uid://d1ucmtjtmh4hm"

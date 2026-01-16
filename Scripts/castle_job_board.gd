@@ -83,6 +83,14 @@ func minion_idle(minion: Node) -> void:
 	_assign_if_possible()
 
 
+func register_worker(minion: Node) -> void:
+	register_minion(minion)
+
+
+func unregister_worker(minion: Node) -> void:
+	unregister_minion(minion)
+
+
 # minion calls this when abandoning/completing a job
 func release_job(site: WorkSite, minion: Node) -> void:
 	if site == null:
@@ -90,6 +98,21 @@ func release_job(site: WorkSite, minion: Node) -> void:
 	if _reserved_by.get(site) == minion:
 		_release_site(site)
 	_assign_if_possible()
+
+
+func request_job(minion: Node) -> WorkSite:
+	if minion == null or not is_instance_valid(minion):
+		return null
+
+	_prune_invalid_sites()
+	_prune_invalid_minions()
+
+	var site := _pick_best_site_for_minion(minion)
+	if site == null:
+		return null
+
+	_reserve(site, minion)
+	return site
 
 
 # -------------------------

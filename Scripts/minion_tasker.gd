@@ -1,0 +1,259 @@
+extends Node
+class_name MinionTasker
+
+@export var agent: Node2D = null
+@export var movement: AgentMovement = null
+@export var castle: Node2D = null
+@export var work_range: float = 28.0
+@export var work_interval: float = 0.35
+@export var work_amount: float = 1.0
+@export_range(0.05, 1.0, 0.05) var think_interval: float = 0.25
+@export var blast_think: bool = true
+
+const JOB_PRIORITY := 5
+
+enum State {
+	IDLE,
+	MOVING,
+	WORKING,
+}
+
+var _job_board: CastleJobBoard = null
+var _site: Node2D = null
+var _state: State = State.IDLE
+var _think_timer: Timer
+var _work_timer: Timer
+
+
+func _ready() -> void:
+	_think_timer = Timer.new()
+	_think_timer.one_shot = false
+	_think_timer.wait_time = think_interval
+	_think_timer.timeout.connect(_on_think)
+	add_child(_think_timer)
+	if blast_think:
+		_think_timer.start(randf() * think_interval)
+	else:
+		_think_timer.start()
+
+	_work_timer = Timer.new()
+	_work_timer.one_shot = false
+	_work_timer.wait_time = work_interval
+	_work_timer.timeout.connect(_on_work_tick)
+	add_child(_work_timer)
+
+	if is_instance_valid(agent) and agent.has_method("return_castle"):
+		set_castle(agent.call("return_castle"))
+	elif is_instance_valid(castle):
+		set_castle(castle)
+
+
+func set_agent(my_agent: Node2D) -> void:
+	agent = my_agent
+	if is_instance_valid(agent) and agent.has_method("return_castle"):
+		set_castle(agent.call("return_castle"))
+
+
+func set_castle(new_castle: Node2D) -> void:
+	if new_castle == castle:
+		return
+
+	_release_job(true)
+	_unregister_from_board()
+
+	castle = new_castle
+	_job_board = _resolve_job_board(castle)
+	if is_instance_valid(_job_board):
+		if _job_board.has_method("register_minion"):
+			_job_board.register_minion(self)
+		elif _job_board.has_method("register_worker"):
+			_job_board.register_worker(self)
+
+	_state = State.IDLE
+	_request_job_if_idle()
+
+
+func switch_job_board(new_castle: Node2D) -> void:
+	set_castle(new_castle)
+
+
+func clear_task() -> void:
+	_release_job(true)
+	_set_idle_state()
+
+
+func has_task() -> bool:
+	return is_instance_valid(_site)
+
+
+func assign_job(site: Node2D) -> void:
+	_release_job(true)
+	if site == null or not is_instance_valid(site):
+		_set_idle_state()
+		return
+
+	_site = site
+	_state = State.MOVING
+	_work_timer.stop()
+	_command_move_to_site()
+
+
+func _on_think() -> void:
+	if agent == null or not is_instance_valid(agent):
+		return
+
+	if not is_instance_valid(_job_board) and agent.has_method("return_castle"):
+		set_castle(agent.call("return_castle"))
+
+	if _site == null or not is_instance_valid(_site):
+		_set_idle_state()
+		_request_job_if_idle()
+		return
+
+	if not _site_needs_work(_site):
+		_release_job(true)
+		_set_idle_state()
+		_request_job_if_idle()
+		return
+
+	match _state:
+		State.MOVING:
+			_command_move_to_site()
+			if _is_in_work_range(_site):
+				_enter_work_state()
+		State.WORKING:
+			_hold_position()
+			if not _is_in_work_range(_site):
+				_state = State.MOVING
+				_work_timer.stop()
+		State.IDLE:
+			_request_job_if_idle()
+
+
+func _on_work_tick() -> void:
+	if agent == null or not is_instance_valid(agent):
+		_work_timer.stop()
+		return
+
+	if _site == null or not is_instance_valid(_site):
+		_work_timer.stop()
+		_set_idle_state()
+		return
+
+	if not _site_needs_work(_site):
+		_release_job(true)
+		_set_idle_state()
+		return
+
+	if not _is_in_work_range(_site):
+		_state = State.MOVING
+		_work_timer.stop()
+		return
+
+	_hold_position()
+	var can_apply := true
+	if is_instance_valid(movement):
+		can_apply = movement.start_work()
+	if can_apply:
+		_apply_work(_site, work_amount)
+
+	if not _site_needs_work(_site):
+		_release_job(true)
+		_set_idle_state()
+
+
+func _enter_work_state() -> void:
+	_state = State.WORKING
+	_hold_position()
+	if _work_timer.is_stopped():
+		_work_timer.start()
+
+
+func _set_idle_state() -> void:
+	_state = State.IDLE
+	_work_timer.stop()
+	if is_instance_valid(movement):
+		movement.clear_movement_order(JOB_PRIORITY + 1)
+
+
+func _request_job_if_idle() -> void:
+	if _state != State.IDLE:
+		return
+	if not is_instance_valid(_job_board):
+		return
+
+	var site: Node2D = null
+	if _job_board.has_method("request_job"):
+		site = _job_board.request_job(self)
+	elif _job_board.has_method("minion_idle"):
+		_job_board.minion_idle(self)
+		return
+
+	if site != null and is_instance_valid(site):
+		assign_job(site)
+
+
+func _command_move_to_site() -> void:
+	if not is_instance_valid(movement):
+		return
+	movement.command_move_to_position(_get_work_position(_site), JOB_PRIORITY)
+
+
+func _hold_position() -> void:
+	if not is_instance_valid(movement):
+		return
+	movement.command_move_velocity(Vector2.ZERO, JOB_PRIORITY)
+
+
+func _release_job(release_to_board: bool) -> void:
+	if release_to_board and is_instance_valid(_job_board) and is_instance_valid(_site):
+		_job_board.release_job(_site, self)
+
+	_site = null
+	_work_timer.stop()
+
+
+func _resolve_job_board(new_castle: Node2D) -> CastleJobBoard:
+	if new_castle == null or not is_instance_valid(new_castle):
+		return null
+
+	if new_castle.has_method("return_job_board"):
+		return new_castle.call("return_job_board")
+	if new_castle.has_method("request_job"):
+		return new_castle
+	return null
+
+
+func _unregister_from_board() -> void:
+	if is_instance_valid(_job_board):
+		if _job_board.has_method("unregister_minion"):
+			_job_board.unregister_minion(self)
+		elif _job_board.has_method("unregister_worker"):
+			_job_board.unregister_worker(self)
+	_job_board = null
+
+
+func _get_work_position(site: Node2D) -> Vector2:
+	if site != null and site.has_method("get_work_position"):
+		return site.call("get_work_position")
+	return agent.global_position if is_instance_valid(agent) else Vector2.ZERO
+
+
+func _apply_work(site: Node2D, amount: float) -> void:
+	if site != null and site.has_method("apply_work"):
+		site.call("apply_work", amount, self)
+
+
+func _site_needs_work(site: Node2D) -> bool:
+	if site == null or not is_instance_valid(site):
+		return false
+	if site.has_method("needs_work"):
+		return bool(site.call("needs_work"))
+	return true
+
+
+func _is_in_work_range(site: Node2D) -> bool:
+	if not is_instance_valid(agent):
+		return false
+	var wp := _get_work_position(site)
+	return agent.global_position.distance_squared_to(wp) <= (work_range * work_range)
