@@ -85,7 +85,7 @@ var tacticals := {
 	PEASANT: TacticalPeasant,
 	SOLDIER: TacticalSoldier,
 	ARCHER: TacticalArcher,
-	WORKER: TacticalWorker,
+	WORKER: MinionTasker,
 }
 
 func get_tactical(role: StringName) -> GDScript:

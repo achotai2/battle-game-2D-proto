@@ -57,7 +57,7 @@ var _work_done: float = 0.0
 var _job_board: CastleJobBoard = null
 ## Cached job board reference resolved from castle. We keep it so we can unregister cleanly.
 
-var _reserved_by: TacticalWorker = null
+var _reserved_by: Node2D = null
 ## Which worker (if any) currently has this site reserved.
 ## This is optional coordination; your JobBoard may also manage this at a higher level.
 
@@ -100,7 +100,7 @@ func get_work_position() -> Vector2:
 		return Vector2.ZERO
 
 
-func apply_work(amount: float, worker: TacticalWorker) -> void:
+func apply_work(amount: float, worker: Node2D) -> void:
 	## Called by a worker to contribute progress toward completion.
 	## - amount: how much work this "hit" contributes
 	## - worker: the worker doing the work (useful if you want to attribute credit)
@@ -123,7 +123,7 @@ func apply_work(amount: float, worker: TacticalWorker) -> void:
 # Optional reservation API (used by JobBoard)
 # -------------------------
 
-func can_reserve(worker: TacticalWorker) -> bool:
+func can_reserve(worker: Node2D) -> bool:
 	## Optional hook: JobBoard can ask if this site can be reserved by a given worker.
 	## Here we enforce:
 	## - site must still need work
@@ -138,14 +138,14 @@ func can_reserve(worker: TacticalWorker) -> bool:
 	return _reserved_by == null or not is_instance_valid(_reserved_by)
 
 
-func reserve(worker: TacticalWorker) -> void:
+func reserve(worker: Node2D) -> void:
 	## Optional hook: JobBoard calls this when it assigns/reserves the job for a worker.
 	## If allow_multiple_workers is true, we don't strictly need this.
 	if not allow_multiple_workers:
 		_reserved_by = worker
 
 
-func unreserve(worker: TacticalWorker) -> void:
+func unreserve(worker: Node2D) -> void:
 	## Optional hook: JobBoard calls this when releasing the reservation (worker changed jobs, etc.)
 	## Clears our _reserved_by only if it matches the releasing worker.
 	if _reserved_by == worker:
