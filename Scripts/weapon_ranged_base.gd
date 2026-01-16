@@ -112,6 +112,8 @@ func _on_attack_delay_timeout() -> void:
 
 	if projectile_scene == null:
 		return
+	if not is_instance_valid(_owner_agent) or not _owner_agent.has_method("return_player"):
+		return
 
 	var parent := _projectile_parent
 	if parent == null or not is_instance_valid(parent):

@@ -98,6 +98,8 @@ func _on_attack_delay_timeout() -> void:
 	var h: Health = t.get("health")
 	if not is_instance_valid(h):
 		return
+	if not is_instance_valid(_owner_agent) or not _owner_agent.has_method("return_player"):
+		return
 
 	var atk := AttackData.new()
 	atk.attack_power = attack_power
