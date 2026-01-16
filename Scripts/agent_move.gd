@@ -304,7 +304,7 @@ func command_player_direction(dir: Vector2, priority: int = 5) -> void:
 
 
 func clear_movement_order(priority: int = 5) -> void:
-	if priority <= _order_priority:
+	if priority < _order_priority:
 		return
 
 	_order_type = OrderType.NONE
@@ -319,7 +319,7 @@ func clear_movement_order(priority: int = 5) -> void:
 
 
 func _accept_order(priority: int) -> bool:
-	if priority <= _order_priority:
+	if priority < _order_priority:
 		return false
 	_order_priority = priority
 	return true
