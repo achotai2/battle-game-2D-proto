@@ -64,7 +64,7 @@ func _setup_prompt() -> void:
 	if prompt_scene == null:
 		return
 
-	_prompt = prompt_scene.instantiate() as Node2D
+	_prompt = prompt_scene.instantiate() as InteractPrompt
 	if _prompt == null:
 		return
 
@@ -72,7 +72,7 @@ func _setup_prompt() -> void:
 		prompt_parent.add_child(_prompt)
 	else:
 		add_child(_prompt)
-	_prompt.hide()
+	_prompt.hide_prompt()
 
 
 func _select_best_target() -> Interactable:
@@ -123,20 +123,20 @@ func _update_prompt() -> void:
 	var percent_left: float = 1.0
 	if not _interaction_timer.is_stopped():
 		percent_left = _interaction_timer.time_left / _current_target.get_interaction_time()
-	_prompt.set_base_position(anchor_position, percent_left)
+	_prompt.set_world_target(anchor_position, percent_left)
 	_show_prompt()
 
 
 func _show_prompt() -> void:
 	if _prompt == null:
 		return
-	_prompt.show()
+	_prompt.show_prompt()
 
 
 func _hide_prompt() -> void:
 	if _prompt == null:
 		return
-	_prompt.hide()
+	_prompt.hide_prompt()
 
 
 func _try_start_interaction() -> void:
