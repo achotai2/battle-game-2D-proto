@@ -1,4 +1,4 @@
-extends Node
+extends WorkSiteWorker
 class_name MinionTasker
 
 signal resume_patrol()
