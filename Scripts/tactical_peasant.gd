@@ -9,7 +9,6 @@ signal resume_patrol()
 @export var flee_margin: float = 99999.0
 @export_range(0.05, 2.0, 0.05) var flee_update: float = 0.25
 @export var movement: AgentMovement = null
-@export var pathfinding: MinionPathfinding = null
 
 var _target: Node2D = null
 var _agent: Node2D = null
@@ -111,27 +110,18 @@ func _on_flee_tick() -> void:
 
 
 func _chase_target(target: Node2D) -> void:
-	if is_instance_valid(pathfinding):
-		pathfinding.stop_meander()
-		pathfinding.set_chase_target(target)
 	if is_instance_valid(movement):
-		movement.stop_meander()
+		movement.command_chase_target(target, 5)
 	chase_target.emit(target)
 
 
 func _move_to_position(pos: Vector2) -> void:
-	if is_instance_valid(pathfinding):
-		pathfinding.stop_meander()
-		pathfinding.set_move_target_position(pos)
 	if is_instance_valid(movement):
-		movement.stop_meander()
+		movement.command_move_to_position(pos, 5)
 	move_to_position.emit(pos)
 
 
 func _resume_patrol() -> void:
-	if is_instance_valid(pathfinding):
-		pathfinding.clear_target()
-		pathfinding.start_meander()
 	if is_instance_valid(movement):
-		movement.make_meander()
+		movement.clear_movement_order(6)
 	resume_patrol.emit()

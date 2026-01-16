@@ -11,7 +11,6 @@ signal combat_started(target: Node2D)
 signal combat_ended()
 
 @export var movement: AgentMovement = null
-@export var pathfinding: MinionPathfinding = null
 
 var _target: Node2D = null
 var _agent: Node2D = null
@@ -52,18 +51,12 @@ func set_agent(my_agent: Node2D) -> void:
 
 
 func _chase_target(target: Node2D) -> void:
-	if is_instance_valid(pathfinding):
-		pathfinding.stop_meander()
-		pathfinding.set_chase_target(target)
 	if is_instance_valid(movement):
-		movement.stop_meander()
+		movement.command_chase_target(target, 5)
 	chase_target.emit(target)
 
 
 func _resume_patrol() -> void:
-	if is_instance_valid(pathfinding):
-		pathfinding.clear_target()
-		pathfinding.start_meander()
 	if is_instance_valid(movement):
-		movement.make_meander()
+		movement.clear_movement_order(6)
 	resume_patrol.emit()

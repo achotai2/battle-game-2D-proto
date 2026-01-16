@@ -11,7 +11,6 @@ signal resume_patrol()
 
 @export_range(0.05, 1.0, 0.05) var think_interval: float = 1.0
 @export var movement: AgentMovement = null
-@export var pathfinding: MinionPathfinding = null
 @export var animation: AgentAnimate = null
 
 var _agent: Node2D
@@ -235,32 +234,22 @@ func _site_needs_work(site: WorkSite) -> bool:
 
 
 func _move_to_position(pos: Vector2) -> void:
-	if is_instance_valid(pathfinding):
-		pathfinding.stop_meander()
-		pathfinding.set_move_target_position(pos)
 	if is_instance_valid(movement):
-		movement.stop_meander()
+		movement.command_move_to_position(pos, 5)
 	move_to_position.emit(pos)
 
 
 func _resume_patrol() -> void:
-	if is_instance_valid(pathfinding):
-		pathfinding.clear_target()
-		pathfinding.start_meander()
 	if is_instance_valid(movement):
-		movement.make_meander()
+		movement.clear_movement_order(6)
 	resume_patrol.emit()
 
 
 func _halt_movement_for_work() -> void:
-	if is_instance_valid(pathfinding):
-		pathfinding.clear_target()
 	if is_instance_valid(movement):
-		movement.stop_meander()
+		movement.clear_movement_order(6)
 
 
 func _ensure_patrol() -> void:
-	var pf_meander := is_instance_valid(pathfinding) and pathfinding.meander_enabled
-	var move_meander := is_instance_valid(movement) and movement.meander
-	if not pf_meander and not move_meander:
+	if is_instance_valid(movement):
 		_resume_patrol()

@@ -50,9 +50,8 @@ func _connect_all_refs() -> void:
 
 
 func _physics_process(_delta: float) -> void:
-	if is_instance_valid(pathfinding) and is_instance_valid(movement):
-		# Update pathfinding information.
-		pathfinding.tick(global_position, movement.return_speed(), _delta)
+	if is_instance_valid(movement):
+		movement.tick(_delta)
 
 	move_and_slide()
 
@@ -100,13 +99,16 @@ func _assign_movement_refs() -> void:
 	elif _node_has_property(movement, &"animation"):
 		movement.set("animation", animation)
 
+	if movement.has_method("set_pathfinding"):
+		movement.call("set_pathfinding", pathfinding)
+	elif _node_has_property(movement, &"pathfinding"):
+		movement.set("pathfinding", pathfinding)
+
 
 func _assign_pathfinding_refs() -> void:
 	if not is_instance_valid(pathfinding):
 		return
 
-	if _node_has_property(pathfinding, &"movement"):
-		pathfinding.set("movement", movement)
 	if _node_has_property(pathfinding, &"assigned_castle"):
 		pathfinding.set("assigned_castle", castle)
 

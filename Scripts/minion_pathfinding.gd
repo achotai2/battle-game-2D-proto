@@ -5,7 +5,6 @@ signal desired_velocity(v: Vector2)
 signal nav_finished
 
 @export var nav_agent: NavigationAgent2D
-@export var movement: AgentMovement = null
 
 # --- Repath tuning ---
 @export_range(0.05, 2.0, 0.05) var repath_interval: float = 0.25
@@ -77,6 +76,13 @@ func stop_meander() -> void:
 	# Only clear if we were patrolling; otherwise leave current mode alone
 	if _mode == Mode.PATROL:
 		clear_target()
+
+
+func set_meander(enable: bool) -> void:
+	if enable:
+		start_meander()
+	else:
+		stop_meander()
 
 
 func set_move_target_position(pos: Vector2) -> void:
@@ -264,6 +270,3 @@ func _on_nav_finished() -> void:
 
 func _send_desired_velocity(velocity: Vector2) -> void:
 	emit_signal("desired_velocity", velocity)
-
-	if is_instance_valid(movement):
-		movement.on_pf_desired_velocity(velocity)
