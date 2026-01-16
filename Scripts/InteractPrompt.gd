@@ -50,7 +50,9 @@ func set_world_target(world_pos: Vector2, percent_left: float, world_offset: Vec
 	var cam := viewport.get_camera_2d()
 	if cam == null:
 		return  # No camera yet (e.g., during scene boot); caller can retry
-	_base_screen_pos = viewport.get_canvas_transform().xform(world_pos + world_offset)
+
+	var canvas_xform: Transform2D = viewport.get_canvas_transform()
+	_base_screen_pos = canvas_xform * (world_pos + world_offset)
 	_set_percent(percent_left)
 
 # If caller already has a screen-space point, use this:
@@ -69,7 +71,7 @@ func hide_prompt() -> void:
 
 func _set_percent(percent_left: float) -> void:
 	# Clamp
-	var p := clamp(percent_left, 0.0, 1.0)
+	var p = clamp(percent_left, 0.0, 1.0)
 
 	# Scale the fill ring relative to the empty ring
 	if circle and circleEmpty:
