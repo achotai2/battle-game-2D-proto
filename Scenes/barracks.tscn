@@ -36,3 +36,7 @@ metadata/_custom_type_script = "uid://qumqy1omy72i"
 
 [node name="Marker2D" type="Marker2D" parent="."]
 position = Vector2(0, 64)
+
+[node name="SpawnSite" type="Node2D" parent="."]
+script = ExtResource("2_coeoc")
+metadata/_custom_type_script = "uid://qumqy1omy72i"

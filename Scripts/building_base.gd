@@ -9,6 +9,7 @@ enum BuildingState { DESTROYED, CONSTRUCTING, BUILT }
 @export var visual: Node
 @export var interactable: Interactable
 @export var worksite: WorkSite
+@export var spawnsite: WorkSite
 @export var health: Health
 @export var state: BuildingState = BuildingState.CONSTRUCTING
 
