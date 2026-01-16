@@ -20,7 +20,7 @@ signal nav_finished
 
 # --- Patrol / meander ---
 @export var assigned_castle: Node2D
-@export_range(0.0, 2000.0, 10.0) var patrol_radius: float = 250.0
+@export_range(0.0, 2000.0, 10.0) var patrol_radius: float = 500.0
 @export_range(0.0, 200.0, 1.0) var patrol_arrival_radius: float = 24.0
 @export_range(0.0, 10.0, 0.1) var patrol_pause_seconds: float = 0.5
 @export_range(1, 20, 1) var patrol_pick_attempts: int = 8

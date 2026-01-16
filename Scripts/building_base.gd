@@ -9,7 +9,6 @@ enum BuildingState { DESTROYED, CONSTRUCTING, BUILT }
 @export var visual: Node
 @export var interactable: Interactable
 @export var worksite: WorkSite
-@export var spawner: Node
 @export var health: Health
 @export var state: BuildingState = BuildingState.CONSTRUCTING
 
@@ -50,7 +49,6 @@ func apply_state(new_state: BuildingState) -> void:
 	_update_visuals()
 	_configure_interactable()
 	_configure_worksite()
-	_configure_spawner()
 
 	_connect_signals()
 
@@ -79,7 +77,7 @@ func _on_interacted(interactor: Node2D) -> void:
 	if state == BuildingState.DESTROYED:
 		set_state(BuildingState.CONSTRUCTING)
 	elif state == BuildingState.BUILT:
-		_request_spawn(interactor)
+		pass
 
 
 func _on_work_completed(_site: WorkSite) -> void:
@@ -130,32 +128,6 @@ func _configure_worksite() -> void:
 		worksite.refresh_registration()
 	else:
 		worksite.set_enabled(false)
-
-
-func _configure_spawner() -> void:
-	if not is_instance_valid(spawner):
-		return
-
-	var enabled := state == BuildingState.BUILT
-	if spawner.has_method("set_enabled"):
-		spawner.call("set_enabled", enabled)
-	elif spawner.has_method("change_timer_to_spawn"):
-		spawner.call("change_timer_to_spawn", enabled)
-	else:
-		spawner.set_process(enabled)
-
-	if enabled and spawner.has_method("set_spawn_config"):
-		spawner.call("set_spawn_config", BuildingDefs.get_spawn_config(building_type))
-
-
-func _request_spawn(_interactor: Node2D) -> void:
-	if not is_instance_valid(spawner):
-		return
-
-	if spawner.has_method("spawn_request"):
-		spawner.call("spawn_request", _interactor)
-	elif spawner.has_method("spawn_unit"):
-		spawner.call("spawn_unit")
 
 
 func _connect_signals() -> void:

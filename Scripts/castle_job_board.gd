@@ -2,12 +2,12 @@ extends Node
 class_name CastleJobBoard
 
 @export var castle: Node2D
-@export var one_worker_per_site: bool = true
+@export var one_minion_per_site: bool = true
 
 var _sites: Array[WorkSite] = []
-var _reserved_by: Dictionary = {} # site: worker
+var _reserved_by: Dictionary = {} # site: minion
 
-var _idle_workers: Array[TacticalWorker] = []
+var _idle_minions: Array[Node] = []
 
 
 func _ready() -> void:
@@ -46,48 +46,48 @@ func _on_site_exited(site: WorkSite) -> void:
 
 
 # -------------------------
-# Workers
+# minions
 # -------------------------
 
-func register_worker(worker: TacticalWorker) -> void:
-	if worker == null or not is_instance_valid(worker):
+func register_minion(minion: Node) -> void:
+	if minion == null or not is_instance_valid(minion):
 		return
 
-	# Clean up if worker is freed
-	worker.tree_exited.connect(_on_worker_exited.bind(worker), CONNECT_ONE_SHOT)
+	# Clean up if minion is freed
+	minion.tree_exited.connect(_on_minion_exited.bind(minion), CONNECT_ONE_SHOT)
 
 
-func unregister_worker(worker: TacticalWorker) -> void:
+func unregister_minion(minion: Node) -> void:
 	# Remove from idle list if present
-	var idx := _idle_workers.find(worker)
+	var idx := _idle_minions.find(minion)
 	if idx != -1:
-		_idle_workers.remove_at(idx)
+		_idle_minions.remove_at(idx)
 
-	# Release any reservations held by this worker
+	# Release any reservations held by this minion
 	for site in _reserved_by.keys():
-		if _reserved_by.get(site) == worker:
+		if _reserved_by.get(site) == minion:
 			_release_site(site)
 
 	_assign_if_possible()
 
 
-func _on_worker_exited(worker: TacticalWorker) -> void:
-	unregister_worker(worker)
+func _on_minion_exited(minion: Node) -> void:
+	unregister_minion(minion)
 
 
-func worker_idle(worker: TacticalWorker) -> void:
-	if worker == null or not is_instance_valid(worker):
+func minion_idle(minion: Node) -> void:
+	if minion == null or not is_instance_valid(minion):
 		return
-	if not _idle_workers.has(worker):
-		_idle_workers.append(worker)
+	if not _idle_minions.has(minion):
+		_idle_minions.append(minion)
 	_assign_if_possible()
 
 
-# Worker calls this when abandoning/completing a job
-func release_job(site: WorkSite, worker: TacticalWorker) -> void:
+# minion calls this when abandoning/completing a job
+func release_job(site: WorkSite, minion: Node) -> void:
 	if site == null:
 		return
-	if _reserved_by.get(site) == worker:
+	if _reserved_by.get(site) == minion:
 		_release_site(site)
 	_assign_if_possible()
 
@@ -98,37 +98,37 @@ func release_job(site: WorkSite, worker: TacticalWorker) -> void:
 
 func _assign_if_possible() -> void:
 	_prune_invalid_sites()
-	_prune_invalid_workers()
+	_prune_invalid_minions()
 
-	# Iterate idle workers and give each one a job if possible
-	for i in range(_idle_workers.size() - 1, -1, -1):
-		var w := _idle_workers[i]
-		var site := _pick_best_site_for_worker(w)
+	# Iterate idle minions and give each one a job if possible
+	for i in range(_idle_minions.size() - 1, -1, -1):
+		var w := _idle_minions[i]
+		var site := _pick_best_site_for_minion(w)
 		if site == null:
 			continue
 
-		_idle_workers.remove_at(i)
+		_idle_minions.remove_at(i)
 		_reserve(site, w)
 
 		w.assign_job(site)
 
 
-func _pick_best_site_for_worker(worker: TacticalWorker) -> WorkSite:
+func _pick_best_site_for_minion(minion: Node) -> WorkSite:
 	var best: WorkSite = null
 	var best_score: float = INF
 
 	for site in _sites:
 		if not _site_needs_work(site):
 			continue
-		if one_worker_per_site and _is_reserved(site):
+		if one_minion_per_site and _is_reserved(site):
 			continue
 
 		# Optional site-side reservation rule
-		if not bool(site.can_reserve(worker)):
+		if not bool(site.can_reserve(minion)):
 			continue
 
 		var wp := _get_site_pos(site)
-		var d2 : float = worker.return_position().distance_squared_to(wp)
+		var d2 : float = minion.return_position().distance_squared_to(wp)
 		if d2 < best_score:
 			best_score = d2
 			best = site
@@ -140,9 +140,9 @@ func _pick_best_site_for_worker(worker: TacticalWorker) -> WorkSite:
 # Internals
 # -------------------------
 
-func _reserve(site: WorkSite, worker: TacticalWorker) -> void:
-	_reserved_by[site] = worker
-	site.reserve(worker)
+func _reserve(site: WorkSite, minion: Node) -> void:
+	_reserved_by[site] = minion
+	site.reserve(minion)
 
 
 func _release_site(site: WorkSite) -> void:
@@ -165,10 +165,10 @@ func _prune_invalid_sites() -> void:
 			_reserved_by.erase(s)
 
 
-func _prune_invalid_workers() -> void:
-	for i in range(_idle_workers.size() - 1, -1, -1):
-		if _idle_workers[i] == null or not is_instance_valid(_idle_workers[i]):
-			_idle_workers.remove_at(i)
+func _prune_invalid_minions() -> void:
+	for i in range(_idle_minions.size() - 1, -1, -1):
+		if _idle_minions[i] == null or not is_instance_valid(_idle_minions[i]):
+			_idle_minions.remove_at(i)
 
 
 func _site_needs_work(site: WorkSite) -> bool:
