@@ -16,7 +16,6 @@ class_name TacticalArcher
 @export_range(0.05, 1.0, 0.05) var update_rate: float = 0.20
 @export var keep_line_of_fire: bool = true     # simple: bias sideways movement a bit
 @export var movement: AgentMovement = null
-@export var pathfinding: MinionPathfinding = null
 
 var _target: Node2D = null
 var _agent: Node2D = null
@@ -112,16 +111,10 @@ func _on_tick() -> void:
 
 
 func _move_to_position(dest: Vector2) -> void:
-	if is_instance_valid(pathfinding):
-		pathfinding.stop_meander()
-		pathfinding.set_move_target_position(dest)
 	if is_instance_valid(movement):
-		movement.stop_meander()
+		movement.command_move_to_position(dest, 5)
 
 
 func _resume_patrol() -> void:
-	if is_instance_valid(pathfinding):
-		pathfinding.clear_target()
-		pathfinding.start_meander()
 	if is_instance_valid(movement):
-		movement.make_meander()
+		movement.clear_movement_order(6)

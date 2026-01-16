@@ -54,11 +54,11 @@ func _physics_process(_delta: float) -> void:
 	if emit_zero_direction:
 		if dir != _last_dir:
 			if is_instance_valid(movement):
-				movement.player_controlled_movement(dir)
+				movement.command_player_direction(dir, 5)
 	else:
 		if dir != Vector2.ZERO and dir != _last_dir:
 			if is_instance_valid(movement):
-				movement.player_controlled_movement(dir)
+				movement.command_player_direction(dir, 5)
 
 	_is_moving = dir != Vector2.ZERO
 	if _is_moving:
