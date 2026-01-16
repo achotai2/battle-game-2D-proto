@@ -560,6 +560,9 @@ navigation_polygon = SubResource("NavigationPolygon_fvkhu")
 [node name="Player" parent="Units" instance=ExtResource("2_bo1nx")]
 position = Vector2(499, 83)
 
+[node name="Camera2D" type="Camera2D" parent="Units/Player"]
+position = Vector2(0, 1)
+
 [node name="Worker" parent="Units" node_paths=PackedStringArray("castle") instance=ExtResource("4_jjvhh")]
 position = Vector2(605, 135)
 player = 1

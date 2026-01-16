@@ -4,8 +4,11 @@
 [ext_resource type="Texture2D" uid="uid://dqb4b3gcn0k3i" path="res://Art/circle.png" id="3_2glke"]
 [ext_resource type="Texture2D" uid="uid://dm6x3sreah3wi" path="res://Art/circleEmpty.png" id="4_hhl6x"]
 
-[node name="InteractPrompt" type="Node2D" node_paths=PackedStringArray("circle", "circleEmpty")]
+[node name="InteractPrompt" type="CanvasLayer" node_paths=PackedStringArray("circle", "circleEmpty")]
+layer = 10
 script = ExtResource("1_qf4td")
+bob_height = null
+bob_speed = null
 circle = NodePath("Circle")
 circleEmpty = NodePath("CircleEmpty")
 
