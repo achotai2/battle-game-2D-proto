@@ -1,11 +1,6 @@
 extends Node
 class_name TacticalWorker
 
-signal move_to_position(pos: Vector2)
-signal resume_patrol()
-
-@export var movement: AgentMovement = null
-@export var animation: AgentAnimate = null
 
 var _agent: Node2D = null
 
