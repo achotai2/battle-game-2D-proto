@@ -218,7 +218,8 @@ func _refresh_target_and_repath(force: bool) -> void:
 func _set_target_pos(pos: Vector2) -> void:
 	_target_pos = pos
 	_last_target_pos = pos
-	nav_agent.target_position = pos
+	if is_instance_valid(nav_agent):
+		nav_agent.target_position = pos
 
 
 func _on_patrol_pause_finished() -> void:

@@ -94,10 +94,13 @@ func needs_work() -> bool:
 func get_work_position() -> Vector2:
 	## Returns the world position a worker should move to in order to work on this site.
 	## Workers will typically stand near this position and repeatedly call apply_work().
-	if my_boss.has_method("return_position"):
-		return my_boss.return_position() + work_offset.position
-	else:
+	if not is_instance_valid(my_boss) or not my_boss.has_method("return_position"):
 		return Vector2.ZERO
+
+	var base_pos: Vector2 = my_boss.return_position()
+	if is_instance_valid(work_offset):
+		return base_pos + work_offset.position
+	return base_pos
 
 
 func apply_work(amount: float, worker: WorkSiteWorker) -> void:

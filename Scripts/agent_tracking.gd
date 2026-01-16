@@ -130,6 +130,8 @@ func _on_candidate_tree_exited(body: Node2D) -> void:
 # -------------------------
 
 func _team_allowed(p: int) -> bool:
+	if not is_instance_valid(my_agent) or not my_agent.has_method("return_player"):
+		return false
 	if p == my_agent.return_player():
 		return target_same_team
 	if p == 0:
