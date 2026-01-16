@@ -17,7 +17,9 @@ var _nearby: Array[Interactable] = []
 var _current_target: Interactable = null
 var _prompt: InteractPrompt = null
 var _interaction_timer: Timer
+var _target_refresh_timer: Timer
 var _is_interacting: bool = false
+var _target_refresh_interval: float = 0.1
 
 
 func _ready() -> void:
@@ -25,6 +27,12 @@ func _ready() -> void:
 	_interaction_timer.one_shot = true
 	_interaction_timer.timeout.connect(_on_interaction_timeout)
 	add_child(_interaction_timer)
+
+	_target_refresh_timer = Timer.new()
+	_target_refresh_timer.wait_time = _target_refresh_interval
+	_target_refresh_timer.autostart = true
+	_target_refresh_timer.timeout.connect(_refresh_target)
+	add_child(_target_refresh_timer)
 
 	if sensor == null:
 		sensor = get_node_or_null("Sensor") as Area2D
@@ -39,14 +47,6 @@ func _ready() -> void:
 
 
 func _process(_delta: float) -> void:
-	if _is_interacting:
-		_update_prompt()
-		return	# Don't allow selecting new target if interacting.
-
-	# Select new best target.
-	var best := _select_best_target()
-	if best != _current_target:
-		_set_target(best)
 	_update_prompt()
 
 
@@ -180,10 +180,21 @@ func _finish_interaction() -> void:
 			_current_target.suspend_interact(owner_node)
 			_interaction_timer.stop()
 			interaction_suspended.emit(_current_target)
+	_refresh_target()
 
 
 func _on_interaction_timeout() -> void:
 	_finish_interaction()
+
+
+func _refresh_target() -> void:
+	if _is_interacting:
+		return
+
+	# Select new best target.
+	var best := _select_best_target()
+	if best != _current_target:
+		_set_target(best)
 
 
 func _on_area_entered(area: Area2D) -> void:
