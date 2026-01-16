@@ -191,6 +191,8 @@ func _refresh_target() -> void:
 	if _is_interacting:
 		return
 
+	_sync_nearby_from_sensor()
+
 	# Select new best target.
 	var best := _select_best_target()
 	if best != _current_target:
@@ -214,6 +216,18 @@ func _on_area_exited(area: Area2D) -> void:
 
 	if _current_target == area:
 		_set_target(_select_best_target())
+
+
+func _sync_nearby_from_sensor() -> void:
+	if not is_instance_valid(sensor):
+		return
+
+	var overlapping := sensor.get_overlapping_areas()
+	var updated: Array[Interactable] = []
+	for area in overlapping:
+		if area is Interactable:
+			updated.append(area)
+	_nearby = updated
 
 
 func _get_interactor_node() -> Node2D:
