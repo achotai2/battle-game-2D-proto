@@ -25,10 +25,14 @@ shape = SubResource("CapsuleShape2D_coeoc")
 position = Vector2(0, -36)
 texture = ExtResource("1_7aoon")
 
-[node name="WorkSite" type="Node2D" parent="." node_paths=PackedStringArray("my_boss")]
+[node name="WorkSite" type="Node2D" parent="." node_paths=PackedStringArray("my_boss", "work_offset")]
 script = ExtResource("2_coeoc")
 my_boss = NodePath("..")
 auto_register = false
+work_offset = NodePath("../Marker2D")
 metadata/_custom_type_script = "uid://qumqy1omy72i"
 
 [node name="Interactable" parent="." instance=ExtResource("4_87o8n")]
+
+[node name="Marker2D" type="Marker2D" parent="."]
+position = Vector2(0, 64)

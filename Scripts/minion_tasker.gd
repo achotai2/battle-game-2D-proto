@@ -234,8 +234,6 @@ func _resolve_job_board(new_castle: Node2D) -> CastleJobBoard:
 
 	if new_castle.has_method("return_job_board"):
 		return new_castle.call("return_job_board")
-	if new_castle.has_method("request_job"):
-		return new_castle
 	return null
 
 

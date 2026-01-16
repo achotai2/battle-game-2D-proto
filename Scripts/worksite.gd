@@ -35,7 +35,7 @@ signal work_completed(site: WorkSite)
 ## If true, the WorkSite automatically resolves its castle and registers with the job board in _ready().
 ## If false, you can call refresh_registration() manually after setting up parent/castle references.
 
-@export var work_offset: Vector2 = Vector2.ZERO
+@export var work_offset: Marker2D = null
 ## Optional offset (in global space) where workers should stand to work.
 ## Useful if the building's sprite origin isn't where you want workers to path to.
 
@@ -95,7 +95,7 @@ func get_work_position() -> Vector2:
 	## Returns the world position a worker should move to in order to work on this site.
 	## Workers will typically stand near this position and repeatedly call apply_work().
 	if my_boss.has_method("return_position"):
-		return my_boss.return_position() + work_offset
+		return my_boss.return_position() + work_offset.position
 	else:
 		return Vector2.ZERO
 
