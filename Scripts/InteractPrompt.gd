@@ -44,10 +44,13 @@ func _process(delta: float) -> void:
 # percent_left: 0..1 for fill/progress
 # world_offset: world-space offset above the target (e.g. (0, -32))
 func set_world_target(world_pos: Vector2, percent_left: float, world_offset: Vector2 = Vector2(0, -32)) -> void:
-	var cam := get_viewport().get_camera_2d()
+	var viewport := get_viewport()
+	if viewport == null:
+		return
+	var cam := viewport.get_camera_2d()
 	if cam == null:
 		return  # No camera yet (e.g., during scene boot); caller can retry
-	_base_screen_pos = cam.world_to_screen(world_pos + world_offset)
+	_base_screen_pos = viewport.get_canvas_transform().xform(world_pos + world_offset)
 	_set_percent(percent_left)
 
 # If caller already has a screen-space point, use this:
