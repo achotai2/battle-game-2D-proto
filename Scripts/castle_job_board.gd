@@ -3,9 +3,11 @@ class_name CastleJobBoard
 
 @export var castle: Node2D
 @export var one_minion_per_site: bool = true
+## Deprecated: slot-based capacity now comes from WorkSite.can_reserve/reserve.
+## This flag is kept for compatibility but no longer used.
 
 var _sites: Array[WorkSite] = []
-var _reserved_by: Dictionary = {} # site: minion
+var _reserved_by: Dictionary = {} # site: Array[Node2D] (agents)
 
 var _idle_minions: Array[WorkSiteWorker] = []
 
@@ -64,9 +66,9 @@ func unregister_minion(minion: WorkSiteWorker) -> void:
 		_idle_minions.remove_at(idx)
 
 	# Release any reservations held by this minion
-	for site in _reserved_by.keys():
-		if _reserved_by.get(site) == minion:
-			_release_site(site)
+	var agent := _resolve_agent(minion)
+	if agent != null:
+		_release_reservations_for_agent(agent)
 
 	_assign_if_possible()
 
@@ -95,9 +97,10 @@ func unregister_worker(minion: WorkSiteWorker) -> void:
 func release_job(site: WorkSite, minion: WorkSiteWorker) -> void:
 	if site == null:
 		return
-	if _reserved_by.get(site) == minion:
-		_release_site(site)
-	_assign_if_possible()
+	var agent := _resolve_agent(minion)
+	if agent != null:
+		_release_reservation(site, agent)
+		_assign_if_possible()
 
 
 func request_job(minion: WorkSiteWorker) -> WorkSite:
@@ -107,12 +110,18 @@ func request_job(minion: WorkSiteWorker) -> WorkSite:
 	_prune_invalid_sites()
 	_prune_invalid_minions()
 
-	var site := _pick_best_site_for_minion(minion)
-	if site == null:
+	var agent := _resolve_agent(minion)
+	if agent == null:
 		return null
 
-	_reserve(site, minion)
-	return site
+	var attempted: Array[WorkSite] = []
+	var site := _pick_best_site_for_minion(minion, agent, attempted)
+	while site != null:
+		if _reserve(site, agent):
+			return site
+		attempted.append(site)
+		site = _pick_best_site_for_minion(minion, agent, attempted)
+	return null
 
 
 # -------------------------
@@ -126,31 +135,37 @@ func _assign_if_possible() -> void:
 	# Iterate idle minions and give each one a job if possible
 	for i in range(_idle_minions.size() - 1, -1, -1):
 		var w := _idle_minions[i]
-		var site := _pick_best_site_for_minion(w)
-		if site == null:
+		var agent := _resolve_agent(w)
+		if agent == null:
 			continue
 
-		_idle_minions.remove_at(i)
-		_reserve(site, w)
+		var attempted: Array[WorkSite] = []
+		var site := _pick_best_site_for_minion(w, agent, attempted)
+		while site != null:
+			if _reserve(site, agent):
+				_idle_minions.remove_at(i)
+				w.assign_job(site)
+				break
+			attempted.append(site)
+			site = _pick_best_site_for_minion(w, agent, attempted)
 
-		w.assign_job(site)
 
-
-func _pick_best_site_for_minion(minion: WorkSiteWorker) -> WorkSite:
+func _pick_best_site_for_minion(minion: WorkSiteWorker, agent: Node2D, excluded_sites: Array[WorkSite] = []) -> WorkSite:
 	var best: WorkSite = null
 	var best_score: float = INF
 
 	for site in _sites:
-		if not _site_needs_work(site):
+		if excluded_sites.has(site):
 			continue
-		if one_minion_per_site and _is_reserved(site):
+		if not _site_needs_work(site):
 			continue
 
 		# Optional site-side reservation rule
-		if not bool(site.can_reserve(minion)):
-			continue
+		if site.has_method("can_reserve"):
+			if not bool(site.call("can_reserve", agent)):
+				continue
 
-		var wp := _get_site_pos(site)
+		var wp := _get_site_pos(site, agent)
 		var d2 : float = minion.return_position().distance_squared_to(wp)
 		if d2 < best_score:
 			best_score = d2
@@ -163,21 +178,48 @@ func _pick_best_site_for_minion(minion: WorkSiteWorker) -> WorkSite:
 # Internals
 # -------------------------
 
-func _reserve(site: WorkSite, minion: WorkSiteWorker) -> void:
-	_reserved_by[site] = minion
-	site.reserve(minion)
+func _reserve(site: WorkSite, agent: Node2D) -> bool:
+	if not is_instance_valid(site):
+		return false
+	if site.has_method("reserve"):
+		if not bool(site.call("reserve", agent)):
+			return false
+
+	var reserved := _reserved_by.get(site, [])
+	if not reserved.has(agent):
+		reserved.append(agent)
+	_reserved_by[site] = reserved
+	return true
 
 
 func _release_site(site: WorkSite) -> void:
 	if _reserved_by.has(site):
-		var w = _reserved_by[site]
+		var agents: Array = _reserved_by[site]
 		_reserved_by.erase(site)
-		if is_instance_valid(site):
-			site.unreserve(w)
+		if is_instance_valid(site) and site.has_method("unreserve"):
+			for agent in agents:
+				if is_instance_valid(agent):
+					site.call("unreserve", agent)
 
 
-func _is_reserved(site: WorkSite) -> bool:
-	return _reserved_by.has(site) and is_instance_valid(_reserved_by[site])
+func _release_reservation(site: WorkSite, agent: Node2D) -> void:
+	if not _reserved_by.has(site):
+		return
+	var agents: Array = _reserved_by[site]
+	var idx := agents.find(agent)
+	if idx != -1:
+		agents.remove_at(idx)
+		if is_instance_valid(site) and site.has_method("unreserve"):
+			site.call("unreserve", agent)
+	if agents.is_empty():
+		_reserved_by.erase(site)
+	else:
+		_reserved_by[site] = agents
+
+
+func _release_reservations_for_agent(agent: Node2D) -> void:
+	for site in _reserved_by.keys():
+		_release_reservation(site, agent)
 
 
 func _prune_invalid_sites() -> void:
@@ -198,5 +240,25 @@ func _site_needs_work(site: WorkSite) -> bool:
 	return site.needs_work()
 
 
-func _get_site_pos(site: WorkSite) -> Vector2:
+func _get_site_pos(site: WorkSite, agent: Node2D) -> Vector2:
+	if site.has_method("get_work_position_for"):
+		return site.call("get_work_position_for", agent)
 	return site.get_work_position()
+
+
+func _resolve_agent(minion: WorkSiteWorker) -> Node2D:
+	if minion == null:
+		return null
+
+	if minion.has_method("get_agent"):
+		var agent = minion.call("get_agent")
+		if agent is Node2D:
+			return agent
+
+	for prop in minion.get_property_list():
+		if prop.name == &"agent":
+			var agent_prop = minion.get("agent")
+			if agent_prop is Node2D:
+				return agent_prop
+			break
+	return null

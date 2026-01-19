@@ -9,7 +9,7 @@ class_name WorkSite
 ## - It registers itself with the castle’s JobBoard (CastleJobBoard) so workers can be assigned here.
 ##
 ## Workers will:
-## - Move to get_work_position()
+## - Move to get_work_position_for(agent) when available (or get_work_position fallback)
 ## - While in range, call apply_work(amount, worker)
 ## - When completed, this WorkSite unregisters itself and emits work_completed.
 
@@ -39,10 +39,6 @@ signal work_completed(site: WorkSite)
 ## Optional offset (in global space) where workers should stand to work.
 ## Useful if the building's sprite origin isn't where you want workers to path to.
 
-@export var allow_multiple_workers: bool = true
-## If false, this site will attempt to act as "single worker at a time" by tracking _reserved_by.
-## Note: the JobBoard also has one_worker_per_site; you can use either or both.
-
 @export var enabled: bool = true
 ## Whether this WorkSite is currently active and available for workers.
 
@@ -60,9 +56,9 @@ var _work_done: float = 0.0
 var _job_board: CastleJobBoard = null
 ## Cached job board reference resolved from castle. We keep it so we can unregister cleanly.
 
-var _reserved_by: WorkSiteWorker = null
-## Which worker (if any) currently has this site reserved.
-## This is optional coordination; your JobBoard may also manage this at a higher level.
+var _slot_markers: Array[Marker2D] = []
+var _slot_for_agent: Dictionary = {} # agent: slot_index
+var _agent_for_slot: Dictionary = {} # slot_index: agent
 
 
 # -------------------------
@@ -72,6 +68,7 @@ var _reserved_by: WorkSiteWorker = null
 func _ready() -> void:
 	## Called when the node enters the scene tree.
 	## If auto_register is enabled, we locate the castle/job board and register this site as available work.
+	_collect_slots()
 	if auto_register and enabled:
 		_resolve_castle_and_register()
 
@@ -106,6 +103,74 @@ func get_work_position() -> Vector2:
 	return base_pos
 
 
+func get_slot_count() -> int:
+	return _slot_markers.size() if _slot_markers.size() > 0 else 1
+
+
+func has_free_slot() -> bool:
+	_cleanup_invalid_agents()
+	if _slot_markers.is_empty():
+		return not _agent_for_slot.has(0)
+	return _agent_for_slot.size() < _slot_markers.size()
+
+
+func can_reserve(agent: Node2D) -> bool:
+	## Optional hook: JobBoard can ask if this site can be reserved by a given agent.
+	if not needs_work():
+		return false
+
+	_cleanup_invalid_agents()
+	if agent != null and _slot_for_agent.has(agent):
+		return true
+	return has_free_slot()
+
+
+func reserve(agent: Node2D) -> bool:
+	## Optional hook: JobBoard calls this when it assigns/reserves the job for an agent.
+	if agent == null or not is_instance_valid(agent):
+		return false
+	if not needs_work():
+		return false
+
+	_cleanup_invalid_agents()
+	if _slot_for_agent.has(agent):
+		return true
+
+	var slot_index := _find_free_slot_index()
+	if slot_index == -1:
+		return false
+
+	_assign_slot(agent, slot_index)
+	return true
+
+
+func unreserve(agent: Node2D) -> void:
+	## Optional hook: JobBoard calls this when releasing the reservation (worker changed jobs, etc.)
+	if agent == null:
+		return
+	if not _slot_for_agent.has(agent):
+		return
+
+	var slot_index: int = _slot_for_agent[agent]
+	_slot_for_agent.erase(agent)
+	_agent_for_slot.erase(slot_index)
+
+
+func get_work_position_for(agent: Node2D) -> Vector2:
+	## Returns the per-agent work position (slot) if reserved.
+	_cleanup_invalid_agents()
+	if agent != null and _slot_for_agent.has(agent):
+		return _get_slot_position(_slot_for_agent[agent])
+
+	if _slot_markers.is_empty():
+		return global_position
+
+	var free_index := _find_free_slot_index()
+	if free_index != -1:
+		return _get_slot_position(free_index)
+	return _get_slot_position(0)
+
+
 func apply_work(amount: float, worker: WorkSiteWorker) -> void:
 	## Called by a worker to contribute progress toward completion.
 	## - amount: how much work this "hit" contributes
@@ -126,38 +191,6 @@ func apply_work(amount: float, worker: WorkSiteWorker) -> void:
 
 
 # -------------------------
-# Optional reservation API (used by JobBoard)
-# -------------------------
-
-func can_reserve(worker: WorkSiteWorker) -> bool:
-	## Optional hook: JobBoard can ask if this site can be reserved by a given worker.
-	## Here we enforce:
-	## - site must still need work
-	## - if allow_multiple_workers is false, only one worker can reserve at a time
-	if not needs_work():
-		return false
-
-	if allow_multiple_workers:
-		return true
-
-	# Single-worker reservation mode:
-	return _reserved_by == null or not is_instance_valid(_reserved_by)
-
-
-func reserve(worker: WorkSiteWorker) -> void:
-	## Optional hook: JobBoard calls this when it assigns/reserves the job for a worker.
-	## If allow_multiple_workers is true, we don't strictly need this.
-	if not allow_multiple_workers:
-		_reserved_by = worker
-
-
-func unreserve(worker: WorkSiteWorker) -> void:
-	## Optional hook: JobBoard calls this when releasing the reservation (worker changed jobs, etc.)
-	## Clears our _reserved_by only if it matches the releasing worker.
-	if _reserved_by == worker:
-		_reserved_by = null
-
-
 # -------------------------
 # Public utility
 # -------------------------
@@ -193,13 +226,80 @@ func set_enabled(new_enabled: bool) -> void:
 	enabled = new_enabled
 	if not enabled:
 		_unregister_from_job_board()
-		_reserved_by = null
+		_clear_all_reservations()
 	elif auto_register:
 		_resolve_castle_and_register()
 
 
 func reset_progress() -> void:
 	_work_done = 0.0
+
+
+func refresh_slots() -> void:
+	_collect_slots()
+
+
+func _collect_slots() -> void:
+	_slot_markers.clear()
+
+	var slots_node: Node = get_node_or_null("Slots")
+	if slots_node != null:
+		_gather_marker_descendants(slots_node, _slot_markers)
+	else:
+		_gather_marker_descendants(self, _slot_markers)
+
+
+func _gather_marker_descendants(root: Node, out: Array[Marker2D]) -> void:
+	for child in root.get_children():
+		if child is Marker2D:
+			out.append(child)
+		_gather_marker_descendants(child, out)
+
+
+func _find_free_slot_index() -> int:
+	if _slot_markers.is_empty():
+		return -1 if _agent_for_slot.has(0) else 0
+
+	for i in range(_slot_markers.size()):
+		if not _agent_for_slot.has(i):
+			return i
+	return -1
+
+
+func _assign_slot(agent: Node2D, slot_index: int) -> void:
+	_slot_for_agent[agent] = slot_index
+	_agent_for_slot[slot_index] = agent
+	if agent is Node:
+		var node_agent: Node = agent
+		var exit_callable := _on_agent_exited.bind(agent)
+		if not node_agent.tree_exited.is_connected(exit_callable):
+			node_agent.tree_exited.connect(exit_callable, CONNECT_ONE_SHOT)
+
+
+func _get_slot_position(slot_index: int) -> Vector2:
+	if _slot_markers.is_empty():
+		return global_position
+	if slot_index < 0 or slot_index >= _slot_markers.size():
+		return global_position
+	var marker := _slot_markers[slot_index]
+	if not is_instance_valid(marker):
+		return global_position
+	return marker.global_position
+
+
+func _cleanup_invalid_agents() -> void:
+	for agent in _slot_for_agent.keys():
+		if agent == null or not is_instance_valid(agent):
+			unreserve(agent)
+
+
+func _clear_all_reservations() -> void:
+	for agent in _slot_for_agent.keys():
+		unreserve(agent)
+
+
+func _on_agent_exited(agent: Node2D) -> void:
+	unreserve(agent)
 
 
 # -------------------------

@@ -88,6 +88,10 @@ func has_task() -> bool:
 	return is_instance_valid(_site)
 
 
+func get_agent() -> Node2D:
+	return agent
+
+
 func return_position() -> Vector2:
 	if is_instance_valid(agent):
 		if agent.has_method("return_position"):
@@ -223,6 +227,8 @@ func _resume_patrol() -> void:
 func _release_job(release_to_board: bool) -> void:
 	if release_to_board and is_instance_valid(_job_board) and is_instance_valid(_site):
 		_job_board.release_job(_site, self)
+	elif is_instance_valid(_site) and _site.has_method("unreserve"):
+		_site.call("unreserve", agent)
 
 	_site = null
 	_work_timer.stop()
@@ -253,6 +259,8 @@ func _unregister_from_board() -> void:
 
 
 func _get_work_position(site: Node2D) -> Vector2:
+	if site != null and site.has_method("get_work_position_for"):
+		return site.call("get_work_position_for", agent)
 	if site != null and site.has_method("get_work_position"):
 		return site.call("get_work_position")
 	return agent.global_position if is_instance_valid(agent) else Vector2.ZERO
