@@ -12,8 +12,9 @@ class_name AgentBase
 @export var attack: Node = null
 @export var interactable: Node = null
 @export var detection: Area2D = null
-@export var castle: Node = null
 @export var tactical: Node = null
+@export var tasker: MinionTasker = null
+@export var castle: Node = null
 @export var current_role: StringName
 
 
@@ -44,6 +45,9 @@ func _connect_all_refs() -> void:
 
 	# Connect signals for TACTICAL node.	
 	_assign_tactical_refs()
+
+	# Connect signals for TASKER node.	
+	_assign_tasker_refs()
 
 	# Connect signals for HEALTH node.	
 	_assign_health_refs()
@@ -79,9 +83,6 @@ func _assign_animation_refs() -> void:
 		return
 
 	animation.set_my_agent(self)
-
-	if _node_has_property(animation, &"tactical"):
-		animation.set("tactical", tactical)
 
 
 func _assign_movement_refs() -> void:
@@ -147,11 +148,16 @@ func _assign_tactical_refs() -> void:
 	if _node_has_property(tactical, &"movement"):
 		tactical.set("movement", movement)
 
-	if _node_has_property(tactical, &"pathfinding"):
-		tactical.set("pathfinding", pathfinding)
 
-	if _node_has_property(tactical, &"animation"):
-		tactical.set("animation", animation)
+func _assign_tasker_refs() -> void:
+	if not is_instance_valid(tasker):
+		return
+
+	if tasker.has_method("set_agent"):
+		tasker.call("set_agent", self)
+
+	if _node_has_property(tasker, &"movement"):
+		tasker.set("movement", movement)
 
 
 func _assign_health_refs() -> void:
@@ -162,14 +168,6 @@ func _assign_health_refs() -> void:
 		health.damaged.connect(_im_damaged)
 	if not health.died.is_connected(_im_dead):
 		health.died.connect(_im_dead)
-
-
-func _clear_tactical_refs() -> void:
-	if is_instance_valid(animation) and _node_has_property(animation, &"tactical"):
-		animation.set("tactical", null)
-
-	if is_instance_valid(detection) and _node_has_property(detection, &"tactical"):
-		detection.set("tactical", null)
 
 
 func _node_has_property(node: Object, property_name: StringName) -> bool:
@@ -217,12 +215,15 @@ func apply_role(role: StringName, p: int) -> void:
 		attack = null
 
 	if is_instance_valid(tactical):
-		if tactical.has_method("has_task") and tactical.call("has_task"):
-			if tactical.has_method("clear_task"):
-				tactical.call("clear_task")
-		_clear_tactical_refs()
 		tactical.queue_free()
 		tactical = null
+
+	if is_instance_valid(tasker):
+		if tasker.has_method("has_task") and tasker.call("has_task"):
+			if tasker.has_method("clear_task"):
+				tasker.call("clear_task")
+		tasker.queue_free()
+		tasker = null
 
 	# --- add new weapon (PackedScene) ---
 	var weapon_scene: PackedScene = UnitRoles.get_weapon(role)
@@ -235,6 +236,12 @@ func apply_role(role: StringName, p: int) -> void:
 	if tactical_script != null:
 		tactical = tactical_script.new()
 		add_child(tactical)
+
+	# --- add new tasker (Script) ---
+	var tasker_script: Script = UnitRoles.get_tasker(role)
+	if tasker_script != null:
+		tasker = tasker_script.new()
+		add_child(tasker)
 
 	# --- visuals ---
 	var frames: SpriteFrames = UnitRoles.get_frames(role, player)
@@ -292,8 +299,8 @@ func set_castle(new_castle: Node) -> void:
 	if is_instance_valid(pathfinding) and _node_has_property(pathfinding, &"assigned_castle"):
 		pathfinding.set("assigned_castle", castle)
 
-	if is_instance_valid(tactical) and tactical.has_method("switch_job_board"):
-		tactical.call("switch_job_board", castle)
+	if is_instance_valid(tasker) and tasker.has_method("switch_job_board"):
+		tasker.call("switch_job_board", castle)
 
 
 #func spawned_this_resource(spawned: Node) -> void:

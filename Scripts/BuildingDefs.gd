@@ -20,7 +20,7 @@ var _visuals := {
 }
 
 var _work_required := {
-	BARRACKS: 10.0,
+	BARRACKS: 20.0,
 }
 
 var _interact_modes := {

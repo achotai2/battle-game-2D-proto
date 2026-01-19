@@ -2,6 +2,7 @@ extends StaticBody2D
 
 @export var player: int = 0
 @export var worker_job_board: CastleJobBoard
+@export var peasant_job_board: CastleJobBoard
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
@@ -13,8 +14,15 @@ func _process(delta: float) -> void:
 	pass
 
 
-func return_job_board() -> CastleJobBoard:
+func return_worker_job_board() -> CastleJobBoard:
 	if is_instance_valid(worker_job_board):
-		return worker_job_board
-	else:
-		return null
+			return worker_job_board
+
+	return null
+
+
+func return_peasant_job_board() -> CastleJobBoard:
+	if is_instance_valid(peasant_job_board):
+			return peasant_job_board
+
+	return null

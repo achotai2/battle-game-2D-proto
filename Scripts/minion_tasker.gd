@@ -230,10 +230,16 @@ func _release_job(release_to_board: bool) -> void:
 
 func _resolve_job_board(new_castle: Node2D) -> CastleJobBoard:
 	if new_castle == null or not is_instance_valid(new_castle):
-		return null
+		return null 
 
-	if new_castle.has_method("return_job_board"):
-		return new_castle.call("return_job_board")
+	var _agent: Node2D = get_parent()
+	if _agent.is_in_group("Workers"):
+		if new_castle.has_method("return_worker_job_board"):
+			return new_castle.call("return_worker_job_board")
+	elif _agent.is_in_group("Peasants"):
+		if new_castle.has_method("return_peasant_job_board"):
+			return new_castle.call("return_peasant_job_board")
+
 	return null
 
 
