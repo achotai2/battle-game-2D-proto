@@ -7,7 +7,7 @@ signal resume_patrol()
 @export var movement: AgentMovement = null
 @export var castle: Node2D = null
 @export var work_range: float = 28.0
-@export var work_interval: float = 0.35
+@export var work_interval: float = 1.0
 @export var work_amount: float = 1.0
 @export_range(0.05, 1.0, 0.05) var think_interval: float = 0.25
 @export var blast_think: bool = true

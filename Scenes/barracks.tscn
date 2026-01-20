@@ -9,12 +9,13 @@
 radius = 47.999996
 height = 110.0
 
-[node name="Barracks" type="StaticBody2D" node_paths=PackedStringArray("visual", "interactable", "worksite")]
+[node name="Barracks" type="StaticBody2D" node_paths=PackedStringArray("visual", "interactable", "worksite", "spawnsite")]
 script = ExtResource("1_3p7p4")
 building_type = &"barracks"
 visual = NodePath("Sprite2D")
 interactable = NodePath("Interactable")
 worksite = NodePath("WorkSite")
+spawnsite = NodePath("SpawnSite")
 state = 0
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
@@ -29,18 +30,33 @@ texture = ExtResource("1_7aoon")
 script = ExtResource("2_coeoc")
 my_boss = NodePath("..")
 auto_register = false
-work_offset = NodePath("../Marker2D")
+work_offset = NodePath("Marker2D")
 metadata/_custom_type_script = "uid://qumqy1omy72i"
+
+[node name="Marker2D" type="Marker2D" parent="WorkSite"]
+position = Vector2(0, 72)
+
+[node name="Marker2D2" type="Marker2D" parent="WorkSite"]
+position = Vector2(-80, 0)
+
+[node name="Marker2D3" type="Marker2D" parent="WorkSite"]
+position = Vector2(80, 0)
+
+[node name="Marker2D6" type="Marker2D" parent="WorkSite"]
+position = Vector2(0, -72)
 
 [node name="SpawnSite" type="Node2D" parent="." node_paths=PackedStringArray("my_boss", "work_offset")]
 script = ExtResource("2_coeoc")
 my_boss = NodePath("..")
 auto_register = false
-work_offset = NodePath("../Marker2D")
+work_offset = NodePath("../WorkSite/Marker2D")
 kind = "Peasants"
 metadata/_custom_type_script = "uid://qumqy1omy72i"
 
+[node name="Marker2D" type="Marker2D" parent="SpawnSite"]
+position = Vector2(0, 72)
+
 [node name="Interactable" parent="." instance=ExtResource("4_87o8n")]
 
-[node name="Marker2D" type="Marker2D" parent="."]
-position = Vector2(0, 64)
+[node name="NavigationObstacle2D" type="NavigationObstacle2D" parent="."]
+radius = 55.0

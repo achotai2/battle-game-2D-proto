@@ -89,6 +89,10 @@ click={
 2d_physics/layer_8="Trees"
 2d_physics/layer_9="Gold"
 2d_physics/layer_10="Sheep"
+avoidance/layer_1="Tilemap"
+avoidance/layer_2="Buildings"
+avoidance/layer_3="Large Minions"
+avoidance/layer_4="Small Minions"
 
 [rendering]
 

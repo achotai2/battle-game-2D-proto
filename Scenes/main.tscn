@@ -563,7 +563,7 @@ position = Vector2(499, 83)
 position = Vector2(0, 1)
 
 [node name="Worker" parent="Units" node_paths=PackedStringArray("castle") instance=ExtResource("4_jjvhh")]
-position = Vector2(605, 135)
+position = Vector2(165, 223)
 player = 1
 castle = NodePath("../../Castle")
 
@@ -576,11 +576,15 @@ castle = NodePath("../../Castle")
 position = Vector2(864, 341)
 castle = NodePath("../../Castle")
 
+[node name="Worker3" parent="Units" node_paths=PackedStringArray("castle") instance=ExtResource("4_jjvhh")]
+position = Vector2(944, 230)
+castle = NodePath("../../Castle")
+
 [node name="Castle" parent="." instance=ExtResource("5_kry3j")]
-position = Vector2(597, 289)
+position = Vector2(501, -191)
 player = 1
 
 [node name="Barracks" parent="." node_paths=PackedStringArray("castle") instance=ExtResource("6_21xkr")]
-position = Vector2(841, 112)
+position = Vector2(753, 176)
 player = 1
 castle = NodePath("../Castle")

@@ -49,7 +49,8 @@ func apply_state(new_state: BuildingState) -> void:
 
 	_update_visuals()
 	_configure_interactable()
-	_configure_worksite()
+	_configure_worksite(worksite)
+	_configure_worksite(spawnsite)
 
 	_connect_signals()
 
@@ -118,17 +119,16 @@ func _configure_interactable() -> void:
 	interactable.icon_type = BuildingDefs.get_interact_mode(building_type, state)
 
 
-func _configure_worksite() -> void:
-	if not is_instance_valid(worksite):
+func _configure_worksite(_worksite: WorkSite) -> void:
+	if not is_instance_valid(_worksite):
 		return
 
 	if state == BuildingState.CONSTRUCTING:
-		worksite.total_work = BuildingDefs.get_work_required(building_type)
-		worksite.reset_progress()
-		worksite.set_enabled(true)
-		worksite.refresh_registration()
+		_worksite.reset_progress()
+		_worksite.set_enabled(true)
+		_worksite.refresh_registration()
 	else:
-		worksite.set_enabled(false)
+		_worksite.set_enabled(false)
 
 
 func _connect_signals() -> void:

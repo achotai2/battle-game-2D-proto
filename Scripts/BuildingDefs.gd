@@ -19,10 +19,6 @@ var _visuals := {
 	},
 }
 
-var _work_required := {
-	BARRACKS: 20.0,
-}
-
 var _interact_modes := {
 	BARRACKS: {
 		BuildingBase.BuildingState.DESTROYED: &"rebuild",
@@ -46,10 +42,6 @@ func get_frames(building_type: StringName, state: int, player: int) -> Resource:
 			return options[player]
 		return options.get(1, null)
 	return null
-
-
-func get_work_required(building_type: StringName) -> float:
-	return _work_required.get(building_type, 0.0)
 
 
 func get_interact_mode(building_type: StringName, state: int) -> StringName:

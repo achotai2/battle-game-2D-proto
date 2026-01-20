@@ -2,7 +2,6 @@ extends Node
 class_name CastleJobBoard
 
 @export var castle: Node2D
-@export var one_minion_per_site: bool = true
 ## Deprecated: slot-based capacity now comes from WorkSite.can_reserve/reserve.
 ## This flag is kept for compatibility but no longer used.
 
@@ -185,7 +184,7 @@ func _reserve(site: WorkSite, agent: Node2D) -> bool:
 		if not bool(site.call("reserve", agent)):
 			return false
 
-	var reserved := _reserved_by.get(site, [])
+	var reserved = _reserved_by.get(site, [])
 	if not reserved.has(agent):
 		reserved.append(agent)
 	_reserved_by[site] = reserved
