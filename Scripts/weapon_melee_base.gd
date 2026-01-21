@@ -85,6 +85,9 @@ func _try_attack() -> void:
 
 
 func _on_attack_delay_timeout() -> void:
+	if is_instance_valid(movement):
+		movement.unfreeze(AgentMovement.LOCK_ATTACK)
+
 	# Single-target strike: apply to the chosen target if still valid and still in range.
 	var t := _current_target
 	if t == null or not is_instance_valid(t):

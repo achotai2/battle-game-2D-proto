@@ -169,6 +169,9 @@ func _on_work_tick() -> void:
 	if can_apply:
 		_apply_work(_site, work_amount)
 
+	if is_instance_valid(movement):
+		movement.unfreeze(AgentMovement.LOCK_WORK)
+
 	if not _site_needs_work(_site):
 		_release_job(true)
 		_set_idle_state()
