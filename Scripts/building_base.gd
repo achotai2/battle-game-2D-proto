@@ -78,7 +78,7 @@ func _on_interacted(interactor: Node2D) -> void:
 	if state == BuildingState.DESTROYED:
 		set_state(BuildingState.CONSTRUCTING)
 	elif state == BuildingState.BUILT:
-		set_state(BuildingState.BUILT)
+		_activate_spawnsite()
 
 
 func _on_work_completed(_site: WorkSite) -> void:
@@ -126,12 +126,20 @@ func _configure_worksite() -> void:
 		worksite.refresh_registration()
 	elif state == BuildingState.BUILT and is_instance_valid(spawnsite):
 		worksite.set_enabled(false)
-		spawnsite.reset_progress()
-		spawnsite.set_enabled(true)
-		spawnsite.refresh_registration()
+		spawnsite.set_enabled(false)
 	else:
 		worksite.set_enabled(false)
 		spawnsite.set_enabled(false)
+
+
+func _activate_spawnsite() -> void:
+	if not is_instance_valid(spawnsite):
+		return
+	if spawnsite.enabled:
+		return
+	spawnsite.reset_progress()
+	spawnsite.set_enabled(true)
+	spawnsite.refresh_registration()
 
 
 func _connect_signals() -> void:
