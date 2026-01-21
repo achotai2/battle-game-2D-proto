@@ -180,6 +180,10 @@ func _finish_interaction() -> void:
 			_current_target.suspend_interact(owner_node)
 			_interaction_timer.stop()
 			interaction_suspended.emit(_current_target)
+
+	if is_instance_valid(movement):
+		movement.unfreeze(AgentMovement.LOCK_INTERACT)
+
 	_refresh_target()
 
 

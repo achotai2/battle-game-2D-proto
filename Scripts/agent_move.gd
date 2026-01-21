@@ -45,19 +45,7 @@ func _ready() -> void:
 # --- Public control API ---
 
 func set_animation(anim: AgentAnimate) -> void:
-	if is_instance_valid(animation):
-		if animation.attackAnimationFinished.is_connected(_on_attack_animation_finished):
-			animation.attackAnimationFinished.disconnect(_on_attack_animation_finished)
-		if animation.interactAnimationFinished.is_connected(_on_interact_animation_finished):
-			animation.interactAnimationFinished.disconnect(_on_interact_animation_finished)
-
 	animation = anim
-
-	if is_instance_valid(animation):
-		if not animation.attackAnimationFinished.is_connected(_on_attack_animation_finished):
-			animation.attackAnimationFinished.connect(_on_attack_animation_finished)
-		if not animation.interactAnimationFinished.is_connected(_on_interact_animation_finished):
-			animation.interactAnimationFinished.connect(_on_interact_animation_finished)
 
 
 func set_pathfinding(value: MinionPathfinding) -> void:
@@ -201,17 +189,6 @@ func set_my_agent(owner_agent: Node2D) -> void:
 	agent = owner_agent
 
 
-func _on_attack_animation_finished() -> void:
-	if _action_state == ACTION_ATTACK:
-		unfreeze(LOCK_ATTACK)
-
-
-func _on_interact_animation_finished() -> void:
-	if _action_state == ACTION_WORK or _action_state == ACTION_INTERACT:
-		if _action_state == ACTION_WORK:
-			unfreeze(LOCK_WORK)
-		else:
-			unfreeze(LOCK_INTERACT)
 
 
 func _notify_moved(vel: Vector2) -> void:
