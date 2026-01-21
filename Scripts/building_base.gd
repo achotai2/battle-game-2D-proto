@@ -21,6 +21,8 @@ func _ready() -> void:
 
 	if is_instance_valid(worksite):
 		worksite.assign_boss(self)
+	if is_instance_valid(spawnsite):
+		spawnsite.assign_boss(self)
 
 	_connect_signals()
 	apply_state(state)
@@ -134,6 +136,9 @@ func _configure_worksite() -> void:
 
 func _activate_spawnsite() -> void:
 	if not is_instance_valid(spawnsite):
+		return
+	if spawnsite.has_method("enqueue_spawn"):
+		spawnsite.call("enqueue_spawn", 1)
 		return
 	if spawnsite.enabled:
 		return
