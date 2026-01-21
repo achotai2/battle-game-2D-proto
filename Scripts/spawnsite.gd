@@ -13,6 +13,8 @@ var _queued_spawns: int = 0
 
 
 func _ready() -> void:
+	if kind != "Peasants":
+		kind = "Peasants"
 	if total_work <= 0.0:
 		total_work = 1.0
 	if total_work != 1.0:
