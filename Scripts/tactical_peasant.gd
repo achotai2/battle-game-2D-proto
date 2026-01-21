@@ -30,7 +30,6 @@ func set_agent(agent: Node2D) -> void:
 	# If we gain a castle at any time, immediately run home.
 	if is_instance_valid(_agent.return_castle()):
 		_timer.stop()
-		_chase_target(_agent.return_castle())
 	elif _target != null:
 		_start_flee()
 
