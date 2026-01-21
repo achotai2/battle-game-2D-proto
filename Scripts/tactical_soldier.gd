@@ -3,7 +3,6 @@ class_name TacticalSoldier
 
 # These are intentionally high-level. The Agent decides how to implement them.
 signal chase_target(target: Node2D)
-signal resume_patrol()
 signal move_to_position(pos: Vector2)
 
 # Optional: you can expose this if you want the agent to change movement state when fighting
@@ -24,22 +23,17 @@ func set_target(t: Node2D) -> void:
 		_chase_target(_target)
 	else:
 		combat_ended.emit()
-		_resume_patrol()
 
 
 func clear_target() -> void:
 	# Called by detection node. Clear the target.
 	_target = null
 	combat_ended.emit()
-	_resume_patrol()
 
 
 func detection_refreshed(t: Node2D) -> void:
 	# Called by detection node.
-	if t != null:
-		set_target(t)
-	else:
-		clear_target()
+	pass
 
 
 func get_target() -> Node2D:
@@ -54,9 +48,3 @@ func _chase_target(target: Node2D) -> void:
 	if is_instance_valid(movement):
 		movement.command_chase_target(target, 5)
 	chase_target.emit(target)
-
-
-func _resume_patrol() -> void:
-	if is_instance_valid(movement):
-		movement.clear_movement_order(6)
-	resume_patrol.emit()

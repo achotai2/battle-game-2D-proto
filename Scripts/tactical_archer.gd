@@ -44,22 +44,17 @@ func set_target(t: Node2D) -> void:
 		_on_tick()
 	else:
 		_timer.stop()
-		_resume_patrol()
 
 
 func clear_target() -> void:
 	# Called by detection node. Clear the target.
 	_target = null
 	_timer.stop()
-	_resume_patrol()
 
 
 func detection_refreshed(t: Node2D) -> void:
 	# Called by detection node.
-	if t != null:
-		set_target(t)
-	else:
-		clear_target()
+	pass
 
 
 func _on_tick() -> void:
@@ -68,7 +63,6 @@ func _on_tick() -> void:
 
 	if _target == null or not is_instance_valid(_target):
 		_timer.stop()
-		_resume_patrol()
 		return
 
 	var my_pos := _agent.global_position
@@ -113,8 +107,3 @@ func _on_tick() -> void:
 func _move_to_position(dest: Vector2) -> void:
 	if is_instance_valid(movement):
 		movement.command_move_to_position(dest, 5)
-
-
-func _resume_patrol() -> void:
-	if is_instance_valid(movement):
-		movement.clear_movement_order(6)

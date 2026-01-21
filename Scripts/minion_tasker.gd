@@ -1,8 +1,6 @@
 extends WorkSiteWorker
 class_name MinionTasker
 
-signal resume_patrol()
-
 @export var agent: Node2D = null
 @export var movement: AgentMovement = null
 @export var castle: Node2D = null
@@ -186,7 +184,6 @@ func _enter_work_state() -> void:
 func _set_idle_state() -> void:
 	_state = State.IDLE
 	_work_timer.stop()
-	_resume_patrol()
 
 
 func _request_job_if_idle() -> void:
@@ -216,12 +213,6 @@ func _hold_position() -> void:
 	if not is_instance_valid(movement):
 		return
 	movement.command_move_velocity(Vector2.ZERO, JOB_PRIORITY)
-
-
-func _resume_patrol() -> void:
-	if is_instance_valid(movement):
-		movement.clear_movement_order(JOB_PRIORITY + 1)
-	resume_patrol.emit()
 
 
 func _release_job(release_to_board: bool) -> void:

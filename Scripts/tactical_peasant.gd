@@ -3,7 +3,6 @@ class_name TacticalPeasant
 
 signal chase_target(target: Node2D)
 signal move_to_position(pos: Vector2)
-signal resume_patrol()
 
 @export var flee_distance: float = 220.0
 @export var flee_margin: float = 99999.0
@@ -34,8 +33,6 @@ func set_agent(agent: Node2D) -> void:
 		_chase_target(_agent.return_castle())
 	elif _target != null:
 		_start_flee()
-	else:
-		_resume_patrol()
 
 
 func set_target(t: Node2D) -> void:
@@ -51,7 +48,6 @@ func set_target(t: Node2D) -> void:
 		_start_flee()
 	else:
 		_timer.stop()
-		_resume_patrol()
 
 
 func clear_target() -> void:
@@ -61,16 +57,11 @@ func clear_target() -> void:
 
 	if is_instance_valid(_agent.return_castle()):
 		_chase_target(_agent.return_castle())
-	else:
-		_resume_patrol()
 
 
 func detection_refreshed(t: Node2D) -> void:
 	# Called by detection node.
-	if t != null:
-		set_target(t)
-	else:
-		clear_target()
+	pass
 
 
 func _start_flee() -> void:
@@ -91,7 +82,6 @@ func _on_flee_tick() -> void:
 
 	if _target == null or not is_instance_valid(_target):
 		_timer.stop()
-		_resume_patrol()
 		return
 
 	var to_enemy: Vector2 = _target.global_position - _agent.global_position
@@ -119,9 +109,3 @@ func _move_to_position(pos: Vector2) -> void:
 	if is_instance_valid(movement):
 		movement.command_move_to_position(pos, 5)
 	move_to_position.emit(pos)
-
-
-func _resume_patrol() -> void:
-	if is_instance_valid(movement):
-		movement.clear_movement_order(6)
-	resume_patrol.emit()

@@ -11,7 +11,7 @@ signal nav_finished
 @export_range(1.0, 200.0, 1.0) var target_repath_distance: float = 250.0
 
 # --- Stuck detection ---
-@export_range(0.1, 2.0, 0.05) var stuck_time: float = 0.5
+@export_range(0.1, 2.0, 0.05) var stuck_time: float = 1.0
 @export_range(0.0, 200.0, 1.0) var min_progress_per_sec: float = 8.0
 
 # --- Arrival ---
@@ -67,22 +67,18 @@ func _ready() -> void:
 # Public API
 # -------------------------
 
-func start_meander() -> void:
-	meander_enabled = true
-	start_patrol()
-
-func stop_meander() -> void:
-	meander_enabled = false
-	# Only clear if we were patrolling; otherwise leave current mode alone
-	if _mode == Mode.PATROL:
-		clear_target()
-
-
 func set_meander(enable: bool) -> void:
+	if enable == meander_enabled:
+		return
+
 	if enable:
-		start_meander()
+		meander_enabled = true
+		start_patrol()
 	else:
-		stop_meander()
+		meander_enabled = false
+		# Only clear if we were patrolling; otherwise leave current mode alone
+		if _mode == Mode.PATROL:
+			clear_target()
 
 
 func set_move_target_position(pos: Vector2) -> void:
