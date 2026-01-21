@@ -49,8 +49,7 @@ func apply_state(new_state: BuildingState) -> void:
 
 	_update_visuals()
 	_configure_interactable()
-	_configure_worksite(worksite)
-	_configure_worksite(spawnsite)
+	_configure_worksite()
 
 	_connect_signals()
 
@@ -79,7 +78,7 @@ func _on_interacted(interactor: Node2D) -> void:
 	if state == BuildingState.DESTROYED:
 		set_state(BuildingState.CONSTRUCTING)
 	elif state == BuildingState.BUILT:
-		pass
+		set_state(BuildingState.BUILT)
 
 
 func _on_work_completed(_site: WorkSite) -> void:
@@ -119,16 +118,20 @@ func _configure_interactable() -> void:
 	interactable.icon_type = BuildingDefs.get_interact_mode(building_type, state)
 
 
-func _configure_worksite(_worksite: WorkSite) -> void:
-	if not is_instance_valid(_worksite):
-		return
-
-	if state == BuildingState.CONSTRUCTING:
-		_worksite.reset_progress()
-		_worksite.set_enabled(true)
-		_worksite.refresh_registration()
+func _configure_worksite() -> void:
+	if state == BuildingState.CONSTRUCTING and is_instance_valid(worksite):
+		spawnsite.set_enabled(false)
+		worksite.reset_progress()
+		worksite.set_enabled(true)
+		worksite.refresh_registration()
+	elif state == BuildingState.BUILT and is_instance_valid(spawnsite):
+		worksite.set_enabled(false)
+		spawnsite.reset_progress()
+		spawnsite.set_enabled(true)
+		spawnsite.refresh_registration()
 	else:
-		_worksite.set_enabled(false)
+		worksite.set_enabled(false)
+		spawnsite.set_enabled(false)
 
 
 func _connect_signals() -> void:

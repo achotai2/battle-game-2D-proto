@@ -581,7 +581,7 @@ position = Vector2(944, 230)
 castle = NodePath("../../Castle")
 
 [node name="Castle" parent="." instance=ExtResource("5_kry3j")]
-position = Vector2(501, -191)
+position = Vector2(477, 337)
 player = 1
 
 [node name="Barracks" parent="." node_paths=PackedStringArray("castle") instance=ExtResource("6_21xkr")]

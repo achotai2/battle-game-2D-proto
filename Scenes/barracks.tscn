@@ -49,7 +49,7 @@ position = Vector2(0, -72)
 script = ExtResource("2_coeoc")
 my_boss = NodePath("..")
 auto_register = false
-work_offset = NodePath("../WorkSite/Marker2D")
+work_offset = NodePath("Marker2D")
 kind = "Peasants"
 metadata/_custom_type_script = "uid://qumqy1omy72i"
 
