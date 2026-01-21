@@ -39,9 +39,9 @@ animation = &"idle"
 
 [node name="NavigationAgent2D" type="NavigationAgent2D" parent="."]
 avoidance_enabled = true
+radius = 50.0
 avoidance_layers = 8
 avoidance_mask = 255
-debug_enabled = true
 
 [node name="AgentAnimate" type="Node" parent="." node_paths=PackedStringArray("sprite")]
 script = ExtResource("2_eqink")

@@ -76,6 +76,9 @@ func _on_target_lost() -> void:
 
 
 func _try_attack() -> void:
+	if is_instance_valid(movement):
+		movement.unfreeze(AgentMovement.LOCK_ATTACK)
+
 	if _attack_paused:
 		return
 	if _current_target == null:
@@ -101,9 +104,6 @@ func _try_attack() -> void:
 
 
 func _on_attack_delay_timeout() -> void:
-	if is_instance_valid(movement):
-		movement.unfreeze(AgentMovement.LOCK_ATTACK)
-
 	# Spawn a single projectile at the chosen target if still valid and still in range.
 	var t := _current_target
 	if t == null or not is_instance_valid(t):
@@ -171,5 +171,4 @@ func _resolve_projectile_parent() -> Node:
 
 
 func attack_animation_finished() -> void:
-	if is_instance_valid(movement):
-		movement.unfreeze(AgentMovement.LOCK_ATTACK)
+	pass

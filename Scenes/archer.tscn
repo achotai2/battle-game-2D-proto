@@ -78,5 +78,6 @@ metadata/_custom_type_script = "uid://drugelqbde4x8"
 
 [node name="NavigationAgent2D" type="NavigationAgent2D" parent="."]
 avoidance_enabled = true
+radius = 50.0
 avoidance_layers = 8
 avoidance_mask = 255

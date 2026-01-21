@@ -42,9 +42,12 @@ func set_player(owner_agent: Node2D) -> void:
 
 func pause_attack() -> void:
 	# Called by controls player node
-	_attack_paused = true
-	cooldown.stop()
-	attack_delay.stop() # prevent firing while player is moving
+	if cooldown.is_stopped():
+		_attack_paused = true
+		cooldown.stop()
+		attack_delay.stop() # prevent firing while player is moving
+		if is_instance_valid(movement):
+			movement.unfreeze(AgentMovement.LOCK_ATTACK)
 
 
 func restart_attack() -> void:
@@ -64,6 +67,9 @@ func _on_target_lost() -> void:
 
 
 func _try_attack() -> void:
+	if is_instance_valid(movement):
+		movement.unfreeze(AgentMovement.LOCK_ATTACK)
+
 	if _attack_paused:
 		return
 	if _current_target == null:
@@ -85,9 +91,6 @@ func _try_attack() -> void:
 
 
 func _on_attack_delay_timeout() -> void:
-	if is_instance_valid(movement):
-		movement.unfreeze(AgentMovement.LOCK_ATTACK)
-
 	# Single-target strike: apply to the chosen target if still valid and still in range.
 	var t := _current_target
 	if t == null or not is_instance_valid(t):
@@ -114,5 +117,4 @@ func _on_attack_delay_timeout() -> void:
 
 
 func attack_animation_finished() -> void:
-	if is_instance_valid(movement):
-		movement.unfreeze(AgentMovement.LOCK_ATTACK)
+	pass

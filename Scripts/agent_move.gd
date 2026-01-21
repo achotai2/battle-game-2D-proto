@@ -98,13 +98,11 @@ func start_attack(target: Node2D) -> bool:
 
 	_action_state = ACTION_ATTACK
 	freeze(LOCK_ATTACK)
-	var started := false
-	if is_instance_valid(animation):
-		started = animation.play_attack(target)
 
-	if not started:
-		unfreeze(LOCK_ATTACK)
-	return started
+	if is_instance_valid(animation):
+		animation.play_attack(target)
+
+	return true
 
 
 func start_work() -> bool:
@@ -130,13 +128,10 @@ func start_interaction() -> bool:
 
 	_action_state = ACTION_INTERACT
 	freeze(LOCK_INTERACT)
-	var started := false
 	if is_instance_valid(animation):
-		started = animation.play_work()
+		animation.play_work()
 
-	if not started:
-		unfreeze(LOCK_INTERACT)
-	return started
+	return true
 
 
 # --- Movement entry points ---
