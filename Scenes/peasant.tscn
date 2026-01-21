@@ -85,3 +85,4 @@ avoidance_enabled = true
 radius = 55.0
 avoidance_layers = 8
 avoidance_mask = 15
+debug_enabled = true

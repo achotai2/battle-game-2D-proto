@@ -4,7 +4,7 @@ class_name MinionTasker
 @export var agent: Node2D = null
 @export var movement: AgentMovement = null
 @export var castle: Node2D = null
-@export var work_range: float = 28.0
+@export var work_range: float = 50.0
 @export var work_interval: float = 1.0
 @export var work_amount: float = 1.0
 @export_range(0.05, 1.0, 0.05) var think_interval: float = 0.25

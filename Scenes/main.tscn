@@ -539,9 +539,9 @@ texture = ExtResource("1_jjgbg")
 sources/0 = SubResource("TileSetAtlasSource_bo1nx")
 
 [sub_resource type="NavigationPolygon" id="NavigationPolygon_fvkhu"]
-vertices = PackedVector2Array(1027.0781, 493.8828, 13.6015625, 482.1172, 41.40625, 18.953125, 1030.9063, 14.046875)
+vertices = PackedVector2Array(1065.6719, -37.21875, 1046.3203, 553.9531, -42.929688, 549.03906, -102.953125, -63.742188)
 polygons = Array[PackedInt32Array]([PackedInt32Array(0, 1, 2, 3)])
-outlines = Array[PackedVector2Array]([PackedVector2Array(32, 9, 1041, 4, 1037, 504, 3, 492)])
+outlines = Array[PackedVector2Array]([PackedVector2Array(-114, -74, 1076, -47, 1056, 564, -52, 559)])
 
 [node name="Main" type="Node2D"]
 script = ExtResource("1_jjvhh")

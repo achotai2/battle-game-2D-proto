@@ -41,6 +41,7 @@ animation = &"idle"
 avoidance_enabled = true
 avoidance_layers = 8
 avoidance_mask = 255
+debug_enabled = true
 
 [node name="AgentAnimate" type="Node" parent="." node_paths=PackedStringArray("sprite")]
 script = ExtResource("2_eqink")

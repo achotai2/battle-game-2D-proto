@@ -127,13 +127,11 @@ func start_work() -> bool:
 
 	_action_state = ACTION_WORK
 	freeze(LOCK_WORK)
-	var started := true
+
 	if is_instance_valid(animation):
 		animation.play_work()
 
-	if not started:
-		unfreeze(LOCK_WORK)
-	return started
+	return true
 
 
 func start_interaction() -> bool:

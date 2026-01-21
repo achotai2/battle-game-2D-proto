@@ -62,3 +62,6 @@ metadata/_custom_type_script = "uid://c2guvnr3dtafe"
 [node name="PlayerInteractor" parent="." node_paths=PackedStringArray("movement") instance=ExtResource("9_yoq75")]
 position = Vector2(0, -1)
 movement = NodePath("../AgentMovement")
+
+[node name="NavigationObstacle2D" type="NavigationObstacle2D" parent="."]
+radius = 41.28

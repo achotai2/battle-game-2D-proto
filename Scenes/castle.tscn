@@ -38,4 +38,6 @@ metadata/_custom_type_script = "uid://ba0yfy3sv1ht2"
 [node name="NavigationObstacle2D2" type="NavigationObstacle2D" parent="."]
 position = Vector2(-48, 72)
 radius = 50.46
-vertices = PackedVector2Array(21, 54, 57, 54, 129, 54, 184, 54, 214, 15, 211, -25, 169, -55, 81, -54, -11, -55, -91, -52, -116, -21, -117, 23, -75, 51, -4, 51)
+vertices = PackedVector2Array(183, -53, 211, -19, 214, 9, 185, 48, -71, 53, -118, 16, -116, -22, -84, -50)
+affect_navigation_mesh = true
+carve_navigation_mesh = true
