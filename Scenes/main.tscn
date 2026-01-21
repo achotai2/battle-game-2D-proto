@@ -538,7 +538,7 @@ texture = ExtResource("1_jjgbg")
 sources/0 = SubResource("TileSetAtlasSource_bo1nx")
 
 [sub_resource type="NavigationPolygon" id="NavigationPolygon_fvkhu"]
-vertices = PackedVector2Array(1027.08, 493.883, 13.6016, 482.117, 41.4063, 18.9531, 1030.91, 14.0469)
+vertices = PackedVector2Array(1027.0781, 493.8828, 13.6015625, 482.1172, 41.40625, 18.953125, 1030.9063, 14.046875)
 polygons = Array[PackedInt32Array]([PackedInt32Array(0, 1, 2, 3)])
 outlines = Array[PackedVector2Array]([PackedVector2Array(32, 9, 1041, 4, 1037, 504, 3, 492)])
 
@@ -572,12 +572,14 @@ position = Vector2(309, 222)
 player = 1
 castle = NodePath("../../Castle")
 
-[node name="Worker2" parent="Units" node_paths=PackedStringArray("castle") instance=ExtResource("4_jjvhh")]
-position = Vector2(864, 341)
+[node name="Peasant2" parent="Units" node_paths=PackedStringArray("castle") instance=ExtResource("7_6bp64")]
+position = Vector2(240, 64)
+player = 1
 castle = NodePath("../../Castle")
 
-[node name="Worker3" parent="Units" node_paths=PackedStringArray("castle") instance=ExtResource("4_jjvhh")]
-position = Vector2(944, 230)
+[node name="Peasant3" parent="Units" node_paths=PackedStringArray("castle") instance=ExtResource("7_6bp64")]
+position = Vector2(80, 80)
+player = 1
 castle = NodePath("../../Castle")
 
 [node name="Castle" parent="." instance=ExtResource("5_kry3j")]

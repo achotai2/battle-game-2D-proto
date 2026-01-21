@@ -1,9 +1,10 @@
-[gd_scene load_steps=6 format=3 uid="uid://so0ngwg160ke"]
+[gd_scene load_steps=7 format=3 uid="uid://so0ngwg160ke"]
 
 [ext_resource type="Script" uid="uid://cjbrsf0fmsehe" path="res://Scripts/building_base.gd" id="1_3p7p4"]
 [ext_resource type="Texture2D" uid="uid://bo1itj23k76yd" path="res://Art/Tiny Swords (Update 010)/Factions/Knights/Buildings/House/House_Construction.png" id="1_7aoon"]
 [ext_resource type="Script" uid="uid://qumqy1omy72i" path="res://Scripts/worksite.gd" id="2_coeoc"]
 [ext_resource type="PackedScene" uid="uid://d1275k0u0fsn" path="res://Scenes/interactable.tscn" id="4_87o8n"]
+[ext_resource type="Script" uid="uid://dqu3s3kqb7wj6" path="res://Scripts/spawnsite.gd" id="5_he61m"]
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_coeoc"]
 radius = 47.999996
@@ -16,7 +17,7 @@ visual = NodePath("Sprite2D")
 interactable = NodePath("Interactable")
 worksite = NodePath("WorkSite")
 spawnsite = NodePath("SpawnSite")
-state = 0
+state = 2
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 rotation = 1.5707964
@@ -45,13 +46,9 @@ position = Vector2(80, 0)
 [node name="Marker2D6" type="Marker2D" parent="WorkSite"]
 position = Vector2(0, -72)
 
-[node name="SpawnSite" type="Node2D" parent="." node_paths=PackedStringArray("my_boss", "work_offset")]
-script = ExtResource("2_coeoc")
-my_boss = NodePath("..")
-auto_register = false
-work_offset = NodePath("Marker2D")
-kind = "Peasants"
-metadata/_custom_type_script = "uid://qumqy1omy72i"
+[node name="SpawnSite" type="Node2D" parent="."]
+script = ExtResource("5_he61m")
+metadata/_custom_type_script = "uid://dqu3s3kqb7wj6"
 
 [node name="Marker2D" type="Marker2D" parent="SpawnSite"]
 position = Vector2(0, 72)

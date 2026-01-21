@@ -12,7 +12,7 @@ signal resume_patrol()
 @export_range(0.05, 1.0, 0.05) var think_interval: float = 0.25
 @export var blast_think: bool = true
 
-const JOB_PRIORITY := 5
+const JOB_PRIORITY := 8
 
 enum State {
 	IDLE,

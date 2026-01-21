@@ -37,8 +37,6 @@ shape = SubResource("CapsuleShape2D_ta2g1")
 sprite_frames = ExtResource("2_fhmuk")
 animation = &"walk"
 
-[node name="NavigationAgent2D" type="NavigationAgent2D" parent="."]
-
 [node name="AgentAnimate" type="Node" parent="." node_paths=PackedStringArray("sprite")]
 script = ExtResource("3_5bpow")
 sprite = NodePath("../AnimatedSprite2D")
@@ -78,8 +76,7 @@ script = ExtResource("9_jhg76")
 movement = NodePath("../AgentMovement")
 metadata/_custom_type_script = "uid://drugelqbde4x8"
 
-[node name="NavigationAgent2D2" type="NavigationAgent2D" parent="."]
+[node name="NavigationAgent2D" type="NavigationAgent2D" parent="."]
 avoidance_enabled = true
-radius = 55.0
 avoidance_layers = 8
-avoidance_mask = 15
+avoidance_mask = 255

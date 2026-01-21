@@ -37,8 +37,6 @@ shape = SubResource("CapsuleShape2D_ta2g1")
 sprite_frames = ExtResource("2_7mdye")
 animation = &"idle"
 
-[node name="NavigationAgent2D" type="NavigationAgent2D" parent="."]
-
 [node name="AgentAnimate" type="Node" parent="." node_paths=PackedStringArray("sprite")]
 script = ExtResource("3_t6mam")
 sprite = NodePath("../AnimatedSprite2D")
@@ -58,7 +56,7 @@ metadata/_custom_type_script = "uid://c2guvnr3dtafe"
 
 [node name="MinionPathfinding" type="Node" parent="." node_paths=PackedStringArray("nav_agent")]
 script = ExtResource("7_8tq67")
-nav_agent = NodePath("../NavigationAgent2D")
+nav_agent = NodePath("../NavigationAgent2D2")
 
 [node name="AgentDetection" type="Area2D" parent="." node_paths=PackedStringArray("my_agent", "tactical")]
 collision_layer = 32

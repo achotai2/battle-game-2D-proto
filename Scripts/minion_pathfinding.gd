@@ -7,11 +7,11 @@ signal nav_finished
 @export var nav_agent: NavigationAgent2D
 
 # --- Repath tuning ---
-@export_range(0.05, 2.0, 0.05) var repath_interval: float = 0.25
-@export_range(1.0, 200.0, 1.0) var target_repath_distance: float = 24.0
+@export_range(0.05, 2.0, 0.05) var repath_interval: float = 2.0
+@export_range(1.0, 200.0, 1.0) var target_repath_distance: float = 250.0
 
 # --- Stuck detection ---
-@export_range(0.1, 2.0, 0.05) var stuck_time: float = 0.35
+@export_range(0.1, 2.0, 0.05) var stuck_time: float = 0.5
 @export_range(0.0, 200.0, 1.0) var min_progress_per_sec: float = 8.0
 
 # --- Arrival ---

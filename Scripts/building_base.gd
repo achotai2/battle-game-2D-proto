@@ -130,8 +130,8 @@ func _configure_worksite() -> void:
 		worksite.set_enabled(false)
 		spawnsite.set_enabled(false)
 	else:
-		worksite.set_enabled(false)
-		spawnsite.set_enabled(false)
+		if is_instance_valid(worksite): worksite.set_enabled(false)
+		if is_instance_valid(spawnsite): spawnsite.set_enabled(false)
 
 
 func _activate_spawnsite() -> void:
