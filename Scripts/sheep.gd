@@ -3,6 +3,7 @@ extends CharacterBody2D
 @export var movement: AgentMovement
 @export var pathfinding: MinionPathfinding
 @export var animate: AgentAnimate
+@export var resource_site: ResourceSite
 @export var despawn_timer: Timer = null
 @export var move_speed: float = 50.0
 @export var hop_radius: float = 100.0
@@ -13,6 +14,9 @@ var patrol_anchor: Node2D = null
 var is_returning: bool = false
 
 func _ready() -> void:
+	if not resource_site:
+		resource_site = get_node_or_null("ResourceSite")
+
 	spawn_position = global_position
 
 	# Create a stationary anchor for the sheep to patrol around
@@ -92,11 +96,8 @@ func _on_despawn_timer_timeout() -> void:
 
 func attack(_attacker: Node) -> void:
 	# Spawn food
-	var food_scene = ResourceSiteDefs.get_scene(ResourceSiteDefs.ResourceType.FOOD)
-	if food_scene:
-		var food = food_scene.instantiate()
-		food.global_position = global_position
-		get_parent().call_deferred("add_child", food)
+	if resource_site:
+		resource_site.spawn()
 
 	queue_free()
 
