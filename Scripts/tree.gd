@@ -11,6 +11,7 @@ enum TreeState { NORMAL, MARKED, CUT }
 @export var resourcesite: ResourceSite
 @export var regrow_timer: Timer
 @export var state: TreeState = TreeState.NORMAL
+@export var regrow: bool = false
 
 var _is_ready: bool = false
 
@@ -22,10 +23,6 @@ func _ready() -> void:
 		worksite.call("assign_boss", self)
 	else:
 		print_debug("worksite does not have function assign_boss")
-	if is_instance_valid(spawnsite) and spawnsite.has_method("assign_boss"):
-		spawnsite.call("assign_boss", self)
-	else:
-		print_debug("spawnsite does not have function assign_boss")
 
 	_connect_signals()
 	apply_state(state)
@@ -68,7 +65,16 @@ func _on_interacted(interactor: Node2D) -> void:
 
 func _on_work_completed(_site: WorkSite) -> void:
 	set_state(TreeState.CUT)
-	regrow_timer.start()
+
+	if is_instance_valid(resourcesite) and resourcesite.has_method("spawn"):
+		resourcesite.call("spawn")
+	else:
+		print_debug("resourcesite does not exist or doesn't have function spawn.")
+
+	_disable_collision()
+
+	if regrow:
+		regrow_timer.start()
 
 
 func _on_work_applied(_site: WorkSite) -> void:
@@ -102,31 +108,12 @@ func _configure_interactable() -> void:
 
 func _configure_worksite() -> void:
 	if state == TreeState.MARKED and is_instance_valid(worksite):
-		if is_instance_valid(spawnsite):
-			spawnsite.set_enabled(false)
 		if is_instance_valid(worksite):
 			worksite.reset_progress()
 			worksite.set_enabled(true)
 			worksite.refresh_registration()
 	else:
 		if is_instance_valid(worksite): worksite.set_enabled(false)
-		if is_instance_valid(spawnsite): spawnsite.set_enabled(false)
-
-
-func _activate_spawnsite() -> void:
-	pass
-	if not is_instance_valid(spawnsite):
-		return
-	if spawnsite.has_method("enqueue_spawn"):
-		spawnsite.call("enqueue_spawn", 1)
-		return
-	else:
-		print_debug("spawnsite does not have function enqueue_spawn")
-	if spawnsite.enabled:
-		return
-	spawnsite.reset_progress()
-	spawnsite.set_enabled(true)
-	spawnsite.refresh_registration()
 
 
 func _connect_signals() -> void:
@@ -147,3 +134,14 @@ func _connect_signals() -> void:
 
 func _on_regrow_timer_timeout() -> void:
 	set_state(TreeState.NORMAL)
+	_enable_collision()
+
+
+func _disable_collision() -> void:
+	$CollisionShape2D.disabled = true
+	$NavigationObstacle2D.avoidance_enabled = false
+
+
+func _enable_collision() -> void:
+	$CollisionShape2D.disabled = false
+	$NavigationObstacle2D.avoidance_enabled = false

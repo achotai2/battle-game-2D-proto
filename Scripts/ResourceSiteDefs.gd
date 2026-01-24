@@ -4,15 +4,17 @@ extends Node
 enum ResourceType {
 	GOLD,
 	FOOD,
+	SHEEP,
 	WOOD,
-	METAL
+	METAL,
 }
 
 # TODO: Create scenes for FOOD, WOOD, and METAL and update the paths below.
 # Current paths are set to null as placeholders.
 const RESOURCES := {
 	ResourceType.GOLD: preload("res://Scenes/Gold.tscn"),
-	ResourceType.FOOD: null, # TODO: preload("res://Scenes/Food.tscn")
+	ResourceType.FOOD: preload("res://Scenes/Food.tscn"),
+	ResourceType.SHEEP: preload("res://Scenes/Sheep.tscn"),
 	ResourceType.WOOD: null, # TODO: preload("res://Scenes/Wood.tscn")
 	ResourceType.METAL: null, # TODO: preload("res://Scenes/Metal.tscn")
 }

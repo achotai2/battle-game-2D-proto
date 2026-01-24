@@ -20,7 +20,7 @@ radius = 500.0
 
 [node name="Worker" type="CharacterBody2D" node_paths=PackedStringArray("health", "movement", "pathfinding", "animation", "detection", "tactical", "tasker", "gold") groups=["Attackable", "Interactable", "Minions", "Workers"]]
 collision_layer = 16
-collision_mask = 159
+collision_mask = 31
 script = ExtResource("1_r0ip0")
 health = NodePath("Health")
 movement = NodePath("AgentMovement")

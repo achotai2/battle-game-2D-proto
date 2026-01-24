@@ -1,9 +1,10 @@
 extends Node2D
 class_name ResourceSite
 
-@export var resource_type: ResourceSiteDefs.ResourceType = ResourceSiteDefs.ResourceType.GOLD
+@export var resource_type: ResourceSiteDefs.ResourceType = ResourceSiteDefs.ResourceType.SHEEP
 @export var resource_amount: int = 1
 @export var spawn_radius: float = 30.0
+
 
 func spawn() -> void:
 	var scene = ResourceSiteDefs.get_scene(resource_type)
