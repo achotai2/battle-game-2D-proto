@@ -131,7 +131,7 @@ shape = SubResource("CircleShape2D_2teul")
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
 sprite_frames = SubResource("SpriteFrames_pwd00")
 animation = &"run"
-frame_progress = 0.7543679
+frame_progress = 0.5144338
 
 [node name="DespawnTimer" type="Timer" parent="."]
 one_shot = true
@@ -140,3 +140,5 @@ one_shot = true
 script = ExtResource("3_ouycb")
 resource_type = 1
 metadata/_custom_type_script = "uid://bk5we0bsn6qwl"
+
+[connection signal="timeout" from="DespawnTimer" to="." method="_on_despawn_timer_timeout"]

@@ -10,6 +10,7 @@ enum TreeState { NORMAL, MARKED, CUT }
 @export var worksite: WorkSite
 @export var resourcesite: ResourceSite
 @export var regrow_timer: Timer
+@export var spawn_timer: Timer
 @export var state: TreeState = TreeState.NORMAL
 @export var regrow: bool = false
 
@@ -145,3 +146,7 @@ func _disable_collision() -> void:
 func _enable_collision() -> void:
 	$CollisionShape2D.disabled = false
 	$NavigationObstacle2D.avoidance_enabled = false
+
+
+func _on_spawn_timer_timeout() -> void:
+	pass # Replace with function body.

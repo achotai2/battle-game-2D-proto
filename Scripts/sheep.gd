@@ -5,3 +5,7 @@ extends CharacterBody2D
 
 func _physics_process(delta: float) -> void:
 	pass
+
+
+func _on_despawn_timer_timeout() -> void:
+	pass # Replace with function body.
