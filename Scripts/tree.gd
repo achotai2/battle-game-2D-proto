@@ -8,7 +8,8 @@ enum TreeState { NORMAL, MARKED, CUT }
 @export var visual: Node
 @export var interactable: Interactable
 @export var worksite: WorkSite
-@export var spawnsite: WorkSite
+@export var resourcesite: ResourceSite
+@export var regrow_timer: Timer
 @export var state: TreeState = TreeState.NORMAL
 
 var _is_ready: bool = false
@@ -67,6 +68,7 @@ func _on_interacted(interactor: Node2D) -> void:
 
 func _on_work_completed(_site: WorkSite) -> void:
 	set_state(TreeState.CUT)
+	regrow_timer.start()
 
 
 func _on_work_applied(_site: WorkSite) -> void:
@@ -141,3 +143,7 @@ func _connect_signals() -> void:
 		if interactable.interaction_finished.is_connected(_on_interacted):
 			interactable.interaction_finished.disconnect(_on_interacted)
 		interactable.interaction_finished.connect(_on_interacted)
+
+
+func _on_regrow_timer_timeout() -> void:
+	set_state(TreeState.NORMAL)

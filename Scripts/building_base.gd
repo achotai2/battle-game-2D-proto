@@ -24,9 +24,9 @@ func _ready() -> void:
 	else:
 		print_debug("worksite does not have function assign_boss")
 	if is_instance_valid(spawnsite) and spawnsite.has_method("assign_boss"):
-		worksite.call("assign_boss", self)
+		spawnsite.call("assign_boss", self)
 	else:
-		print_debug("worksite does not have function assign_boss")
+		print_debug("spawnsite does not have function assign_boss")
 
 	_connect_signals()
 	apply_state(state)
@@ -58,18 +58,6 @@ func apply_state(new_state: BuildingState) -> void:
 	_configure_worksite()
 
 	_connect_signals()
-
-
-func to_destroyed() -> void:
-	set_state(BuildingState.DESTROYED)
-
-
-func to_constructing() -> void:
-	set_state(BuildingState.CONSTRUCTING)
-
-
-func to_built() -> void:
-	set_state(BuildingState.BUILT)
 
 
 func return_castle() -> Node2D:

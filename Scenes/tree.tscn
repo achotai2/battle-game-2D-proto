@@ -108,7 +108,7 @@ animations = [{
 "speed": 5.0
 }]
 
-[node name="Tree" type="StaticBody2D" node_paths=PackedStringArray("visual", "interactable", "worksite")]
+[node name="Tree" type="StaticBody2D" node_paths=PackedStringArray("visual", "interactable", "worksite", "regrow_timer")]
 collision_layer = 128
 collision_mask = 31
 script = ExtResource("1_l3oha")
@@ -116,6 +116,8 @@ building_type = &"tree"
 visual = NodePath("AnimatedSprite2D")
 interactable = NodePath("WorkSite/Interactable")
 worksite = NodePath("WorkSite")
+regrow_timer = NodePath("RegrowTimer")
+state = null
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 shape = SubResource("CircleShape2D_0vwjc")
@@ -148,3 +150,8 @@ position = Vector2(0, -72)
 
 [node name="NavigationObstacle2D" type="NavigationObstacle2D" parent="."]
 vertices = PackedVector2Array(-19, 13, -18, -16, 16, -18, 17, 13)
+
+[node name="RegrowTimer" type="Timer" parent="."]
+one_shot = true
+
+[connection signal="timeout" from="RegrowTimer" to="." method="_on_regrow_timer_timeout"]

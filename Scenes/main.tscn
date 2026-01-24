@@ -1,4 +1,4 @@
-[gd_scene load_steps=15 format=4 uid="uid://denj1nj2jkqg1"]
+[gd_scene load_steps=13 format=4 uid="uid://denj1nj2jkqg1"]
 
 [ext_resource type="Texture2D" uid="uid://b48b8ua5c4hra" path="res://Art/Tiny Swords (Update 010)/Terrain/Ground/Tilemap_Flat.png" id="1_jjgbg"]
 [ext_resource type="Script" uid="uid://6hbmeykuynas" path="res://Scripts/main.gd" id="1_jjvhh"]
@@ -6,11 +6,9 @@
 [ext_resource type="PackedScene" uid="uid://mvfvmj8qom4v" path="res://Scenes/worker.tscn" id="4_jjvhh"]
 [ext_resource type="PackedScene" uid="uid://56ng42k13bnj" path="res://Scenes/castle.tscn" id="5_kry3j"]
 [ext_resource type="PackedScene" uid="uid://so0ngwg160ke" path="res://Scenes/house.tscn" id="6_21xkr"]
-[ext_resource type="PackedScene" uid="uid://dvgilnkmeqdfu" path="res://Scenes/archer.tscn" id="6_ynf5e"]
 [ext_resource type="PackedScene" uid="uid://ctx2ge4w4wad7" path="res://Scenes/peasant.tscn" id="7_6bp64"]
 [ext_resource type="PackedScene" uid="uid://bx0vujr38q8pu" path="res://Scenes/tree.tscn" id="7_344ge"]
 [ext_resource type="PackedScene" uid="uid://boksm60la2s5a" path="res://Scenes/archery_range.tscn" id="8_344ge"]
-[ext_resource type="PackedScene" uid="uid://sy3ke7fhk1uv" path="res://Scenes/soldier.tscn" id="11_d1ilt"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_6bp64"]
 texture = ExtResource("1_jjgbg")
@@ -246,19 +244,5 @@ state = 0
 
 [node name="House" parent="." node_paths=PackedStringArray("castle") instance=ExtResource("6_21xkr")]
 position = Vector2(622, 36)
-player = 1
-castle = NodePath("../Castle")
-
-[node name="Archer" parent="." node_paths=PackedStringArray("castle") instance=ExtResource("6_ynf5e")]
-position = Vector2(585, 519)
-player = 1
-castle = NodePath("../Castle")
-
-[node name="Archer2" parent="." instance=ExtResource("6_ynf5e")]
-position = Vector2(100, 558)
-player = 2
-
-[node name="Soldier" parent="." node_paths=PackedStringArray("castle") instance=ExtResource("11_d1ilt")]
-position = Vector2(809, 537)
 player = 1
 castle = NodePath("../Castle")

@@ -4,7 +4,7 @@
 [ext_resource type="Script" uid="uid://bi15gddmxujcs" path="res://Scripts/agent_tracking.gd" id="2_72ito"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_72ito"]
-radius = 51.0392
+radius = 78.0
 
 [node name="WeaponSword" type="Node2D"]
 script = ExtResource("1_7iax5")
