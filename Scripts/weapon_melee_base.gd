@@ -9,7 +9,6 @@ class_name WeaponMelee
 @export var affects_opposing: bool = true
 @export var affects_neutral: bool = false
 @export var attack_power: int = 10
-@export var animation: AgentAnimate = null
 @export var movement: AgentMovement = null
 
 @onready var tracking: AgentTracking = $AgentTracking
@@ -82,12 +81,9 @@ func _try_attack() -> void:
 	if not attack_delay.is_stopped():
 		return
 
-	cooldown.start()
-	attack_delay.start()
-	if is_instance_valid(movement):
-		movement.start_attack(_current_target)
-	elif is_instance_valid(animation):
-		animation.play_attack(_current_target)
+	if is_instance_valid(movement) and movement.start_attack(_current_target):
+		cooldown.start()
+		attack_delay.start()
 
 
 func _on_attack_delay_timeout() -> void:
@@ -118,3 +114,7 @@ func _on_attack_delay_timeout() -> void:
 
 func attack_animation_finished() -> void:
 	pass
+
+
+func set_movement(m: AgentMovement) -> void:
+	movement = m

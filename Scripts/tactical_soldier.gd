@@ -44,6 +44,10 @@ func set_agent(my_agent: Node2D) -> void:
 	_agent = my_agent
 
 
+func set_movement(m: AgentMovement) -> void:
+	movement = m
+
+
 func _chase_target(target: Node2D) -> void:
 	if is_instance_valid(movement):
 		movement.command_chase_target(target, 5)

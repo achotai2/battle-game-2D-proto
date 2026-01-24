@@ -267,3 +267,7 @@ func _on_nav_finished() -> void:
 
 func _send_desired_velocity(velocity: Vector2) -> void:
 	emit_signal("desired_velocity", velocity)
+
+
+func set_castle(c: Node2D) -> void:
+	assigned_castle = c

@@ -34,6 +34,10 @@ func set_agent(agent: Node2D) -> void:
 		_start_flee()
 
 
+func set_movement(m: AgentMovement) -> void:
+	movement = m
+
+
 func set_target(t: Node2D) -> void:
 	# Called by detection node. Found a target.
 	_target = t if is_instance_valid(t) else null

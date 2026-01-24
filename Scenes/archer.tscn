@@ -1,4 +1,4 @@
-[gd_scene load_steps=12 format=3 uid="uid://dvgilnkmeqdfu"]
+[gd_scene load_steps=13 format=3 uid="uid://dvgilnkmeqdfu"]
 
 [ext_resource type="Script" uid="uid://b3iqpgjb0vtvl" path="res://Scripts/agent_base.gd" id="1_fhmuk"]
 [ext_resource type="SpriteFrames" uid="uid://bgouc0jxjgtus" path="res://Art/SpriteFrames/Archer_Red.tres" id="2_fhmuk"]
@@ -9,6 +9,7 @@
 [ext_resource type="Script" uid="uid://bi15gddmxujcs" path="res://Scripts/agent_tracking.gd" id="8_tcsy7"]
 [ext_resource type="PackedScene" uid="uid://o3i1hye0kspv" path="res://Scenes/weapon_bow.tscn" id="9_fhmuk"]
 [ext_resource type="Script" uid="uid://drugelqbde4x8" path="res://Scripts/tactical_archer.gd" id="9_jhg76"]
+[ext_resource type="PackedScene" uid="uid://c4n5elrxg64hp" path="res://Scenes/GoldHolder.tscn" id="10_jhg76"]
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_ta2g1"]
 radius = 23.0
@@ -17,7 +18,7 @@ height = 74.0
 [sub_resource type="CircleShape2D" id="CircleShape2D_65o65"]
 radius = 500.0
 
-[node name="Archer" type="CharacterBody2D" node_paths=PackedStringArray("health", "movement", "pathfinding", "animation", "attack", "detection", "tactical") groups=["Attackable", "Interactable", "Minions"]]
+[node name="Archer" type="CharacterBody2D" node_paths=PackedStringArray("health", "movement", "pathfinding", "animation", "attack", "detection", "tactical", "gold") groups=["Attackable", "Interactable", "Minions"]]
 collision_layer = 16
 collision_mask = 159
 script = ExtResource("1_fhmuk")
@@ -28,6 +29,7 @@ animation = NodePath("AgentAnimate")
 attack = NodePath("WeaponBow")
 detection = NodePath("AgentDetection")
 tactical = NodePath("TacticalArcher")
+gold = NodePath("GoldHolder")
 current_role = &"archer"
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
@@ -81,3 +83,5 @@ avoidance_enabled = true
 radius = 50.0
 avoidance_layers = 8
 avoidance_mask = 255
+
+[node name="GoldHolder" parent="." instance=ExtResource("10_jhg76")]

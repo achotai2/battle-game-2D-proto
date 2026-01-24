@@ -85,6 +85,8 @@ func _apply_role_to_worker(worker: WorkSiteWorker) -> void:
 	if agent.has_method("apply_role"):
 		agent.call("apply_role", role, player_id)
 		spawn_completed.emit(agent, role, player_id)
+	else:
+		print_debug("agent does not have function apply_role.")
 
 
 func _resolve_spawn_role() -> StringName:
@@ -125,6 +127,8 @@ func _resolve_agent(minion: WorkSiteWorker) -> Node2D:
 		var agent = minion.call("get_agent")
 		if agent is Node2D:
 			return agent
+	else:
+		print_debug("minion does not have function get_agent.")
 
 	for prop in minion.get_property_list():
 		if prop.name == &"agent":

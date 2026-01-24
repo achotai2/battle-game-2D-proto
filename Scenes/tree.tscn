@@ -1,0 +1,150 @@
+[gd_scene load_steps=18 format=3 uid="uid://bx0vujr38q8pu"]
+
+[ext_resource type="Texture2D" uid="uid://dr73w3j5yj2n6" path="res://Art/Tree.png" id="1_0vwjc"]
+[ext_resource type="Script" uid="uid://dw0fsj8gi8e1m" path="res://Scripts/tree.gd" id="1_l3oha"]
+[ext_resource type="Script" uid="uid://qumqy1omy72i" path="res://Scripts/worksite.gd" id="2_rsuno"]
+[ext_resource type="PackedScene" uid="uid://d1275k0u0fsn" path="res://Scenes/interactable.tscn" id="3_l7sa7"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_0vwjc"]
+radius = 16.0
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_rsuno"]
+atlas = ExtResource("1_0vwjc")
+region = Rect2(0, 192, 192, 192)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_l7sa7"]
+atlas = ExtResource("1_0vwjc")
+region = Rect2(192, 192, 192, 192)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_l3oha"]
+atlas = ExtResource("1_0vwjc")
+region = Rect2(0, 384, 192, 192)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_m36md"]
+atlas = ExtResource("1_0vwjc")
+region = Rect2(0, 0, 192, 192)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_q8wpw"]
+atlas = ExtResource("1_0vwjc")
+region = Rect2(192, 0, 192, 192)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_jqx0n"]
+atlas = ExtResource("1_0vwjc")
+region = Rect2(384, 0, 192, 192)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_byqqd"]
+atlas = ExtResource("1_0vwjc")
+region = Rect2(576, 0, 192, 192)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_vqyx3"]
+atlas = ExtResource("1_0vwjc")
+region = Rect2(0, 576, 192, 192)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_wnlik"]
+atlas = ExtResource("1_0vwjc")
+region = Rect2(192, 576, 192, 192)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_81a3x"]
+atlas = ExtResource("1_0vwjc")
+region = Rect2(384, 576, 192, 192)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_obiyg"]
+atlas = ExtResource("1_0vwjc")
+region = Rect2(576, 576, 192, 192)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_0jkly"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_rsuno")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_l7sa7")
+}],
+"loop": false,
+"name": &"chop",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_l3oha")
+}],
+"loop": true,
+"name": &"chopped",
+"speed": 1.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_m36md")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_q8wpw")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_jqx0n")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_byqqd")
+}],
+"loop": true,
+"name": &"idle",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_vqyx3")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_wnlik")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_81a3x")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_obiyg")
+}],
+"loop": true,
+"name": &"idle_marked",
+"speed": 5.0
+}]
+
+[node name="Tree" type="StaticBody2D" node_paths=PackedStringArray("visual", "interactable", "worksite")]
+collision_layer = 128
+collision_mask = 31
+script = ExtResource("1_l3oha")
+building_type = &"tree"
+visual = NodePath("AnimatedSprite2D")
+interactable = NodePath("WorkSite/Interactable")
+worksite = NodePath("WorkSite")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("CircleShape2D_0vwjc")
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+position = Vector2(0, -56)
+sprite_frames = SubResource("SpriteFrames_0jkly")
+animation = &"chop"
+
+[node name="WorkSite" type="Node2D" parent="." node_paths=PackedStringArray("my_boss", "work_offset")]
+script = ExtResource("2_rsuno")
+my_boss = NodePath("")
+auto_register = false
+work_offset = NodePath("Marker2D")
+metadata/_custom_type_script = "uid://qumqy1omy72i"
+
+[node name="Marker2D" type="Marker2D" parent="WorkSite"]
+position = Vector2(0, 72)
+
+[node name="Marker2D2" type="Marker2D" parent="WorkSite"]
+position = Vector2(-80, 0)
+
+[node name="Marker2D3" type="Marker2D" parent="WorkSite"]
+position = Vector2(80, 0)
+
+[node name="Marker2D6" type="Marker2D" parent="WorkSite"]
+position = Vector2(0, -72)
+
+[node name="Interactable" parent="WorkSite" instance=ExtResource("3_l7sa7")]
+
+[node name="NavigationObstacle2D" type="NavigationObstacle2D" parent="."]
+vertices = PackedVector2Array(-19, 13, -18, -16, 16, -18, 17, 13)

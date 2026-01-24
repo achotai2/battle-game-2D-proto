@@ -71,8 +71,12 @@ func unfreeze(reason: StringName = &"generic") -> void:
 	# Called to unfreeze movement.
 	# Can be called by signal from agent animation when a frozen animation is finished.
 	_freeze_locks.erase(reason)
-	if reason == LOCK_ATTACK or reason == LOCK_WORK or reason == LOCK_INTERACT or reason == &"generic":
-		_action_state = ACTION_NONE
+	if ((reason == LOCK_ATTACK and _action_state == ACTION_ATTACK)
+		or (reason == LOCK_WORK and _action_state == ACTION_WORK)
+		or (reason == LOCK_INTERACT and _action_state == ACTION_INTERACT)
+		or reason == &"generic"):
+			_action_state = ACTION_NONE
+			_order_type = OrderType.NONE
 
 
 func clear_freeze_locks(keep: Array[StringName] = []) -> void:
@@ -88,21 +92,6 @@ func debug_freeze_locks() -> Array[StringName]:
 
 func _to_string() -> String:
 	return "AgentMovement locks=%s" % [debug_freeze_locks()]
-
-
-func start_attack(target: Node2D) -> bool:
-	if _action_state != ACTION_NONE and _action_state != ACTION_ATTACK:
-		return false
-	if _action_state == ACTION_ATTACK and is_frozen():
-		return true
-
-	_action_state = ACTION_ATTACK
-	freeze(LOCK_ATTACK)
-
-	if is_instance_valid(animation):
-		animation.play_attack(target)
-
-	return true
 
 
 func start_work() -> bool:
@@ -199,7 +188,7 @@ func tick(delta: float) -> void:
 		move_with_velocity(Vector2.ZERO, delta)
 		return
 
-	if _order_type == OrderType.NONE and can_meander:
+	if _action_state == ACTION_NONE and _order_type == OrderType.NONE and can_meander:
 		_start_self_meander()
 
 	match _order_type:
@@ -217,9 +206,27 @@ func tick(delta: float) -> void:
 			move_with_velocity(Vector2.ZERO, delta)
 
 
-func command_move_to_position(pos: Vector2, priority: int = 5) -> void:
+func start_attack(target: Node2D, priority: int = 5) -> bool:
 	if not _accept_order(priority):
-		return
+		return false
+
+	if _action_state != ACTION_NONE and _action_state != ACTION_ATTACK:
+		return false
+	if _action_state == ACTION_ATTACK and is_frozen():
+		return true
+
+	_action_state = ACTION_ATTACK
+	freeze(LOCK_ATTACK)
+
+	if is_instance_valid(animation):
+		animation.play_attack(target)
+
+	return true
+
+
+func command_move_to_position(pos: Vector2, priority: int = 5) -> bool:
+	if not _accept_order(priority):
+		return false
 
 	_order_type = OrderType.MOVE_TO_POS
 	_order_target_pos = pos
@@ -229,11 +236,13 @@ func command_move_to_position(pos: Vector2, priority: int = 5) -> void:
 	_disable_meander()
 	if is_instance_valid(pathfinding):
 		pathfinding.set_move_target_position(pos)
+		
+	return true
 
 
-func command_chase_target(node: Node2D, priority: int = 5) -> void:
+func command_chase_target(node: Node2D, priority: int = 5) -> bool:
 	if not _accept_order(priority):
-		return
+		return false
 
 	_order_type = OrderType.CHASE_NODE
 	_order_target_node = node
@@ -244,10 +253,12 @@ func command_chase_target(node: Node2D, priority: int = 5) -> void:
 	if is_instance_valid(pathfinding):
 		pathfinding.set_chase_target(node)
 
+	return true
 
-func command_move_velocity(vel: Vector2, priority: int = 5) -> void:
+
+func command_move_velocity(vel: Vector2, priority: int = 5) -> bool:
 	if not _accept_order(priority):
-		return
+		return false
 
 	_order_type = OrderType.RAW_VELOCITY
 	_order_raw_velocity = vel
@@ -258,10 +269,12 @@ func command_move_velocity(vel: Vector2, priority: int = 5) -> void:
 	if is_instance_valid(pathfinding):
 		pathfinding.clear_target()
 
+	return true
 
-func command_player_direction(dir: Vector2, priority: int = 5) -> void:
+
+func command_player_direction(dir: Vector2, priority: int = 5) -> bool:
 	if not _accept_order(priority):
-		return
+		return false
 
 	_order_type = OrderType.PLAYER_DIRECTION
 	_order_direction = dir
@@ -271,6 +284,8 @@ func command_player_direction(dir: Vector2, priority: int = 5) -> void:
 	_disable_meander()
 	if is_instance_valid(pathfinding):
 		pathfinding.clear_target()
+		
+	return true
 
 
 func clear_movement_order(priority: int = 5) -> void:
@@ -278,6 +293,7 @@ func clear_movement_order(priority: int = 5) -> void:
 		return
 
 	_order_type = OrderType.NONE
+	_action_state = ACTION_NONE
 	_order_priority = -1
 	_order_target_pos = Vector2.ZERO
 	_order_target_node = null

@@ -1,4 +1,4 @@
-[gd_scene load_steps=12 format=3 uid="uid://sy3ke7fhk1uv"]
+[gd_scene load_steps=13 format=3 uid="uid://sy3ke7fhk1uv"]
 
 [ext_resource type="Script" uid="uid://b3iqpgjb0vtvl" path="res://Scripts/agent_base.gd" id="1_ta2g1"]
 [ext_resource type="Script" uid="uid://cjjdaf7vlfs4k" path="res://Scripts/agent_animate.gd" id="2_eqink"]
@@ -8,6 +8,7 @@
 [ext_resource type="PackedScene" uid="uid://6it7l8b8yxs" path="res://Scenes/weapon_sword.tscn" id="7_xhcvx"]
 [ext_resource type="Script" uid="uid://cf3jwbm3206s5" path="res://Scripts/minion_pathfinding.gd" id="8_4g45u"]
 [ext_resource type="Script" uid="uid://bi15gddmxujcs" path="res://Scripts/agent_tracking.gd" id="9_dxyvq"]
+[ext_resource type="PackedScene" uid="uid://c4n5elrxg64hp" path="res://Scenes/GoldHolder.tscn" id="10_225og"]
 [ext_resource type="Script" uid="uid://sxvily52588c" path="res://Scripts/tactical_soldier.gd" id="10_fjdoe"]
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_ta2g1"]
@@ -17,10 +18,12 @@ height = 74.0
 [sub_resource type="CircleShape2D" id="CircleShape2D_65o65"]
 radius = 500.0
 
-[node name="Soldier" type="CharacterBody2D" node_paths=PackedStringArray("health", "movement", "pathfinding", "animation", "attack", "detection", "tactical") groups=["Attackable", "Interactable", "Minions"]]
+[node name="Soldier" type="CharacterBody2D" node_paths=PackedStringArray("health", "movement", "pathfinding", "animation", "attack", "detection", "tactical", "gold") groups=["Attackable", "Interactable", "Minions"]]
 collision_layer = 16
 collision_mask = 159
 script = ExtResource("1_ta2g1")
+player = null
+current_role = &"soldier"
 health = NodePath("Health")
 movement = NodePath("AgentMovement")
 pathfinding = NodePath("MinionPathfinding")
@@ -28,7 +31,7 @@ animation = NodePath("AgentAnimate")
 attack = NodePath("WeaponSword")
 detection = NodePath("AgentDetection")
 tactical = NodePath("TacticalSoldier")
-current_role = &"soldier"
+gold = NodePath("GoldHolder")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 shape = SubResource("CapsuleShape2D_ta2g1")
@@ -80,3 +83,5 @@ debug_color = Color(0.498544, 0.546397, 0.554583, 0.42)
 [node name="TacticalSoldier" type="Node" parent="." node_paths=PackedStringArray("movement")]
 script = ExtResource("10_fjdoe")
 movement = NodePath("../AgentMovement")
+
+[node name="GoldHolder" parent="." instance=ExtResource("10_225og")]

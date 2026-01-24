@@ -46,6 +46,10 @@ func set_target(t: Node2D) -> void:
 		_timer.stop()
 
 
+func set_movement(m: AgentMovement) -> void:
+	movement = m
+
+
 func clear_target() -> void:
 	# Called by detection node. Clear the target.
 	_target = null

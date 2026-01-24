@@ -1,9 +1,11 @@
 extends Node
 
 const BARRACKS := &"barracks"
+const HOUSE := &"house"
+const ARCHERY := &"archery_range"
 
 var _visuals := {
-	BARRACKS: {
+	HOUSE: {
 		BuildingBase.BuildingState.DESTROYED: {
 			1: preload("res://Art/Tiny Swords (Update 010)/Factions/Knights/Buildings/House/House_Destroyed.png"),
 			2: preload("res://Art/Tiny Swords (Update 010)/Factions/Knights/Buildings/House/House_Destroyed.png"),
@@ -17,19 +19,65 @@ var _visuals := {
 			2: preload("res://Art/Tiny Swords (Update 010)/Factions/Knights/Buildings/House/House_Red.png"),
 		},
 	},
+	BARRACKS: {
+		BuildingBase.BuildingState.DESTROYED: {
+			1: preload("res://Art/Tiny Swords (Update 010)/Factions/Knights/Buildings/Castle/Castle_Destroyed.png"),
+			2: preload("res://Art/Tiny Swords (Update 010)/Factions/Knights/Buildings/Castle/Castle_Destroyed.png"),
+		},
+		BuildingBase.BuildingState.CONSTRUCTING: {
+			1: preload("res://Art/Tiny Swords (Update 010)/Factions/Knights/Buildings/Castle/Castle_Construction.png"),
+			2: preload("res://Art/Tiny Swords (Update 010)/Factions/Knights/Buildings/Castle/Castle_Construction.png"),
+		},
+		BuildingBase.BuildingState.BUILT: {
+			1: preload("res://Art/Tiny Swords (Update 010)/Factions/Knights/Buildings/Castle/Castle_Blue.png"),
+			2: preload("res://Art/Tiny Swords (Update 010)/Factions/Knights/Buildings/Castle/Castle_Red.png"),
+		},
+	},
+	ARCHERY: {
+		BuildingBase.BuildingState.DESTROYED: {
+			1: preload("res://Art/Tiny Swords (Update 010)/Factions/Goblins/Buildings/Wood_House/Goblin_House_Destroyed.png"),
+			2: preload("res://Art/Tiny Swords (Update 010)/Factions/Goblins/Buildings/Wood_House/Goblin_House_Destroyed.png"),
+		},
+		BuildingBase.BuildingState.CONSTRUCTING: {
+			1: preload("res://Art/Tiny Swords (Update 010)/Factions/Knights/Buildings/House/House_Construction.png"),
+			2: preload("res://Art/Tiny Swords (Update 010)/Factions/Knights/Buildings/House/House_Construction.png"),
+		},
+		BuildingBase.BuildingState.BUILT: {
+			1: preload("res://Art/Tiny Swords (Update 010)/Factions/Goblins/Buildings/Wood_House/Goblin_House.png"),
+			2: preload("res://Art/Tiny Swords (Update 010)/Factions/Goblins/Buildings/Wood_House/Goblin_House.png"),
+		},
+	},
 }
 
 var _interact_modes := {
+	HOUSE: {
+		BuildingBase.BuildingState.DESTROYED: &"rebuild",
+		BuildingBase.BuildingState.CONSTRUCTING: &"",
+		BuildingBase.BuildingState.BUILT: &"spawn",
+	},
 	BARRACKS: {
 		BuildingBase.BuildingState.DESTROYED: &"rebuild",
 		BuildingBase.BuildingState.CONSTRUCTING: &"",
 		BuildingBase.BuildingState.BUILT: &"spawn",
-	}
+	},
+	ARCHERY: {
+		BuildingBase.BuildingState.DESTROYED: &"rebuild",
+		BuildingBase.BuildingState.CONSTRUCTING: &"",
+		BuildingBase.BuildingState.BUILT: &"spawn",
+	},
 }
 
 var _spawn_configs := {
+	HOUSE: {
+		"unit_type": "worker",
+		"cooldown": 1.0,
+	},
 	BARRACKS: {
-		"unit_type": "Soldier",
+		"unit_type": "soldier",
+		"cooldown": 1.0,
+	},
+	ARCHERY: {
+		"unit_type": "archer",
 		"cooldown": 1.0,
 	},
 }

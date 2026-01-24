@@ -52,6 +52,12 @@ func set_agent(my_agent: Node2D) -> void:
 	agent = my_agent
 	if is_instance_valid(agent) and agent.has_method("return_castle"):
 		set_castle(agent.call("return_castle"))
+	else:
+		print_debug("agent does not have function return_castle.")
+
+
+func set_movement(m: AgentMovement) -> void:
+	movement = m
 
 
 func set_castle(new_castle: Node2D) -> void:
@@ -65,9 +71,9 @@ func set_castle(new_castle: Node2D) -> void:
 	_job_board = _resolve_job_board(castle)
 	if is_instance_valid(_job_board):
 		if _job_board.has_method("register_minion"):
-			_job_board.register_minion(self)
-		elif _job_board.has_method("register_worker"):
-			_job_board.register_worker(self)
+			_job_board.call("register_minion", self)
+		else:
+			print_debug("job_board does not have function register_minion.")
 
 	_state = State.IDLE
 	_request_job_if_idle()
@@ -94,6 +100,9 @@ func return_position() -> Vector2:
 	if is_instance_valid(agent):
 		if agent.has_method("return_position"):
 			return agent.call("return_position")
+		else:
+			print_debug("agent does not have function return_positon.")
+
 		return agent.global_position
 	return Vector2.ZERO
 
@@ -188,6 +197,9 @@ func _set_idle_state() -> void:
 	_state = State.IDLE
 	_work_timer.stop()
 
+	if is_instance_valid(movement):
+		movement.unfreeze(AgentMovement.LOCK_WORK)
+
 
 func _request_job_if_idle() -> void:
 	if _state != State.IDLE:
@@ -223,7 +235,18 @@ func _release_job(release_to_board: bool) -> void:
 		_job_board.release_job(_site, self)
 	elif is_instance_valid(_site) and _site.has_method("unreserve"):
 		_site.call("unreserve", agent)
+	else:
+		print_debug("release job failed:")
+		if not release_to_board:
+			print_debug("   release_to_board not valid")
+		if not is_instance_valid(_job_board):
+			print_debug("   _job_board not valid")
+		if not is_instance_valid(_site):
+			print_debug("   _site not valid")
+		if is_instance_valid(_site) and not _site.has_method("unreserve"):
+			print_debug("   _site does not have function unreserve")
 
+	_set_idle_state()
 	_site = null
 	_work_timer.stop()
 
@@ -236,9 +259,13 @@ func _resolve_job_board(new_castle: Node2D) -> CastleJobBoard:
 	if _agent.is_in_group("Workers"):
 		if new_castle.has_method("return_worker_job_board"):
 			return new_castle.call("return_worker_job_board")
+		else:
+			print_debug("new_castle does not have function return_worker_job_board.")
 	elif _agent.is_in_group("Peasants"):
 		if new_castle.has_method("return_peasant_job_board"):
 			return new_castle.call("return_peasant_job_board")
+		else:
+			print_debug("new_castle does not have function return_peasant_job_board.")
 
 	return null
 
@@ -246,17 +273,24 @@ func _resolve_job_board(new_castle: Node2D) -> CastleJobBoard:
 func _unregister_from_board() -> void:
 	if is_instance_valid(_job_board):
 		if _job_board.has_method("unregister_minion"):
-			_job_board.unregister_minion(self)
-		elif _job_board.has_method("unregister_worker"):
-			_job_board.unregister_worker(self)
+			_job_board.call("unregister_minion", self)
+		else:
+			print_debug("_job_board does not have function unregister_minion.")
 	_job_board = null
+	_set_idle_state()
 
 
 func _get_work_position(site: Node2D) -> Vector2:
 	if site != null and site.has_method("get_work_position_for"):
 		return site.call("get_work_position_for", agent)
+	else:
+		print_debug("site does not have function get_work_position_for")
+
 	if site != null and site.has_method("get_work_position"):
 		return site.call("get_work_position")
+	else:
+		print_debug("site does not have function get_work_position")
+
 	return agent.global_position if is_instance_valid(agent) else Vector2.ZERO
 
 

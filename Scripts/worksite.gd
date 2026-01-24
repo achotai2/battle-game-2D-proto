@@ -17,6 +17,9 @@ class_name WorkSite
 # Emitted once, when total work has been completed.
 signal work_completed(site: WorkSite)
 
+# Emitted when work is applied to site.
+signal work_applied(site: WorkSite)
+
 # -------------------------
 # Editor / tuning variables
 # -------------------------
@@ -186,6 +189,8 @@ func apply_work(amount: float, worker: WorkSiteWorker) -> void:
 	var safe_amount: float = maxf(amount, 0.0)
 	_work_done = minf(total_work, _work_done + safe_amount)
 
+	work_applied.emit(self)
+
 	if not needs_work():
 		_complete()
 
@@ -336,6 +341,8 @@ func _get_castle_from_parent() -> Node2D:
 		var c = my_boss.call("return_castle")
 		if c is Node2D:
 			return c
+	else:
+		print_debug("my_boss does not have function return_castle.")
 
 	# Convention B: property
 	#var prop = my_boss.get("castle")
@@ -354,9 +361,13 @@ func _resolve_job_board(castle: Node2D) -> CastleJobBoard:
 	if kind == "Workers":
 		if castle.has_method("return_worker_job_board"):
 			return castle.call("return_worker_job_board")
+		else:
+			print_debug("castle does not have function return_worker_job_board.")
 	elif kind == "Peasants":
 		if castle.has_method("return_peasant_job_board"):
 			return castle.call("return_peasant_job_board")
+		else:
+			print_debug("castle does not have function return_peasant_job_board.")
 
 	return null
 

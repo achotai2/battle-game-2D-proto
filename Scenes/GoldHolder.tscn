@@ -1,0 +1,30 @@
+[gd_scene load_steps=4 format=3 uid="uid://c4n5elrxg64hp"]
+
+[ext_resource type="Script" uid="uid://cuh7wlntlvlvr" path="res://Scripts/GoldHolder.gd" id="1_88xe4"]
+[ext_resource type="PackedScene" uid="uid://wwdody3hxtjl" path="res://Scenes/Gold.tscn" id="2_18nks"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_88xe4"]
+radius = 98.0
+
+[node name="GoldHolder" type="Area2D" node_paths=PackedStringArray("_patience_timer", "_gold_gone_timer")]
+collision_layer = 32
+collision_mask = 1023
+script = ExtResource("1_88xe4")
+gold_scene = ExtResource("2_18nks")
+_patience_timer = NodePath("DeliveryPatience")
+_gold_gone_timer = NodePath("GoldGone")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("CircleShape2D_88xe4")
+
+[node name="DeliveryPatience" type="Timer" parent="."]
+wait_time = 5.0
+one_shot = true
+
+[node name="GoldGone" type="Timer" parent="."]
+wait_time = 2.0
+one_shot = true
+
+[connection signal="body_entered" from="." to="." method="_on_body_entered"]
+[connection signal="timeout" from="DeliveryPatience" to="." method="_on_delivery_patience_timeout"]
+[connection signal="timeout" from="GoldGone" to="." method="_on_gold_gone_timeout"]

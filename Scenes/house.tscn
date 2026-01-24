@@ -1,8 +1,8 @@
-[gd_scene load_steps=7 format=3 uid="uid://ra0fj2eqns6d"]
+[gd_scene load_steps=7 format=3 uid="uid://so0ngwg160ke"]
 
 [ext_resource type="Script" uid="uid://cjbrsf0fmsehe" path="res://Scripts/building_base.gd" id="1_3p7p4"]
+[ext_resource type="Texture2D" uid="uid://bo1itj23k76yd" path="res://Art/Tiny Swords (Update 010)/Factions/Knights/Buildings/House/House_Construction.png" id="1_7aoon"]
 [ext_resource type="Script" uid="uid://qumqy1omy72i" path="res://Scripts/worksite.gd" id="2_coeoc"]
-[ext_resource type="Texture2D" uid="uid://fmdpglm25048" path="res://Art/Tiny Swords (Update 010)/Factions/Knights/Buildings/Castle/Castle_Destroyed.png" id="2_he61m"]
 [ext_resource type="PackedScene" uid="uid://d1275k0u0fsn" path="res://Scenes/interactable.tscn" id="4_87o8n"]
 [ext_resource type="Script" uid="uid://dqu3s3kqb7wj6" path="res://Scripts/spawnsite.gd" id="5_he61m"]
 
@@ -10,9 +10,9 @@
 radius = 47.999996
 height = 110.0
 
-[node name="Barracks" type="StaticBody2D" node_paths=PackedStringArray("visual", "interactable", "worksite", "spawnsite")]
+[node name="House" type="StaticBody2D" node_paths=PackedStringArray("visual", "interactable", "worksite", "spawnsite")]
 script = ExtResource("1_3p7p4")
-building_type = &"barracks"
+building_type = &"house"
 visual = NodePath("Sprite2D")
 interactable = NodePath("Interactable")
 worksite = NodePath("WorkSite")
@@ -24,9 +24,8 @@ rotation = 1.5707964
 shape = SubResource("CapsuleShape2D_coeoc")
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
-position = Vector2(-0.49996984, -9.536743e-07)
-scale = Vector2(0.359375, 0.359375)
-texture = ExtResource("2_he61m")
+position = Vector2(0, -36)
+texture = ExtResource("1_7aoon")
 
 [node name="WorkSite" type="Node2D" parent="." node_paths=PackedStringArray("my_boss", "work_offset")]
 script = ExtResource("2_coeoc")
@@ -49,6 +48,7 @@ position = Vector2(0, -72)
 
 [node name="SpawnSite" type="Node2D" parent="."]
 script = ExtResource("5_he61m")
+spawn_role = &"worker"
 metadata/_custom_type_script = "uid://dqu3s3kqb7wj6"
 
 [node name="Marker2D" type="Marker2D" parent="SpawnSite"]

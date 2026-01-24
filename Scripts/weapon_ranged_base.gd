@@ -17,7 +17,6 @@ class_name WeaponRanged
 # If it's invalid, we will fall back to current_scene.
 @export var projectile_speed: float = 700.0
 @export var attack_power: int = 10
-@export var animation: AgentAnimate = null
 @export var movement: AgentMovement = null
 
 @onready var tracking: AgentTracking = $AgentTracking
@@ -95,12 +94,9 @@ func _try_attack() -> void:
 	if projectile_scene == null:
 		return
 
-	cooldown.start()
-	attack_delay.start()
-	if is_instance_valid(movement):
-		movement.start_attack(_current_target)
-	elif is_instance_valid(animation):
-		animation.play_attack(_current_target)
+	if is_instance_valid(movement) and movement.start_attack(_current_target):
+		cooldown.start()
+		attack_delay.start()
 
 
 func _on_attack_delay_timeout() -> void:
@@ -142,7 +138,11 @@ func _on_attack_delay_timeout() -> void:
 	atk.attacker = _owner_agent
 	atk.source = self
 
-	proj.call("init", spawn_pos, t.global_position, projectile_speed, atk)
+	if proj.has_method("init"):
+		proj.call("init", spawn_pos, t.global_position, projectile_speed, atk)
+	else:
+		print_debug("projectile does not have function init.")
+
 
 
 func _get_spawn_position() -> Vector2:
@@ -172,3 +172,7 @@ func _resolve_projectile_parent() -> Node:
 
 func attack_animation_finished() -> void:
 	pass
+
+
+func set_movement(m: AgentMovement) -> void:
+	movement = m

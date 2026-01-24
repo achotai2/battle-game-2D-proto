@@ -59,6 +59,10 @@ func set_myself(agent: Node2D) -> void:
 	_reselect_target()
 
 
+func set_tactical(t: Node) -> void:
+	tactical = t
+
+
 func get_target() -> Node2D:
 	return _current_target
 
@@ -245,8 +249,13 @@ func _health_value(n: Node) -> float:
 	# Support either return_health() or get_health()
 	if h.has_method("return_health"):
 		return float(h.call("return_health"))
+	else:
+		print_debug("h does not have function return_health")
+
 	if h.has_method("get_health"):
 		return float(h.call("get_health"))
+	else:
+		print_debug("h does not have function get_health")
 
 	return INF
 
@@ -254,11 +263,15 @@ func _health_value(n: Node) -> float:
 func _notify_tactical_target_changed(target: Node2D) -> void:
 	if is_instance_valid(tactical) and tactical.has_method("set_target"):
 		tactical.call("set_target", target)
+	else:
+		print_debug("tactical does not have function set_target")
 
 
 func _notify_tactical_target_lost() -> void:
 	if is_instance_valid(tactical) and tactical.has_method("clear_target"):
 		tactical.call("clear_target")
+	else:
+		print_debug("tactical does not have function clear_target or does not exist")
 
 
 func _notify_tactical_target_refreshed(target: Node2D) -> void:

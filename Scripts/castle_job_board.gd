@@ -163,6 +163,8 @@ func _pick_best_site_for_minion(minion: WorkSiteWorker, agent: Node2D, excluded_
 		if site.has_method("can_reserve"):
 			if not bool(site.call("can_reserve", agent)):
 				continue
+		else:
+			print_debug("site does not have function can_reserve")
 
 		var wp := _get_site_pos(site, agent)
 		var d2 : float = minion.return_position().distance_squared_to(wp)
@@ -183,6 +185,8 @@ func _reserve(site: WorkSite, agent: Node2D) -> bool:
 	if site.has_method("reserve"):
 		if not bool(site.call("reserve", agent)):
 			return false
+	else:
+		print_debug("site does not have function reserve")
 
 	var reserved = _reserved_by.get(site, [])
 	if not reserved.has(agent):
@@ -198,7 +202,17 @@ func _release_site(site: WorkSite) -> void:
 		if is_instance_valid(site) and site.has_method("unreserve"):
 			for agent in agents:
 				if is_instance_valid(agent):
-					site.call("unreserve", agent)
+					if is_instance_valid(site) and site.has_method("unreserve"):
+						site.call("unreserve", agent)
+					else:
+						print_debug("site doesn't exist or doesnt have function unreserve.")
+					if is_instance_valid(agent.tasker) and agent.tasker.has_method("clear_task"):
+						agent.tasker.call("clear_task")
+					else:
+						print_debug("agent doesn't exist or doesnt have function clear_task.")
+			
+		else:
+			print_debug("site does not exist or does not have function unreserve")
 
 
 func _release_reservation(site: WorkSite, agent: Node2D) -> void:
@@ -206,10 +220,14 @@ func _release_reservation(site: WorkSite, agent: Node2D) -> void:
 		return
 	var agents: Array = _reserved_by[site]
 	var idx := agents.find(agent)
+
 	if idx != -1:
 		agents.remove_at(idx)
 		if is_instance_valid(site) and site.has_method("unreserve"):
 			site.call("unreserve", agent)
+		else:
+			print_debug("site does not exist or does not have function unreserve")
+
 	if agents.is_empty():
 		_reserved_by.erase(site)
 	else:
@@ -242,6 +260,8 @@ func _site_needs_work(site: WorkSite) -> bool:
 func _get_site_pos(site: WorkSite, agent: Node2D) -> Vector2:
 	if site.has_method("get_work_position_for"):
 		return site.call("get_work_position_for", agent)
+	else:
+		print_debug("site does not have function get_work_position_for")
 	return site.get_work_position()
 
 

@@ -27,6 +27,14 @@ func set_interactor(value: PlayerInteractor) -> void:
 	_bind_interactor()
 
 
+func set_attackNode(a: Node) -> void:
+	attackNode = a
+
+
+func set_movement(m: AgentMovement) -> void:
+	movement = m
+
+
 func _bind_interactor() -> void:
 	if is_instance_valid(interactor):
 		if not interactor.interaction_started.is_connected(_on_interaction_started):
