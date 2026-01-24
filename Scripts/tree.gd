@@ -31,9 +31,8 @@ func _ready() -> void:
 	if is_instance_valid(spawn_timer):
 		# Stagger start
 		spawn_timer.stop()
-		var stagger_time = randf_range(0.0, 10.0)
-		await get_tree().create_timer(stagger_time).timeout
-		spawn_timer.start()
+		var stagger_time = randf_range(0.0, 5.0)
+		spawn_timer.start(stagger_time)
 
 
 func set_castle(c: Node2D) -> void:
@@ -78,6 +77,8 @@ func _on_work_completed(_site: WorkSite) -> void:
 		resourcesite.call("spawn")
 	else:
 		print_debug("resourcesite does not exist or doesn't have function spawn.")
+
+	spawn_timer.stop()
 
 	_disable_collision()
 

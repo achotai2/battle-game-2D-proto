@@ -130,6 +130,7 @@ movement = NodePath("AgentMovement")
 pathfinding = NodePath("MinionPathfinding")
 animate = NodePath("AgentAnimate")
 despawn_timer = NodePath("DespawnTimer")
+hop_radius = 300.0
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 shape = SubResource("CircleShape2D_2teul")

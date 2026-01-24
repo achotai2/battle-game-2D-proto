@@ -212,37 +212,53 @@ position = Vector2(0, 1)
 [node name="Worker" parent="Units" node_paths=PackedStringArray("castle") instance=ExtResource("4_jjvhh")]
 position = Vector2(794, 143)
 player = 1
-castle = NodePath("../../Castle")
+castle = NodePath("../../Buildings/Castle")
 
 [node name="Peasant" parent="Units" node_paths=PackedStringArray("castle") instance=ExtResource("7_6bp64")]
 position = Vector2(180, 55)
 player = 1
-castle = NodePath("../../Castle")
+castle = NodePath("../../Buildings/Castle")
 
-[node name="Castle" parent="." instance=ExtResource("5_kry3j")]
-position = Vector2(246, 289)
-
-[node name="Peasant" parent="." node_paths=PackedStringArray("castle") instance=ExtResource("7_6bp64")]
+[node name="Peasant2" parent="Units" node_paths=PackedStringArray("castle") instance=ExtResource("7_6bp64")]
 position = Vector2(463, 456)
 player = 1
-castle = NodePath("../Castle")
+castle = NodePath("../../Buildings/Castle")
 
-[node name="Tree" parent="." node_paths=PackedStringArray("castle") instance=ExtResource("7_344ge")]
-position = Vector2(614, 340)
-castle = NodePath("../Castle")
-
-[node name="Worker" parent="." node_paths=PackedStringArray("castle") instance=ExtResource("4_jjvhh")]
+[node name="Worker2" parent="Units" node_paths=PackedStringArray("castle") instance=ExtResource("4_jjvhh")]
 position = Vector2(828, 317)
 player = 1
-castle = NodePath("../Castle")
+castle = NodePath("../../Buildings/Castle")
 
-[node name="ArcheryRange" parent="." node_paths=PackedStringArray("castle") instance=ExtResource("8_344ge")]
+[node name="Trees" type="Node2D" parent="."]
+
+[node name="Tree2" parent="Trees" node_paths=PackedStringArray("castle") instance=ExtResource("7_344ge")]
+position = Vector2(1062, -20)
+castle = NodePath("../../Buildings/Castle")
+
+[node name="Tree3" parent="Trees" node_paths=PackedStringArray("castle") instance=ExtResource("7_344ge")]
+position = Vector2(1006, 60)
+castle = NodePath("../../Buildings/Castle")
+
+[node name="Tree4" parent="Trees" node_paths=PackedStringArray("castle") instance=ExtResource("7_344ge")]
+position = Vector2(942, -20)
+castle = NodePath("../../Buildings/Castle")
+
+[node name="Tree5" parent="Trees" node_paths=PackedStringArray("castle") instance=ExtResource("7_344ge")]
+position = Vector2(854, 60)
+castle = NodePath("../../Buildings/Castle")
+
+[node name="Buildings" type="Node2D" parent="."]
+
+[node name="ArcheryRange" parent="Buildings" node_paths=PackedStringArray("castle") instance=ExtResource("8_344ge")]
 position = Vector2(824, 406)
 player = 1
 castle = NodePath("../Castle")
 state = 0
 
-[node name="House" parent="." node_paths=PackedStringArray("castle") instance=ExtResource("6_21xkr")]
+[node name="House" parent="Buildings" node_paths=PackedStringArray("castle") instance=ExtResource("6_21xkr")]
 position = Vector2(622, 36)
 player = 1
 castle = NodePath("../Castle")
+
+[node name="Castle" parent="Buildings" instance=ExtResource("5_kry3j")]
+position = Vector2(246, 289)
