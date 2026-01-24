@@ -73,7 +73,10 @@ func agent_moved(velocity: Vector2) -> void:
 # Called by Agent when movement occurs, to run animation.
 	if sprite and not attacking and not working:
 		if velocity != Vector2(0, 0):
-			sprite.play("walk")
+			if sprite.sprite_frames.has_animation("walk"):
+				sprite.play("walk")
+			elif sprite.sprite_frames.has_animation("run"):
+				sprite.play("run")
 
 			if velocity.x < 0:
 				sprite.flip_h = true
