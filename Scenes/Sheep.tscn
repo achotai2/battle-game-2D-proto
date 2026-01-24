@@ -1,7 +1,8 @@
-[gd_scene load_steps=19 format=3 uid="uid://b2iojfyjvedm7"]
+[gd_scene load_steps=20 format=3 uid="uid://b2iojfyjvedm7"]
 
 [ext_resource type="Texture2D" uid="uid://chavuk16uvdxt" path="res://Art/Tiny Swords (Update 010)/Resources/Sheep/HappySheep_All.png" id="1_2teul"]
 [ext_resource type="Script" uid="uid://jea8uqh0mycn" path="res://Scripts/sheep.gd" id="1_4j78d"]
+[ext_resource type="Script" uid="uid://bk5we0bsn6qwl" path="res://Scripts/resource_site.gd" id="3_ouycb"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_2teul"]
 radius = 20.0
@@ -130,7 +131,12 @@ shape = SubResource("CircleShape2D_2teul")
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
 sprite_frames = SubResource("SpriteFrames_pwd00")
 animation = &"run"
-frame_progress = 0.30250844
+frame_progress = 0.7543679
 
 [node name="DespawnTimer" type="Timer" parent="."]
 one_shot = true
+
+[node name="ResourceSite" type="Node2D" parent="."]
+script = ExtResource("3_ouycb")
+resource_type = 1
+metadata/_custom_type_script = "uid://bk5we0bsn6qwl"
