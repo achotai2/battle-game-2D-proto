@@ -28,6 +28,13 @@ func _ready() -> void:
 	_connect_signals()
 	apply_state(state)
 
+	if is_instance_valid(spawn_timer):
+		# Stagger start
+		spawn_timer.stop()
+		var stagger_time = randf_range(0.0, 10.0)
+		await get_tree().create_timer(stagger_time).timeout
+		spawn_timer.start()
+
 
 func set_castle(c: Node2D) -> void:
 	castle = c
@@ -149,4 +156,9 @@ func _enable_collision() -> void:
 
 
 func _on_spawn_timer_timeout() -> void:
-	pass # Replace with function body.
+	if randf() < 0.25: # 25% probability
+		var sheep_scene = ResourceSiteDefs.get_scene(ResourceSiteDefs.ResourceType.SHEEP)
+		if sheep_scene:
+			var sheep = sheep_scene.instantiate()
+			sheep.global_position = global_position
+			get_parent().add_child(sheep)
