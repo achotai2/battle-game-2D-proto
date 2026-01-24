@@ -4,13 +4,13 @@ extends CharacterBody2D
 @export var pathfinding: MinionPathfinding
 @export var animate: AgentAnimate
 @export var despawn_timer: Timer = null
-@export var move_speed: float = 50.0
 @export var hop_radius: float = 100.0
 @export var wander_interval: float = 2.0 # Not actively used by MinionPathfinding but kept for API compatibility if needed
 
 var spawn_position: Vector2
 var patrol_anchor: Node2D = null
 var is_returning: bool = false
+
 
 func _ready() -> void:
 	spawn_position = global_position
@@ -26,8 +26,6 @@ func _ready() -> void:
 
 	# Configure movement speeds
 	if is_instance_valid(movement):
-		movement.max_speed = move_speed
-		movement.meander_speed = move_speed
 		movement.can_meander = true
 
 	# Configure pathfinding
@@ -43,18 +41,22 @@ func _ready() -> void:
 		if despawn_timer.is_stopped():
 			despawn_timer.start()
 
+
 func _exit_tree() -> void:
 	if is_instance_valid(patrol_anchor):
 		patrol_anchor.queue_free()
+
 
 func _connect_all_refs() -> void:
 	_assign_animation_refs()
 	_assign_movement_refs()
 	_assign_pathfinding_refs()
 
+
 func _assign_animation_refs() -> void:
 	if is_instance_valid(animate):
 		animate.set_my_agent(self)
+
 
 func _assign_movement_refs() -> void:
 	if not is_instance_valid(movement):
@@ -67,12 +69,14 @@ func _assign_movement_refs() -> void:
 	if movement.has_method("set_pathfinding"):
 		movement.call("set_pathfinding", pathfinding)
 
+
 func _assign_pathfinding_refs() -> void:
 	if not is_instance_valid(pathfinding):
 		return
 	# We set the castle (anchor) in _ready, but this mimics AgentBase structure
 	if pathfinding.has_method("set_castle"):
 		pathfinding.call("set_castle", patrol_anchor)
+
 
 func _physics_process(delta: float) -> void:
 	if is_instance_valid(movement):
@@ -84,13 +88,15 @@ func _physics_process(delta: float) -> void:
 		if global_position.distance_to(spawn_position) < 10.0:
 			queue_free()
 
+
 func _on_despawn_timer_timeout() -> void:
 	is_returning = true
 	if is_instance_valid(movement):
 		# Stop meandering and move to spawn
 		movement.command_move_to_position(spawn_position)
 
-func attack(_attacker: Node) -> void:
+
+func attack(_attacker: Node2D) -> void:
 	# Spawn food
 	var food_scene = ResourceSiteDefs.get_scene(ResourceSiteDefs.ResourceType.FOOD)
 	if food_scene:
@@ -99,6 +105,7 @@ func attack(_attacker: Node) -> void:
 		get_parent().call_deferred("add_child", food)
 
 	queue_free()
+
 
 func return_position() -> Vector2:
 	return global_position

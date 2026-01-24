@@ -117,7 +117,7 @@ animations = [{
 "texture": SubResource("AtlasTexture_fcles")
 }],
 "loop": true,
-"name": &"run",
+"name": &"walk",
 "speed": 5.0
 }]
 
@@ -136,8 +136,7 @@ shape = SubResource("CircleShape2D_2teul")
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
 sprite_frames = SubResource("SpriteFrames_pwd00")
-animation = &"run"
-frame_progress = 0.5144338
+animation = &"walk"
 
 [node name="DespawnTimer" type="Timer" parent="."]
 wait_time = 10.0
