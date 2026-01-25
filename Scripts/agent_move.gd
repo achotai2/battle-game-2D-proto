@@ -15,6 +15,7 @@ class_name AgentMovement
 var _current_velocity: Vector2 = Vector2.ZERO
 var _action_state: int = 0
 var _pf_velocity: Vector2 = Vector2.ZERO
+var _last_anim_velocity: Vector2 = Vector2(INF, INF)
 
 enum OrderType { NONE, MEANDER, MOVE_TO_POS, CHASE_NODE, RAW_VELOCITY, PLAYER_DIRECTION }
 
@@ -180,7 +181,9 @@ func _notify_moved(vel: Vector2) -> void:
 		agent.velocity = vel
 
 	if is_instance_valid(animation):
-		animation.agent_moved(vel)
+		if not vel.is_equal_approx(_last_anim_velocity):
+			animation.agent_moved(vel)
+			_last_anim_velocity = vel
 
 
 func tick(delta: float) -> void:
