@@ -1,4 +1,4 @@
-[gd_scene load_steps=23 format=3 uid="uid://b2iojfyjvedm7"]
+[gd_scene load_steps=24 format=3 uid="uid://b2iojfyjvedm7"]
 
 [ext_resource type="Texture2D" uid="uid://chavuk16uvdxt" path="res://Art/Tiny Swords (Update 010)/Resources/Sheep/HappySheep_All.png" id="1_2teul"]
 [ext_resource type="Script" uid="uid://jea8uqh0mycn" path="res://Scripts/sheep.gd" id="1_4j78d"]
@@ -6,6 +6,7 @@
 [ext_resource type="Script" uid="uid://58qm17emnwvd" path="res://Scripts/agent_move.gd" id="4_tuqvd"]
 [ext_resource type="Script" uid="uid://cf3jwbm3206s5" path="res://Scripts/minion_pathfinding.gd" id="5_spu4p"]
 [ext_resource type="Script" uid="uid://cjjdaf7vlfs4k" path="res://Scripts/agent_animate.gd" id="6_spu4p"]
+[ext_resource type="PackedScene" uid="uid://c8o4373okv5fq" path="res://Scenes/HungerHolder.tscn" id="7_bhvsg"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_2teul"]
 radius = 20.0
@@ -121,7 +122,7 @@ animations = [{
 "speed": 5.0
 }]
 
-[node name="Sheep" type="CharacterBody2D" node_paths=PackedStringArray("movement", "pathfinding", "animate", "resource_site", "despawn_timer")]
+[node name="Sheep" type="CharacterBody2D" node_paths=PackedStringArray("movement", "pathfinding", "animate", "food", "resource_site", "despawn_timer")]
 collision_layer = 512
 collision_mask = 3
 slide_on_ceiling = false
@@ -129,6 +130,7 @@ script = ExtResource("1_4j78d")
 movement = NodePath("AgentMovement")
 pathfinding = NodePath("MinionPathfinding")
 animate = NodePath("AgentAnimate")
+food = NodePath("HungerHolder")
 resource_site = NodePath("ResourceSite")
 despawn_timer = NodePath("DespawnTimer")
 hop_radius = 300.0
@@ -165,5 +167,7 @@ avoidance_enabled = true
 script = ExtResource("6_spu4p")
 sprite = NodePath("../AnimatedSprite2D")
 metadata/_custom_type_script = "uid://cjjdaf7vlfs4k"
+
+[node name="HungerHolder" parent="." instance=ExtResource("7_bhvsg")]
 
 [connection signal="timeout" from="DespawnTimer" to="." method="_on_despawn_timer_timeout"]

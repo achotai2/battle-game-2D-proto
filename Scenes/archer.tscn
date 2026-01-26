@@ -9,8 +9,8 @@
 [ext_resource type="Script" uid="uid://bi15gddmxujcs" path="res://Scripts/agent_tracking.gd" id="8_tcsy7"]
 [ext_resource type="PackedScene" uid="uid://o3i1hye0kspv" path="res://Scenes/weapon_bow.tscn" id="9_fhmuk"]
 [ext_resource type="Script" uid="uid://drugelqbde4x8" path="res://Scripts/tactical_archer.gd" id="9_jhg76"]
+[ext_resource type="PackedScene" uid="uid://c8o4373okv5fq" path="res://Scenes/HungerHolder.tscn" id="10_5bpow"]
 [ext_resource type="PackedScene" uid="uid://c4n5elrxg64hp" path="res://Scenes/GoldHolder.tscn" id="10_jhg76"]
-[ext_resource type="Script" uid="uid://cjgf3atjh3w6i" path="res://Scripts/hunger.gd" id="11_5bpow"]
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_ta2g1"]
 radius = 23.0
@@ -31,7 +31,7 @@ attack = NodePath("WeaponBow")
 detection = NodePath("AgentDetection")
 tactical = NodePath("TacticalArcher")
 gold = NodePath("GoldHolder")
-hunger = NodePath("Hunger")
+hunger = NodePath("")
 current_role = &"archer"
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
@@ -86,8 +86,7 @@ radius = 50.0
 avoidance_layers = 8
 avoidance_mask = 255
 
-[node name="GoldHolder" parent="." instance=ExtResource("10_jhg76")]
+[node name="HungerHolder" parent="." node_paths=PackedStringArray("movement") instance=ExtResource("10_5bpow")]
+movement = NodePath("../AgentMovement")
 
-[node name="Hunger" type="Node" parent="."]
-script = ExtResource("11_5bpow")
-metadata/_custom_type_script = "uid://cjgf3atjh3w6i"
+[node name="GoldHolder" parent="." instance=ExtResource("10_jhg76")]

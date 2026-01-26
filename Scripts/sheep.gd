@@ -4,6 +4,7 @@ extends CharacterBody2D
 @export var movement: AgentMovement
 @export var pathfinding: MinionPathfinding
 @export var animate: AgentAnimate
+@export var food: HungerHolder
 @export var resource_site: ResourceSite
 @export var despawn_timer: Timer = null
 @export var hop_radius: float = 100.0
@@ -13,6 +14,16 @@ var _spawn_position: Vector2
 var patrol_anchor: Node2D = null
 var is_returning: bool = false
 
+#Swap food over to job board handled by the castle.
+#	Every minion at the castle registers with the food job board.
+#	When they are hungry it assigns them a food, has them run over to it and apply work and get the food.
+#Really they apply work to a sheep, or to a building storing food. The sheep or building then hands the food resource over.
+#Resources will be handled like that, in that they aren't floating in the world, they are always in someones hand.
+#	Therefore it makes sense to have them spawn and run animation inside the GoldHolder and Hunger nodes themselves.
+#	Then, when GoldHolder and Hunger do the handoff those nodes themselves will handle the animations.
+#	If I want to add floating resources later, on the ground, then I can add it as a different structure.
+#	Now, the sheep will have a hunger node on it, and some amount of food. 
+# The sheep will be commanded to despawn and hand over food. It will be commanded this by the job board.
 
 func _ready() -> void:
 	if not resource_site:

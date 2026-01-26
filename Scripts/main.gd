@@ -6,6 +6,7 @@ var playerTwoTarget: Node
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
+	$Units/Worker.gold.give_gold($Units/Peasant, 1)
 	pass
 #	$Objects.updateGold.connect(_update_gold_label)
 
