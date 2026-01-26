@@ -121,7 +121,7 @@ animations = [{
 "speed": 5.0
 }]
 
-[node name="Sheep" type="CharacterBody2D" node_paths=PackedStringArray("movement", "pathfinding", "animate", "despawn_timer")]
+[node name="Sheep" type="CharacterBody2D" node_paths=PackedStringArray("movement", "pathfinding", "animate", "resource_site", "despawn_timer")]
 collision_layer = 512
 collision_mask = 3
 slide_on_ceiling = false
@@ -129,6 +129,7 @@ script = ExtResource("1_4j78d")
 movement = NodePath("AgentMovement")
 pathfinding = NodePath("MinionPathfinding")
 animate = NodePath("AgentAnimate")
+resource_site = NodePath("ResourceSite")
 despawn_timer = NodePath("DespawnTimer")
 hop_radius = 300.0
 

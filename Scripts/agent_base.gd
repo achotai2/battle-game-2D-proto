@@ -15,8 +15,11 @@ class_name AgentBase
 @export var tactical: Node = null
 @export var tasker: MinionTasker = null
 @export var gold: GoldHolder = null
+@export var hunger: Hunger = null
 @export var castle: Node = null
 @export var current_role: StringName
+
+var _min_hunger = 0
 
 
 # Called when the node enters the scene tree for the first time.
@@ -55,6 +58,9 @@ func _connect_all_refs() -> void:
 
 	# Connect signals for HEALTH node.	
 	_assign_health_refs()
+
+	# Connect signals for HUNGER node.	
+	_assign_hunger_refs()
 
 
 func _physics_process(_delta: float) -> void:
@@ -203,6 +209,14 @@ func _assign_health_refs() -> void:
 		health.died.connect(_im_dead)
 
 
+func _assign_hunger_refs() -> void:
+	if not is_instance_valid(hunger):
+		return
+		
+	if is_instance_valid(movement) and hunger.has_method("set_movement"):	
+		hunger.call("set_movement", movement)
+
+
 func _im_damaged() -> void:
 #	if is_instance_valid(animation):
 #		animation.show_damage()
@@ -332,61 +346,3 @@ func set_castle(new_castle: Node) -> void:
 
 	if is_instance_valid(tasker) and tasker.has_method("switch_job_board"):
 		tasker.call("switch_job_board", castle)
-
-
-#func spawned_this_resource(spawned: Node) -> void:
-#	pass
-
-
-#func return_health() -> int:
-#	return 100 
-	#if is_instance_valid(health):
-		#return health.return_health()
-	#else:
-		#return 0
-
-
-#func delete_me() -> void:
-#	if is_instance_valid(task):
-#		task.remove_me(self)
-#	self.queue_free()
-
-
-#func return_to_castle() -> void:
-#	if is_instance_valid(castle):
-#		castle.give_me_task(self)
-
-
-# Called by resource _body_entered when picked up by this agent.
-#func carry_me(thing: Node) -> void:
-#	thing.reparent(self)
-#	carrying = thing
-#	thing.global_position = self.global_position
-
-
-#func set_player(newPlayer: int, newCastle: Node, goldAmount: int) -> void:
-#	#playerUpdate.emit(newPlayer)
-#	player = newPlayer
-#	castle = newCastle
-#	if is_instance_valid(gold):
-#		gold.pickup_gold(goldAmount)
-
-
-# PROBABLY BEST TO MOVE INTO SEPARATE BASES
-#func task_command(taskType: String, taskPlayer: int) -> void:
-#	# Called by tasks
-#	if self.is_in_group("Goblins") and taskType == "Gold":
-#		if is_instance_valid(gold):
-#			gold.pickup_gold(-1)
-#		set_player(taskPlayer, get_parent().get_closest_castle(taskPlayer, return_position()), 0)
-#
-#	elif self.is_in_group("Goblins") and taskType == "Spawn":
-#		delete_me()
-
-
-# Called by spawns when a unit is spawned from this unit.
-#func return_my_gold() -> int:
-#	if is_instance_valid(gold):
-#		return gold.return_gold()
-#	else:
-#		return 0

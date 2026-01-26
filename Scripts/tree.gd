@@ -11,6 +11,7 @@ enum TreeState { NORMAL, MARKED, CUT }
 @export var resourcesite: ResourceSite
 @export var regrow_timer: Timer
 @export var spawn_timer: Timer
+@export var spawn_probability: float = 0.25
 @export var state: TreeState = TreeState.NORMAL
 @export var regrow: bool = false
 
@@ -72,11 +73,6 @@ func _on_interacted(interactor: Node2D) -> void:
 
 func _on_work_completed(_site: WorkSite) -> void:
 	set_state(TreeState.CUT)
-
-	if is_instance_valid(resourcesite) and resourcesite.has_method("spawn"):
-		resourcesite.call("spawn")
-	else:
-		print_debug("resourcesite does not exist or doesn't have function spawn.")
 
 	spawn_timer.stop()
 
@@ -157,9 +153,8 @@ func _enable_collision() -> void:
 
 
 func _on_spawn_timer_timeout() -> void:
-	if randf() < 0.25: # 25% probability
-		var sheep_scene = ResourceSiteDefs.get_scene(ResourceSiteDefs.ResourceType.SHEEP)
-		if sheep_scene:
-			var sheep = sheep_scene.instantiate()
-			sheep.global_position = global_position
-			get_parent().add_child(sheep)
+	if is_instance_valid(resourcesite) and resourcesite.has_method("spawn"):
+		if randf() < spawn_probability: # 25% probability
+			resourcesite.call("spawn")
+	else:
+		print_debug("resourcesite does not exist or doesn't have function spawn.")

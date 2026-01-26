@@ -1,5 +1,6 @@
 extends CharacterBody2D
 
+@export var castle: Node2D
 @export var movement: AgentMovement
 @export var pathfinding: MinionPathfinding
 @export var animate: AgentAnimate
@@ -8,7 +9,7 @@ extends CharacterBody2D
 @export var hop_radius: float = 100.0
 @export var wander_interval: float = 2.0 # Not actively used by MinionPathfinding but kept for API compatibility if needed
 
-var spawn_position: Vector2
+var _spawn_position: Vector2
 var patrol_anchor: Node2D = null
 var is_returning: bool = false
 
@@ -17,16 +18,12 @@ func _ready() -> void:
 	if not resource_site:
 		resource_site = get_node_or_null("ResourceSite")
 
-	spawn_position = global_position
-
 	# Create a stationary anchor for the sheep to patrol around
-	patrol_anchor = Node2D.new()
-	patrol_anchor.name = "SheepAnchor_" + str(get_instance_id())
-	patrol_anchor.global_position = spawn_position
-	# Add to parent so it doesn't move with the sheep
-	get_parent().call_deferred("add_child", patrol_anchor)
+	call_deferred("_set_marker")
 
 	_connect_all_refs()
+
+	patrol_anchor = Node2D.new()
 
 	# Configure movement speeds
 	if is_instance_valid(movement):
@@ -89,7 +86,7 @@ func _physics_process(delta: float) -> void:
 	move_and_slide()
 
 	if is_returning:
-		if global_position.distance_to(spawn_position) < 10.0:
+		if global_position.distance_to(_spawn_position) < 10.0:
 			queue_free()
 
 
@@ -97,7 +94,9 @@ func _on_despawn_timer_timeout() -> void:
 	is_returning = true
 	if is_instance_valid(movement):
 		# Stop meandering and move to spawn
-		movement.command_move_to_position(spawn_position)
+		movement.command_move_to_position(_spawn_position)
+		
+	_unregister_self()
 
 
 func attack(_attacker: Node2D) -> void:
@@ -110,3 +109,23 @@ func attack(_attacker: Node2D) -> void:
 
 func return_position() -> Vector2:
 	return global_position
+
+
+func set_castle(c: Node2D) -> void:
+# Set castle and register myself with it.
+	castle = c
+	if castle.has_method("register_sheep"):
+		castle.call("register_sheep", self)
+
+
+func _unregister_self() -> void:
+	if castle.has_method("unregister_sheep"):
+		castle.call("unregister_sheep", self)
+
+
+func _set_marker() -> void:
+	_spawn_position = global_position
+	patrol_anchor.name = "SheepAnchor_" + str(get_instance_id())
+	patrol_anchor.global_position = _spawn_position
+
+	add_child(patrol_anchor)

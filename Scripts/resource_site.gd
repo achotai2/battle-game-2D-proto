@@ -10,11 +10,12 @@ func spawn() -> void:
 	var scene = ResourceSiteDefs.get_scene(resource_type)
 	if not scene:
 		return
-
 	var instance = scene.instantiate()
-
 	if instance.has_method("set_amount"):
-		instance.set_amount(resource_amount)
+		instance.call("set_amount", resource_amount)
+	if instance.has_method("set_castle") and get_parent().has_method("return_castle"):
+		var c = get_parent().call("return_castle")
+		instance.call("set_castle", c)
 
 	# Add to current scene (World)
 	var world = get_tree().current_scene

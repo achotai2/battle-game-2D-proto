@@ -1,4 +1,4 @@
-[gd_scene load_steps=13 format=3 uid="uid://sy3ke7fhk1uv"]
+[gd_scene load_steps=14 format=3 uid="uid://sy3ke7fhk1uv"]
 
 [ext_resource type="Script" uid="uid://b3iqpgjb0vtvl" path="res://Scripts/agent_base.gd" id="1_ta2g1"]
 [ext_resource type="Script" uid="uid://cjjdaf7vlfs4k" path="res://Scripts/agent_animate.gd" id="2_eqink"]
@@ -10,6 +10,7 @@
 [ext_resource type="Script" uid="uid://bi15gddmxujcs" path="res://Scripts/agent_tracking.gd" id="9_dxyvq"]
 [ext_resource type="PackedScene" uid="uid://c4n5elrxg64hp" path="res://Scenes/GoldHolder.tscn" id="10_225og"]
 [ext_resource type="Script" uid="uid://sxvily52588c" path="res://Scripts/tactical_soldier.gd" id="10_fjdoe"]
+[ext_resource type="Script" uid="uid://cjgf3atjh3w6i" path="res://Scripts/hunger.gd" id="11_rby74"]
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_ta2g1"]
 radius = 23.0
@@ -18,11 +19,10 @@ height = 74.0
 [sub_resource type="CircleShape2D" id="CircleShape2D_65o65"]
 radius = 500.0
 
-[node name="Soldier" type="CharacterBody2D" node_paths=PackedStringArray("health", "movement", "pathfinding", "animation", "attack", "detection", "tactical", "gold") groups=["Attackable", "Interactable", "Minions"]]
+[node name="Soldier" type="CharacterBody2D" node_paths=PackedStringArray("health", "movement", "pathfinding", "animation", "attack", "detection", "tactical", "gold", "hunger") groups=["Attackable", "Interactable", "Minions"]]
 collision_layer = 16
 collision_mask = 31
 script = ExtResource("1_ta2g1")
-player = null
 health = NodePath("Health")
 movement = NodePath("AgentMovement")
 pathfinding = NodePath("MinionPathfinding")
@@ -31,6 +31,7 @@ attack = NodePath("WeaponSword")
 detection = NodePath("AgentDetection")
 tactical = NodePath("TacticalSoldier")
 gold = NodePath("GoldHolder")
+hunger = NodePath("Hunger")
 current_role = &"soldier"
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
@@ -85,3 +86,7 @@ script = ExtResource("10_fjdoe")
 movement = NodePath("../AgentMovement")
 
 [node name="GoldHolder" parent="." instance=ExtResource("10_225og")]
+
+[node name="Hunger" type="Node" parent="."]
+script = ExtResource("11_rby74")
+metadata/_custom_type_script = "uid://cjgf3atjh3w6i"

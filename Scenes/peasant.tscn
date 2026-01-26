@@ -1,4 +1,4 @@
-[gd_scene load_steps=13 format=3 uid="uid://ctx2ge4w4wad7"]
+[gd_scene load_steps=14 format=3 uid="uid://ctx2ge4w4wad7"]
 
 [ext_resource type="Script" uid="uid://b3iqpgjb0vtvl" path="res://Scripts/agent_base.gd" id="1_wen5c"]
 [ext_resource type="SpriteFrames" uid="uid://b16w7vlo5c8qt" path="res://Art/SpriteFrames/Peasant_Red.tres" id="2_7mdye"]
@@ -10,6 +10,7 @@
 [ext_resource type="Script" uid="uid://cfisvjx2cjr0f" path="res://Scripts/tactical_peasant.gd" id="8_wen5c"]
 [ext_resource type="Script" uid="uid://d1ucmtjtmh4hm" path="res://Scripts/minion_tasker.gd" id="9_wen5c"]
 [ext_resource type="PackedScene" uid="uid://c4n5elrxg64hp" path="res://Scenes/GoldHolder.tscn" id="10_hoemf"]
+[ext_resource type="Script" uid="uid://cjgf3atjh3w6i" path="res://Scripts/hunger.gd" id="11_t6mam"]
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_ta2g1"]
 radius = 23.0
@@ -18,7 +19,7 @@ height = 74.0
 [sub_resource type="CircleShape2D" id="CircleShape2D_65o65"]
 radius = 500.0
 
-[node name="Peasant" type="CharacterBody2D" node_paths=PackedStringArray("health", "movement", "pathfinding", "animation", "detection", "tactical", "tasker", "gold") groups=["Attackable", "Interactable", "Minions"]]
+[node name="Peasant" type="CharacterBody2D" node_paths=PackedStringArray("health", "movement", "pathfinding", "animation", "detection", "tactical", "tasker", "gold", "hunger") groups=["Attackable", "Interactable", "Minions"]]
 collision_layer = 16
 collision_mask = 31
 script = ExtResource("1_wen5c")
@@ -30,6 +31,7 @@ detection = NodePath("AgentDetection")
 tactical = NodePath("TacticalPeasant")
 tasker = NodePath("MinionTasker")
 gold = NodePath("GoldHolder")
+hunger = NodePath("Hunger")
 current_role = &"peasant"
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
@@ -89,3 +91,7 @@ avoidance_layers = 8
 avoidance_mask = 15
 
 [node name="GoldHolder" parent="." instance=ExtResource("10_hoemf")]
+
+[node name="Hunger" type="Node" parent="."]
+script = ExtResource("11_t6mam")
+metadata/_custom_type_script = "uid://cjgf3atjh3w6i"
