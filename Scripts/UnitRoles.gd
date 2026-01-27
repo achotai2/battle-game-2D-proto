@@ -99,3 +99,12 @@ var taskers := {
 
 func get_tasker(role: StringName) -> GDScript:
 	return taskers.get(role)
+
+
+var tasker_kinds := {
+	PEASANT: CastleJobBoard.JobBoardType.PEASANTS,
+	WORKER: CastleJobBoard.JobBoardType.WORKERS,
+}
+
+func get_tasker_kind(role: StringName) -> Variant:
+	return tasker_kinds.get(role, null)

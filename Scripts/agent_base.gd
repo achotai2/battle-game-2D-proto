@@ -283,6 +283,9 @@ func apply_role(role: StringName, p: int) -> void:
 	var tasker_script: Script = UnitRoles.get_tasker(role)
 	if tasker_script != null:
 		tasker = tasker_script.new()
+		var kind = UnitRoles.get_tasker_kind(role)
+		if kind != null and "kind" in tasker:
+			tasker.kind = kind
 		add_child(tasker)
 
 	# --- visuals ---
