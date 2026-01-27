@@ -15,7 +15,7 @@ class_name AgentBase
 @export var tactical: Node = null
 @export var tasker: MinionTasker = null
 @export var gold: GoldHolder = null
-@export var hunger: Hunger = null
+@export var hunger: HungerHolder = null
 @export var castle: Node = null
 @export var current_role: StringName
 

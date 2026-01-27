@@ -96,6 +96,7 @@ wait_time = 2.0
 one_shot = true
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+visible = false
 sprite_frames = SubResource("SpriteFrames_sae57")
 animation = &"idle"
 

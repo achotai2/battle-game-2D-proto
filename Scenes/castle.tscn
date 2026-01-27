@@ -10,12 +10,13 @@
 radius = 54.0
 height = 334.0
 
-[node name="Castle" type="StaticBody2D" node_paths=PackedStringArray("worker_job_board", "peasant_job_board") groups=["Attackable", "Buildings", "Interactable"]]
+[node name="Castle" type="StaticBody2D" node_paths=PackedStringArray("worker_job_board", "peasant_job_board", "food_job_board") groups=["Attackable", "Buildings", "Interactable"]]
 position = Vector2(0, -72)
 physics_material_override = SubResource("PhysicsMaterial_r1mkv")
 script = ExtResource("1_p6e6l")
 worker_job_board = NodePath("WorkerJobBoard")
 peasant_job_board = NodePath("PeasantJobBoard")
+food_job_board = NodePath("FoodJobBoard")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 position = Vector2(0, 72)
@@ -31,6 +32,11 @@ castle = NodePath("..")
 metadata/_custom_type_script = "uid://ba0yfy3sv1ht2"
 
 [node name="PeasantJobBoard" type="Node" parent="." node_paths=PackedStringArray("castle")]
+script = ExtResource("2_r1mkv")
+castle = NodePath("..")
+metadata/_custom_type_script = "uid://ba0yfy3sv1ht2"
+
+[node name="FoodJobBoard" type="Node" parent="." node_paths=PackedStringArray("castle")]
 script = ExtResource("2_r1mkv")
 castle = NodePath("..")
 metadata/_custom_type_script = "uid://ba0yfy3sv1ht2"

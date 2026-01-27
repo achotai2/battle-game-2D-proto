@@ -5,7 +5,6 @@ extends CharacterBody2D
 @export var pathfinding: MinionPathfinding
 @export var animate: AgentAnimate
 @export var food: HungerHolder
-@export var resource_site: ResourceSite
 @export var despawn_timer: Timer = null
 @export var hop_radius: float = 100.0
 @export var wander_interval: float = 2.0 # Not actively used by MinionPathfinding but kept for API compatibility if needed
@@ -19,22 +18,16 @@ var is_returning: bool = false
 #	When they are hungry it assigns them a food, has them run over to it and apply work and get the food.
 #Really they apply work to a sheep, or to a building storing food. The sheep or building then hands the food resource over.
 #Resources will be handled like that, in that they aren't floating in the world, they are always in someones hand.
-#	Therefore it makes sense to have them spawn and run animation inside the GoldHolder and Hunger nodes themselves.
-#	Then, when GoldHolder and Hunger do the handoff those nodes themselves will handle the animations.
-#	If I want to add floating resources later, on the ground, then I can add it as a different structure.
-#	Now, the sheep will have a hunger node on it, and some amount of food. 
 # The sheep will be commanded to despawn and hand over food. It will be commanded this by the job board.
 
 func _ready() -> void:
-	if not resource_site:
-		resource_site = get_node_or_null("ResourceSite")
-
 	# Create a stationary anchor for the sheep to patrol around
 	call_deferred("_set_marker")
 
 	_connect_all_refs()
 
 	patrol_anchor = Node2D.new()
+	add_child(patrol_anchor)
 
 	# Configure movement speeds
 	if is_instance_valid(movement):
@@ -111,10 +104,14 @@ func _on_despawn_timer_timeout() -> void:
 
 
 func attack(_attacker: Node2D) -> void:
-	# Spawn food
-	if resource_site:
-		resource_site.spawn()
+	# Spawn food and hand it over to attacker.
+	if is_instance_valid(_attacker.hunger) and _attacker.hunger.has_method("receive_food"):
+		food.give_food(_attacker, food.food)
+		food.food_handed.connect(_food_handed)
 
+
+func _food_handed() -> void:
+	_unregister_self()
 	queue_free()
 
 
@@ -138,5 +135,3 @@ func _set_marker() -> void:
 	_spawn_position = global_position
 	patrol_anchor.name = "SheepAnchor_" + str(get_instance_id())
 	patrol_anchor.global_position = _spawn_position
-
-	add_child(patrol_anchor)

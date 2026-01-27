@@ -9,6 +9,7 @@ class_name MinionTasker
 @export var work_amount: float = 1.0
 @export_range(0.05, 1.0, 0.05) var think_interval: float = 0.25
 @export var blast_think: bool = true
+@export var kind: CastleJobBoard.JobBoardType = CastleJobBoard.JobBoardType.WORKERS
 
 const JOB_PRIORITY := 8
 
@@ -255,19 +256,7 @@ func _resolve_job_board(new_castle: Node2D) -> CastleJobBoard:
 	if new_castle == null or not is_instance_valid(new_castle):
 		return null 
 
-	var _agent: Node2D = get_parent()
-	if _agent.is_in_group("Workers"):
-		if new_castle.has_method("return_worker_job_board"):
-			return new_castle.call("return_worker_job_board")
-		else:
-			print_debug("new_castle does not have function return_worker_job_board.")
-	elif _agent.is_in_group("Peasants"):
-		if new_castle.has_method("return_peasant_job_board"):
-			return new_castle.call("return_peasant_job_board")
-		else:
-			print_debug("new_castle does not have function return_peasant_job_board.")
-
-	return null
+	return new_castle.return_job_board(kind)
 
 
 func _unregister_from_board() -> void:

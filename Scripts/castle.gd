@@ -3,6 +3,7 @@ extends StaticBody2D
 @export var player: int = 0
 @export var worker_job_board: CastleJobBoard
 @export var peasant_job_board: CastleJobBoard
+@export var food_job_board: CastleJobBoard
 
 var _sheep: Array[Node2D]
 
@@ -17,18 +18,15 @@ func _process(delta: float) -> void:
 	pass
 
 
-func return_worker_job_board() -> CastleJobBoard:
-	if is_instance_valid(worker_job_board):
-			return worker_job_board
-
-	return null
-
-
-func return_peasant_job_board() -> CastleJobBoard:
-	if is_instance_valid(peasant_job_board):
-			return peasant_job_board
-
-	return null
+func return_job_board(kind: CastleJobBoard.JobBoardType) -> CastleJobBoard:
+	if kind == CastleJobBoard.JobBoardType.WORKERS:
+		return worker_job_board
+	elif kind ==  CastleJobBoard.JobBoardType.PEASANTS:
+		return peasant_job_board
+	elif kind ==  CastleJobBoard.JobBoardType.FOOD:
+		return food_job_board
+	else:
+		return null
 
 
 func register_sheep(new_sheep: Node2D) -> void:

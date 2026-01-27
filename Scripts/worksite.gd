@@ -45,9 +45,8 @@ signal work_applied(site: WorkSite)
 @export var enabled: bool = true
 ## Whether this WorkSite is currently active and available for workers.
 
-@export_enum("Workers", "Peasants") var kind: String = "Workers"
 ## References the group that the minion is a part of who will match this worksite.
-
+@export var kind: CastleJobBoard.JobBoardType = CastleJobBoard.JobBoardType.WORKERS
 
 # -------------------------
 # Runtime state
@@ -358,18 +357,7 @@ func _resolve_job_board(castle: Node2D) -> CastleJobBoard:
 	if castle == null or not is_instance_valid(castle):
 		return null
 
-	if kind == "Workers":
-		if castle.has_method("return_worker_job_board"):
-			return castle.call("return_worker_job_board")
-		else:
-			print_debug("castle does not have function return_worker_job_board.")
-	elif kind == "Peasants":
-		if castle.has_method("return_peasant_job_board"):
-			return castle.call("return_peasant_job_board")
-		else:
-			print_debug("castle does not have function return_peasant_job_board.")
-
-	return null
+	return castle.return_job_board(kind)
 
 
 func _unregister_from_job_board() -> void:

@@ -99,6 +99,7 @@ one_shot = true
 [node name="HungerTimer" type="Timer" parent="."]
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+visible = false
 sprite_frames = SubResource("SpriteFrames_sae57")
 animation = &"spawn"
 

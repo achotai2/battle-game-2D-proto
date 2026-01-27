@@ -1,6 +1,7 @@
 extends Area2D
 class_name HungerHolder
 
+signal food_handed
 
 ## The scene used to represent food on the ground when dropped.
 @export var food_display: AnimatedSprite2D
@@ -9,7 +10,7 @@ class_name HungerHolder
 @export var movement: AgentMovement
 
 ## Current amount of food stomach held.
-@export var food: int = 1
+@export var food: int = 10
 
 ## Time ticks for hunger to automatically go down.
 @export var time_tick: int = 1
@@ -24,6 +25,10 @@ class_name HungerHolder
 
 ## Time food stays in hand after received before despawning, for visual purposes only.
 @export var _food_gone_timer: Timer = null
+
+# Lose food with time.
+@export var lose_food: bool = true
+
 
 # Internal state
 var _agent: Node2D
@@ -58,15 +63,22 @@ func set_movement(m: AgentMovement) -> void:
 
 
 func _on_hunger_timer_timeout() -> void:
-	food -= 1
+	if lose_food:
+		food -= 1
+		
+		if food <= 0:
+			food = 0
 	
-	if food <= min_hunger:
-		var castle: Node = get_parent().return_castle()
-		var position: Vector2 = get_parent().return_position()
-		var nearest: Node2D = castle.get_nearest(&"sheep", position)
+		if food <= min_hunger:
+			var castle: Node = get_parent().return_castle()
+			var position: Vector2 = get_parent().return_position()
+			var nearest: Node2D = castle.get_nearest(&"sheep", position)
 
-		if is_instance_valid(movement) and is_instance_valid(nearest):
-			movement.command_chase_target(nearest, _hunger_move_priority)
+			if is_instance_valid(movement) and is_instance_valid(nearest):
+				movement.command_chase_target(nearest, _hunger_move_priority)
+				nearest.attack(get_parent())
+	
+	_hunger_timer.start()
 
 
 ## Command the agent to run to a target and give them the food.
@@ -131,6 +143,8 @@ func _food_handover() -> void:
 	if actual_amount > 0 and is_instance_valid(_target_to_give.hunger) and _target_to_give.hunger.has_method("receive_food"):
 		food -= actual_amount
 		_target_to_give.hunger.receive_food(actual_amount)
+		
+		food_handed.emit()
 
 	_finish_action()
 

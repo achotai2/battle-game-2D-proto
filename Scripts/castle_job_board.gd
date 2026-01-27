@@ -1,6 +1,12 @@
 extends Node
 class_name CastleJobBoard
 
+enum JobBoardType {
+	WORKERS,
+	PEASANTS,
+	FOOD,
+}
+
 @export var castle: Node2D
 ## Deprecated: slot-based capacity now comes from WorkSite.can_reserve/reserve.
 ## This flag is kept for compatibility but no longer used.

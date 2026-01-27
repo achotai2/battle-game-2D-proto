@@ -31,7 +31,7 @@ detection = NodePath("AgentDetection")
 tactical = NodePath("TacticalWorker")
 tasker = NodePath("MinionTasker")
 gold = NodePath("GoldHolder")
-hunger = NodePath("")
+hunger = NodePath("HungerHolder")
 current_role = &"worker"
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]

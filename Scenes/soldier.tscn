@@ -31,7 +31,7 @@ attack = NodePath("WeaponSword")
 detection = NodePath("AgentDetection")
 tactical = NodePath("TacticalSoldier")
 gold = NodePath("GoldHolder")
-hunger = NodePath("")
+hunger = NodePath("HungerHolder")
 current_role = &"soldier"
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
