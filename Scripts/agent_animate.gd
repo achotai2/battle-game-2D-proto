@@ -50,13 +50,20 @@ func _animation_finished() -> void:
 	if is_instance_valid(sprite):
 		attacking = false
 		working = false
-		sprite.play("idle")
+		_update_idle_walk_anim()
 	
 
 func _on_timer_timeout() -> void:
 	if is_instance_valid(sprite) and is_instance_valid(sprite.material):
 		sprite.material.set_shader_parameter("progress", 0)
 #		animation.position = Vector2(0, 0)
+
+
+func _update_idle_walk_anim() -> void:
+	var vel = Vector2.ZERO
+	if is_instance_valid(_my_agent) and "velocity" in _my_agent:
+		vel = _my_agent.velocity
+	agent_moved(vel)
 
 
 func set_my_agent(ag: Node2D) -> void:
