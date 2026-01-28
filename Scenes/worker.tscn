@@ -90,8 +90,9 @@ radius = 50.0
 avoidance_layers = 8
 avoidance_mask = 15
 
-[node name="HungerHolder" parent="." node_paths=PackedStringArray("movement") instance=ExtResource("10_r0j7o")]
+[node name="HungerHolder" parent="." node_paths=PackedStringArray("movement", "food_tasker") instance=ExtResource("10_r0j7o")]
 movement = NodePath("../AgentMovement")
+food_tasker = NodePath("../FoodTasker")
 
 [node name="GoldHolder" parent="." instance=ExtResource("10_cwsst")]
 gold = 1
@@ -100,5 +101,7 @@ gold = 1
 script = ExtResource("9_r0ip0")
 agent = NodePath("..")
 movement = NodePath("../AgentMovement")
+work_range = 100.0
 kind = 2
+auto_get_work_when_idle = false
 metadata/_custom_type_script = "uid://d1ucmtjtmh4hm"

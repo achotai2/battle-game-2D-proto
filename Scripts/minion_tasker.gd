@@ -10,6 +10,7 @@ class_name MinionTasker
 @export_range(0.05, 1.0, 0.05) var think_interval: float = 0.25
 @export var blast_think: bool = true
 @export var kind: CastleJobBoard.JobBoardType = CastleJobBoard.JobBoardType.WORKERS
+@export var auto_get_work_when_idle: bool = true
 
 const JOB_PRIORITY := 8
 
@@ -208,6 +209,11 @@ func _request_job_if_idle() -> void:
 	if not is_instance_valid(_job_board):
 		return
 
+	if auto_get_work_when_idle:
+		request_job()
+
+
+func request_job() -> void:
 	var site: Node2D = null
 	if _job_board.has_method("request_job"):
 		site = _job_board.request_job(self)

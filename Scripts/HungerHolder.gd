@@ -9,6 +9,9 @@ signal food_handed
 ## Connects to the agents move node to call commands to it.
 @export var movement: AgentMovement
 
+## Connects to the agents food tasker to call work when needed.
+@export var food_tasker: MinionTasker
+
 ## Current amount of food stomach held.
 @export var food: int = 10
 
@@ -70,7 +73,7 @@ func _on_hunger_timer_timeout() -> void:
 			food = 0
 	
 		if food <= min_hunger:
-			pass
+			food_tasker.request_job()
 	
 	_hunger_timer.start()
 
