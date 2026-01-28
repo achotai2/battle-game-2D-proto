@@ -189,9 +189,15 @@ func _on_work_tick() -> void:
 
 
 func _enter_work_state() -> void:
+	if _state == State.WORKING:
+		return
+
 	_state = State.WORKING
 	_hold_position()
-	if _work_timer.is_stopped():
+
+	_on_work_tick()
+
+	if _state == State.WORKING and _work_timer.is_stopped():
 		_work_timer.start()
 
 
