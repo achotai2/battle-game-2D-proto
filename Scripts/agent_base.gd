@@ -368,3 +368,6 @@ func set_castle(new_castle: Node) -> void:
 
 	if is_instance_valid(tasker) and tasker.has_method("switch_job_board"):
 		tasker.call("switch_job_board", castle)
+
+	if is_instance_valid(foodTasker) and foodTasker.has_method("switch_job_board"):
+		foodTasker.call("switch_job_board", castle)

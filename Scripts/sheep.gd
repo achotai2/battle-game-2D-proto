@@ -131,6 +131,10 @@ func return_position() -> Vector2:
 	return global_position
 
 
+func return_castle() -> Node2D:
+	return castle
+
+
 func set_castle(c: Node2D) -> void:
 # Set castle and register myself with it, and apply for work.
 	castle = c
