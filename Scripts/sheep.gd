@@ -48,6 +48,8 @@ func _ready() -> void:
 			despawn_timer.timeout.connect(_on_despawn_timer_timeout)
 		if despawn_timer.is_stopped():
 			despawn_timer.start()
+			
+	
 
 
 func _exit_tree() -> void:
@@ -130,15 +132,16 @@ func return_position() -> Vector2:
 
 
 func set_castle(c: Node2D) -> void:
-# Set castle and register myself with it.
+# Set castle and register myself with it, and apply for work.
 	castle = c
-	if castle.has_method("register_sheep"):
-		castle.call("register_sheep", self)
+
+	foodWorkSite._resolve_castle_and_register()
+	foodWorkSite.needs_work()
 
 
 func _unregister_self() -> void:
-	if castle.has_method("unregister_sheep"):
-		castle.call("unregister_sheep", self)
+	# Unregister from job board.
+	foodWorkSite._unregister_from_job_board()
 
 
 func _set_marker() -> void:

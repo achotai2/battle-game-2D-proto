@@ -97,4 +97,5 @@ movement = NodePath("../AgentMovement")
 script = ExtResource("12_euce6")
 agent = NodePath("..")
 movement = NodePath("../AgentMovement")
+kind = 2
 metadata/_custom_type_script = "uid://d1ucmtjtmh4hm"

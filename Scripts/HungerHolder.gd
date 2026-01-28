@@ -70,13 +70,7 @@ func _on_hunger_timer_timeout() -> void:
 			food = 0
 	
 		if food <= min_hunger:
-			var castle: Node = get_parent().return_castle()
-			var position: Vector2 = get_parent().return_position()
-			var nearest: Node2D = castle.get_nearest(&"sheep", position)
-
-			if is_instance_valid(movement) and is_instance_valid(nearest):
-				movement.command_chase_target(nearest, _hunger_move_priority)
-				nearest.attack(get_parent())
+			pass
 	
 	_hunger_timer.start()
 

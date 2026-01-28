@@ -90,6 +90,7 @@ func needs_work() -> bool:
 	## The JobBoard uses this to decide if the job is still valid.
 	if not enabled:
 		return false
+		
 	return _work_done < total_work
 
 

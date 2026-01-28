@@ -236,16 +236,6 @@ func _release_job(release_to_board: bool) -> void:
 		_job_board.release_job(_site, self)
 	elif is_instance_valid(_site) and _site.has_method("unreserve"):
 		_site.call("unreserve", agent)
-	else:
-		print_debug("release job failed:")
-		if not release_to_board:
-			print_debug("   release_to_board not valid")
-		if not is_instance_valid(_job_board):
-			print_debug("   _job_board not valid")
-		if not is_instance_valid(_site):
-			print_debug("   _site not valid")
-		if is_instance_valid(_site) and not _site.has_method("unreserve"):
-			print_debug("   _site does not have function unreserve")
 
 	_set_idle_state()
 	_site = null

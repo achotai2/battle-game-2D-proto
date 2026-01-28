@@ -120,7 +120,7 @@ worksite = NodePath("WorkSite")
 resourcesite = NodePath("ResourceSite")
 regrow_timer = NodePath("RegrowTimer")
 spawn_timer = NodePath("SpawnTimer")
-spawn_probability = 0.0
+spawn_probability = 0.5
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 shape = SubResource("CircleShape2D_0vwjc")
