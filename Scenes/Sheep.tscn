@@ -122,7 +122,7 @@ animations = [{
 "speed": 5.0
 }]
 
-[node name="Sheep" type="CharacterBody2D" node_paths=PackedStringArray("movement", "pathfinding", "animate", "food", "despawn_timer")]
+[node name="Sheep" type="CharacterBody2D" node_paths=PackedStringArray("movement", "pathfinding", "animate", "food", "foodWorkSite", "despawn_timer")]
 collision_layer = 512
 collision_mask = 3
 slide_on_ceiling = false
@@ -131,6 +131,7 @@ movement = NodePath("AgentMovement")
 pathfinding = NodePath("MinionPathfinding")
 animate = NodePath("AgentAnimate")
 food = NodePath("HungerHolder")
+foodWorkSite = NodePath("FoodWorkSite")
 despawn_timer = NodePath("DespawnTimer")
 hop_radius = 300.0
 
@@ -167,9 +168,11 @@ movement = NodePath("../AgentMovement")
 food = 5
 lose_food = false
 
-[node name="WorkSite" type="Node2D" parent="." node_paths=PackedStringArray("my_boss")]
+[node name="FoodWorkSite" type="Node2D" parent="." node_paths=PackedStringArray("my_boss")]
 script = ExtResource("7_trimn")
 my_boss = NodePath("..")
+total_work = 1.0
+kind = 2
 metadata/_custom_type_script = "uid://qumqy1omy72i"
 
 [connection signal="timeout" from="DespawnTimer" to="." method="_on_despawn_timer_timeout"]

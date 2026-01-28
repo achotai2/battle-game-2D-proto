@@ -16,6 +16,7 @@ class_name AgentBase
 @export var tasker: MinionTasker = null
 @export var gold: GoldHolder = null
 @export var hunger: HungerHolder = null
+@export var foodTasker: MinionTasker = null
 @export var castle: Node = null
 @export var current_role: StringName
 
@@ -52,6 +53,9 @@ func _connect_all_refs() -> void:
 
 	# Connect signals for TASKER node.	
 	_assign_tasker_refs()
+
+	# Connect signals for FOOD TASKER node.	
+	_assign_food_tasker_refs()
 
 	# Connect signals for GOLD node.	
 	_assign_gold_refs()
@@ -187,6 +191,21 @@ func _assign_tasker_refs() -> void:
 		tasker.call("set_movement", movement)
 	else:
 		print_debug("No function set_movement in tasker.")
+
+
+func _assign_food_tasker_refs() -> void:
+	if not is_instance_valid(foodTasker):
+		return
+
+	if foodTasker.has_method("set_agent"):
+		foodTasker.call("set_agent", self)
+	else:
+		print_debug("No function set_agent in foodTasker.")
+
+	if foodTasker.has_method("set_movement"):
+		foodTasker.call("set_movement", movement)
+	else:
+		print_debug("No function set_movement in foodTasker.")
 
 
 func _assign_gold_refs() -> void:

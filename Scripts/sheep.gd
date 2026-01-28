@@ -5,6 +5,7 @@ extends CharacterBody2D
 @export var pathfinding: MinionPathfinding
 @export var animate: AgentAnimate
 @export var food: HungerHolder
+@export var foodWorkSite: WorkSite
 @export var despawn_timer: Timer = null
 @export var hop_radius: float = 100.0
 @export var wander_interval: float = 2.0 # Not actively used by MinionPathfinding but kept for API compatibility if needed
@@ -19,6 +20,8 @@ var is_returning: bool = false
 #Really they apply work to a sheep, or to a building storing food. The sheep or building then hands the food resource over.
 #Resources will be handled like that, in that they aren't floating in the world, they are always in someones hand.
 # The sheep will be commanded to despawn and hand over food. It will be commanded this by the job board.
+# The idea is that minions get sheep as a worksite, they apply work, and this triggers the sheep to die and spawn.
+# This can actually be handled as a basic worksite style, just when work is completed what does the sheep do?
 
 func _ready() -> void:
 	# Create a stationary anchor for the sheep to patrol around
@@ -56,6 +59,7 @@ func _connect_all_refs() -> void:
 	_assign_animation_refs()
 	_assign_movement_refs()
 	_assign_pathfinding_refs()
+	_assign_food_worksite_refs()
 
 
 func _assign_animation_refs() -> void:
@@ -83,6 +87,11 @@ func _assign_pathfinding_refs() -> void:
 		pathfinding.call("set_castle", patrol_anchor)
 
 
+func _assign_food_worksite_refs() -> void:
+	if not foodWorkSite.work_completed.is_connected(_food_harvested):
+		foodWorkSite.work_completed.connect(_food_harvested)
+
+
 func _physics_process(delta: float) -> void:
 	if is_instance_valid(movement):
 		movement.tick(delta)
@@ -103,16 +112,17 @@ func _on_despawn_timer_timeout() -> void:
 	_unregister_self()
 
 
-func attack(_attacker: Node2D) -> void:
-	# Spawn food and hand it over to attacker.
-	if is_instance_valid(_attacker.hunger) and _attacker.hunger.has_method("receive_food"):
-		food.give_food(_attacker, food.food)
-		food.food_handed.connect(_food_handed)
-
-
 func _food_handed() -> void:
 	_unregister_self()
 	queue_free()
+
+
+func _food_harvested(f: WorkSite, _attacker: WorkSiteWorker) -> void:
+	# Spawn food and hand it over to attacker.
+	var attackerNode: Node2D = _attacker.get_parent()
+	if is_instance_valid(attackerNode.hunger) and attackerNode.hunger.has_method("receive_food"):
+		food.give_food(attackerNode, food.food)
+		food.food_handed.connect(_food_handed)
 
 
 func return_position() -> Vector2:

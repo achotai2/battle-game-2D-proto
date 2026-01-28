@@ -19,7 +19,7 @@ height = 74.0
 [sub_resource type="CircleShape2D" id="CircleShape2D_65o65"]
 radius = 500.0
 
-[node name="Worker" type="CharacterBody2D" node_paths=PackedStringArray("health", "movement", "pathfinding", "animation", "detection", "tactical", "tasker", "gold", "hunger") groups=["Attackable", "Interactable", "Minions", "Workers"]]
+[node name="Worker" type="CharacterBody2D" node_paths=PackedStringArray("health", "movement", "pathfinding", "animation", "detection", "tactical", "tasker", "gold", "hunger", "foodTasker") groups=["Attackable", "Interactable", "Minions", "Workers"]]
 collision_layer = 16
 collision_mask = 31
 script = ExtResource("1_r0ip0")
@@ -29,9 +29,10 @@ pathfinding = NodePath("MinionPathfinding")
 animation = NodePath("AgentAnimate")
 detection = NodePath("AgentDetection")
 tactical = NodePath("TacticalWorker")
-tasker = NodePath("MinionTasker")
+tasker = NodePath("WorkerTasker")
 gold = NodePath("GoldHolder")
 hunger = NodePath("HungerHolder")
+foodTasker = NodePath("FoodTasker")
 current_role = &"worker"
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
@@ -77,7 +78,7 @@ debug_color = Color(0.498544, 0.546397, 0.554583, 0.42)
 script = ExtResource("8_ca3ot")
 metadata/_custom_type_script = "uid://cjkde0ltdx5i0"
 
-[node name="MinionTasker" type="Node" parent="." node_paths=PackedStringArray("agent", "movement")]
+[node name="WorkerTasker" type="Node" parent="." node_paths=PackedStringArray("agent", "movement")]
 script = ExtResource("9_r0ip0")
 agent = NodePath("..")
 movement = NodePath("../AgentMovement")
@@ -94,3 +95,10 @@ movement = NodePath("../AgentMovement")
 
 [node name="GoldHolder" parent="." instance=ExtResource("10_cwsst")]
 gold = 1
+
+[node name="FoodTasker" type="Node" parent="." node_paths=PackedStringArray("agent", "movement")]
+script = ExtResource("9_r0ip0")
+agent = NodePath("..")
+movement = NodePath("../AgentMovement")
+kind = 2
+metadata/_custom_type_script = "uid://d1ucmtjtmh4hm"

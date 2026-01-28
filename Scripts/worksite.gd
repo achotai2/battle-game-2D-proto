@@ -15,7 +15,7 @@ class_name WorkSite
 
 
 # Emitted once, when total work has been completed.
-signal work_completed(site: WorkSite)
+signal work_completed(site: WorkSite, worker: WorkSiteWorker)
 
 # Emitted when work is applied to site.
 signal work_applied(site: WorkSite)
@@ -191,7 +191,7 @@ func apply_work(amount: float, worker: WorkSiteWorker) -> void:
 	work_applied.emit(self)
 
 	if not needs_work():
-		_complete()
+		_complete(worker)
 
 
 # -------------------------
@@ -373,9 +373,9 @@ func _unregister_from_job_board() -> void:
 # Internals: completion
 # -------------------------
 
-func _complete() -> void:
+func _complete(worker: WorkSiteWorker) -> void:
 	## Called once when work is finished.
 	## We unregister from the job board so new workers won't be assigned here,
 	## then emit a signal so the parent/building can react (upgrade, spawn loot, etc).
 	_unregister_from_job_board()
-	work_completed.emit(self)
+	work_completed.emit(self, worker)

@@ -59,7 +59,7 @@ func apply_work(amount: float, worker: WorkSiteWorker) -> void:
 		_work_done = 0.0
 		return
 
-	_complete()
+	_complete(worker)
 
 
 func set_enabled(new_enabled: bool) -> void:

@@ -1,4 +1,4 @@
-[gd_scene load_steps=14 format=3 uid="uid://sy3ke7fhk1uv"]
+[gd_scene load_steps=15 format=3 uid="uid://sy3ke7fhk1uv"]
 
 [ext_resource type="Script" uid="uid://b3iqpgjb0vtvl" path="res://Scripts/agent_base.gd" id="1_ta2g1"]
 [ext_resource type="Script" uid="uid://cjjdaf7vlfs4k" path="res://Scripts/agent_animate.gd" id="2_eqink"]
@@ -11,6 +11,7 @@
 [ext_resource type="PackedScene" uid="uid://c4n5elrxg64hp" path="res://Scenes/GoldHolder.tscn" id="10_225og"]
 [ext_resource type="Script" uid="uid://sxvily52588c" path="res://Scripts/tactical_soldier.gd" id="10_fjdoe"]
 [ext_resource type="PackedScene" uid="uid://c8o4373okv5fq" path="res://Scenes/HungerHolder.tscn" id="10_rby74"]
+[ext_resource type="Script" uid="uid://d1ucmtjtmh4hm" path="res://Scripts/minion_tasker.gd" id="12_a61dd"]
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_ta2g1"]
 radius = 23.0
@@ -19,7 +20,7 @@ height = 74.0
 [sub_resource type="CircleShape2D" id="CircleShape2D_65o65"]
 radius = 500.0
 
-[node name="Soldier" type="CharacterBody2D" node_paths=PackedStringArray("health", "movement", "pathfinding", "animation", "attack", "detection", "tactical", "gold", "hunger") groups=["Attackable", "Interactable", "Minions"]]
+[node name="Soldier" type="CharacterBody2D" node_paths=PackedStringArray("health", "movement", "pathfinding", "animation", "attack", "detection", "tactical", "gold", "hunger", "foodTasker") groups=["Attackable", "Interactable", "Minions"]]
 collision_layer = 16
 collision_mask = 31
 script = ExtResource("1_ta2g1")
@@ -32,6 +33,7 @@ detection = NodePath("AgentDetection")
 tactical = NodePath("TacticalSoldier")
 gold = NodePath("GoldHolder")
 hunger = NodePath("HungerHolder")
+foodTasker = NodePath("FoodTasker")
 current_role = &"soldier"
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
@@ -89,3 +91,9 @@ movement = NodePath("../AgentMovement")
 movement = NodePath("../AgentMovement")
 
 [node name="GoldHolder" parent="." instance=ExtResource("10_225og")]
+
+[node name="FoodTasker" type="Node" parent="." node_paths=PackedStringArray("agent", "movement")]
+script = ExtResource("12_a61dd")
+agent = NodePath("..")
+movement = NodePath("../AgentMovement")
+metadata/_custom_type_script = "uid://d1ucmtjtmh4hm"
