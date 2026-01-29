@@ -11,6 +11,7 @@ var damageTimer := Timer.new()
 var attacking: bool = false
 var working: bool = false
 
+var _move_anim: StringName = &""
 var _my_agent: Node2D = null
 
 
@@ -23,6 +24,7 @@ func _ready() -> void:
 	add_child(damageTimer)
 
 	if sprite:
+		_update_move_anim_cache()
 		sprite.animation_finished.connect(_animation_finished)
 		_animation_finished()
 
@@ -80,10 +82,8 @@ func agent_moved(velocity: Vector2) -> void:
 # Called by Agent when movement occurs, to run animation.
 	if sprite and not attacking and not working:
 		if velocity != Vector2(0, 0):
-			if sprite.sprite_frames.has_animation("walk"):
-				sprite.play("walk")
-			elif sprite.sprite_frames.has_animation("run"):
-				sprite.play("run")
+			if _move_anim != &"":
+				sprite.play(_move_anim)
 
 			if velocity.x < 0:
 				sprite.flip_h = true
@@ -146,6 +146,7 @@ func set_sprite_frames(frames: SpriteFrames) -> void:
 	sprite.stop()
 
 	sprite.sprite_frames = frames
+	_update_move_anim_cache()
 
 	# Reset animation state safely
 	attacking = false
@@ -157,6 +158,17 @@ func set_sprite_frames(frames: SpriteFrames) -> void:
 		sprite.play("idle")
 	elif sprite.sprite_frames.get_animation_names().size() > 0:
 		sprite.play(sprite.sprite_frames.get_animation_names()[0])
+
+
+func _update_move_anim_cache() -> void:
+	_move_anim = &""
+	if not is_instance_valid(sprite) or sprite.sprite_frames == null:
+		return
+
+	if sprite.sprite_frames.has_animation("walk"):
+		_move_anim = &"walk"
+	elif sprite.sprite_frames.has_animation("run"):
+		_move_anim = &"run"
 
 
 func cancel_action_state() -> void:
