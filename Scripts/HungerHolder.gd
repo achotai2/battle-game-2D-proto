@@ -81,7 +81,7 @@ func _on_hunger_timer_timeout() -> void:
 		if food <= hunger_start_threshold:
 			if is_instance_valid(food_tasker):
 				# Linear interpolation: low priority at threshold, max at min_hunger
-				var t = inverse_lerp(hunger_start_threshold, min_hunger, food)
+				var t = clamp(inverse_lerp(hunger_start_threshold, min_hunger, food), 0.0, 1.0)
 				# Default job priority is usually 8. We scale from 8 up to max_hunger_priority.
 				var new_priority = lerp(8, max_hunger_priority, t)
 				food_tasker.job_priority = int(new_priority)
