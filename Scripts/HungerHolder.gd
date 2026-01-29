@@ -75,7 +75,6 @@ func _on_hunger_timer_timeout() -> void:
 		if food <= min_hunger:
 			food_tasker.request_job()
 	
-	print(get_parent().name, " ", food)
 	_hunger_timer.start(time_tick)
 
 
