@@ -76,7 +76,7 @@ func _on_hunger_timer_timeout() -> void:
 			food_tasker.request_job()
 	
 	print(get_parent().name, " ", food)
-	_hunger_timer.start()
+	_hunger_timer.start(time_tick)
 
 
 ## Command the agent to run to a target and give them the food.
