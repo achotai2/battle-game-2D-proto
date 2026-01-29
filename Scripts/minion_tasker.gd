@@ -12,7 +12,7 @@ class_name MinionTasker
 @export var kind: CastleJobBoard.JobBoardType = CastleJobBoard.JobBoardType.WORKERS
 @export var auto_get_work_when_idle: bool = true
 
-const JOB_PRIORITY := 8
+var job_priority: int = 8
 
 enum State {
 	IDLE,
@@ -234,13 +234,13 @@ func request_job() -> void:
 func _command_move_to_site() -> void:
 	if not is_instance_valid(movement):
 		return
-	movement.command_move_to_position(_get_work_position(_site), JOB_PRIORITY)
+	movement.command_move_to_position(_get_work_position(_site), job_priority)
 
 
 func _hold_position() -> void:
 	if not is_instance_valid(movement):
 		return
-	movement.command_move_velocity(Vector2.ZERO, JOB_PRIORITY)
+	movement.command_move_velocity(Vector2.ZERO, job_priority)
 
 
 func _release_job(release_to_board: bool) -> void:
