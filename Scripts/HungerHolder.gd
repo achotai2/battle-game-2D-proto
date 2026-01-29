@@ -21,6 +21,12 @@ signal food_handed
 ## Min hunger before seeking food.
 @export var min_hunger: int = 0
 
+## Max priority for food seeking (at min_hunger).
+@export var max_hunger_priority: int = 20
+
+## Hunger level to start seeking food (linear ramp to max_priority).
+@export var hunger_start_threshold: int = 50
+
 ## How long will agent try to deliver food before giving up.
 @export var _patience_timer: Timer = null
 
@@ -72,8 +78,14 @@ func _on_hunger_timer_timeout() -> void:
 		if food <= 0:
 			food = 0
 	
-		if food <= min_hunger:
-			food_tasker.request_job()
+		if food <= hunger_start_threshold:
+			if is_instance_valid(food_tasker):
+				# Linear interpolation: low priority at threshold, max at min_hunger
+				var t = clamp(inverse_lerp(hunger_start_threshold, min_hunger, food), 0.0, 1.0)
+				# Default job priority is usually 8. We scale from 8 up to max_hunger_priority.
+				var new_priority = lerp(8, max_hunger_priority, t)
+				food_tasker.job_priority = int(new_priority)
+				food_tasker.request_job()
 	
 	print(get_parent().name, " ", food)
 	_hunger_timer.start(time_tick)
