@@ -13,10 +13,10 @@ signal food_handed
 @export var food_tasker: MinionTasker
 
 ## Current amount of food stomach held.
-@export var food: int = 10
+@export var food: int = 100
 
 ## Time ticks for hunger to automatically go down.
-@export var time_tick: int = 1
+@export var time_tick: int = 5
 
 ## Min hunger before seeking food.
 @export var min_hunger: int = 0
@@ -75,6 +75,7 @@ func _on_hunger_timer_timeout() -> void:
 		if food <= min_hunger:
 			food_tasker.request_job()
 	
+	print(get_parent().name, " ", food)
 	_hunger_timer.start()
 
 
@@ -95,7 +96,6 @@ func give_food(target: Node2D, amount: int) -> void:
 	for body in current_bodies:
 		if is_instance_valid(_target_to_give) and body == _target_to_give:
 			_food_handover()
-
 
 
 func _issue_movement_command(target_node: Node2D) -> bool:

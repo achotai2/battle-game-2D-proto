@@ -95,10 +95,6 @@ avoidance_mask = 15
 [node name="HungerHolder" parent="." node_paths=PackedStringArray("movement", "food_tasker") instance=ExtResource("10_t6mam")]
 movement = NodePath("../AgentMovement")
 food_tasker = NodePath("../FoodTasker")
-food = null
-time_tick = null
-min_hunger = null
-lose_food = null
 
 [node name="GoldHolder" parent="." instance=ExtResource("10_hoemf")]
 

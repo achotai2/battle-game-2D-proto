@@ -62,6 +62,7 @@ func _connect_all_refs() -> void:
 	_assign_movement_refs()
 	_assign_pathfinding_refs()
 	_assign_food_worksite_refs()
+	_assign_food_refs()
 
 
 func _assign_animation_refs() -> void:
@@ -94,6 +95,11 @@ func _assign_food_worksite_refs() -> void:
 		foodWorkSite.work_completed.connect(_food_harvested)
 
 
+func _assign_food_refs() -> void:
+	if not food.food_handed.is_connected(_food_handed):
+		food.food_handed.connect(_food_handed)
+
+
 func _physics_process(delta: float) -> void:
 	if is_instance_valid(movement):
 		movement.tick(delta)
@@ -124,7 +130,6 @@ func _food_harvested(f: WorkSite, _attacker: WorkSiteWorker) -> void:
 	var attackerNode: Node2D = _attacker.get_parent()
 	if is_instance_valid(attackerNode.hunger) and attackerNode.hunger.has_method("receive_food"):
 		food.give_food(attackerNode, food.food)
-		food.food_handed.connect(_food_handed)
 
 
 func return_position() -> Vector2:
