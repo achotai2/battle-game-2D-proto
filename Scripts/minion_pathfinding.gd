@@ -126,10 +126,12 @@ func tick(my_pos: Vector2, max_speed: float, delta: float) -> void:
 		return
 
 	# --- stuck detection ---
-	var progress := my_pos.distance_to(_last_my_pos)
+	# Bolt: Use squared distance to avoid sqrt every frame
+	var progress_sq := my_pos.distance_squared_to(_last_my_pos)
 	_last_my_pos = my_pos
 
-	if progress < (min_progress_per_sec * delta):
+	var min_dist_frame := min_progress_per_sec * delta
+	if progress_sq < (min_dist_frame * min_dist_frame):
 		_stuck_accum += delta
 	else:
 		_stuck_accum = 0.0
@@ -171,9 +173,11 @@ func tick(my_pos: Vector2, max_speed: float, delta: float) -> void:
 	var desired := to_next.normalized() * max_speed
 
 	# Optional slowing near final target
+	# Bolt: Check squared distance first to avoid sqrt when outside radius
 	if slow_radius > 0.0:
-		var dist_to_target := my_pos.distance_to(nav_agent.target_position)
-		if dist_to_target < slow_radius:
+		var dist_sq := my_pos.distance_squared_to(nav_agent.target_position)
+		if dist_sq < (slow_radius * slow_radius):
+			var dist_to_target := sqrt(dist_sq)
 			var t: float = clamp(dist_to_target / slow_radius, 0.0, 1.0)
 			desired *= t
 
@@ -206,7 +210,8 @@ func _refresh_target_and_repath(force: bool) -> void:
 		return
 
 	# Only repath if moved enough (unless forced)
-	if force or _target_pos.distance_to(_last_target_pos) >= target_repath_distance:
+	# Bolt: Use squared distance check
+	if force or _target_pos.distance_squared_to(_last_target_pos) >= (target_repath_distance * target_repath_distance):
 		_last_target_pos = _target_pos
 		nav_agent.target_position = _target_pos
 
@@ -241,7 +246,8 @@ func _pick_new_patrol_point(force: bool) -> void:
 		var candidate := center + Vector2(cos(angle), sin(angle)) * r
 
 		# Basic sanity: avoid choosing basically the same target
-		if candidate.distance_to(_target_pos) < 8.0:
+		# Bolt: Squared distance check (8^2 = 64)
+		if candidate.distance_squared_to(_target_pos) < 64.0:
 			continue
 
 		_set_target_pos(candidate)
