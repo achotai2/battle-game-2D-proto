@@ -1,0 +1,26 @@
+[gd_scene load_steps=4 format=3 uid="uid://6it7l8b8yxs"]
+
+[ext_resource type="Script" uid="uid://eeh2yvsqyogh" path="res://Scripts/Weapons/weapon_melee_base.gd" id="1_7iax5"]
+[ext_resource type="Script" uid="uid://bi15gddmxujcs" path="res://Scripts/AgentNodes/agent_tracking.gd" id="2_72ito"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_72ito"]
+radius = 78.0
+
+[node name="WeaponSword" type="Node2D"]
+script = ExtResource("1_7iax5")
+
+[node name="cooldown" type="Timer" parent="."]
+one_shot = true
+
+[node name="AgentTracking" type="Area2D" parent="."]
+collision_layer = 32
+collision_mask = 30
+script = ExtResource("2_72ito")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="AgentTracking"]
+shape = SubResource("CircleShape2D_72ito")
+debug_color = Color(0.949976, 0.0836959, 0.327913, 0.419608)
+
+[node name="AttackDelay" type="Timer" parent="."]
+wait_time = 0.25
+one_shot = true

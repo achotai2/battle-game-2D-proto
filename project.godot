@@ -17,8 +17,8 @@ config/icon="res://icon.svg"
 
 [autoload]
 
-UnitRoles="*res://Scripts/UnitRoles.gd"
-BuildingDefs="*res://Scripts/BuildingDefs.gd"
+UnitRoles="*res://Scripts/UnitBase/UnitRoles.gd"
+BuildingDefs="*res://Scripts/DefsScripts/BuildingDefs.gd"
 
 [global_group]
 

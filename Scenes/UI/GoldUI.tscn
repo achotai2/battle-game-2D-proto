@@ -1,0 +1,26 @@
+[gd_scene load_steps=2 format=3 uid="uid://d4k6usdi8l0w0"]
+
+[ext_resource type="Script" uid="uid://b62xnbha3twkq" path="res://Scripts/UI/GoldUI.gd" id="1_m6gm5"]
+
+[node name="GoldUi" type="CanvasLayer"]
+
+[node name="Control" type="Control" parent="."]
+layout_mode = 3
+anchors_preset = 0
+offset_right = 62.815884
+offset_bottom = 27.436823
+scale = Vector2(1.75, 1.75)
+
+[node name="ColorRect" type="ColorRect" parent="Control"]
+layout_mode = 0
+offset_right = 121.14285
+offset_bottom = 25.142857
+color = Color(0, 0, 0, 0.54901963)
+
+[node name="GoldAmount" type="Label" parent="Control"]
+layout_mode = 0
+offset_left = 6.285721
+offset_right = 97.28572
+offset_bottom = 23.0
+text = "Gold: 10000"
+script = ExtResource("1_m6gm5")

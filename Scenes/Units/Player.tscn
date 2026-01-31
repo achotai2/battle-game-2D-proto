@@ -1,0 +1,72 @@
+[gd_scene load_steps=11 format=3 uid="uid://ex22mf26lsid"]
+
+[ext_resource type="Script" uid="uid://b3iqpgjb0vtvl" path="res://Scripts/UnitBase/agent_base.gd" id="1_rpqav"]
+[ext_resource type="Script" uid="uid://cjjdaf7vlfs4k" path="res://Scripts/AgentNodes/agent_animate.gd" id="2_gntrk"]
+[ext_resource type="SpriteFrames" uid="uid://cvmbb1xtbmxsv" path="res://Art/SpriteFrames/Player.tres" id="3_bhhdu"]
+[ext_resource type="Script" uid="uid://58qm17emnwvd" path="res://Scripts/AgentNodes/agent_move.gd" id="5_5ixxa"]
+[ext_resource type="Script" uid="uid://cfiw0qaxe8jxd" path="res://Scripts/AgentNodes/player_controls.gd" id="6_nn08x"]
+[ext_resource type="Script" uid="uid://c2guvnr3dtafe" path="res://Scripts/AgentNodes/health.gd" id="7_52ee3"]
+[ext_resource type="PackedScene" uid="uid://6it7l8b8yxs" path="res://Scenes/Weapons/weapon_sword.tscn" id="7_bhhdu"]
+[ext_resource type="PackedScene" uid="uid://c4n5elrxg64hp" path="res://Scenes/AgentNodes/GoldHolder.tscn" id="9_jokor"]
+[ext_resource type="PackedScene" uid="uid://by5ppm4d4bxev" path="res://Scenes/AgentNodes/player_interactor.tscn" id="9_yoq75"]
+
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_kyqiw"]
+radius = 26.0
+height = 82.0
+
+[node name="Player" type="CharacterBody2D" node_paths=PackedStringArray("health", "interactor", "movement", "controls", "animation", "attack", "gold") groups=["Attackable", "Player"]]
+collision_layer = 4
+collision_mask = 15
+script = ExtResource("1_rpqav")
+player = 1
+health = NodePath("Health")
+interactor = NodePath("PlayerInteractor")
+movement = NodePath("AgentMovement")
+controls = NodePath("PlayerControls")
+animation = NodePath("AgentAnimate")
+attack = NodePath("WeaponSword")
+gold = NodePath("GoldHolder")
+current_role = &"player"
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("CapsuleShape2D_kyqiw")
+
+[node name="AgentAnimate" type="Node" parent="." node_paths=PackedStringArray("sprite")]
+script = ExtResource("2_gntrk")
+sprite = NodePath("../AnimatedSprite2D")
+metadata/_custom_type_script = "uid://cjjdaf7vlfs4k"
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+position = Vector2(0.499996, -0.499995)
+scale = Vector2(2.81, 2.81)
+sprite_frames = ExtResource("3_bhhdu")
+animation = &"walk"
+
+[node name="AgentMovement" type="Node" parent="." node_paths=PackedStringArray("agent", "animation")]
+script = ExtResource("5_5ixxa")
+agent = NodePath("..")
+animation = NodePath("../AgentAnimate")
+metadata/_custom_type_script = "uid://58qm17emnwvd"
+
+[node name="PlayerControls" type="Node2D" parent="." node_paths=PackedStringArray("interactor", "attackNode", "movement")]
+script = ExtResource("6_nn08x")
+interactor = NodePath("../PlayerInteractor")
+attackNode = NodePath("../WeaponSword")
+movement = NodePath("../AgentMovement")
+metadata/_custom_type_script = "uid://cfiw0qaxe8jxd"
+
+[node name="Health" type="Node" parent="."]
+script = ExtResource("7_52ee3")
+metadata/_custom_type_script = "uid://c2guvnr3dtafe"
+
+[node name="WeaponSword" parent="." instance=ExtResource("7_bhhdu")]
+
+[node name="PlayerInteractor" parent="." node_paths=PackedStringArray("movement") instance=ExtResource("9_yoq75")]
+position = Vector2(0, -1)
+movement = NodePath("../AgentMovement")
+
+[node name="NavigationObstacle2D" type="NavigationObstacle2D" parent="."]
+radius = 41.28
+
+[node name="GoldHolder" parent="." instance=ExtResource("9_jokor")]
+gold = 10

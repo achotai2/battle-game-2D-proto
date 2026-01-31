@@ -1,0 +1,103 @@
+[gd_scene load_steps=15 format=3 uid="uid://sy3ke7fhk1uv"]
+
+[ext_resource type="Script" uid="uid://b3iqpgjb0vtvl" path="res://Scripts/UnitBase/agent_base.gd" id="1_jq3hr"]
+[ext_resource type="SpriteFrames" uid="uid://rc30dymytbcd" path="res://Art/SpriteFrames/Soldier_Red.tres" id="2_gqo0k"]
+[ext_resource type="Script" uid="uid://cjjdaf7vlfs4k" path="res://Scripts/AgentNodes/agent_animate.gd" id="3_x32bv"]
+[ext_resource type="Script" uid="uid://58qm17emnwvd" path="res://Scripts/AgentNodes/agent_move.gd" id="4_80g1m"]
+[ext_resource type="Script" uid="uid://c2guvnr3dtafe" path="res://Scripts/AgentNodes/health.gd" id="5_14jue"]
+[ext_resource type="PackedScene" uid="uid://6it7l8b8yxs" path="res://Scenes/Weapons/weapon_sword.tscn" id="6_k4v4y"]
+[ext_resource type="Script" uid="uid://cf3jwbm3206s5" path="res://Scripts/AgentNodes/minion_pathfinding.gd" id="7_lel1w"]
+[ext_resource type="Script" uid="uid://bi15gddmxujcs" path="res://Scripts/AgentNodes/agent_tracking.gd" id="8_gdgxh"]
+[ext_resource type="Script" uid="uid://sxvily52588c" path="res://Scripts/AgentNodes/tactical_soldier.gd" id="9_3s4fr"]
+[ext_resource type="PackedScene" uid="uid://c8o4373okv5fq" path="res://Scenes/AgentNodes/HungerHolder.tscn" id="10_jghxd"]
+[ext_resource type="PackedScene" uid="uid://c4n5elrxg64hp" path="res://Scenes/AgentNodes/GoldHolder.tscn" id="11_iaeu3"]
+[ext_resource type="Script" uid="uid://d1ucmtjtmh4hm" path="res://Scripts/AgentNodes/minion_tasker.gd" id="12_g0yrv"]
+
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_ta2g1"]
+radius = 23.0
+height = 74.0
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_65o65"]
+radius = 500.0
+
+[node name="Soldier" type="CharacterBody2D" node_paths=PackedStringArray("health", "movement", "pathfinding", "animation", "attack", "detection", "tactical", "gold", "hunger", "foodTasker") groups=["Attackable", "Interactable", "Minions"]]
+collision_layer = 16
+collision_mask = 31
+script = ExtResource("1_jq3hr")
+health = NodePath("Health")
+movement = NodePath("AgentMovement")
+pathfinding = NodePath("MinionPathfinding")
+animation = NodePath("AgentAnimate")
+attack = NodePath("WeaponSword")
+detection = NodePath("AgentDetection")
+tactical = NodePath("TacticalSoldier")
+gold = NodePath("GoldHolder")
+hunger = NodePath("HungerHolder")
+foodTasker = NodePath("FoodTasker")
+current_role = &"soldier"
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("CapsuleShape2D_ta2g1")
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+sprite_frames = ExtResource("2_gqo0k")
+animation = &"idle"
+
+[node name="NavigationAgent2D" type="NavigationAgent2D" parent="."]
+avoidance_enabled = true
+radius = 50.0
+avoidance_layers = 8
+avoidance_mask = 255
+
+[node name="AgentAnimate" type="Node" parent="." node_paths=PackedStringArray("sprite")]
+script = ExtResource("3_x32bv")
+sprite = NodePath("../AnimatedSprite2D")
+metadata/_custom_type_script = "uid://cjjdaf7vlfs4k"
+
+[node name="AgentMovement" type="Node" parent="." node_paths=PackedStringArray("agent", "animation")]
+script = ExtResource("4_80g1m")
+max_speed = 200.0
+can_meander = true
+agent = NodePath("..")
+animation = NodePath("../AgentAnimate")
+metadata/_custom_type_script = "uid://58qm17emnwvd"
+
+[node name="Health" type="Node" parent="."]
+script = ExtResource("5_14jue")
+metadata/_custom_type_script = "uid://c2guvnr3dtafe"
+
+[node name="WeaponSword" parent="." instance=ExtResource("6_k4v4y")]
+
+[node name="MinionPathfinding" type="Node" parent="." node_paths=PackedStringArray("nav_agent")]
+script = ExtResource("7_lel1w")
+nav_agent = NodePath("../NavigationAgent2D")
+
+[node name="AgentDetection" type="Area2D" parent="." node_paths=PackedStringArray("my_agent", "tactical")]
+collision_layer = 32
+collision_mask = 1023
+script = ExtResource("8_gdgxh")
+my_agent = NodePath("..")
+tactical = NodePath("../TacticalSoldier")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="AgentDetection"]
+shape = SubResource("CircleShape2D_65o65")
+debug_color = Color(0.498544, 0.546397, 0.554583, 0.42)
+
+[node name="TacticalSoldier" type="Node" parent="." node_paths=PackedStringArray("movement")]
+script = ExtResource("9_3s4fr")
+movement = NodePath("../AgentMovement")
+
+[node name="HungerHolder" parent="." node_paths=PackedStringArray("movement", "food_tasker") instance=ExtResource("10_jghxd")]
+movement = NodePath("../AgentMovement")
+food_tasker = NodePath("../FoodTasker")
+
+[node name="GoldHolder" parent="." instance=ExtResource("11_iaeu3")]
+
+[node name="FoodTasker" type="Node" parent="." node_paths=PackedStringArray("agent", "movement")]
+script = ExtResource("12_g0yrv")
+agent = NodePath("..")
+movement = NodePath("../AgentMovement")
+work_range = 100.0
+kind = 2
+auto_get_work_when_idle = false
+metadata/_custom_type_script = "uid://d1ucmtjtmh4hm"

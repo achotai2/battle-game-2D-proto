@@ -5,3 +5,9 @@ Finish work:
 git add .
 git commit -m "Rebuilt Main scene with player, world, interaction"
 git push
+
+
+Now, the idea is that players inject money into the economy by doing things. 
+	Therefore we need that a player has money, and that they put it into a interactable when they interact.
+	The thing has a GoldHolder, and when given gold it emits a signal that other nodes are listening to.
+	They respond by calling over workers and giving them the gold.

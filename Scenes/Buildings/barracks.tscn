@@ -1,0 +1,63 @@
+[gd_scene load_steps=7 format=3 uid="uid://ra0fj2eqns6d"]
+
+[ext_resource type="Script" uid="uid://cjbrsf0fmsehe" path="res://Scripts/BuildingsBase/building_base.gd" id="1_24hde"]
+[ext_resource type="Texture2D" uid="uid://fmdpglm25048" path="res://Art/Tiny Swords (Update 010)/Factions/Knights/Buildings/Castle/Castle_Destroyed.png" id="2_2u44n"]
+[ext_resource type="Script" uid="uid://qumqy1omy72i" path="res://Scripts/BuildingNodes/worksite.gd" id="3_0ywlv"]
+[ext_resource type="Script" uid="uid://dqu3s3kqb7wj6" path="res://Scripts/BuildingNodes/spawnsite.gd" id="4_ua3nw"]
+[ext_resource type="PackedScene" uid="uid://d1275k0u0fsn" path="res://Scenes/AgentNodes/interactable.tscn" id="5_krvd1"]
+
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_coeoc"]
+radius = 47.999996
+height = 110.0
+
+[node name="Barracks" type="StaticBody2D" node_paths=PackedStringArray("visual", "interactable", "worksite", "spawnsite")]
+script = ExtResource("1_24hde")
+building_type = &"barracks"
+visual = NodePath("Sprite2D")
+interactable = NodePath("Interactable")
+worksite = NodePath("WorkSite")
+spawnsite = NodePath("SpawnSite")
+state = 2
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+rotation = 1.5707964
+shape = SubResource("CapsuleShape2D_coeoc")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+position = Vector2(-0.49996984, -9.536743e-07)
+scale = Vector2(0.359375, 0.359375)
+texture = ExtResource("2_2u44n")
+
+[node name="WorkSite" type="Node2D" parent="." node_paths=PackedStringArray("my_boss", "work_offset")]
+script = ExtResource("3_0ywlv")
+my_boss = NodePath("..")
+auto_register = false
+work_offset = NodePath("Marker2D")
+metadata/_custom_type_script = "uid://qumqy1omy72i"
+
+[node name="Marker2D" type="Marker2D" parent="WorkSite"]
+position = Vector2(0, 72)
+
+[node name="Marker2D2" type="Marker2D" parent="WorkSite"]
+position = Vector2(-80, 0)
+
+[node name="Marker2D3" type="Marker2D" parent="WorkSite"]
+position = Vector2(80, 0)
+
+[node name="Marker2D6" type="Marker2D" parent="WorkSite"]
+position = Vector2(0, -72)
+
+[node name="SpawnSite" type="Node2D" parent="."]
+script = ExtResource("4_ua3nw")
+metadata/_custom_type_script = "uid://dqu3s3kqb7wj6"
+
+[node name="Marker2D" type="Marker2D" parent="SpawnSite"]
+position = Vector2(0, 72)
+
+[node name="Interactable" parent="." instance=ExtResource("5_krvd1")]
+
+[node name="NavigationObstacle2D" type="NavigationObstacle2D" parent="."]
+radius = 55.0
+vertices = PackedVector2Array(-51, -15, -16, -53, 21, -53, 53, -20, 52, 13, 24, 48, -15, 51, -51, 21)
+affect_navigation_mesh = true
+carve_navigation_mesh = true

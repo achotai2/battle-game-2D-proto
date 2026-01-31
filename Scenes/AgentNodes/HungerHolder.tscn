@@ -1,0 +1,109 @@
+[gd_scene load_steps=14 format=3 uid="uid://c8o4373okv5fq"]
+
+[ext_resource type="Script" uid="uid://cjgf3atjh3w6i" path="res://Scripts/AgentNodes/HungerHolder.gd" id="1_tl0wv"]
+[ext_resource type="Texture2D" uid="uid://3wm74ejwn7sa" path="res://Art/Tiny Swords (Update 010)/Resources/Resources/M_Idle.png" id="2_csgo3"]
+[ext_resource type="Texture2D" uid="uid://cov0gs8y5c45w" path="res://Art/Tiny Swords (Update 010)/Resources/Resources/M_Spawn.png" id="3_yln4b"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_88xe4"]
+radius = 98.0
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_2fd65"]
+atlas = ExtResource("2_csgo3")
+region = Rect2(0, 0, 128, 128)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_os4x8"]
+atlas = ExtResource("3_yln4b")
+region = Rect2(0, 0, 128, 128)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_jep2r"]
+atlas = ExtResource("3_yln4b")
+region = Rect2(128, 0, 128, 128)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_vsi8l"]
+atlas = ExtResource("3_yln4b")
+region = Rect2(256, 0, 128, 128)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_nktci"]
+atlas = ExtResource("3_yln4b")
+region = Rect2(384, 0, 128, 128)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_d36pi"]
+atlas = ExtResource("3_yln4b")
+region = Rect2(512, 0, 128, 128)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_022cr"]
+atlas = ExtResource("3_yln4b")
+region = Rect2(640, 0, 128, 128)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_r25ft"]
+atlas = ExtResource("3_yln4b")
+region = Rect2(768, 0, 128, 128)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_sae57"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_2fd65")
+}],
+"loop": true,
+"name": &"idle",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_os4x8")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_jep2r")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_vsi8l")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_nktci")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_d36pi")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_022cr")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_r25ft")
+}],
+"loop": false,
+"name": &"spawn",
+"speed": 5.0
+}]
+
+[node name="HungerHolder" type="Area2D" node_paths=PackedStringArray("food_display", "_patience_timer", "_hunger_timer", "_food_gone_timer")]
+collision_layer = 32
+collision_mask = 1023
+script = ExtResource("1_tl0wv")
+food_display = NodePath("AnimatedSprite2D")
+_patience_timer = NodePath("DeliveryPatience")
+_hunger_timer = NodePath("HungerTimer")
+_food_gone_timer = NodePath("FoodGone")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("CircleShape2D_88xe4")
+
+[node name="DeliveryPatience" type="Timer" parent="."]
+wait_time = 5.0
+one_shot = true
+
+[node name="FoodGone" type="Timer" parent="."]
+wait_time = 2.0
+one_shot = true
+
+[node name="HungerTimer" type="Timer" parent="."]
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+visible = false
+sprite_frames = SubResource("SpriteFrames_sae57")
+animation = &"spawn"
+
+[connection signal="body_entered" from="." to="." method="_on_body_entered"]
+[connection signal="timeout" from="DeliveryPatience" to="." method="_on_delivery_patience_timeout"]
+[connection signal="timeout" from="FoodGone" to="." method="_on_food_gone_timeout"]
+[connection signal="timeout" from="HungerTimer" to="." method="_on_hunger_timer_timeout"]

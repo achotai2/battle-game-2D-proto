@@ -1,0 +1,52 @@
+[gd_scene load_steps=7 format=3 uid="uid://ddlh76nm5b4gr"]
+
+[ext_resource type="Script" uid="uid://6x83wimk0ald" path="res://Scripts/Weapons/projectile.gd" id="1_k1g7c"]
+[ext_resource type="Texture2D" uid="uid://cwx6s3dniriph" path="res://Art/Tiny Swords (Update 010)/Factions/Knights/Troops/Archer/Arrow/Arrow.png" id="2_l22lk"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_h5x2m"]
+atlas = ExtResource("2_l22lk")
+region = Rect2(0, 0, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_40cdi"]
+atlas = ExtResource("2_l22lk")
+region = Rect2(0, 64, 64, 64)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_xxsqv"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_h5x2m")
+}],
+"loop": true,
+"name": &"flying",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_40cdi")
+}],
+"loop": true,
+"name": &"landed",
+"speed": 5.0
+}]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_l2k8s"]
+
+[node name="Arrow" type="Area2D"]
+collision_layer = 64
+collision_mask = 30
+script = ExtResource("1_k1g7c")
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+sprite_frames = SubResource("SpriteFrames_xxsqv")
+animation = &"flying"
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+position = Vector2(24, 1)
+shape = SubResource("CircleShape2D_l2k8s")
+debug_color = Color(0.97078675, 0, 0.45557922, 0.41960785)
+
+[node name="DeathTimer" type="Timer" parent="."]
+one_shot = true
+
+[connection signal="timeout" from="DeathTimer" to="." method="_on_death_timer_timeout"]
