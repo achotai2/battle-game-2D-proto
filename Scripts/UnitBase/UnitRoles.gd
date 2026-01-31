@@ -6,6 +6,7 @@ const PEASANT := &"peasant"
 const SOLDIER := &"soldier"
 const ARCHER := &"archer"
 const WORKER := &"worker"
+const LORD := &"lord"
 
 
 var role_groups := {
@@ -17,6 +18,11 @@ var role_groups := {
 		&"Minions",
 		&"Peasants",
 		&"Interactable"
+	],
+	LORD: [
+		&"Minions",
+		&"Interactable",
+		&"Attackable",
 	],
 	SOLDIER: [
 		&"Minions",
@@ -62,6 +68,10 @@ var frames := {
 		1: preload("res://Art/SpriteFrames/Worker_Blue.tres"),
 		2: preload("res://Art/SpriteFrames/Worker_Red.tres"),
 	},
+	LORD: {
+		1: preload("res://Art/SpriteFrames/Peasant_Blue.tres"),
+		2: preload("res://Art/SpriteFrames/Peasant_Red.tres"),
+	},
 }
 
 func get_frames(role: StringName, player: int) -> SpriteFrames:
@@ -86,6 +96,7 @@ var tacticals := {
 	SOLDIER: TacticalSoldier,
 	ARCHER: TacticalArcher,
 	WORKER: TacticalWorker,
+	LORD: TacticalLord,
 }
 
 func get_tactical(role: StringName) -> GDScript:
