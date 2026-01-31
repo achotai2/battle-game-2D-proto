@@ -12,7 +12,7 @@ class_name WeaponRanged
 # Projectile setup
 @export var projectile_scene: PackedScene
 @export var muzzle: Node2D                      # optional spawn point (e.g. "Muzzle" Node2D)
-@export var projectile_parent_path: NodePath = ^"/root/main/Projectiles"
+@export var projectile_parent_path: NodePath
 # Tip: set this in the inspector to point at your Projectiles node.
 # If it's invalid, we will fall back to current_scene.
 @export var projectile_speed: float = 700.0
