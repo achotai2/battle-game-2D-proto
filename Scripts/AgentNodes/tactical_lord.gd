@@ -10,6 +10,7 @@ signal move_to_position(pos: Vector2)
 @export var tax_cooldown: float = 10000.0 # 10 seconds
 @export var max_gold_for_guarantee: float = 10.0
 @export var movement: AgentMovement = null
+@export var detection: AgentTracking = null
 
 var _agent: Node2D = null
 var _wander_timer: Timer
@@ -35,11 +36,11 @@ func set_agent(agent: Node2D) -> void:
 	_agent = agent
 
 	# Configure detection to find friendly interactables
-	if is_instance_valid(_agent) and "detection" in _agent and is_instance_valid(_agent.detection):
-		if _agent.detection.has_method("set_team_filters"):
-			_agent.detection.set_team_filters(true, false, false) # Same team, not opposing, not neutral
-		_agent.detection.target_kind = AgentTracking.TargetKind.INTERACTABLE
-		_agent.detection.refresh()
+	if is_instance_valid(detection):
+		if detection.has_method("set_team_filters"):
+			detection.set_team_filters(true, false, false) # Same team, not opposing, not neutral
+		detection.target_kind = AgentTracking.TargetKind.INTERACTABLE
+		detection.refresh()
 
 	_on_wander_timeout() # Start wandering immediately/soon
 
@@ -82,10 +83,10 @@ func _on_wander_timeout() -> void:
 
 
 func _on_tax_check() -> void:
-	if not is_instance_valid(_agent) or not "detection" in _agent or not is_instance_valid(_agent.detection):
+	if not is_instance_valid(detection):
 		return
 
-	var candidates = _agent.detection.get_candidates()
+	var candidates = detection.get_candidates()
 	var now = Time.get_ticks_msec()
 
 	# Cleanup cooldowns

@@ -1,0 +1,90 @@
+[gd_scene load_steps=12 format=3 uid="uid://cwsleixsa262m"]
+
+[ext_resource type="Script" uid="uid://b3iqpgjb0vtvl" path="res://Scripts/UnitBase/agent_base.gd" id="1_pu4ol"]
+[ext_resource type="Script" uid="uid://cjjdaf7vlfs4k" path="res://Scripts/AgentNodes/agent_animate.gd" id="3_ygrm2"]
+[ext_resource type="Script" uid="uid://58qm17emnwvd" path="res://Scripts/AgentNodes/agent_move.gd" id="4_24sip"]
+[ext_resource type="Script" uid="uid://c2guvnr3dtafe" path="res://Scripts/AgentNodes/health.gd" id="5_4tqx4"]
+[ext_resource type="Script" uid="uid://c1706o51hkau1" path="res://Scripts/AgentNodes/minion_pathfinding.gd" id="7_p5hcf"]
+[ext_resource type="Script" uid="uid://bi15gddmxujcs" path="res://Scripts/AgentNodes/agent_tracking.gd" id="8_7kbwn"]
+[ext_resource type="PackedScene" uid="uid://c4n5elrxg64hp" path="res://Scenes/AgentNodes/GoldHolder.tscn" id="11_ljm1k"]
+[ext_resource type="SpriteFrames" uid="uid://cmw8o5r0psvj8" path="res://Art/SpriteFrames/Soldier_Yellow.tres" id="11_pu4ol"]
+[ext_resource type="Script" uid="uid://ckav3fy85cq6v" path="res://Scripts/AgentNodes/tactical_lord.gd" id="12_pu4ol"]
+
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_ta2g1"]
+radius = 38.0
+height = 104.0
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_65o65"]
+radius = 500.0
+
+[node name="Lord" type="CharacterBody2D" node_paths=PackedStringArray("health", "movement", "pathfinding", "animation", "attack", "detection", "tactical", "gold", "hunger", "foodTasker") groups=["Attackable", "Interactable", "Minions"]]
+collision_layer = 16
+collision_mask = 31
+script = ExtResource("1_pu4ol")
+health = NodePath("Health")
+movement = NodePath("AgentMovement")
+pathfinding = NodePath("MinionPathfinding")
+animation = NodePath("AgentAnimate")
+attack = NodePath("")
+detection = NodePath("AgentDetection")
+tactical = NodePath("TacticalLord")
+gold = NodePath("GoldHolder")
+hunger = NodePath("")
+foodTasker = NodePath("")
+current_role = &"lord"
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("CapsuleShape2D_ta2g1")
+
+[node name="NavigationAgent2D" type="NavigationAgent2D" parent="."]
+avoidance_enabled = true
+radius = 50.0
+avoidance_layers = 8
+avoidance_mask = 255
+
+[node name="AgentAnimate" type="Node" parent="." node_paths=PackedStringArray("sprite")]
+script = ExtResource("3_ygrm2")
+sprite = NodePath("../AnimatedSprite2D")
+metadata/_custom_type_script = "uid://cjjdaf7vlfs4k"
+
+[node name="AgentMovement" type="Node" parent="." node_paths=PackedStringArray("agent", "animation", "pathfinding")]
+script = ExtResource("4_24sip")
+max_speed = 200.0
+can_meander = true
+agent = NodePath("..")
+animation = NodePath("../AgentAnimate")
+pathfinding = NodePath("../MinionPathfinding")
+metadata/_custom_type_script = "uid://58qm17emnwvd"
+
+[node name="Health" type="Node" parent="."]
+script = ExtResource("5_4tqx4")
+metadata/_custom_type_script = "uid://c2guvnr3dtafe"
+
+[node name="MinionPathfinding" type="Node" parent="." node_paths=PackedStringArray("nav_agent")]
+script = ExtResource("7_p5hcf")
+nav_agent = NodePath("../NavigationAgent2D")
+
+[node name="AgentDetection" type="Area2D" parent="." node_paths=PackedStringArray("my_agent", "tactical")]
+collision_layer = 32
+collision_mask = 1023
+script = ExtResource("8_7kbwn")
+my_agent = NodePath("..")
+tactical = NodePath("../TacticalLord")
+target_same_team = true
+target_opposing = false
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="AgentDetection"]
+shape = SubResource("CircleShape2D_65o65")
+debug_color = Color(0.498544, 0.546397, 0.554583, 0.42)
+
+[node name="GoldHolder" parent="." instance=ExtResource("11_ljm1k")]
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." groups=["Interactable", "Lord", "Minions"]]
+scale = Vector2(1.1770834, 1.1770834)
+sprite_frames = ExtResource("11_pu4ol")
+animation = &"walk"
+
+[node name="TacticalLord" type="Node" parent="." node_paths=PackedStringArray("movement", "detection")]
+script = ExtResource("12_pu4ol")
+movement = NodePath("../AgentMovement")
+detection = NodePath("../AgentDetection")

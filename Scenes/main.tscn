@@ -1,4 +1,4 @@
-[gd_scene load_steps=14 format=4 uid="uid://denj1nj2jkqg1"]
+[gd_scene load_steps=15 format=4 uid="uid://denj1nj2jkqg1"]
 
 [ext_resource type="Texture2D" uid="uid://b48b8ua5c4hra" path="res://Art/Tiny Swords (Update 010)/Terrain/Ground/Tilemap_Flat.png" id="1_jjgbg"]
 [ext_resource type="Script" uid="uid://6hbmeykuynas" path="res://Scripts/main.gd" id="1_jjvhh"]
@@ -7,6 +7,7 @@
 [ext_resource type="PackedScene" uid="uid://56ng42k13bnj" path="res://Scenes/Buildings/castle.tscn" id="5_kry3j"]
 [ext_resource type="PackedScene" uid="uid://ctx2ge4w4wad7" path="res://Scenes/Units/peasant.tscn" id="5_ynf5e"]
 [ext_resource type="PackedScene" uid="uid://so0ngwg160ke" path="res://Scenes/Buildings/house.tscn" id="6_21xkr"]
+[ext_resource type="PackedScene" uid="uid://cwsleixsa262m" path="res://Scenes/Units/lord.tscn" id="6_d1ilt"]
 [ext_resource type="PackedScene" uid="uid://bx0vujr38q8pu" path="res://Scenes/Buildings/tree.tscn" id="7_344ge"]
 [ext_resource type="PackedScene" uid="uid://boksm60la2s5a" path="res://Scenes/Buildings/archery_range.tscn" id="8_344ge"]
 [ext_resource type="PackedScene" uid="uid://d4k6usdi8l0w0" path="res://Scenes/UI/GoldUI.tscn" id="10_hptm8"]
@@ -221,6 +222,11 @@ castle = NodePath("../../Buildings/Castle")
 
 [node name="Peasant2" parent="Units" node_paths=PackedStringArray("castle") instance=ExtResource("5_ynf5e")]
 position = Vector2(200, 24)
+player = 1
+castle = NodePath("../../Buildings/Castle")
+
+[node name="Lord" parent="Units" node_paths=PackedStringArray("castle") instance=ExtResource("6_d1ilt")]
+position = Vector2(567, 306)
 player = 1
 castle = NodePath("../../Buildings/Castle")
 

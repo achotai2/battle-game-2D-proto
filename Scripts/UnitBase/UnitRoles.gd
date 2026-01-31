@@ -22,7 +22,7 @@ var role_groups := {
 	LORD: [
 		&"Minions",
 		&"Interactable",
-		&"Attackable",
+		&"Lord",
 	],
 	SOLDIER: [
 		&"Minions",
@@ -69,8 +69,8 @@ var frames := {
 		2: preload("res://Art/SpriteFrames/Worker_Red.tres"),
 	},
 	LORD: {
-		1: preload("res://Art/SpriteFrames/Peasant_Blue.tres"),
-		2: preload("res://Art/SpriteFrames/Peasant_Red.tres"),
+		1: preload("res://Art/SpriteFrames/Soldier_Yellow.tres"),
+		2: preload("res://Art/SpriteFrames/Soldier_Yellow.tres"),
 	},
 }
 
