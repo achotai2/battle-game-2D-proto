@@ -143,13 +143,13 @@ func _on_regrow_timer_timeout() -> void:
 
 
 func _disable_collision() -> void:
-	$CollisionShape2D.disabled = true
-	$NavigationObstacle2D.avoidance_enabled = false
+	pass
+#	$CollisionShape2D.disabled = true
 
 
 func _enable_collision() -> void:
-	$CollisionShape2D.disabled = false
-	$NavigationObstacle2D.avoidance_enabled = false
+	pass
+#	$CollisionShape2D.disabled = true
 
 
 func _on_spawn_timer_timeout() -> void:
