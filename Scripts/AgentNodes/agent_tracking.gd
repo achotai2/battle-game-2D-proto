@@ -185,11 +185,23 @@ func _reselect_target() -> void:
 		_remove_candidate(b)
 
 	var best: Node2D = null
-	for b in _candidate_list:
-		if best == null:
-			best = b
-		elif _is_better(b, best):
-			best = b
+
+	# Bolt Optimization: Fast path for Nearest to avoid repeated function calls and property access
+	if target_bias == "Nearest":
+		var my_pos := global_position
+		var best_dist_sq := INF
+
+		for b in _candidate_list:
+			var d := my_pos.distance_squared_to(b.global_position)
+			if d < best_dist_sq:
+				best_dist_sq = d
+				best = b
+	else:
+		for b in _candidate_list:
+			if best == null:
+				best = b
+			elif _is_better(b, best):
+				best = b
 
 	if best != _current_target:
 		_current_target = best
