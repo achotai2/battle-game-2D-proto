@@ -17,7 +17,7 @@ height = 104.0
 [sub_resource type="CircleShape2D" id="CircleShape2D_65o65"]
 radius = 500.0
 
-[node name="Lord" type="CharacterBody2D" node_paths=PackedStringArray("health", "movement", "pathfinding", "animation", "attack", "detection", "tactical", "gold", "hunger", "foodTasker") groups=["Attackable", "Interactable", "Minions"]]
+[node name="Lord" type="CharacterBody2D" node_paths=PackedStringArray("health", "movement", "pathfinding", "animation", "detection", "tactical", "gold") groups=["Attackable", "Interactable", "Minions"]]
 collision_layer = 16
 collision_mask = 31
 script = ExtResource("1_pu4ol")
@@ -25,12 +25,9 @@ health = NodePath("Health")
 movement = NodePath("AgentMovement")
 pathfinding = NodePath("MinionPathfinding")
 animation = NodePath("AgentAnimate")
-attack = NodePath("")
 detection = NodePath("AgentDetection")
 tactical = NodePath("TacticalLord")
 gold = NodePath("GoldHolder")
-hunger = NodePath("")
-foodTasker = NodePath("")
 current_role = &"lord"
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
@@ -38,9 +35,10 @@ shape = SubResource("CapsuleShape2D_ta2g1")
 
 [node name="NavigationAgent2D" type="NavigationAgent2D" parent="."]
 avoidance_enabled = true
-radius = 50.0
+radius = 60.0
 avoidance_layers = 8
 avoidance_mask = 255
+debug_enabled = true
 
 [node name="AgentAnimate" type="Node" parent="." node_paths=PackedStringArray("sprite")]
 script = ExtResource("3_ygrm2")
@@ -84,7 +82,6 @@ scale = Vector2(1.1770834, 1.1770834)
 sprite_frames = ExtResource("11_pu4ol")
 animation = &"walk"
 
-[node name="TacticalLord" type="Node" parent="." node_paths=PackedStringArray("movement", "detection")]
+[node name="TacticalLord" type="Node" parent="." node_paths=PackedStringArray("movement")]
 script = ExtResource("12_pu4ol")
 movement = NodePath("../AgentMovement")
-detection = NodePath("../AgentDetection")

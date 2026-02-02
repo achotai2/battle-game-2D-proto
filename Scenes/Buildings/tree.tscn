@@ -148,10 +148,6 @@ position = Vector2(80, 0)
 [node name="Marker2D6" type="Marker2D" parent="WorkSite"]
 position = Vector2(0, -72)
 
-[node name="NavigationObstacle2D" type="NavigationObstacle2D" parent="."]
-vertices = PackedVector2Array(-19, 13, -18, -16, 16, -18, 17, 13)
-avoidance_enabled = false
-
 [node name="RegrowTimer" type="Timer" parent="."]
 wait_time = 10.0
 one_shot = true

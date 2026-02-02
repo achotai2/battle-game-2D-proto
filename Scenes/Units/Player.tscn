@@ -66,7 +66,7 @@ position = Vector2(0, -1)
 movement = NodePath("../AgentMovement")
 
 [node name="NavigationObstacle2D" type="NavigationObstacle2D" parent="."]
-radius = 41.28
+radius = 50.0
 
 [node name="GoldHolder" parent="." instance=ExtResource("9_jokor")]
 gold = 10

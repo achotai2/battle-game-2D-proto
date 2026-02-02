@@ -27,6 +27,12 @@ var _min_hunger = 0
 func _ready() -> void:
 	_connect_all_refs()
 	apply_role(current_role, player)
+	
+	_register_myself_with_castle()
+
+
+func _exit_tree() -> void:
+	_unregister_myself_with_castle()
 
 
 func _connect_all_refs() -> void:
@@ -360,7 +366,10 @@ func return_castle() -> Node:
 
 # Called externally to update castle agent is assigned to.
 func set_castle(new_castle: Node) -> void:
+	_unregister_myself_with_castle
 	castle = new_castle
+	_register_myself_with_castle()
+	
 	if is_instance_valid(pathfinding) and pathfinding.has_method("set_castle"):
 		pathfinding.call("set_castle", castle)
 	else:
@@ -371,3 +380,14 @@ func set_castle(new_castle: Node) -> void:
 
 	if is_instance_valid(foodTasker) and foodTasker.has_method("switch_job_board"):
 		foodTasker.call("switch_job_board", castle)
+		
+
+
+func _register_myself_with_castle() -> void:
+	if is_instance_valid(castle):
+		castle.register_minion(self)
+
+
+func _unregister_myself_with_castle() -> void:
+	if is_instance_valid(castle):
+		castle.unregister_minion(self)

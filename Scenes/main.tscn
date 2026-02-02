@@ -187,8 +187,8 @@ terrain_set_0/terrain_1/color = Color(0.5, 0.4375, 0.25, 1)
 sources/3 = SubResource("TileSetAtlasSource_6bp64")
 
 [sub_resource type="NavigationPolygon" id="NavigationPolygon_fvkhu"]
-vertices = PackedVector2Array(1132.0078, 625.09375, -108.92969, 636.89844, -104.0625, -108, 1132.9922, -108)
-polygons = Array[PackedInt32Array]([PackedInt32Array(0, 1, 2, 3)])
+vertices = PackedVector2Array(658.1797, 86.53906, 787.8203, 355.46094, 766.46094, 376.8203, 423.35156, 361, 630.3203, 94, 889.35156, 406, 1132.9922, -108, 1132.0078, 625.09375, 881.53906, 435.1797, 881.53906, 376.8203, 687.35156, 36, 679.53906, 6.8203125, 860.1797, 355.46094, 679.53906, 65.17969, 832.3203, 348, 815.6797, 348, 613.6797, 94, 414.7422, 328.8203, 585.8203, 86.53906, 391.1797, 305.2578, 758.64844, 406, 414.7422, 393.1797, 564.46094, 65.17969, 360.3203, 297, 860.1797, 456.53906, 766.46094, 435.1797, 391.1797, 416.7422, 658.1797, -14.5390625, 556.64844, 36, 131.67969, 297, -104.0625, -108, 832.3203, 464, -108.92969, 636.89844, 815.6797, 464, 787.8203, 456.53906, 360.3203, 425, 131.67969, 425, 100.82031, 416.7422, 77.25781, 393.1797, 68.64844, 361, 77.25781, 328.8203, 100.82031, 305.2578, 564.46094, 6.8203125, 585.8203, -14.5390625, 630.3203, -22, 613.6797, -22)
+polygons = Array[PackedInt32Array]([PackedInt32Array(0, 1, 2, 3, 4), PackedInt32Array(5, 6, 7, 8), PackedInt32Array(6, 5, 9), PackedInt32Array(10, 11, 6, 9, 12), PackedInt32Array(13, 10, 12, 14), PackedInt32Array(13, 14, 15, 0), PackedInt32Array(0, 15, 1), PackedInt32Array(16, 4, 3, 17), PackedInt32Array(18, 16, 17, 19), PackedInt32Array(3, 2, 20, 21), PackedInt32Array(22, 18, 19, 23), PackedInt32Array(24, 8, 7), PackedInt32Array(21, 20, 25, 26), PackedInt32Array(6, 11, 27), PackedInt32Array(28, 22, 23, 29, 30), PackedInt32Array(31, 24, 7), PackedInt32Array(31, 7, 32, 33), PackedInt32Array(34, 33, 32), PackedInt32Array(26, 25, 34, 32, 35), PackedInt32Array(36, 35, 32), PackedInt32Array(37, 36, 32), PackedInt32Array(38, 37, 32), PackedInt32Array(38, 32, 30, 39), PackedInt32Array(40, 39, 30), PackedInt32Array(41, 40, 30), PackedInt32Array(29, 41, 30), PackedInt32Array(42, 28, 30), PackedInt32Array(43, 42, 30), PackedInt32Array(6, 27, 44), PackedInt32Array(30, 6, 44, 45), PackedInt32Array(43, 30, 45)])
 outlines = Array[PackedVector2Array]([PackedVector2Array(-114, -118, 1143, -118, 1142, 635, -119, 647)])
 
 [node name="Main" type="Node2D"]
@@ -197,9 +197,6 @@ script = ExtResource("1_jjvhh")
 [node name="TileMapLayer" type="TileMapLayer" parent="."]
 tile_map_data = PackedByteArray("AAARAAkAAwACAAIAAAARAAgAAwACAAEAAAARAAcAAwACAAEAAAARAAYAAwACAAEAAAARAAUAAwACAAEAAAARAAQAAwACAAEAAAARAAMAAwACAAEAAAARAAIAAwACAAEAAAARAAEAAwACAAEAAAARAAAAAwACAAEAAAARAP//AwACAAEAAAARAP7/AwACAAAAAAAQAAkAAwABAAIAAAAQAAgAAwABAAEAAAAQAAcAAwABAAEAAAAQAAYAAwABAAEAAAAQAAUAAwABAAEAAAAQAAQAAwABAAEAAAAQAAMAAwABAAEAAAAQAAIAAwABAAEAAAAQAAEAAwABAAEAAAAQAAAAAwABAAEAAAAQAP//AwABAAEAAAAQAP7/AwABAAAAAAAPAAkAAwABAAIAAAAPAAgAAwABAAEAAAAPAAcAAwABAAEAAAAPAAYAAwABAAEAAAAPAAUAAwABAAEAAAAPAAQAAwABAAEAAAAPAAMAAwABAAEAAAAPAAIAAwABAAEAAAAPAAEAAwABAAEAAAAPAAAAAwABAAEAAAAPAP//AwABAAEAAAAPAP7/AwABAAAAAAAOAAkAAwABAAIAAAAOAAgAAwABAAEAAAAOAAcAAwABAAEAAAAOAAYAAwABAAEAAAAOAAUAAwABAAEAAAAOAAQAAwABAAEAAAAOAAMAAwABAAEAAAAOAAIAAwABAAEAAAAOAAEAAwABAAEAAAAOAAAAAwABAAEAAAAOAP//AwABAAEAAAAOAP7/AwABAAAAAAANAAkAAwABAAIAAAANAAgAAwABAAEAAAANAAcAAwABAAEAAAANAAYAAwABAAEAAAANAAUAAwABAAEAAAANAAQAAwABAAEAAAANAAMAAwABAAEAAAANAAIAAwABAAEAAAANAAEAAwABAAEAAAANAAAAAwABAAEAAAANAP//AwABAAEAAAANAP7/AwABAAAAAAAMAAkAAwABAAIAAAAMAAgAAwABAAEAAAAMAAcAAwABAAEAAAAMAAYAAwABAAEAAAAMAAUAAwABAAEAAAAMAAQAAwABAAEAAAAMAAMAAwABAAEAAAAMAAIAAwABAAEAAAAMAAEAAwABAAEAAAAMAAAAAwABAAEAAAAMAP//AwABAAEAAAAMAP7/AwABAAAAAAALAAkAAwABAAIAAAALAAgAAwABAAEAAAALAAcAAwABAAEAAAALAAYAAwABAAEAAAALAAUAAwABAAEAAAALAAQAAwABAAEAAAALAAMAAwABAAEAAAALAAIAAwABAAEAAAALAAEAAwABAAEAAAALAAAAAwABAAEAAAALAP//AwABAAEAAAALAP7/AwABAAAAAAAKAAkAAwABAAIAAAAKAAgAAwABAAEAAAAKAAcAAwABAAEAAAAKAAYAAwABAAEAAAAKAAUAAwABAAEAAAAKAAQAAwABAAEAAAAKAAMAAwABAAEAAAAKAAIAAwABAAEAAAAKAAEAAwABAAEAAAAKAAAAAwABAAEAAAAKAP//AwABAAEAAAAKAP7/AwABAAAAAAAJAAkAAwABAAIAAAAJAAgAAwABAAEAAAAJAAcAAwABAAEAAAAJAAYAAwABAAEAAAAJAAUAAwABAAEAAAAJAAQAAwABAAEAAAAJAAMAAwABAAEAAAAJAAIAAwABAAEAAAAJAAEAAwABAAEAAAAJAAAAAwABAAEAAAAJAP//AwABAAEAAAAJAP7/AwABAAAAAAAIAAkAAwABAAIAAAAIAAgAAwABAAEAAAAIAAcAAwABAAEAAAAIAAYAAwABAAEAAAAIAAUAAwABAAEAAAAIAAQAAwABAAEAAAAIAAMAAwABAAEAAAAIAAIAAwABAAEAAAAIAAEAAwABAAEAAAAIAAAAAwABAAEAAAAIAP//AwABAAEAAAAIAP7/AwABAAAAAAAHAAkAAwABAAIAAAAHAAgAAwABAAEAAAAHAAcAAwABAAEAAAAHAAYAAwABAAEAAAAHAAUAAwABAAEAAAAHAAQAAwABAAEAAAAHAAMAAwABAAEAAAAHAAIAAwABAAEAAAAHAAEAAwABAAEAAAAHAAAAAwABAAEAAAAHAP//AwABAAEAAAAHAP7/AwABAAAAAAAGAAkAAwABAAIAAAAGAAgAAwABAAEAAAAGAAcAAwABAAEAAAAGAAYAAwABAAEAAAAGAAUAAwABAAEAAAAGAAQAAwABAAEAAAAGAAMAAwABAAEAAAAGAAIAAwABAAEAAAAGAAEAAwABAAEAAAAGAAAAAwABAAEAAAAGAP//AwABAAEAAAAGAP7/AwABAAAAAAAFAAkAAwABAAIAAAAFAAgAAwABAAEAAAAFAAcAAwABAAEAAAAFAAYAAwABAAEAAAAFAAUAAwABAAEAAAAFAAQAAwABAAEAAAAFAAMAAwABAAEAAAAFAAIAAwABAAEAAAAFAAEAAwABAAEAAAAFAAAAAwABAAEAAAAFAP//AwABAAEAAAAFAP7/AwABAAAAAAAEAAkAAwABAAIAAAAEAAgAAwABAAEAAAAEAAcAAwABAAEAAAAEAAYAAwABAAEAAAAEAAUAAwABAAEAAAAEAAQAAwABAAEAAAAEAAMAAwABAAEAAAAEAAIAAwABAAEAAAAEAAEAAwABAAEAAAAEAAAAAwABAAEAAAAEAP//AwABAAEAAAAEAP7/AwABAAAAAAADAAkAAwABAAIAAAADAAgAAwABAAEAAAADAAcAAwABAAEAAAADAAYAAwABAAEAAAADAAUAAwABAAEAAAADAAQAAwABAAEAAAADAAMAAwABAAEAAAADAAIAAwABAAEAAAADAAEAAwABAAEAAAADAAAAAwABAAEAAAADAP//AwABAAEAAAADAP7/AwABAAAAAAACAAkAAwABAAIAAAACAAgAAwABAAEAAAACAAcAAwABAAEAAAACAAYAAwABAAEAAAACAAUAAwABAAEAAAACAAQAAwABAAEAAAACAAMAAwABAAEAAAACAAIAAwABAAEAAAACAAEAAwABAAEAAAACAAAAAwABAAEAAAACAP//AwABAAEAAAACAP7/AwABAAAAAAABAAkAAwABAAIAAAABAAgAAwABAAEAAAABAAcAAwABAAEAAAABAAYAAwABAAEAAAABAAUAAwABAAEAAAABAAQAAwABAAEAAAABAAMAAwABAAEAAAABAAIAAwABAAEAAAABAAEAAwABAAEAAAABAAAAAwABAAEAAAABAP//AwABAAEAAAABAP7/AwABAAAAAAAAAAkAAwABAAIAAAAAAAgAAwABAAEAAAAAAAcAAwABAAEAAAAAAAYAAwABAAEAAAAAAAUAAwABAAEAAAAAAAQAAwABAAEAAAAAAAMAAwABAAEAAAAAAAIAAwABAAEAAAAAAAEAAwABAAEAAAAAAAAAAwABAAEAAAAAAP//AwABAAEAAAAAAP7/AwABAAAAAAD//wkAAwABAAIAAAD//wgAAwABAAEAAAD//wcAAwABAAEAAAD//wYAAwABAAEAAAD//wUAAwABAAEAAAD//wQAAwABAAEAAAD//wMAAwABAAEAAAD//wIAAwABAAEAAAD//wEAAwABAAEAAAD//wAAAwABAAEAAAD/////AwABAAEAAAD///7/AwABAAAAAAD+/wkAAwAAAAIAAAD+/wgAAwAAAAEAAAD+/wcAAwAAAAEAAAD+/wYAAwAAAAEAAAD+/wUAAwAAAAEAAAD+/wQAAwAAAAEAAAD+/wMAAwAAAAEAAAD+/wIAAwAAAAEAAAD+/wEAAwAAAAEAAAD+/wAAAwAAAAEAAAD+////AwAAAAEAAAD+//7/AwAAAAAAAAA=")
 tile_set = SubResource("TileSet_8gbba")
-
-[node name="NavigationRegion2D" type="NavigationRegion2D" parent="."]
-navigation_polygon = SubResource("NavigationPolygon_fvkhu")
 
 [node name="Projectiles" type="Node2D" parent="."]
 
@@ -214,54 +211,57 @@ position = Vector2(0, 1)
 [node name="Worker" parent="Units" node_paths=PackedStringArray("castle") instance=ExtResource("4_jjvhh")]
 position = Vector2(794, 143)
 player = 1
-castle = NodePath("../../Buildings/Castle")
+castle = NodePath("../../NavigationRegion2D/Buildings/Castle")
 
 [node name="Peasant" parent="Units" node_paths=PackedStringArray("castle") instance=ExtResource("5_ynf5e")]
 player = 1
-castle = NodePath("../../Buildings/Castle")
+castle = NodePath("../../NavigationRegion2D/Buildings/Castle")
 
 [node name="Peasant2" parent="Units" node_paths=PackedStringArray("castle") instance=ExtResource("5_ynf5e")]
 position = Vector2(200, 24)
 player = 1
-castle = NodePath("../../Buildings/Castle")
+castle = NodePath("../../NavigationRegion2D/Buildings/Castle")
 
 [node name="Lord" parent="Units" node_paths=PackedStringArray("castle") instance=ExtResource("6_d1ilt")]
 position = Vector2(567, 306)
 player = 1
-castle = NodePath("../../Buildings/Castle")
+castle = NodePath("../../NavigationRegion2D/Buildings/Castle")
 
 [node name="Trees" type="Node2D" parent="."]
 
 [node name="Tree2" parent="Trees" node_paths=PackedStringArray("castle") instance=ExtResource("7_344ge")]
 position = Vector2(1062, -20)
-castle = NodePath("../../Buildings/Castle")
+castle = NodePath("../../NavigationRegion2D/Buildings/Castle")
 
 [node name="Tree3" parent="Trees" node_paths=PackedStringArray("castle") instance=ExtResource("7_344ge")]
 position = Vector2(1006, 60)
-castle = NodePath("../../Buildings/Castle")
+castle = NodePath("../../NavigationRegion2D/Buildings/Castle")
 
 [node name="Tree4" parent="Trees" node_paths=PackedStringArray("castle") instance=ExtResource("7_344ge")]
 position = Vector2(942, -20)
-castle = NodePath("../../Buildings/Castle")
+castle = NodePath("../../NavigationRegion2D/Buildings/Castle")
 
 [node name="Tree5" parent="Trees" node_paths=PackedStringArray("castle") instance=ExtResource("7_344ge")]
 position = Vector2(854, 60)
-castle = NodePath("../../Buildings/Castle")
+castle = NodePath("../../NavigationRegion2D/Buildings/Castle")
 
-[node name="Buildings" type="Node2D" parent="."]
+[node name="NavigationRegion2D" type="NavigationRegion2D" parent="."]
+navigation_polygon = SubResource("NavigationPolygon_fvkhu")
 
-[node name="ArcheryRange" parent="Buildings" node_paths=PackedStringArray("castle") instance=ExtResource("8_344ge")]
+[node name="Buildings" type="Node2D" parent="NavigationRegion2D"]
+
+[node name="ArcheryRange" parent="NavigationRegion2D/Buildings" node_paths=PackedStringArray("castle") instance=ExtResource("8_344ge")]
 position = Vector2(824, 406)
 player = 1
 castle = NodePath("../Castle")
 state = 0
 
-[node name="House" parent="Buildings" node_paths=PackedStringArray("castle") instance=ExtResource("6_21xkr")]
+[node name="House" parent="NavigationRegion2D/Buildings" node_paths=PackedStringArray("castle") instance=ExtResource("6_21xkr")]
 position = Vector2(622, 36)
 player = 1
 castle = NodePath("../Castle")
 
-[node name="Castle" parent="Buildings" instance=ExtResource("5_kry3j")]
+[node name="Castle" parent="NavigationRegion2D/Buildings" instance=ExtResource("5_kry3j")]
 position = Vector2(246, 289)
 
 [node name="GoldUi" parent="." instance=ExtResource("10_hptm8")]

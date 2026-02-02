@@ -5,7 +5,7 @@
 [ext_resource type="Script" uid="uid://cjjdaf7vlfs4k" path="res://Scripts/AgentNodes/agent_animate.gd" id="3_t6mam"]
 [ext_resource type="Script" uid="uid://58qm17emnwvd" path="res://Scripts/AgentNodes/agent_move.gd" id="4_kqf48"]
 [ext_resource type="Script" uid="uid://c2guvnr3dtafe" path="res://Scripts/AgentNodes/health.gd" id="5_pnucv"]
-[ext_resource type="Script" uid="uid://cf3jwbm3206s5" path="res://Scripts/AgentNodes/minion_pathfinding.gd" id="7_8tq67"]
+[ext_resource type="Script" uid="uid://c1706o51hkau1" path="res://Scripts/AgentNodes/minion_pathfinding.gd" id="7_8tq67"]
 [ext_resource type="Script" uid="uid://bi15gddmxujcs" path="res://Scripts/AgentNodes/agent_tracking.gd" id="8_3pkjs"]
 [ext_resource type="Script" uid="uid://cfisvjx2cjr0f" path="res://Scripts/AgentNodes/tactical_peasant.gd" id="8_wen5c"]
 [ext_resource type="Script" uid="uid://d1ucmtjtmh4hm" path="res://Scripts/AgentNodes/minion_tasker.gd" id="9_wen5c"]
@@ -91,12 +91,14 @@ avoidance_enabled = true
 radius = 50.0
 avoidance_layers = 8
 avoidance_mask = 15
+debug_enabled = true
 
 [node name="HungerHolder" parent="." node_paths=PackedStringArray("movement", "food_tasker") instance=ExtResource("10_t6mam")]
 movement = NodePath("../AgentMovement")
 food_tasker = NodePath("../FoodTasker")
 
 [node name="GoldHolder" parent="." instance=ExtResource("10_hoemf")]
+gold = 2
 
 [node name="FoodTasker" type="Node" parent="." node_paths=PackedStringArray("agent", "movement")]
 script = ExtResource("9_wen5c")

@@ -23,6 +23,9 @@ signal goldChanged(amount_of_gold: int)
 ## Time gold stays in hand after received before despawning, for visual purposes only.
 @export var _gold_gone_timer: Timer = null
 
+## When can I be taxed again after Lord has taxed me.
+@export var _tax_timer: Timer = null
+
 # Internal state
 var _agent: Node2D
 var _target_to_give: Node2D
@@ -125,7 +128,8 @@ func receive_gold(amount: int) -> void:
 
 
 func _on_delivery_patience_timeout() -> void:
-	_finish_action()
+	# Just teleport them the gold.
+	_gold_handover()
 
 
 func _on_gold_gone_timeout() -> void:
@@ -140,3 +144,20 @@ func set_movement(m: AgentMovement) -> void:
 func _change_gold_amount(amount: int) -> void:
 	gold += amount
 	goldChanged.emit(gold)
+
+
+func can_i_tax_you(lord: Node2D) -> void:
+	# Must NOT be player (already filtered by detection team? No, detection same team includes player)
+	if get_parent().is_in_group("Player"):
+		return
+
+	if not _tax_timer.is_stopped():
+		return
+
+	# Max probability of being taxed when 10.0 gold. Increases linearly to then.
+	var probability = clamp(float(gold) / 10.0, 0.0, 1.0)
+
+	if randf() < probability:
+		# Tax!
+		give_gold(lord, 1)
+		_tax_timer.start()
