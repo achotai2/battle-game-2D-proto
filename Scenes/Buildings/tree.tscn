@@ -134,6 +134,7 @@ animation = &"chop"
 
 [node name="WorkSite" type="Node2D" parent="." node_paths=PackedStringArray("work_offset")]
 script = ExtResource("2_rsuno")
+total_work = 1.0
 auto_register = false
 work_offset = NodePath("Marker2D")
 metadata/_custom_type_script = "uid://qumqy1omy72i"

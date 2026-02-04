@@ -1,40 +1,41 @@
 extends Node
 
 
-const PLAYER := &"player"
-const PEASANT := &"peasant"
-const SOLDIER := &"soldier"
-const ARCHER := &"archer"
-const WORKER := &"worker"
-const LORD := &"lord"
-
+enum UnitType {
+	PLAYER,
+	PEASANT,
+	SOLDIER,
+	ARCHER,
+	WORKER,
+	LORD,
+}
 
 var role_groups := {
-	PLAYER: [
+	UnitType.PLAYER: [
 		&"Attackable",
 		&"Player",
 	],
-	PEASANT: [
+	UnitType.PEASANT: [
 		&"Minions",
 		&"Peasants",
 		&"Interactable"
 	],
-	LORD: [
+	UnitType.LORD: [
 		&"Minions",
 		&"Interactable",
 		&"Lord",
 	],
-	SOLDIER: [
+	UnitType.SOLDIER: [
 		&"Minions",
 		&"Attackable",
 		&"Interactable"
 	],
-	ARCHER: [
+	UnitType.ARCHER: [
 		&"Minions",
 		&"Attackable",
 		&"Interactable"
 	],
-	WORKER: [
+	UnitType.WORKER: [
 		&"Minions",
 		&"Attackable",
 		&"Interactable",
@@ -42,39 +43,39 @@ var role_groups := {
 	],
 }
 
-func get_role_groups(role: StringName) -> Array:
+func get_role_groups(role: UnitType) -> Array:
 	return role_groups.get(role, [])
 
 
 # role -> player -> SpriteFrames
 var frames := {
-	PLAYER: {
+	UnitType.PLAYER: {
 		1: preload("res://Art/SpriteFrames/Player.tres"),
 		2: preload("res://Art/SpriteFrames/Player.tres"),
 	},
-	PEASANT: {
+	UnitType.PEASANT: {
 		1: preload("res://Art/SpriteFrames/Peasant_Blue.tres"),
 		2: preload("res://Art/SpriteFrames/Peasant_Red.tres"),
 	},
-	SOLDIER: {
+	UnitType.SOLDIER: {
 		1: preload("res://Art/SpriteFrames/Soldier_Blue.tres"),
 		2: preload("res://Art/SpriteFrames/Soldier_Red.tres"),
 	},
-	ARCHER: {
+	UnitType.ARCHER: {
 		1: preload("res://Art/SpriteFrames/Archer_Blue.tres"),
 		2: preload("res://Art/SpriteFrames/Archer_Red.tres"),
 	},
-	WORKER: {
+	UnitType.WORKER: {
 		1: preload("res://Art/SpriteFrames/Worker_Blue.tres"),
 		2: preload("res://Art/SpriteFrames/Worker_Red.tres"),
 	},
-	LORD: {
+	UnitType.LORD: {
 		1: preload("res://Art/SpriteFrames/Soldier_Yellow.tres"),
 		2: preload("res://Art/SpriteFrames/Soldier_Yellow.tres"),
 	},
 }
 
-func get_frames(role: StringName, player: int) -> SpriteFrames:
+func get_frames(role: UnitType, player: int) -> SpriteFrames:
 	if frames.has(role) and frames[role].has(player):
 		return frames[role][player]
 	# fallback: player 1 if missing
@@ -82,40 +83,40 @@ func get_frames(role: StringName, player: int) -> SpriteFrames:
 
 
 var weapons := {
-	PLAYER: preload("res://Scenes/Weapons/weapon_sword.tscn"),
-	SOLDIER: preload("res://Scenes/Weapons/weapon_sword.tscn"),
-	ARCHER: preload("res://Scenes/Weapons/weapon_bow.tscn"),
+	UnitType.PLAYER: preload("res://Scenes/Weapons/weapon_sword.tscn"),
+	UnitType.SOLDIER: preload("res://Scenes/Weapons/weapon_sword.tscn"),
+	UnitType.ARCHER: preload("res://Scenes/Weapons/weapon_bow.tscn"),
 }
 
-func get_weapon(role: StringName) -> PackedScene:
+func get_weapon(role: UnitType) -> PackedScene:
 	return weapons.get(role)
 
 
 var tacticals := {
-	PEASANT: TacticalPeasant,
-	SOLDIER: TacticalSoldier,
-	ARCHER: TacticalArcher,
-	WORKER: TacticalWorker,
-	LORD: TacticalLord,
+	UnitType.PEASANT: TacticalPeasant,
+	UnitType.SOLDIER: TacticalSoldier,
+	UnitType.ARCHER: TacticalArcher,
+	UnitType.WORKER: TacticalWorker,
+	UnitType.LORD: TacticalLord,
 }
 
-func get_tactical(role: StringName) -> GDScript:
+func get_tactical(role: UnitType) -> GDScript:
 	return tacticals.get(role)
 
 
 var taskers := {
-	PEASANT: MinionTasker,
-	WORKER: MinionTasker,
+	UnitType.PEASANT: MinionTasker,
+	UnitType.WORKER: MinionTasker,
 }
 
-func get_tasker(role: StringName) -> GDScript:
+func get_tasker(role: UnitType) -> GDScript:
 	return taskers.get(role)
 
 
 var tasker_kinds := {
-	PEASANT: CastleJobBoard.JobBoardType.PEASANTS,
-	WORKER: CastleJobBoard.JobBoardType.WORKERS,
+	UnitType.PEASANT: CastleJobBoard.JobBoardType.PEASANTS,
+	UnitType.WORKER: CastleJobBoard.JobBoardType.WORKERS,
 }
 
-func get_tasker_kind(role: StringName) -> Variant:
+func get_tasker_kind(role: UnitType) -> Variant:
 	return tasker_kinds.get(role, null)

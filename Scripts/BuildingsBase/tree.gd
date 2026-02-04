@@ -68,7 +68,8 @@ func return_position() -> Vector2:
 
 
 func _on_interacted(interactor: Node2D) -> void:
-	if state == TreeState.NORMAL:
+	if state == TreeState.NORMAL and is_instance_valid(interactor.gold) and interactor.gold.gold >= worksite.total_work:
+		interactor.gold.give_gold(self, worksite.total_work)
 		set_state(TreeState.MARKED)
 
 
@@ -109,7 +110,7 @@ func _configure_interactable() -> void:
 
 	var enabled := state == TreeState.NORMAL
 	interactable.set_enabled(enabled)
-	interactable.icon_type = InteractPrompt.IconType.CUT
+	interactable.icon_type = BuildingDefs.IconType.CUT
 
 
 func _configure_worksite() -> void:

@@ -1,18 +1,16 @@
 extends StaticBody2D
 class_name BuildingBase
 
-enum BuildingState { DESTROYED, CONSTRUCTING, BUILT }
-
 @export var player: int = 0
 @export var castle: Node2D
-@export var building_type: StringName = &""
+@export var building_type: BuildingDefs.BuildingType = BuildingDefs.BuildingType.BARRACKS
 @export var visual: Node
 @export var interactable: Interactable
 @export var worksite: WorkSite
 @export var spawnsite: WorkSite
 @export var gold: GoldHolder
 #@export var health: Health
-@export var state: BuildingState = BuildingState.CONSTRUCTING
+@export var state: BuildingDefs.BuildingState = BuildingDefs.BuildingState.CONSTRUCTING
 
 var _is_ready: bool = false
 
@@ -41,17 +39,17 @@ func set_player(p: int) -> void:
 
 func set_castle(c: Node2D) -> void:
 	castle = c
-	if is_instance_valid(worksite) and state == BuildingState.CONSTRUCTING:
+	if is_instance_valid(worksite) and state == BuildingDefs.BuildingState.CONSTRUCTING:
 		worksite.refresh_registration()
 
 
-func set_state(new_state: BuildingState) -> void:
+func set_state(new_state: BuildingDefs.BuildingState) -> void:
 	if state == new_state:
 		return
 	apply_state(new_state)
 
 
-func apply_state(new_state: BuildingState) -> void:
+func apply_state(new_state: BuildingDefs.BuildingState) -> void:
 	state = new_state
 
 	_update_visuals()
@@ -70,19 +68,19 @@ func return_position() -> Vector2:
 
 
 func _on_interacted(interactor: Node2D) -> void:
-	if state == BuildingState.DESTROYED and is_instance_valid(interactor.gold) and interactor.gold.gold >= worksite.total_work:
+	if state == BuildingDefs.BuildingState.DESTROYED and is_instance_valid(interactor.gold) and interactor.gold.gold >= worksite.total_work:
 		interactor.gold.give_gold(self, worksite.total_work)
-		set_state(BuildingState.CONSTRUCTING)
-	elif state == BuildingState.BUILT:
+		set_state(BuildingDefs.BuildingState.CONSTRUCTING)
+	elif state == BuildingDefs.BuildingState.BUILT:
 		_activate_spawnsite()
 
 
 func _on_work_completed(_site: WorkSite, _worker: WorkSiteWorker) -> void:
-	set_state(BuildingState.BUILT)
+	set_state(BuildingDefs.BuildingState.BUILT)
 
 
 func _on_destroyed() -> void:
-	set_state(BuildingState.DESTROYED)
+	set_state(BuildingDefs.BuildingState.DESTROYED)
 
 
 func _update_visuals() -> void:
@@ -109,18 +107,18 @@ func _configure_interactable() -> void:
 	if not is_instance_valid(interactable):
 		return
 
-	var enabled := state != BuildingState.CONSTRUCTING
+	var enabled := state != BuildingDefs.BuildingState.CONSTRUCTING
 	interactable.set_enabled(enabled)
 	interactable.icon_type = BuildingDefs.get_interact_mode(building_type, state)
 
 
 func _configure_worksite() -> void:
-	if state == BuildingState.CONSTRUCTING and is_instance_valid(worksite):
+	if state == BuildingDefs.BuildingState.CONSTRUCTING and is_instance_valid(worksite):
 		spawnsite.set_enabled(false)
 		worksite.reset_progress()
 		worksite.set_enabled(true)
 		worksite.refresh_registration()
-	elif state == BuildingState.BUILT and is_instance_valid(spawnsite):
+	elif state == BuildingDefs.BuildingState.BUILT and is_instance_valid(spawnsite):
 		worksite.set_enabled(false)
 		spawnsite.set_enabled(false)
 	else:

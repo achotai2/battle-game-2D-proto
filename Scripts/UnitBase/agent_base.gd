@@ -18,9 +18,7 @@ class_name AgentBase
 @export var hunger: HungerHolder = null
 @export var foodTasker: MinionTasker = null
 @export var castle: Node = null
-@export var current_role: StringName
-
-var _min_hunger = 0
+@export var current_role: UnitRoles.UnitType
 
 
 # Called when the node enters the scene tree for the first time.
@@ -218,7 +216,7 @@ func _assign_gold_refs() -> void:
 	if not is_instance_valid(gold):
 		return
 	
-	if gold.has_method("set_movement"):
+	if gold.has_method("set_movement") and not is_in_group("Player"):
 		gold.call("set_movement", movement)
 	else:
 		print_debug("No function set_movement in gold.")
@@ -249,10 +247,10 @@ func _im_damaged() -> void:
 
 
 func _im_dead() -> void:
-	if current_role == "peasant" or current_role == "player":
+	if current_role == UnitRoles.UnitType.PEASANT or UnitRoles.UnitType.PLAYER:
 		return
 	else:
-		apply_role("peasant", player)
+		apply_role(UnitRoles.UnitType.PEASANT, player)
 
 
 func _agent_moved(vel: Vector2) -> void:
@@ -263,7 +261,7 @@ func _agent_moved(vel: Vector2) -> void:
 ##################
 # External called.
 ##################
-func apply_role(role: StringName, p: int) -> void:
+func apply_role(role: UnitRoles.UnitType, p: int) -> void:
 	# Set the new player number.
 	player = p
 

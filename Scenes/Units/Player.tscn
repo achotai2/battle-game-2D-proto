@@ -69,4 +69,4 @@ movement = NodePath("../AgentMovement")
 radius = 50.0
 
 [node name="GoldHolder" parent="." instance=ExtResource("9_jokor")]
-gold = 10
+gold = 100

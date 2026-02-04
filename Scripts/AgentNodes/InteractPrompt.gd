@@ -1,19 +1,11 @@
 extends CanvasLayer
 class_name InteractPrompt
 
-enum IconType {
-	NONE,
-	TAX,
-	CONSTRUCT,
-	CUT,
-	ARCHER,
-}
-
 const ICONS := {
-	IconType.TAX: preload("res://Art/Icons/TaxIcon.png"),
-	IconType.CONSTRUCT: preload("res://Art/Icons/ConstructIcon.png"),
-	IconType.CUT: preload("res://Art/Icons/TreeCutIcon.png"),
-	IconType.ARCHER: preload("res://Art/Icons/TransformArcherIcon.png"),
+	BuildingDefs.IconType.TAX: preload("res://Art/Icons/TaxIcon.png"),
+	BuildingDefs.IconType.CONSTRUCT: preload("res://Art/Icons/ConstructIcon.png"),
+	BuildingDefs.IconType.CUT: preload("res://Art/Icons/TreeCutIcon.png"),
+	BuildingDefs.IconType.ARCHER: preload("res://Art/Icons/TransformArcherIcon.png"),
 } 
 
 @export_range(0.0, 64.0, 0.5) var bob_height: float = 6.0
@@ -104,10 +96,10 @@ func reset_bob_phase() -> void:
 	_time = 0.0
 
 
-func update_icon(_icon_type: IconType) -> void:
-	if _icon_type == IconType.NONE:
+func update_icon(_icon_type: BuildingDefs.IconType) -> void:
+	if _icon_type == BuildingDefs.IconType.NONE:
 		type_icon.hide()
 	else:
 		type_icon.show()
 		
-	type_icon.texture = ICONS.get(_icon_type, IconType.CONSTRUCT)
+	type_icon.texture = ICONS.get(_icon_type, BuildingDefs.IconType.CONSTRUCT)

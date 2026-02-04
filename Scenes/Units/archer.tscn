@@ -5,7 +5,7 @@
 [ext_resource type="Script" uid="uid://cjjdaf7vlfs4k" path="res://Scripts/AgentNodes/agent_animate.gd" id="3_22n53"]
 [ext_resource type="Script" uid="uid://58qm17emnwvd" path="res://Scripts/AgentNodes/agent_move.gd" id="4_6oxgn"]
 [ext_resource type="Script" uid="uid://c2guvnr3dtafe" path="res://Scripts/AgentNodes/health.gd" id="5_gunah"]
-[ext_resource type="Script" uid="uid://cf3jwbm3206s5" path="res://Scripts/AgentNodes/minion_pathfinding.gd" id="6_udtap"]
+[ext_resource type="Script" uid="uid://c1706o51hkau1" path="res://Scripts/AgentNodes/minion_pathfinding.gd" id="6_udtap"]
 [ext_resource type="Script" uid="uid://bi15gddmxujcs" path="res://Scripts/AgentNodes/agent_tracking.gd" id="7_seka2"]
 [ext_resource type="PackedScene" uid="uid://o3i1hye0kspv" path="res://Scenes/Weapons/weapon_bow.tscn" id="8_therj"]
 [ext_resource type="Script" uid="uid://drugelqbde4x8" path="res://Scripts/AgentNodes/tactical_archer.gd" id="9_fujmp"]
@@ -34,7 +34,7 @@ tactical = NodePath("TacticalArcher")
 gold = NodePath("GoldHolder")
 hunger = NodePath("HungerHolder")
 foodTasker = NodePath("FoodTasker")
-current_role = &"archer"
+current_role = 3
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 shape = SubResource("CapsuleShape2D_ta2g1")

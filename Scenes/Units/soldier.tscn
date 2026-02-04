@@ -6,7 +6,7 @@
 [ext_resource type="Script" uid="uid://58qm17emnwvd" path="res://Scripts/AgentNodes/agent_move.gd" id="4_80g1m"]
 [ext_resource type="Script" uid="uid://c2guvnr3dtafe" path="res://Scripts/AgentNodes/health.gd" id="5_14jue"]
 [ext_resource type="PackedScene" uid="uid://6it7l8b8yxs" path="res://Scenes/Weapons/weapon_sword.tscn" id="6_k4v4y"]
-[ext_resource type="Script" uid="uid://cf3jwbm3206s5" path="res://Scripts/AgentNodes/minion_pathfinding.gd" id="7_lel1w"]
+[ext_resource type="Script" uid="uid://c1706o51hkau1" path="res://Scripts/AgentNodes/minion_pathfinding.gd" id="7_lel1w"]
 [ext_resource type="Script" uid="uid://bi15gddmxujcs" path="res://Scripts/AgentNodes/agent_tracking.gd" id="8_gdgxh"]
 [ext_resource type="Script" uid="uid://sxvily52588c" path="res://Scripts/AgentNodes/tactical_soldier.gd" id="9_3s4fr"]
 [ext_resource type="PackedScene" uid="uid://c8o4373okv5fq" path="res://Scenes/AgentNodes/HungerHolder.tscn" id="10_jghxd"]
@@ -34,7 +34,7 @@ tactical = NodePath("TacticalSoldier")
 gold = NodePath("GoldHolder")
 hunger = NodePath("HungerHolder")
 foodTasker = NodePath("FoodTasker")
-current_role = &"soldier"
+current_role = 2
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 shape = SubResource("CapsuleShape2D_ta2g1")

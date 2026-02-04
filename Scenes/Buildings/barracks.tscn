@@ -13,7 +13,6 @@ height = 110.0
 
 [node name="Barracks" type="StaticBody2D" node_paths=PackedStringArray("visual", "interactable", "worksite", "spawnsite", "gold")]
 script = ExtResource("1_24hde")
-building_type = &"barracks"
 visual = NodePath("Sprite2D")
 interactable = NodePath("Interactable")
 worksite = NodePath("WorkSite")

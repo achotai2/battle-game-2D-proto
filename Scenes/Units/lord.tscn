@@ -28,7 +28,7 @@ animation = NodePath("AgentAnimate")
 detection = NodePath("AgentDetection")
 tactical = NodePath("TacticalLord")
 gold = NodePath("GoldHolder")
-current_role = &"lord"
+current_role = 5
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." groups=["Interactable", "Lord", "Minions"]]
 scale = Vector2(1.1770834, 1.1770834)

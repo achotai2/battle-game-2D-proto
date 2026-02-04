@@ -33,7 +33,7 @@ tasker = NodePath("PeasantTasker")
 gold = NodePath("GoldHolder")
 hunger = NodePath("HungerHolder")
 foodTasker = NodePath("FoodTasker")
-current_role = &"peasant"
+current_role = 1
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 shape = SubResource("CapsuleShape2D_ta2g1")

@@ -4,8 +4,7 @@ class_name SpawnSite
 
 signal spawn_completed(agent: Node2D, role: StringName, player: int)
 
-@export var spawn_role: StringName = &""
-@export var use_building_config: bool = true
+@export var spawn_role: UnitRoles.UnitType = UnitRoles.UnitType.SOLDIER
 @export var default_player: int = 0
 @export var clear_queue_on_disable: bool = true
 
@@ -78,8 +77,6 @@ func _apply_role_to_worker(worker: WorkSiteWorker) -> void:
 		return
 
 	var role := _resolve_spawn_role()
-	if role == &"":
-		return
 	var player_id := _resolve_spawn_player()
 
 	if agent.has_method("apply_role"):
@@ -89,51 +86,23 @@ func _apply_role_to_worker(worker: WorkSiteWorker) -> void:
 		print_debug("agent does not have function apply_role.")
 
 
-func _resolve_spawn_role() -> StringName:
-	if spawn_role != &"":
-		return spawn_role
-	if use_building_config and is_instance_valid(my_boss):
-		var building_type = _get_boss_property(&"building_type")
-		if building_type is StringName or building_type is String:
-			var config := BuildingDefs.get_spawn_config(StringName(building_type))
-			var unit_type := String(config.get("unit_type", ""))
-			if unit_type != "":
-				return StringName(unit_type.to_lower())
-	return &""
+func _resolve_spawn_role() -> UnitRoles.UnitType:
+	var building_type := _get_boss_property(&"building_type")
+	var config := BuildingDefs.get_spawn_config(building_type)
+	var unit_type: UnitRoles.UnitType = config.get("unit_type", "")
+	return unit_type
 
 
 func _resolve_spawn_player() -> int:
-	if is_instance_valid(my_boss):
-		var boss_player = _get_boss_property(&"player")
-		if boss_player is int:
-			return boss_player
-	return default_player
+	return get_parent().player
 
 
-func _get_boss_property(property_name: StringName) -> Variant:
-	if my_boss == null:
-		return null
-	for prop in my_boss.get_property_list():
-		if prop.name == property_name:
-			return my_boss.get(property_name)
-	return null
+func _get_boss_property(property_name: StringName) -> BuildingDefs.BuildingType:
+	return get_parent().building_type
 
 
 func _resolve_agent(minion: WorkSiteWorker) -> Node2D:
 	if minion == null:
 		return null
 
-	if minion.has_method("get_agent"):
-		var agent = minion.call("get_agent")
-		if agent is Node2D:
-			return agent
-	else:
-		print_debug("minion does not have function get_agent.")
-
-	for prop in minion.get_property_list():
-		if prop.name == &"agent":
-			var agent_prop = minion.get("agent")
-			if agent_prop is Node2D:
-				return agent_prop
-			break
-	return null
+	return minion.get_parent()

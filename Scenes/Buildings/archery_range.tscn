@@ -13,7 +13,7 @@ height = 110.0
 
 [node name="ArcheryRange" type="StaticBody2D" node_paths=PackedStringArray("visual", "interactable", "worksite", "spawnsite", "gold")]
 script = ExtResource("1_aww4k")
-building_type = &"archery_range"
+building_type = 2
 visual = NodePath("Sprite2D")
 interactable = NodePath("Interactable")
 worksite = NodePath("WorkSite")
@@ -46,6 +46,14 @@ position = Vector2(0, -72)
 
 [node name="SpawnSite" type="Node2D" parent="."]
 script = ExtResource("4_5cnks")
+spawn_role = null
+use_building_config = null
+default_player = null
+clear_queue_on_disable = null
+total_work = null
+auto_register = null
+enabled = null
+kind = null
 metadata/_custom_type_script = "uid://dqu3s3kqb7wj6"
 
 [node name="Marker2D" type="Marker2D" parent="SpawnSite"]
