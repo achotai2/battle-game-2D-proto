@@ -62,7 +62,7 @@ func give_gold(target: Node2D, amount: int) -> void:
 		if is_instance_valid(_target_to_give) and body == _target_to_give:
 			_gold_handover()
 
-	if _issue_movement_command(target) or not is_instance_valid(movement):
+	if not _issue_movement_command(target) and not is_instance_valid(movement):
 		_gold_handover()
 
 
