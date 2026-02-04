@@ -24,10 +24,14 @@ enum TargetKind { ATTACKABLE, INTERACTABLE }
 var dont_target: Node2D = null
 
 # Candidate set + list
-var _candidates: Dictionary = {}          # Node2D -> true
+var _candidates: Dictionary = {}          # Node2D -> index (int)
 var _candidate_list: Array[Node2D] = []
 var _current_target: Node2D = null
 var _timer: Timer
+
+# Bolt Optimization: Cache player ID to avoid repeated function calls
+var _my_player_id: int = -1
+var _has_player_method: bool = false
 
 const GROUP_ATTACKABLE: StringName = "Attackable"
 const GROUP_INTERACTABLE: StringName = "Interactable"
@@ -51,6 +55,14 @@ func _ready() -> void:
 
 func set_myself(agent: Node2D) -> void:
 	my_agent = agent
+
+	# Bolt Optimization: Update cached player info
+	if is_instance_valid(my_agent) and my_agent.has_method("return_player"):
+		_my_player_id = my_agent.return_player()
+		_has_player_method = true
+	else:
+		_my_player_id = -1
+		_has_player_method = false
 
 	dont_target = null if targets_self else agent
 	if dont_target:
@@ -109,7 +121,8 @@ func _on_body_exited(body: Node2D) -> void:
 func _add_candidate(body: Node2D) -> void:
 	if _candidates.has(body):
 		return
-	_candidates[body] = true
+	# Bolt Optimization: Store index for O(1) removal
+	_candidates[body] = _candidate_list.size()
 	_candidate_list.append(body)
 
 	# Clean up if freed/dies without body_exited
@@ -118,11 +131,19 @@ func _add_candidate(body: Node2D) -> void:
 func _remove_candidate(body: Node2D) -> void:
 	if not _candidates.has(body):
 		return
+
+	# Bolt Optimization: O(1) Removal via Swap-and-Pop
+	var idx: int = _candidates[body]
 	_candidates.erase(body)
 
-	var idx := _candidate_list.find(body)
-	if idx != -1:
-		_candidate_list.remove_at(idx)
+	var last_idx := _candidate_list.size() - 1
+	if idx == last_idx:
+		_candidate_list.pop_back()
+	else:
+		var last_node = _candidate_list[last_idx]
+		_candidate_list[idx] = last_node
+		_candidates[last_node] = idx
+		_candidate_list.pop_back()
 
 func _on_candidate_tree_exited(body: Node2D) -> void:
 	_remove_candidate(body)
@@ -134,9 +155,10 @@ func _on_candidate_tree_exited(body: Node2D) -> void:
 # -------------------------
 
 func _team_allowed(p: int) -> bool:
-	if not is_instance_valid(my_agent) or not my_agent.has_method("return_player"):
+	# Bolt Optimization: Use cached values
+	if not is_instance_valid(my_agent) or not _has_player_method:
 		return false
-	if p == my_agent.return_player():
+	if p == _my_player_id:
 		return target_same_team
 	if p == 0:
 		return target_neutral
@@ -176,13 +198,11 @@ func _is_candidate(body: Node2D) -> bool:
 # -------------------------
 
 func _reselect_target() -> void:
-	# Prune invalids safely (don't mutate while iterating)
-	var to_remove: Array[Node2D] = []
-	for b in _candidate_list:
+	# Bolt Optimization: Prune invalids safely with backward iteration (no allocation)
+	for i in range(_candidate_list.size() - 1, -1, -1):
+		var b = _candidate_list[i]
 		if not is_instance_valid(b) or not _is_candidate(b):
-			to_remove.append(b)
-	for b in to_remove:
-		_remove_candidate(b)
+			_remove_candidate(b)
 
 	var best: Node2D = null
 
