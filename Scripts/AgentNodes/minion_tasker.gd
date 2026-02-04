@@ -207,7 +207,6 @@ func _set_idle_state() -> void:
 
 	if is_instance_valid(movement):
 		movement.unfreeze(AgentMovement.LOCK_WORK)
-		movement.clear_movement_order(job_priority)
 
 
 func _request_job_if_idle() -> void:

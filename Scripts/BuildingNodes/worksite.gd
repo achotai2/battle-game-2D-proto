@@ -184,10 +184,14 @@ func apply_work(amount: float, worker: WorkSiteWorker) -> void:
 	## - clamps negative work to 0
 	## - completes the site once total_work reached
 	if not enabled or not needs_work():
+		_complete(worker)
 		return
 
 	var safe_amount: float = maxf(amount, 0.0)
 	_work_done = minf(total_work, _work_done + safe_amount)
+
+	if is_instance_valid(get_parent().gold):
+		get_parent().gold.give_gold(worker.get_parent(), safe_amount)
 
 	work_applied.emit(self)
 

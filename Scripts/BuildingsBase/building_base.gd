@@ -10,7 +10,8 @@ enum BuildingState { DESTROYED, CONSTRUCTING, BUILT }
 @export var interactable: Interactable
 @export var worksite: WorkSite
 @export var spawnsite: WorkSite
-@export var health: Health
+@export var gold: GoldHolder
+#@export var health: Health
 @export var state: BuildingState = BuildingState.CONSTRUCTING
 
 var _is_ready: bool = false
@@ -69,7 +70,8 @@ func return_position() -> Vector2:
 
 
 func _on_interacted(interactor: Node2D) -> void:
-	if state == BuildingState.DESTROYED:
+	if state == BuildingState.DESTROYED and is_instance_valid(interactor.gold) and interactor.gold.gold >= worksite.total_work:
+		interactor.gold.give_gold(self, worksite.total_work)
 		set_state(BuildingState.CONSTRUCTING)
 	elif state == BuildingState.BUILT:
 		_activate_spawnsite()
@@ -151,8 +153,3 @@ func _connect_signals() -> void:
 		if interactable.interaction_finished.is_connected(_on_interacted):
 			interactable.interaction_finished.disconnect(_on_interacted)
 		interactable.interaction_finished.connect(_on_interacted)
-
-	if is_instance_valid(health):
-		if health.died.is_connected(_on_destroyed):
-			health.died.disconnect(_on_destroyed)
-		health.died.connect(_on_destroyed)

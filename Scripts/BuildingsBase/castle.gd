@@ -5,7 +5,7 @@ extends StaticBody2D
 @export var peasant_job_board: CastleJobBoard
 @export var food_job_board: CastleJobBoard
 
-var _minions: Array[Node2D] = []
+var minions: Array[Node2D] = []
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
@@ -29,14 +29,14 @@ func return_job_board(kind: CastleJobBoard.JobBoardType) -> CastleJobBoard:
 
 
 func register_minion(minion: Node2D) -> void:
-	if not minion in _minions:
-		_minions.append(minion) 
+	if not minion in minions:
+		minions.append(minion) 
 
 
 func unregister_minion(minion: Node2D) -> void:
-	if minion in _minions:
-		_minions.erase(minion)
+	if minion in minions:
+		minions.erase(minion)
 
 
 func get_active_minions() -> Array:
-	return _minions
+	return minions

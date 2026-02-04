@@ -10,7 +10,7 @@ signal interaction_suspended(interactor: Node2D)
 @export var requires_same_team: bool = false
 @export var allows_neutral: bool = true
 @export var my_priority: int = 0
-@export var icon_type: StringName = &""
+@export var icon_type: InteractPrompt.IconType = InteractPrompt.IconType.CONSTRUCT
 @export var prompt_anchor: Node2D
 
 var _disabled: bool = false
@@ -94,3 +94,7 @@ func set_enabled(enabled: bool) -> void:
 	_disabled = not enabled
 	set_deferred("monitoring", enabled)
 	set_deferred("monitorable", enabled)
+
+
+func get_prompt_icon_type() -> InteractPrompt.IconType:
+	return icon_type

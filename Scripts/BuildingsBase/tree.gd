@@ -8,6 +8,7 @@ enum TreeState { NORMAL, MARKED, CUT }
 @export var visual: Node
 @export var interactable: Interactable
 @export var worksite: WorkSite
+@export var gold: GoldHolder
 @export var resourcesite: ResourceSite
 @export var regrow_timer: Timer
 @export var spawn_timer: Timer
@@ -108,7 +109,7 @@ func _configure_interactable() -> void:
 
 	var enabled := state == TreeState.NORMAL
 	interactable.set_enabled(enabled)
-	interactable.icon_type = &"cut"
+	interactable.icon_type = InteractPrompt.IconType.CUT
 
 
 func _configure_worksite() -> void:

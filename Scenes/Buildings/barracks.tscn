@@ -1,22 +1,24 @@
-[gd_scene load_steps=7 format=3 uid="uid://ra0fj2eqns6d"]
+[gd_scene load_steps=8 format=3 uid="uid://ra0fj2eqns6d"]
 
 [ext_resource type="Script" uid="uid://cjbrsf0fmsehe" path="res://Scripts/BuildingsBase/building_base.gd" id="1_24hde"]
 [ext_resource type="Texture2D" uid="uid://fmdpglm25048" path="res://Art/Tiny Swords (Update 010)/Factions/Knights/Buildings/Castle/Castle_Destroyed.png" id="2_2u44n"]
 [ext_resource type="Script" uid="uid://qumqy1omy72i" path="res://Scripts/BuildingNodes/worksite.gd" id="3_0ywlv"]
 [ext_resource type="Script" uid="uid://dqu3s3kqb7wj6" path="res://Scripts/BuildingNodes/spawnsite.gd" id="4_ua3nw"]
 [ext_resource type="PackedScene" uid="uid://d1275k0u0fsn" path="res://Scenes/AgentNodes/interactable.tscn" id="5_krvd1"]
+[ext_resource type="PackedScene" uid="uid://c4n5elrxg64hp" path="res://Scenes/AgentNodes/GoldHolder.tscn" id="6_2u44n"]
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_coeoc"]
 radius = 47.999996
 height = 110.0
 
-[node name="Barracks" type="StaticBody2D" node_paths=PackedStringArray("visual", "interactable", "worksite", "spawnsite")]
+[node name="Barracks" type="StaticBody2D" node_paths=PackedStringArray("visual", "interactable", "worksite", "spawnsite", "gold")]
 script = ExtResource("1_24hde")
 building_type = &"barracks"
 visual = NodePath("Sprite2D")
 interactable = NodePath("Interactable")
 worksite = NodePath("WorkSite")
 spawnsite = NodePath("SpawnSite")
+gold = NodePath("GoldHolder")
 state = 2
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
@@ -55,8 +57,11 @@ metadata/_custom_type_script = "uid://dqu3s3kqb7wj6"
 position = Vector2(0, 72)
 
 [node name="Interactable" parent="." instance=ExtResource("5_krvd1")]
+icon_type = 1
 
 [node name="NavigationObstacle2D" type="NavigationObstacle2D" parent="."]
 vertices = PackedVector2Array(-51, -15, -16, -53, 21, -53, 53, -20, 52, 13, 24, 48, -15, 51, -51, 21)
 affect_navigation_mesh = true
 carve_navigation_mesh = true
+
+[node name="GoldHolder" parent="." instance=ExtResource("6_2u44n")]

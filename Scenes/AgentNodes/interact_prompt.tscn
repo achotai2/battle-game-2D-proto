@@ -1,16 +1,16 @@
-[gd_scene load_steps=4 format=3 uid="uid://c6guwdbgls2v4"]
+[gd_scene load_steps=5 format=3 uid="uid://c6guwdbgls2v4"]
 
 [ext_resource type="Script" uid="uid://xro2cfkbmf3b" path="res://Scripts/AgentNodes/InteractPrompt.gd" id="1_ps6gp"]
-[ext_resource type="Texture2D" uid="uid://dqb4b3gcn0k3i" path="res://Art/circle.png" id="2_stv28"]
-[ext_resource type="Texture2D" uid="uid://dm6x3sreah3wi" path="res://Art/circleEmpty.png" id="3_0lluy"]
+[ext_resource type="Texture2D" uid="uid://dqb4b3gcn0k3i" path="res://Art/Icons/circle.png" id="2_stv28"]
+[ext_resource type="Texture2D" uid="uid://dm6x3sreah3wi" path="res://Art/Icons/circleEmpty.png" id="3_0lluy"]
+[ext_resource type="Texture2D" uid="uid://dkyh46mh70hjj" path="res://Art/Icons/TaxIcon.png" id="4_stv28"]
 
-[node name="InteractPrompt" type="CanvasLayer" node_paths=PackedStringArray("circle", "circleEmpty")]
+[node name="InteractPrompt" type="CanvasLayer" node_paths=PackedStringArray("circle", "circleEmpty", "type_icon")]
 layer = 10
 script = ExtResource("1_ps6gp")
-bob_height = null
-bob_speed = null
 circle = NodePath("Circle")
 circleEmpty = NodePath("CircleEmpty")
+type_icon = NodePath("TypeIcon")
 
 [node name="Circle" type="Sprite2D" parent="."]
 scale = Vector2(0.13611111, 0.13611111)
@@ -20,3 +20,11 @@ texture = ExtResource("2_stv28")
 position = Vector2(-9.23872e-06, 7.0929527e-06)
 scale = Vector2(0.1333333, 0.13333331)
 texture = ExtResource("3_0lluy")
+
+[node name="Icon" type="Sprite2D" parent="."]
+position = Vector2(0, 32)
+
+[node name="TypeIcon" type="Sprite2D" parent="."]
+position = Vector2(60, 0)
+scale = Vector2(0.20555557, 0.20555557)
+texture = ExtResource("4_stv28")

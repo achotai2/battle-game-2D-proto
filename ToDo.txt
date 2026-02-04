@@ -6,8 +6,12 @@ git add .
 git commit -m "Rebuilt Main scene with player, world, interaction"
 git push
 
-
-Now, the idea is that players inject money into the economy by doing things. 
-	Therefore we need that a player has money, and that they put it into a interactable when they interact.
-	The thing has a GoldHolder, and when given gold it emits a signal that other nodes are listening to.
-	They respond by calling over workers and giving them the gold.
+# Interacting to build:
+# 	Will first trigger player GoldHolder to give_gold to buildings GoldHolder.
+#	Then building calls workers. Each time a worker applies_work it gets a coin.
+#	So, amount of work required = cost to build.
+# Interacting to spawn:
+#	Same as above, first giving gold.
+#	Then building calls workers. So, it needs a second worksite for workers. Workers apply work.
+#	Now upon completion it triggers spawnsite to call Peasant and transform them.
+# Then we need to display the cost inside the circle, and maybe change the amount of time it takes based on cost.

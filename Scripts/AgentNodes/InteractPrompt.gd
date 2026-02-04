@@ -1,10 +1,26 @@
 extends CanvasLayer
 class_name InteractPrompt
 
+enum IconType {
+	NONE,
+	TAX,
+	CONSTRUCT,
+	CUT,
+	ARCHER,
+}
+
+const ICONS := {
+	IconType.TAX: preload("res://Art/Icons/TaxIcon.png"),
+	IconType.CONSTRUCT: preload("res://Art/Icons/ConstructIcon.png"),
+	IconType.CUT: preload("res://Art/Icons/TreeCutIcon.png"),
+	IconType.ARCHER: preload("res://Art/Icons/TransformArcherIcon.png"),
+} 
+
 @export_range(0.0, 64.0, 0.5) var bob_height: float = 6.0
 @export_range(0.0, 10.0, 0.1) var bob_speed: float = 2.0
 @export var circle: Sprite2D
 @export var circleEmpty: Sprite2D
+@export var type_icon: Sprite2D
 
 # Screen-space anchor for the whole prompt (CanvasLayer uses 'offset' in screen coords)
 var _base_screen_pos: Vector2 = Vector2.ZERO
@@ -86,3 +102,12 @@ func follow_target(target: Node2D, percent_left: float, world_offset: Vector2 = 
 # Optional: reset bobbing phase when (re)shown so it's more readable
 func reset_bob_phase() -> void:
 	_time = 0.0
+
+
+func update_icon(_icon_type: IconType) -> void:
+	if _icon_type == IconType.NONE:
+		type_icon.hide()
+	else:
+		type_icon.show()
+		
+	type_icon.texture = ICONS.get(_icon_type, IconType.CONSTRUCT)

@@ -260,6 +260,7 @@ state = 0
 position = Vector2(622, 36)
 player = 1
 castle = NodePath("../Castle")
+state = 0
 
 [node name="Castle" parent="NavigationRegion2D/Buildings" instance=ExtResource("5_kry3j")]
 position = Vector2(246, 289)

@@ -51,19 +51,19 @@ var _visuals := {
 
 var _interact_modes := {
 	HOUSE: {
-		BuildingBase.BuildingState.DESTROYED: &"rebuild",
-		BuildingBase.BuildingState.CONSTRUCTING: &"",
-		BuildingBase.BuildingState.BUILT: &"spawn",
+		BuildingBase.BuildingState.DESTROYED: InteractPrompt.IconType.CONSTRUCT,
+		BuildingBase.BuildingState.CONSTRUCTING: InteractPrompt.IconType.NONE,
+		BuildingBase.BuildingState.BUILT: InteractPrompt.IconType.TAX,
 	},
 	BARRACKS: {
-		BuildingBase.BuildingState.DESTROYED: &"rebuild",
-		BuildingBase.BuildingState.CONSTRUCTING: &"",
-		BuildingBase.BuildingState.BUILT: &"spawn",
+		BuildingBase.BuildingState.DESTROYED: InteractPrompt.IconType.CONSTRUCT,
+		BuildingBase.BuildingState.CONSTRUCTING: InteractPrompt.IconType.NONE,
+		BuildingBase.BuildingState.BUILT: InteractPrompt.IconType.TAX,
 	},
 	ARCHERY: {
-		BuildingBase.BuildingState.DESTROYED: &"rebuild",
-		BuildingBase.BuildingState.CONSTRUCTING: &"",
-		BuildingBase.BuildingState.BUILT: &"spawn",
+		BuildingBase.BuildingState.DESTROYED: InteractPrompt.IconType.CONSTRUCT,
+		BuildingBase.BuildingState.CONSTRUCTING: InteractPrompt.IconType.NONE,
+		BuildingBase.BuildingState.BUILT: InteractPrompt.IconType.ARCHER,
 	},
 }
 
@@ -92,10 +92,10 @@ func get_frames(building_type: StringName, state: int, player: int) -> Resource:
 	return null
 
 
-func get_interact_mode(building_type: StringName, state: int) -> StringName:
+func get_interact_mode(building_type: StringName, state: int) -> InteractPrompt.IconType:
 	if _interact_modes.has(building_type):
-		return _interact_modes[building_type].get(state, &"")
-	return &""
+		return _interact_modes[building_type].get(state, InteractPrompt.IconType.CONSTRUCT)
+	return InteractPrompt.IconType.CONSTRUCT
 
 
 func get_spawn_config(building_type: StringName) -> Dictionary:

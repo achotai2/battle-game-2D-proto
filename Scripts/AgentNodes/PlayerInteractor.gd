@@ -107,6 +107,7 @@ func _set_target(target: Interactable) -> void:
 	if _current_target == null:
 		_hide_prompt()
 	else:
+		_update_prompt_icon()
 		_show_prompt()
 
 	target_changed.emit(_current_target)
@@ -131,6 +132,16 @@ func _show_prompt() -> void:
 	if _prompt == null:
 		return
 	_prompt.show_prompt()
+
+
+func _update_prompt_icon() -> void:
+	if _current_target == null:
+		return
+
+	if prompt_scene == null:
+		return
+
+	_prompt.update_icon(_current_target.get_prompt_icon_type())
 
 
 func _hide_prompt() -> void:

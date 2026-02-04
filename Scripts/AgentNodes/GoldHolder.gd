@@ -50,18 +50,20 @@ func give_gold(target: Node2D, amount: int) -> void:
 	if gold <= 0 or not is_instance_valid(target) and not _state == State.IDLE:
 		return
 
-	if _issue_movement_command(target) or not is_instance_valid(movement):
-		_target_to_give = target
-		_amount_to_give = amount
-		_state = State.GIVING
-		_spawn_gold()
-		_patience_timer.start()
+	_target_to_give = target
+	_amount_to_give = amount
+	_state = State.GIVING
+	_spawn_gold()
+	_patience_timer.start()
 		
 	# Check if the target is already within givers radius.
 	var current_bodies = get_overlapping_bodies()
 	for body in current_bodies:
 		if is_instance_valid(_target_to_give) and body == _target_to_give:
 			_gold_handover()
+
+	if _issue_movement_command(target) or not is_instance_valid(movement):
+		_gold_handover()
 
 
 func _issue_movement_command(target_node: Node2D) -> bool:
