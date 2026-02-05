@@ -31,8 +31,12 @@ var _age: float = 0.0
 var _landed: bool = false
 var _armed: bool = false   # “can hit bodies yet”
 
+var _tan_camera_angle: float = 0.0
+
 
 func _ready() -> void:
+	_tan_camera_angle = tan(deg_to_rad(camera_angle))
+
 	body_entered.connect(_on_body_entered)
 	monitoring = true
 	monitorable = true
@@ -136,7 +140,7 @@ func _land(hit_target: Node2D) -> void:
 
 func _new_global_position() -> Vector2:
 	# fake camera tilt: higher Z lifts sprite upward on screen
-	return Vector2(position2d.x, position2d.y - (height * tan(deg_to_rad(camera_angle))))
+	return Vector2(position2d.x, position2d.y - (height * _tan_camera_angle))
 
 
 func _change_sprite_angle(look_to: Vector2) -> void:
