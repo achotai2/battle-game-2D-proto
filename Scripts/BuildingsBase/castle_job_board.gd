@@ -275,15 +275,4 @@ func _resolve_agent(minion: WorkSiteWorker) -> Node2D:
 	if minion == null:
 		return null
 
-	if minion.has_method("get_agent"):
-		var agent = minion.call("get_agent")
-		if agent is Node2D:
-			return agent
-
-	for prop in minion.get_property_list():
-		if prop.name == &"agent":
-			var agent_prop = minion.get("agent")
-			if agent_prop is Node2D:
-				return agent_prop
-			break
-	return null
+	return minion.get_agent()
