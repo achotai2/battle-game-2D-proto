@@ -11,10 +11,5 @@ func _ready() -> void:
 			player.gold.goldChanged.connect(_update_gold_display)
 
 
-# Called every frame. 'delta' is the elapsed time since the previous frame.
-func _process(delta: float) -> void:
-	pass
-
-
 func _update_gold_display(gold: int) -> void:
 	text = "Gold: %d" % gold
