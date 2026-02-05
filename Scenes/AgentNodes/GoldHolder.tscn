@@ -103,7 +103,7 @@ sprite_frames = SubResource("SpriteFrames_sae57")
 animation = &"idle"
 
 [node name="TaxTimer" type="Timer" parent="."]
-wait_time = 10.0
+wait_time = 30.0
 one_shot = true
 
 [connection signal="body_entered" from="." to="." method="_on_body_entered"]

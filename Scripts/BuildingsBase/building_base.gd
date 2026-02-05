@@ -7,6 +7,7 @@ class_name BuildingBase
 @export var visual: Node
 @export var interactable: Interactable
 @export var worksite: WorkSite
+@export var workForSpawnsite: WorkSite
 @export var spawnsite: WorkSite
 @export var gold: GoldHolder
 #@export var health: Health
@@ -69,9 +70,13 @@ func return_position() -> Vector2:
 
 func _on_interacted(interactor: Node2D) -> void:
 	if state == BuildingDefs.BuildingState.DESTROYED and is_instance_valid(interactor.gold) and interactor.gold.gold >= worksite.total_work:
+		# If DESTROYED then Player gives building gold (to give to Workers) and sets state to CONSTRUCTING.
 		interactor.gold.give_gold(self, worksite.total_work)
 		set_state(BuildingDefs.BuildingState.CONSTRUCTING)
 	elif state == BuildingDefs.BuildingState.BUILT:
+		# If BUILT then Player gives building gold (to give to Workers) and sets state to SPAWNING.
+#		interactor.gold.give_gold(self, worksite.total_work)
+#		set_state(BuildingDefs.BuildingState.CONSTRUCTING)
 		_activate_spawnsite()
 
 
@@ -113,17 +118,17 @@ func _configure_interactable() -> void:
 
 
 func _configure_worksite() -> void:
-	if state == BuildingDefs.BuildingState.CONSTRUCTING and is_instance_valid(worksite):
+	if not is_instance_valid(worksite) or not is_instance_valid(spawnsite):
+		return
+	
+	if state == BuildingDefs.BuildingState.CONSTRUCTING:
 		spawnsite.set_enabled(false)
 		worksite.reset_progress()
 		worksite.set_enabled(true)
 		worksite.refresh_registration()
-	elif state == BuildingDefs.BuildingState.BUILT and is_instance_valid(spawnsite):
+	else:
 		worksite.set_enabled(false)
 		spawnsite.set_enabled(false)
-	else:
-		if is_instance_valid(worksite): worksite.set_enabled(false)
-		if is_instance_valid(spawnsite): spawnsite.set_enabled(false)
 
 
 func _activate_spawnsite() -> void:

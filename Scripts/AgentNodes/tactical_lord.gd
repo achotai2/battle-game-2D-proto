@@ -2,7 +2,6 @@ extends Node
 class_name TacticalLord
 
 @export var tax_check_interval: float = 1.0
-@export var tax_cooldown: float = 10000.0 # 10 seconds
 @export var movement: AgentMovement = null
 
 var _tax_timer: Timer
