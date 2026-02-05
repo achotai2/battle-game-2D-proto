@@ -13,3 +13,10 @@ func return_position() -> Vector2:
 
 func assign_job(_site: WorkSite) -> void:
 	pass
+
+
+func get_agent() -> Node2D:
+	var a = get("agent")
+	if a is Node2D:
+		return a
+	return null
