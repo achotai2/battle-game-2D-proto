@@ -23,9 +23,6 @@ enum TargetKind { ATTACKABLE, INTERACTABLE }
 
 var dont_target: Node2D = null
 
-# Candidate set + list
-var _candidates: Dictionary = {}          # Node2D -> index (int)
-var _candidate_list: Array[Node2D] = []
 var _current_target: Node2D = null
 var _timer: Timer
 
@@ -65,8 +62,6 @@ func set_myself(agent: Node2D) -> void:
 		_has_player_method = false
 
 	dont_target = null if targets_self else agent
-	if dont_target:
-		_remove_candidate(dont_target)
 
 	_reselect_target()
 
@@ -80,11 +75,15 @@ func get_target() -> Node2D:
 
 
 func get_candidates() -> Array[Node2D]:
-	return _candidate_list.duplicate()
+	var candidates: Array[Node2D] = []
+	for body in get_overlapping_bodies():
+		if _is_candidate(body):
+			candidates.append(body)
+	return candidates
 
 
 func refresh() -> void:
-	# Force an immediate prune + reselection (useful when units change role/capabilities).
+	# Force an immediate reselection
 	_reselect_target()
 
 
@@ -106,48 +105,11 @@ func set_team_filters(same_team: bool, opposing: bool, neutral: bool) -> void:
 
 func _on_body_entered(body: Node2D) -> void:
 	if _is_candidate(body):
-		_add_candidate(body)
 		_reselect_target()
 
 func _on_body_exited(body: Node2D) -> void:
-	_remove_candidate(body)
-	_reselect_target()
-
-
-# -------------------------
-# Candidate management
-# -------------------------
-
-func _add_candidate(body: Node2D) -> void:
-	if _candidates.has(body):
-		return
-	# Bolt Optimization: Store index for O(1) removal
-	_candidates[body] = _candidate_list.size()
-	_candidate_list.append(body)
-
-	# Clean up if freed/dies without body_exited
-	body.tree_exited.connect(_on_candidate_tree_exited.bind(body), CONNECT_ONE_SHOT)
-
-func _remove_candidate(body: Node2D) -> void:
-	if not _candidates.has(body):
-		return
-
-	# Bolt Optimization: O(1) Removal via Swap-and-Pop
-	var idx: int = _candidates[body]
-	_candidates.erase(body)
-
-	var last_idx := _candidate_list.size() - 1
-	if idx == last_idx:
-		_candidate_list.pop_back()
-	else:
-		var last_node = _candidate_list[last_idx]
-		_candidate_list[idx] = last_node
-		_candidates[last_node] = idx
-		_candidate_list.pop_back()
-
-func _on_candidate_tree_exited(body: Node2D) -> void:
-	_remove_candidate(body)
-	_reselect_target()
+	if body == _current_target:
+		_reselect_target()
 
 
 # -------------------------
@@ -177,6 +139,9 @@ func _is_candidate(body: Node2D) -> bool:
 	if body == null or body == dont_target:
 		return false
 
+	if not is_instance_valid(body):
+		return false
+
 	# Capability gate
 	match target_kind:
 		TargetKind.ATTACKABLE:
@@ -194,16 +159,11 @@ func _is_candidate(body: Node2D) -> bool:
 
 
 # -------------------------
-# Target selection (O(n), no sorting)
+# Target selection
 # -------------------------
 
 func _reselect_target() -> void:
-	# Bolt Optimization: Prune invalids safely with backward iteration (no allocation)
-	for i in range(_candidate_list.size() - 1, -1, -1):
-		var b = _candidate_list[i]
-		if not is_instance_valid(b) or not _is_candidate(b):
-			_remove_candidate(b)
-
+	var bodies := get_overlapping_bodies()
 	var best: Node2D = null
 
 	# Bolt Optimization: Fast path for Nearest to avoid repeated function calls and property access
@@ -211,13 +171,19 @@ func _reselect_target() -> void:
 		var my_pos := global_position
 		var best_dist_sq := INF
 
-		for b in _candidate_list:
+		for b in bodies:
+			if not _is_candidate(b):
+				continue
+
 			var d := my_pos.distance_squared_to(b.global_position)
 			if d < best_dist_sq:
 				best_dist_sq = d
 				best = b
 	else:
-		for b in _candidate_list:
+		for b in bodies:
+			if not _is_candidate(b):
+				continue
+
 			if best == null:
 				best = b
 			elif _is_better(b, best):
@@ -274,20 +240,20 @@ func _dist2(n: Node2D) -> float:
 
 func _health_value(n: Node) -> float:
 	# Only meaningful if the target has a valid health reference
-	var h: Object = n.get("health")
+	var h = n.get("health")
+
+	if h is Health:
+		return float(h.return_health())
+
 	if not is_instance_valid(h):
 		return INF
 
 	# Support either return_health() or get_health()
 	if h.has_method("return_health"):
 		return float(h.call("return_health"))
-	else:
-		print_debug("h does not have function return_health")
 
 	if h.has_method("get_health"):
 		return float(h.call("get_health"))
-	else:
-		print_debug("h does not have function get_health")
 
 	return INF
 
@@ -295,15 +261,11 @@ func _health_value(n: Node) -> float:
 func _notify_tactical_target_changed(target: Node2D) -> void:
 	if is_instance_valid(tactical) and tactical.has_method("set_target"):
 		tactical.call("set_target", target)
-	else:
-		print_debug("tactical does not have function set_target")
 
 
 func _notify_tactical_target_lost() -> void:
 	if is_instance_valid(tactical) and tactical.has_method("clear_target"):
 		tactical.call("clear_target")
-	else:
-		print_debug("tactical does not have function clear_target or does not exist")
 
 
 func _notify_tactical_target_refreshed(target: Node2D) -> void:
