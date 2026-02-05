@@ -5,7 +5,7 @@ extends StaticBody2D
 @export var peasant_job_board: CastleJobBoard
 @export var food_job_board: CastleJobBoard
 
-var minions: Array[Node2D] = []
+var minions: Dictionary = {}
 
 
 func return_job_board(kind: CastleJobBoard.JobBoardType) -> CastleJobBoard:
@@ -20,14 +20,13 @@ func return_job_board(kind: CastleJobBoard.JobBoardType) -> CastleJobBoard:
 
 
 func register_minion(minion: Node2D) -> void:
-	if not minion in minions:
-		minions.append(minion) 
+	if not minions.has(minion):
+		minions[minion] = true
 
 
 func unregister_minion(minion: Node2D) -> void:
-	if minion in minions:
-		minions.erase(minion)
+	minions.erase(minion)
 
 
 func get_active_minions() -> Array:
-	return minions
+	return minions.keys()
