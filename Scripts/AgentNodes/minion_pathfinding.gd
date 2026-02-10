@@ -47,6 +47,8 @@ func _ready() -> void:
 		return
 
 	nav_agent.avoidance_enabled = true
+	nav_agent.path_desired_distance = 20.0
+	nav_agent.target_desired_distance = 10.0
 	nav_agent.velocity_computed.connect(_on_velocity_computed)
 	nav_agent.navigation_finished.connect(_on_nav_finished)
 
@@ -84,12 +86,16 @@ func set_meander(enable: bool) -> void:
 func set_move_target_position(pos: Vector2) -> void:
 	_mode = Mode.MOVE_TO_POS
 	_target_node = null
+	if is_instance_valid(nav_agent):
+		nav_agent.target_desired_distance = 10.0
 	_set_target_pos(pos)
 
 
 func set_chase_target(node: Node2D) -> void:
 	_mode = Mode.CHASE_NODE
 	_target_node = node
+	if is_instance_valid(nav_agent):
+		nav_agent.target_desired_distance = 10.0
 	if is_instance_valid(_target_node):
 		_set_target_pos(_target_node.global_position)
 	else:
@@ -99,6 +105,8 @@ func set_chase_target(node: Node2D) -> void:
 func start_patrol() -> void:
 	_mode = Mode.PATROL
 	_target_node = null
+	if is_instance_valid(nav_agent):
+		nav_agent.target_desired_distance = patrol_arrival_radius
 	_pick_new_patrol_point(true)
 
 
@@ -138,17 +146,17 @@ func tick(my_pos: Vector2, max_speed: float, delta: float) -> void:
 
 	if _stuck_accum >= stuck_time:
 		_stuck_accum = 0.0
-		_refresh_target_and_repath(true)
-
-	# --- finished? ---
-	if _mode == Mode.PATROL and _is_patrol_target_reached(my_pos):
-		_send_desired_velocity(Vector2.ZERO)
-		if not _patrol_pause_timer.is_stopped():
-			return
-		if patrol_pause_seconds > 0.0:
-			_patrol_pause_timer.start(patrol_pause_seconds)
-		else:
+		push_warning("MinionPathfinding: Agent stuck at " + str(my_pos))
+		if _mode == Mode.PATROL:
 			_pick_new_patrol_point(true)
+		else:
+			_refresh_target_and_repath(true)
+
+	if not nav_agent.is_target_reachable():
+		if _mode == Mode.PATROL:
+			_pick_new_patrol_point(true)
+		else:
+			_send_desired_velocity(Vector2.ZERO)
 		return
 
 	if nav_agent.is_navigation_finished():
@@ -157,6 +165,8 @@ func tick(my_pos: Vector2, max_speed: float, delta: float) -> void:
 		if _mode == Mode.PATROL and not _patrol_pause_timer.is_stopped():
 			return
 		if _mode == Mode.PATROL:
+			if not _patrol_pause_timer.is_stopped():
+				return
 			if patrol_pause_seconds > 0.0:
 				_patrol_pause_timer.start(patrol_pause_seconds)
 			else:
@@ -255,12 +265,6 @@ func _pick_new_patrol_point(force: bool) -> void:
 
 	# Fallback: just stand near castle
 	_set_target_pos(center)
-
-
-func _is_patrol_target_reached(my_pos: Vector2) -> bool:
-	if patrol_arrival_radius <= 0.0:
-		return nav_agent.is_navigation_finished()
-	return my_pos.distance_squared_to(_target_pos) <= patrol_arrival_radius * patrol_arrival_radius
 
 
 func _on_velocity_computed(safe_velocity: Vector2) -> void:
