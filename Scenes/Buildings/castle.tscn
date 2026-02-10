@@ -1,8 +1,10 @@
-[gd_scene load_steps=6 format=3 uid="uid://56ng42k13bnj"]
+[gd_scene load_steps=10 format=3 uid="uid://56ng42k13bnj"]
 
 [ext_resource type="Texture2D" uid="uid://d4hqu3k4e8pts" path="res://Art/Tiny Swords (Update 010)/Factions/Knights/Buildings/Castle/Castle_Blue.png" id="1_ayoda"]
 [ext_resource type="Script" uid="uid://beretwk1vqwgm" path="res://Scripts/BuildingsBase/castle.gd" id="1_p6e6l"]
-[ext_resource type="Script" uid="uid://ba0yfy3sv1ht2" path="res://Scripts/BuildingsBase/castle_job_board.gd" id="2_r1mkv"]
+[ext_resource type="Script" uid="uid://ba0yfy3sv1ht2" path="res://Scripts/BuildingNodes/castle_job_board.gd" id="2_r1mkv"]
+[ext_resource type="Script" uid="uid://bts71s2mlomuh" path="res://Scripts/AgentNodes/shadow_sprite.gd" id="4_40flp"]
+[ext_resource type="Shader" uid="uid://cmsuxok158t72" path="res://Scripts/Shaders/shadow.gdshader" id="4_fon5w"]
 
 [sub_resource type="PhysicsMaterial" id="PhysicsMaterial_r1mkv"]
 
@@ -10,21 +12,22 @@
 radius = 54.0
 height = 334.0
 
-[node name="Castle" type="StaticBody2D" node_paths=PackedStringArray("worker_job_board", "peasant_job_board", "food_job_board") groups=["Attackable", "Buildings", "Interactable"]]
-position = Vector2(0, -72)
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_mx46n"]
+shader = ExtResource("4_fon5w")
+
+[sub_resource type="OccluderPolygon2D" id="OccluderPolygon2D_fon5w"]
+polygon = PackedVector2Array(-77, -13, -92, -37, -124, -43, -140, -63, -141, -101, -122, -120, -61, -128, -19, -131, 29, -132, 67, -130, 79, -123, 109, -125, 120, -121, 137, -106, 142, -90, 139, -66, 130, -47, 92, -37, 85, -16)
+
+[node name="Castle" type="StaticBody2D" node_paths=PackedStringArray("worker_job_board", "food_job_board") groups=["Attackable", "Buildings", "Interactable"]]
+y_sort_enabled = true
 physics_material_override = SubResource("PhysicsMaterial_r1mkv")
 script = ExtResource("1_p6e6l")
 worker_job_board = NodePath("WorkerJobBoard")
-peasant_job_board = NodePath("PeasantJobBoard")
 food_job_board = NodePath("FoodJobBoard")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
-position = Vector2(0, 72)
 rotation = 1.5707964
 shape = SubResource("CapsuleShape2D_r1mkv")
-
-[node name="Sprite2D" type="Sprite2D" parent="."]
-texture = ExtResource("1_ayoda")
 
 [node name="WorkerJobBoard" type="Node" parent="." node_paths=PackedStringArray("castle")]
 script = ExtResource("2_r1mkv")
@@ -42,8 +45,22 @@ castle = NodePath("..")
 metadata/_custom_type_script = "uid://ba0yfy3sv1ht2"
 
 [node name="NavigationObstacle2D2" type="NavigationObstacle2D" parent="."]
-position = Vector2(-48, 72)
 radius = 50.46
-vertices = PackedVector2Array(215, 16, 196, 44, 175, 55, -78, 54, -101, 43, -118, 16, -119, -12, -103, -38, -82, -52, 165, -57, 193, -43, 215, -20)
+vertices = PackedVector2Array(156, 31, 130, 52, 64, 57, -67, 57, -129, 55, -154, 37, -171, -1, -162, -34, -136, -52, 128, -54, 154, -35, 169, -1)
 affect_navigation_mesh = true
 carve_navigation_mesh = true
+
+[node name="Sprites" type="Node2D" parent="."]
+
+[node name="ShadowSprite" type="Sprite2D" parent="Sprites"]
+material = SubResource("ShaderMaterial_mx46n")
+texture = ExtResource("1_ayoda")
+offset = Vector2(0, -80)
+script = ExtResource("4_40flp")
+
+[node name="Sprite2D" type="Sprite2D" parent="Sprites"]
+texture = ExtResource("1_ayoda")
+offset = Vector2(0, -50)
+
+[node name="LightOccluder2D" type="LightOccluder2D" parent="."]
+occluder = SubResource("OccluderPolygon2D_fon5w")

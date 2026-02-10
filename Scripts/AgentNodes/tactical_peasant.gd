@@ -112,3 +112,11 @@ func _move_to_position(pos: Vector2) -> void:
 	if is_instance_valid(movement):
 		movement.command_move_to_position(pos, 5)
 	move_to_position.emit(pos)
+
+
+func call_over(pos: Vector2) -> bool:
+# Spawnsites call me over if they want to transform me. I let them know if I am currently idle, and then I go.
+	if movement.command_move_to_position(pos, 5):
+		return true
+
+	return false

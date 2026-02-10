@@ -32,7 +32,7 @@ func set_movement(m: AgentMovement) -> void:
 func _on_tax_check() -> void:
 	# Get list of minions from castle.
 	if is_instance_valid(get_parent().castle):
-		var _minions: Array[Node2D] = get_parent().castle.get_active_minions()
+		var _minions: Array = get_parent().castle.get_active_minions()
 	
 		for m in _minions:
 			if is_instance_valid(m.gold):

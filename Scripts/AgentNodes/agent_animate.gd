@@ -5,6 +5,7 @@ signal interactAnimationFinished
 signal attackAnimationFinished
 
 @export var sprite: AnimatedSprite2D
+@export var shadow_sprite: AnimatedSprite2D
 @export_range(0, 3, 0.1) var damageVisualTime: float = 0.2
 
 var damageTimer := Timer.new()
@@ -80,19 +81,25 @@ func set_my_agent(ag: Node2D) -> void:
 
 func agent_moved(velocity: Vector2) -> void:
 # Called by Agent when movement occurs, to run animation.
-	if sprite and not attacking and not working:
+	if not is_instance_valid(sprite):
+		return 
+
+	if not attacking and not working:
 		if velocity != Vector2(0, 0):
 			if _move_anim != &"":
 				sprite.play(_move_anim)
+				if is_instance_valid(shadow_sprite): shadow_sprite.play(_move_anim)
 
 			if velocity.x < 0:
 				sprite.flip_h = true
+				if is_instance_valid(shadow_sprite): shadow_sprite.flip_h = true
 			elif velocity.x > 0:
 				sprite.flip_h = false
+				if is_instance_valid(shadow_sprite): shadow_sprite.flip_h = false
 			
 		else:
-			if is_instance_valid(sprite):
-				sprite.play("idle")
+			sprite.play("idle")
+			if is_instance_valid(shadow_sprite): shadow_sprite.play("idle")
 
 
 func _show_damage() -> void:
@@ -119,8 +126,10 @@ func play_attack(target: Node2D) -> bool:
 	if abs(dir.y) > abs(dir.x):
 		anim = variant + ("Up" if dir.y < 0 else "Down")
 		sprite.flip_h = false
+		if is_instance_valid(shadow_sprite): shadow_sprite.flip_h = false
 	else:
 		sprite.flip_h = dir.x < 0
+		if is_instance_valid(shadow_sprite): shadow_sprite.flip_h = dir.x < 0
 
 	# Fallbacks if a unit lacks Up/Down
 	if not frames.has_animation(anim):
@@ -130,6 +139,7 @@ func play_attack(target: Node2D) -> bool:
 
 	if anim != "":
 		sprite.play(anim)
+		if is_instance_valid(shadow_sprite): shadow_sprite.play(anim)
 		return true
 	return false
 
@@ -144,8 +154,10 @@ func set_sprite_frames(frames: SpriteFrames) -> void:
 
 	# Stop current animation cleanly
 	sprite.stop()
+	if is_instance_valid(shadow_sprite): shadow_sprite.stop()
 
 	sprite.sprite_frames = frames
+	if is_instance_valid(shadow_sprite): shadow_sprite.sprite_frames = frames
 	_update_move_anim_cache()
 
 	# Reset animation state safely
@@ -156,9 +168,10 @@ func set_sprite_frames(frames: SpriteFrames) -> void:
 	# Pick a safe default animation
 	if sprite.sprite_frames.has_animation("idle"):
 		sprite.play("idle")
+		if is_instance_valid(shadow_sprite): shadow_sprite.play("idle")
 	elif sprite.sprite_frames.get_animation_names().size() > 0:
 		sprite.play(sprite.sprite_frames.get_animation_names()[0])
-
+		if is_instance_valid(shadow_sprite): shadow_sprite.play(shadow_sprite.sprite_frames.get_animation_names()[0])
 
 func _update_move_anim_cache() -> void:
 	_move_anim = &""
@@ -177,6 +190,7 @@ func cancel_action_state() -> void:
 	working = false
 	# optionally stop attack anim
 	sprite.stop()
+	if is_instance_valid(shadow_sprite): shadow_sprite.stop()
 
 
 func play_work() -> bool:
@@ -188,5 +202,6 @@ func play_work() -> bool:
 	if frames.has_animation("work"):
 		working = true
 		sprite.play("work")
+		if is_instance_valid(shadow_sprite): shadow_sprite.play("work")
 		return true
 	return false

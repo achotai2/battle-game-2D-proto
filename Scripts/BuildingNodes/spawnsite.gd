@@ -5,89 +5,91 @@ class_name SpawnSite
 signal spawn_completed(agent: Node2D, role: StringName, player: int)
 
 @export var spawn_role: UnitRoles.UnitType = UnitRoles.UnitType.SOLDIER
+@export var work_per_spawn: float = 5.0
 @export var default_player: int = 0
-@export var clear_queue_on_disable: bool = true
+@export var clear_queue_on_disable: bool = false
+@export var spawn_location: Marker2D
 
-var _queued_spawns: int = 0
+var _peasants_qeued: int = 0
+var _task_work: float = 0.0
 
 
 func _ready() -> void:
-	if kind != CastleJobBoard.JobBoardType.PEASANTS:
-		kind = CastleJobBoard.JobBoardType.PEASANTS
-	if total_work <= 0.0:
-		total_work = 1.0
-	if total_work != 1.0:
-		total_work = 1.0
+	if kind != CastleJobBoard.JobBoardType.WORKERS:
+		kind = CastleJobBoard.JobBoardType.WORKERS
 	super._ready()
+	total_work = 0.0
 
 
 func enqueue_spawn(amount: int = 1) -> void:
+# When player interacts this gets called.
+# Add total_work and queue another peasant.
 	if amount <= 0:
 		return
-	_queued_spawns += amount
+		
 	if not enabled:
 		set_enabled(true)
 		reset_progress()
 		refresh_registration()
+		total_work = 0.0
+		_task_work = 0.0
 	else:
 		refresh_registration()
 
-
-func needs_work() -> bool:
-	if not enabled:
-		return false
-	return _queued_spawns > 0
-
+	total_work += work_per_spawn
 
 func apply_work(amount: float, worker: WorkSiteWorker) -> void:
+# Extends the worksite.gd apply work function for spawnsite logic:
 	if not enabled or not needs_work():
 		return
-	if _queued_spawns <= 0:
-		return
+	
+	# Call standard apply_work logic.
+	super.apply_work(amount, worker)
 
-	var safe_amount: float = maxf(amount, 0.0)
-	_work_done = minf(total_work, _work_done + safe_amount)
+	_task_work += amount
 
-	if _work_done < total_work:
-		return
+	if _task_work >= work_per_spawn:
+		_peasants_qeued += 1
+		_task_work -= work_per_spawn
 
-	_queued_spawns = maxi(0, _queued_spawns - 1)
-	_apply_role_to_worker(worker)
+		# Get peasant from castle and call them over.
+		var _minions: Array = get_parent().castle.get_active_minions()
+		for m in _minions:
+			if m.is_in_group("Peasants") and m.tactical.call_over(spawn_location.global_position):
+				if not m.movement.move_to_pos_finished.is_connected(_peasant_move_finished):
+					m.movement.move_to_pos_finished.connect(_peasant_move_finished)
+					break
+					
 
-	if _queued_spawns > 0:
-		_work_done = 0.0
-		return
 
-	_complete(worker)
+func _peasant_move_finished(_peasant: Node2D) -> void:
+	_peasants_qeued -= 1
+	if _peasants_qeued < 0:
+		print_debug("Peasants queud went less than 0")
+		_peasants_qeued = 0
+
+	if _peasant.has_method("apply_role"):
+		spawn_role = _resolve_spawn_role()
+		_peasant.call("apply_role", spawn_role, _resolve_spawn_player())
+	else:
+		print_debug("peasant does not have function apply_role.")
+
+	if _peasant.movement.move_to_pos_finished.is_connected(_peasant_move_finished):
+		_peasant.movement.move_to_pos_finished.disconnect(_peasant_move_finished)
+
+	if not needs_work() and _peasants_qeued <= 0:
+		set_enabled(false)
 
 
 func set_enabled(new_enabled: bool) -> void:
 	super.set_enabled(new_enabled)
 	if not new_enabled and clear_queue_on_disable:
-		_queued_spawns = 0
 		_work_done = 0.0
-
-
-func _apply_role_to_worker(worker: WorkSiteWorker) -> void:
-	if worker == null or not is_instance_valid(worker):
-		return
-
-	var agent := _resolve_agent(worker)
-	if agent == null:
-		return
-
-	var role := _resolve_spawn_role()
-	var player_id := _resolve_spawn_player()
-
-	if agent.has_method("apply_role"):
-		agent.call("apply_role", role, player_id)
-		spawn_completed.emit(agent, role, player_id)
-	else:
-		print_debug("agent does not have function apply_role.")
+		_peasants_qeued = 0
 
 
 func _resolve_spawn_role() -> UnitRoles.UnitType:
-	var building_type := _get_boss_property(&"building_type")
+	var building_type := _get_boss_property()
 	var config := BuildingDefs.get_spawn_config(building_type)
 	var unit_type: UnitRoles.UnitType = config.get("unit_type", "")
 	return unit_type
@@ -97,7 +99,7 @@ func _resolve_spawn_player() -> int:
 	return get_parent().player
 
 
-func _get_boss_property(property_name: StringName) -> BuildingDefs.BuildingType:
+func _get_boss_property() -> BuildingDefs.BuildingType:
 	return get_parent().building_type
 
 

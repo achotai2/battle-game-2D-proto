@@ -7,7 +7,6 @@ class_name BuildingBase
 @export var visual: Node
 @export var interactable: Interactable
 @export var worksite: WorkSite
-@export var workForSpawnsite: WorkSite
 @export var spawnsite: WorkSite
 @export var gold: GoldHolder
 #@export var health: Health
@@ -56,6 +55,7 @@ func apply_state(new_state: BuildingDefs.BuildingState) -> void:
 	_update_visuals()
 	_configure_interactable()
 	_configure_worksite()
+	_configure_spawnsite()
 
 	_connect_signals()
 
@@ -69,14 +69,11 @@ func return_position() -> Vector2:
 
 
 func _on_interacted(interactor: Node2D) -> void:
-	if state == BuildingDefs.BuildingState.DESTROYED and is_instance_valid(interactor.gold) and interactor.gold.gold >= worksite.total_work:
+	if state == BuildingDefs.BuildingState.DESTROYED:
 		# If DESTROYED then Player gives building gold (to give to Workers) and sets state to CONSTRUCTING.
-		interactor.gold.give_gold(self, worksite.total_work)
 		set_state(BuildingDefs.BuildingState.CONSTRUCTING)
 	elif state == BuildingDefs.BuildingState.BUILT:
 		# If BUILT then Player gives building gold (to give to Workers) and sets state to SPAWNING.
-#		interactor.gold.give_gold(self, worksite.total_work)
-#		set_state(BuildingDefs.BuildingState.CONSTRUCTING)
 		_activate_spawnsite()
 
 
@@ -114,21 +111,31 @@ func _configure_interactable() -> void:
 
 	var enabled := state != BuildingDefs.BuildingState.CONSTRUCTING
 	interactable.set_enabled(enabled)
-	interactable.icon_type = BuildingDefs.get_interact_mode(building_type, state)
+	
+	var _interaction_cost: int = 0
+	if state == BuildingDefs.BuildingState.DESTROYED:
+		_interaction_cost = worksite.total_work
+	elif state == BuildingDefs.BuildingState.BUILT:
+		_interaction_cost = spawnsite.work_per_spawn
+		
+	interactable.update_interaction_state(BuildingDefs.get_interact_mode(building_type, state), _interaction_cost)
+
 
 
 func _configure_worksite() -> void:
-	if not is_instance_valid(worksite) or not is_instance_valid(spawnsite):
+	if not is_instance_valid(worksite):
 		return
 	
 	if state == BuildingDefs.BuildingState.CONSTRUCTING:
-		spawnsite.set_enabled(false)
 		worksite.reset_progress()
 		worksite.set_enabled(true)
 		worksite.refresh_registration()
 	else:
 		worksite.set_enabled(false)
-		spawnsite.set_enabled(false)
+
+
+func _configure_spawnsite() -> void:
+	spawnsite.set_enabled(false)
 
 
 func _activate_spawnsite() -> void:
@@ -139,11 +146,10 @@ func _activate_spawnsite() -> void:
 		return
 	else:
 		print_debug("spawnsite does not have function enqueue_spawn")
-	if spawnsite.enabled:
-		return
-	spawnsite.reset_progress()
-	spawnsite.set_enabled(true)
-	spawnsite.refresh_registration()
+	if not spawnsite.enabled:
+		spawnsite.reset_progress()
+		spawnsite.set_enabled(true)
+		spawnsite.refresh_registration()
 
 
 func _connect_signals() -> void:

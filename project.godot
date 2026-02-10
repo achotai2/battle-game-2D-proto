@@ -19,6 +19,7 @@ config/icon="res://icon.svg"
 
 UnitRoles="*res://Scripts/UnitBase/UnitRoles.gd"
 BuildingDefs="*res://Scripts/DefsScripts/BuildingDefs.gd"
+Sun="*res://Scripts/DefsScripts/GlobalSun.gd"
 
 [global_group]
 
@@ -99,3 +100,22 @@ avoidance/layer_4="Small Minions"
 
 renderer/rendering_method="gl_compatibility"
 renderer/rendering_method.mobile="gl_compatibility"
+
+[shader_globals]
+
+location_fade={
+"type": "float",
+"value": 1.0
+}
+global_shadow_color={
+"type": "color",
+"value": Color(0.5931336, 0.59313357, 0.59313357, 1)
+}
+global_shadow_length={
+"type": "float",
+"value": 0.0
+}
+global_shadow_direction={
+"type": "float",
+"value": 0.0
+}

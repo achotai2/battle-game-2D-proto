@@ -33,31 +33,33 @@ work_offset = NodePath("Marker2D")
 metadata/_custom_type_script = "uid://qumqy1omy72i"
 
 [node name="Marker2D" type="Marker2D" parent="WorkSite"]
-position = Vector2(0, 72)
+position = Vector2(0, 96)
 
 [node name="Marker2D2" type="Marker2D" parent="WorkSite"]
-position = Vector2(-80, 0)
+position = Vector2(-96, 0)
 
 [node name="Marker2D3" type="Marker2D" parent="WorkSite"]
-position = Vector2(80, 0)
+position = Vector2(96, 0)
 
 [node name="Marker2D6" type="Marker2D" parent="WorkSite"]
-position = Vector2(0, -72)
+position = Vector2(0, -96)
 
-[node name="SpawnSite" type="Node2D" parent="."]
+[node name="SpawnSite" type="Node2D" parent="." node_paths=PackedStringArray("spawn_location")]
 script = ExtResource("4_5cnks")
-spawn_role = null
-use_building_config = null
-default_player = null
-clear_queue_on_disable = null
-total_work = null
-auto_register = null
-enabled = null
-kind = null
+spawn_location = NodePath("Marker2D")
 metadata/_custom_type_script = "uid://dqu3s3kqb7wj6"
 
 [node name="Marker2D" type="Marker2D" parent="SpawnSite"]
-position = Vector2(0, 72)
+position = Vector2(0, 96)
+
+[node name="Marker2D2" type="Marker2D" parent="SpawnSite"]
+position = Vector2(-96, 0)
+
+[node name="Marker2D3" type="Marker2D" parent="SpawnSite"]
+position = Vector2(96, 0)
+
+[node name="Marker2D6" type="Marker2D" parent="SpawnSite"]
+position = Vector2(0, -96)
 
 [node name="Interactable" parent="." instance=ExtResource("5_q2yk0")]
 icon_type = 1
@@ -67,8 +69,9 @@ vertices = PackedVector2Array(-51, -15, -16, -53, 21, -53, 53, -20, 52, 13, 24, 
 affect_navigation_mesh = true
 carve_navigation_mesh = true
 
-[node name="Sprite2D" type="Sprite2D" parent="."]
-position = Vector2(0, -24)
-texture = ExtResource("2_aww4k")
-
 [node name="GoldHolder" parent="." instance=ExtResource("6_2yu6c")]
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+y_sort_enabled = true
+texture = ExtResource("2_aww4k")
+offset = Vector2(0, -50)

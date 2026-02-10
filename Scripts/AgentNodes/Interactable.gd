@@ -15,6 +15,12 @@ signal interaction_suspended(interactor: Node2D)
 
 var _disabled: bool = false
 var _active_interactor: Node2D = null
+var _interaction_cost: int = 0
+
+
+func _ready() -> void:
+	pass
+#	_setup_icon_dict()
 
 
 func can_interact(interactor: Node2D) -> bool:
@@ -49,10 +55,15 @@ func finish_interact(interactor: Node2D) -> void:
 	if _active_interactor != interactor:
 		return
 
-	_active_interactor = null
-	if one_shot:
-		_disable_interaction()
-	interaction_finished.emit(interactor)
+	# Order interacting Player to give gold equal to interaction cost.
+	if is_instance_valid(interactor.gold) and interactor.gold.gold >= _interaction_cost:
+		interactor.gold.give_gold(get_parent(), _interaction_cost)
+
+		_active_interactor = null
+		if one_shot:
+			_disable_interaction()
+
+		interaction_finished.emit(interactor)
 
 
 func suspend_interact(interactor: Node2D) -> void:
@@ -84,6 +95,11 @@ func _get_team_id(entity: Node) -> int:
 	return 0
 
 
+func update_interaction_state(new_icon: BuildingDefs.IconType, new_cost: int) -> void:
+	icon_type = new_icon
+	_interaction_cost = new_cost
+
+
 func _disable_interaction() -> void:
 	_disabled = true
 	set_deferred("monitoring", false)
@@ -98,3 +114,7 @@ func set_enabled(enabled: bool) -> void:
 
 func get_prompt_icon_type() -> BuildingDefs.IconType:
 	return icon_type
+
+
+func get_prompt_cost() -> int:
+	return _interaction_cost

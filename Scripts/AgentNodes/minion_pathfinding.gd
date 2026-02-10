@@ -152,7 +152,7 @@ func tick(my_pos: Vector2, max_speed: float, delta: float) -> void:
 		return
 
 	if nav_agent.is_navigation_finished():
-		_send_desired_velocity(Vector2.ZERO)
+		_send_desired_velocity(Vector2.ZERO)		
 		# Patrol: upon arrival, pause then pick a new point
 		if _mode == Mode.PATROL and not _patrol_pause_timer.is_stopped():
 			return

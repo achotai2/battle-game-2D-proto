@@ -142,6 +142,7 @@ func _update_prompt_icon() -> void:
 		return
 
 	_prompt.update_icon(_current_target.get_prompt_icon_type())
+	_prompt.update_cost(_current_target.get_prompt_cost())
 
 
 func _hide_prompt() -> void:

@@ -8,18 +8,7 @@
 #	Now upon completion it triggers spawnsite to call Peasant and transform them.
 # Then we need to display the cost inside the circle, and maybe change the amount of time it takes based on cost.
 
-So, the idea is to attach another worksite to buildings.
-This worksite triggers when player interacts with BUILT building. 
-When player interacts we again give money.
-It calls Workers.
-When this worksite is completed it triggers calling the spawnsite.
-The challenge with this is that the player can interact multiple times to queue spawning.
-This means that the spawnworksite needs to keep ADDING work when player interacts, in addition to being enabled.
-
-We need to add a function to spawnsites that adds work to the worksite upon interaction.
-Currently, enqueue_spawn in spawnsite.gd might have a flaw in that it calls reset_progress which sets work_done = 0.
-It actually only calls the next peasant when the first arrives.
-We actually don't want to reset_progress until _queued_spawns = 0. Instead we want to add work...
-The problem with adding work is that the same peasant will try to do all that work.
-It's possible that we need to separate spawnsites and worksites completely, as their functionality is totally different.
-For now we can just have it happen one at a time: Call a worker, does work, add to spawnsite queue, call a peasant.
+- I think it would be better for building_base to treat worksites and spawnsites similar, using configure_worksite code.
+	Then we can activate spawnsite by setting building state to SPAWNING perhaps. 
+- Make enqueue_spawn and bool, and add max_queueu so player can't spend money and queueu too many.
+- Offset the location for calling peasants so it doesn't interfere with workers maybe.
