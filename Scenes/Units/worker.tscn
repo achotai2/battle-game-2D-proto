@@ -20,8 +20,9 @@ height = 74.0
 radius = 500.0
 
 [node name="Worker" type="CharacterBody2D" node_paths=PackedStringArray("health", "movement", "pathfinding", "animation", "detection", "tactical", "tasker", "gold", "hunger", "foodTasker") groups=["Attackable", "Interactable", "Minions", "Workers"]]
+y_sort_enabled = true
 collision_layer = 16
-collision_mask = 31
+collision_mask = 11
 script = ExtResource("1_r0ip0")
 health = NodePath("Health")
 movement = NodePath("AgentMovement")
@@ -37,10 +38,6 @@ current_role = 4
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 shape = SubResource("CapsuleShape2D_ta2g1")
-
-[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
-sprite_frames = ExtResource("2_r0ip0")
-animation = &"work"
 
 [node name="AgentAnimate" type="Node" parent="." node_paths=PackedStringArray("sprite")]
 script = ExtResource("3_r0j7o")
@@ -88,7 +85,7 @@ metadata/_custom_type_script = "uid://d1ucmtjtmh4hm"
 avoidance_enabled = true
 radius = 50.0
 avoidance_layers = 8
-avoidance_mask = 15
+avoidance_mask = 7
 debug_enabled = true
 
 [node name="HungerHolder" parent="." node_paths=PackedStringArray("movement", "food_tasker") instance=ExtResource("10_r0j7o")]
@@ -106,3 +103,9 @@ work_range = 100.0
 kind = 2
 auto_get_work_when_idle = false
 metadata/_custom_type_script = "uid://d1ucmtjtmh4hm"
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+y_sort_enabled = true
+sprite_frames = ExtResource("2_r0ip0")
+animation = &"work"
+offset = Vector2(0, -20)

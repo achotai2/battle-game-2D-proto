@@ -1,6 +1,8 @@
 extends Node
 class_name AgentMovement
 
+signal move_to_pos_finished(agent: Node2D)
+
 @export_range(0, 500, 10) var max_speed: float = 300.0
 @export_range(0, 500, 10) var meander_speed: float = 50.0
 
@@ -152,6 +154,12 @@ func move_with_velocity(desired_velocity: Vector2, delta: float) -> void:
 
 func _on_pf_desired_velocity(v: Vector2) -> void:
 	_pf_velocity = v
+
+
+func _on_pf_nav_finished() -> void:
+	if _order_type == OrderType.MOVE_TO_POS:
+		_order_type = OrderType.NONE
+		move_to_pos_finished.emit(get_parent())
 
 
 # Convenience: direction in (unit or not)
@@ -331,6 +339,8 @@ func _bind_pathfinding() -> void:
 		return
 	if not pathfinding.desired_velocity.is_connected(_on_pf_desired_velocity):
 		pathfinding.desired_velocity.connect(_on_pf_desired_velocity)
+	if not pathfinding.nav_finished.is_connected(_on_pf_nav_finished):
+		pathfinding.nav_finished.connect(_on_pf_nav_finished)
 	if _order_type == OrderType.MEANDER and can_meander:
 		pathfinding.set_meander(true)
 	else:
@@ -341,3 +351,7 @@ func _unbind_pathfinding() -> void:
 	if is_instance_valid(pathfinding):
 		if pathfinding.desired_velocity.is_connected(_on_pf_desired_velocity):
 			pathfinding.desired_velocity.disconnect(_on_pf_desired_velocity)
+
+
+func no_order_check() -> bool:
+	return _order_type == OrderType.NONE

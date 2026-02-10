@@ -9,7 +9,6 @@ radius = 98.02041
 collision_layer = 32
 collision_mask = 32
 script = ExtResource("1_8s6bd")
-icon_type = &"E"
 prompt_anchor = NodePath("PromptAnchor")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]

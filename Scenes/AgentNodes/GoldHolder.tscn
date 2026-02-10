@@ -99,8 +99,10 @@ one_shot = true
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
 visible = false
+z_index = 1
 sprite_frames = SubResource("SpriteFrames_sae57")
 animation = &"idle"
+offset = Vector2(0, -20)
 
 [node name="TaxTimer" type="Timer" parent="."]
 wait_time = 30.0

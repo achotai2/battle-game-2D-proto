@@ -191,7 +191,7 @@ func apply_work(amount: float, worker: WorkSiteWorker) -> void:
 	_work_done = minf(total_work, _work_done + safe_amount)
 
 	if is_instance_valid(get_parent().gold):
-		var amount_to_give: int = max(ceil(safe_amount), get_parent().gold.gold)
+		var amount_to_give: int = min(ceil(safe_amount), get_parent().gold.gold)
 		get_parent().gold.give_gold(worker.get_parent(), amount_to_give)
 
 	work_applied.emit(self)

@@ -2,7 +2,6 @@ extends StaticBody2D
 
 @export var player: int = 0
 @export var worker_job_board: CastleJobBoard
-@export var peasant_job_board: CastleJobBoard
 @export var food_job_board: CastleJobBoard
 
 var minions: Dictionary = {}
@@ -11,8 +10,6 @@ var minions: Dictionary = {}
 func return_job_board(kind: CastleJobBoard.JobBoardType) -> CastleJobBoard:
 	if kind == CastleJobBoard.JobBoardType.WORKERS:
 		return worker_job_board
-	elif kind ==  CastleJobBoard.JobBoardType.PEASANTS:
-		return peasant_job_board
 	elif kind ==  CastleJobBoard.JobBoardType.FOOD:
 		return food_job_board
 	else:

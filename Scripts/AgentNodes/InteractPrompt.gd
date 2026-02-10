@@ -10,9 +10,11 @@ const ICONS := {
 
 @export_range(0.0, 64.0, 0.5) var bob_height: float = 6.0
 @export_range(0.0, 10.0, 0.1) var bob_speed: float = 2.0
+@export var con: Control
 @export var circle: Sprite2D
 @export var circleEmpty: Sprite2D
 @export var type_icon: Sprite2D
+@export var costLabel: Label
 
 # Screen-space anchor for the whole prompt (CanvasLayer uses 'offset' in screen coords)
 var _base_screen_pos: Vector2 = Vector2.ZERO
@@ -27,10 +29,15 @@ func _ready() -> void:
 	_base_screen_pos = offset
 
 	# Basic safety if sprites are missing
+	if con == null:
+		push_warning("InteractPrompt: 'con' Control export is not set.")
 	if circle == null:
 		push_warning("InteractPrompt: 'circle' Sprite2D export is not set.")
 	if circleEmpty == null:
 		push_warning("InteractPrompt: 'circleEmpty' Sprite2D export is not set.")
+	if costLabel == null:
+		push_warning("InteractPrompt: 'costLabel' Label export is not set.")
+
 
 func _process(delta: float) -> void:
 	_time += delta
@@ -40,10 +47,8 @@ func _process(delta: float) -> void:
 
 	# Bob the visuals locally (so the whole layer stays anchored)
 	var bob_y := sin(_time * bob_speed) * bob_height
-	if circle:
-		circle.position.y = bob_y
-	if circleEmpty:
-		circleEmpty.position.y = bob_y
+	if con:
+		con.position.y = bob_y
 
 # --- Public API ---
 
@@ -103,3 +108,7 @@ func update_icon(_icon_type: BuildingDefs.IconType) -> void:
 		type_icon.show()
 		
 	type_icon.texture = ICONS.get(_icon_type, BuildingDefs.IconType.CONSTRUCT)
+
+
+func update_cost(_cost: int) -> void:
+	costLabel.text = str(_cost)

@@ -19,9 +19,9 @@ height = 74.0
 [sub_resource type="CircleShape2D" id="CircleShape2D_65o65"]
 radius = 500.0
 
-[node name="Peasant" type="CharacterBody2D" node_paths=PackedStringArray("health", "movement", "pathfinding", "animation", "detection", "tactical", "tasker", "gold", "hunger", "foodTasker") groups=["Attackable", "Interactable", "Minions"]]
+[node name="Peasant" type="CharacterBody2D" node_paths=PackedStringArray("health", "movement", "pathfinding", "animation", "detection", "tactical", "gold", "hunger", "foodTasker") groups=["Attackable", "Interactable", "Minions"]]
 collision_layer = 16
-collision_mask = 31
+collision_mask = 11
 script = ExtResource("1_wen5c")
 health = NodePath("Health")
 movement = NodePath("AgentMovement")
@@ -29,7 +29,6 @@ pathfinding = NodePath("MinionPathfinding")
 animation = NodePath("AgentAnimate")
 detection = NodePath("AgentDetection")
 tactical = NodePath("TacticalPeasant")
-tasker = NodePath("PeasantTasker")
 gold = NodePath("GoldHolder")
 hunger = NodePath("HungerHolder")
 foodTasker = NodePath("FoodTasker")
@@ -37,10 +36,6 @@ current_role = 1
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 shape = SubResource("CapsuleShape2D_ta2g1")
-
-[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
-sprite_frames = ExtResource("2_7mdye")
-animation = &"idle"
 
 [node name="AgentAnimate" type="Node" parent="." node_paths=PackedStringArray("sprite")]
 script = ExtResource("3_t6mam")
@@ -79,18 +74,11 @@ script = ExtResource("8_wen5c")
 movement = NodePath("../AgentMovement")
 metadata/_custom_type_script = "uid://cfisvjx2cjr0f"
 
-[node name="PeasantTasker" type="Node" parent="." node_paths=PackedStringArray("agent", "movement")]
-script = ExtResource("9_wen5c")
-agent = NodePath("..")
-movement = NodePath("../AgentMovement")
-kind = 1
-metadata/_custom_type_script = "uid://d1ucmtjtmh4hm"
-
 [node name="NavigationAgent2D2" type="NavigationAgent2D" parent="."]
 avoidance_enabled = true
 radius = 50.0
 avoidance_layers = 8
-avoidance_mask = 15
+avoidance_mask = 7
 debug_enabled = true
 
 [node name="HungerHolder" parent="." node_paths=PackedStringArray("movement", "food_tasker") instance=ExtResource("10_t6mam")]
@@ -108,3 +96,9 @@ work_range = 100.0
 kind = 2
 auto_get_work_when_idle = false
 metadata/_custom_type_script = "uid://d1ucmtjtmh4hm"
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+y_sort_enabled = true
+sprite_frames = ExtResource("2_7mdye")
+animation = &"idle"
+offset = Vector2(0, -20)

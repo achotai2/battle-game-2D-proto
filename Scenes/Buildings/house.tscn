@@ -25,10 +25,6 @@ state = 2
 rotation = 1.5707964
 shape = SubResource("CapsuleShape2D_coeoc")
 
-[node name="Sprite2D" type="Sprite2D" parent="."]
-position = Vector2(0, -36)
-texture = ExtResource("1_7aoon")
-
 [node name="WorkSite" type="Node2D" parent="." node_paths=PackedStringArray("my_boss", "work_offset")]
 script = ExtResource("2_coeoc")
 my_boss = NodePath("..")
@@ -37,34 +33,35 @@ work_offset = NodePath("Marker2D")
 metadata/_custom_type_script = "uid://qumqy1omy72i"
 
 [node name="Marker2D" type="Marker2D" parent="WorkSite"]
-position = Vector2(0, 72)
+position = Vector2(0, 96)
 
 [node name="Marker2D2" type="Marker2D" parent="WorkSite"]
-position = Vector2(-80, 0)
+position = Vector2(-96, 0)
 
 [node name="Marker2D3" type="Marker2D" parent="WorkSite"]
-position = Vector2(80, 0)
+position = Vector2(96, 0)
 
 [node name="Marker2D6" type="Marker2D" parent="WorkSite"]
-position = Vector2(0, -72)
+position = Vector2(0, -96)
 
-[node name="SpawnSite" type="Node2D" parent="."]
+[node name="SpawnSite" type="Node2D" parent="." node_paths=PackedStringArray("spawn_location")]
 script = ExtResource("5_he61m")
-spawn_role = &"worker"
-use_building_config = null
-default_player = null
-clear_queue_on_disable = null
-total_work = null
-auto_register = null
-enabled = null
-kind = null
+spawn_location = NodePath("Marker2D2")
 metadata/_custom_type_script = "uid://dqu3s3kqb7wj6"
 
-[node name="Marker2D" type="Marker2D" parent="SpawnSite"]
-position = Vector2(0, 72)
+[node name="Marker2D2" type="Marker2D" parent="SpawnSite"]
+position = Vector2(0, 96)
+
+[node name="Marker2D3" type="Marker2D" parent="SpawnSite"]
+position = Vector2(-96, 0)
+
+[node name="Marker2D4" type="Marker2D" parent="SpawnSite"]
+position = Vector2(96, 0)
+
+[node name="Marker2D6" type="Marker2D" parent="SpawnSite"]
+position = Vector2(0, -96)
 
 [node name="Interactable" parent="." instance=ExtResource("4_87o8n")]
-icon_type = 2
 
 [node name="NavigationObstacle2D" type="NavigationObstacle2D" parent="."]
 vertices = PackedVector2Array(-51, -15, -16, -53, 21, -53, 53, -20, 52, 13, 24, 48, -15, 51, -51, 21)
@@ -72,3 +69,8 @@ affect_navigation_mesh = true
 carve_navigation_mesh = true
 
 [node name="GoldHolder" parent="." instance=ExtResource("6_mts68")]
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+y_sort_enabled = true
+texture = ExtResource("1_7aoon")
+offset = Vector2(0, -50)

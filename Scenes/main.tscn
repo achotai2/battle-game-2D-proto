@@ -1,4 +1,4 @@
-[gd_scene load_steps=15 format=4 uid="uid://denj1nj2jkqg1"]
+[gd_scene load_steps=27 format=4 uid="uid://denj1nj2jkqg1"]
 
 [ext_resource type="Texture2D" uid="uid://b48b8ua5c4hra" path="res://Art/Tiny Swords (Update 010)/Terrain/Ground/Tilemap_Flat.png" id="1_jjgbg"]
 [ext_resource type="Script" uid="uid://6hbmeykuynas" path="res://Scripts/main.gd" id="1_jjvhh"]
@@ -10,7 +10,11 @@
 [ext_resource type="PackedScene" uid="uid://cwsleixsa262m" path="res://Scenes/Units/lord.tscn" id="6_d1ilt"]
 [ext_resource type="PackedScene" uid="uid://bx0vujr38q8pu" path="res://Scenes/Buildings/tree.tscn" id="7_344ge"]
 [ext_resource type="PackedScene" uid="uid://boksm60la2s5a" path="res://Scenes/Buildings/archery_range.tscn" id="8_344ge"]
+[ext_resource type="PackedScene" uid="uid://ra0fj2eqns6d" path="res://Scenes/Buildings/barracks.tscn" id="10_6iyac"]
 [ext_resource type="PackedScene" uid="uid://d4k6usdi8l0w0" path="res://Scenes/UI/GoldUI.tscn" id="10_hptm8"]
+[ext_resource type="Shader" uid="uid://clbugf03j2rkc" path="res://Scripts/Shaders/cloud.gdshader" id="13_fdnlq"]
+[ext_resource type="Script" uid="uid://bvlh6f3r7x1kb" path="res://Scripts/Resources/point_light_2d.gd" id="14_jkdf5"]
+[ext_resource type="Shader" uid="uid://d1flwqvfy5jwu" path="res://Scripts/Shaders/rain.gdshader" id="14_wsu2k"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_6bp64"]
 texture = ExtResource("1_jjgbg")
@@ -187,9 +191,53 @@ terrain_set_0/terrain_1/color = Color(0.5, 0.4375, 0.25, 1)
 sources/3 = SubResource("TileSetAtlasSource_6bp64")
 
 [sub_resource type="NavigationPolygon" id="NavigationPolygon_fvkhu"]
-vertices = PackedVector2Array(658.1797, 86.53906, 787.8203, 355.46094, 766.46094, 376.8203, 423.35156, 361, 630.3203, 94, 889.35156, 406, 1132.9922, -108, 1132.0078, 625.09375, 881.53906, 435.1797, 881.53906, 376.8203, 687.35156, 36, 679.53906, 6.8203125, 860.1797, 355.46094, 679.53906, 65.17969, 832.3203, 348, 815.6797, 348, 613.6797, 94, 414.7422, 328.8203, 585.8203, 86.53906, 391.1797, 305.2578, 758.64844, 406, 414.7422, 393.1797, 564.46094, 65.17969, 360.3203, 297, 860.1797, 456.53906, 766.46094, 435.1797, 391.1797, 416.7422, 658.1797, -14.5390625, 556.64844, 36, 131.67969, 297, -104.0625, -108, 832.3203, 464, -108.92969, 636.89844, 815.6797, 464, 787.8203, 456.53906, 360.3203, 425, 131.67969, 425, 100.82031, 416.7422, 77.25781, 393.1797, 68.64844, 361, 77.25781, 328.8203, 100.82031, 305.2578, 564.46094, 6.8203125, 585.8203, -14.5390625, 630.3203, -22, 613.6797, -22)
-polygons = Array[PackedInt32Array]([PackedInt32Array(0, 1, 2, 3, 4), PackedInt32Array(5, 6, 7, 8), PackedInt32Array(6, 5, 9), PackedInt32Array(10, 11, 6, 9, 12), PackedInt32Array(13, 10, 12, 14), PackedInt32Array(13, 14, 15, 0), PackedInt32Array(0, 15, 1), PackedInt32Array(16, 4, 3, 17), PackedInt32Array(18, 16, 17, 19), PackedInt32Array(3, 2, 20, 21), PackedInt32Array(22, 18, 19, 23), PackedInt32Array(24, 8, 7), PackedInt32Array(21, 20, 25, 26), PackedInt32Array(6, 11, 27), PackedInt32Array(28, 22, 23, 29, 30), PackedInt32Array(31, 24, 7), PackedInt32Array(31, 7, 32, 33), PackedInt32Array(34, 33, 32), PackedInt32Array(26, 25, 34, 32, 35), PackedInt32Array(36, 35, 32), PackedInt32Array(37, 36, 32), PackedInt32Array(38, 37, 32), PackedInt32Array(38, 32, 30, 39), PackedInt32Array(40, 39, 30), PackedInt32Array(41, 40, 30), PackedInt32Array(29, 41, 30), PackedInt32Array(42, 28, 30), PackedInt32Array(43, 42, 30), PackedInt32Array(6, 27, 44), PackedInt32Array(30, 6, 44, 45), PackedInt32Array(43, 30, 45)])
+vertices = PackedVector2Array(678.8828, 122.39844, 837.5781, 308, 810.4219, 308, 464.7578, 289, 635.5781, 134, 1092.0625, 585.46875, 521.34375, 590.89844, 541.8828, 585.39844, 428.1172, 585.39844, 451.14844, 591.5625, -68.65625, 596.5078, 767.1172, 319.60156, 930.7578, 406, 1092.9297, -68, 917.39844, 455.8828, 917.39844, 356.1172, 578.39844, 548.8828, 391.60156, 548.8828, 730.60156, 356.1172, 728.7578, 36, 715.39844, -13.8828125, 880.8828, 319.60156, 715.39844, 85.88281, 608.4219, 134, 450.60156, 236.11719, 565.1172, 122.39844, 591.7578, 499, 378.2422, 499, 717.2422, 406, 450.60156, 341.8828, 528.60156, 85.88281, 411.8828, 197.39844, 880.8828, 492.39844, 810.4219, 504, 578.39844, 449.1172, 767.1172, 492.39844, 391.60156, 449.1172, 730.60156, 455.8828, 515.2422, 36, 365.57813, 185, 678.8828, -50.398438, 126.421875, 185, 528.60156, -13.8828125, 837.5781, 504, 411.8828, 380.60156, 428.1172, 412.60156, 365.57813, 393, 541.8828, 412.60156, -64.32031, -68, 565.1172, -50.398438, 80.11719, 197.39844, 498.57813, 401, 471.42188, 401, 126.421875, 393, 80.11719, 380.60156, 41.398438, 341.8828, 27.242188, 289, 41.398438, 236.11719, 635.5781, -62, 608.4219, -62)
+polygons = Array[PackedInt32Array]([PackedInt32Array(0, 1, 2, 3, 4), PackedInt32Array(5, 6, 7), PackedInt32Array(8, 9, 10), PackedInt32Array(3, 2, 11), PackedInt32Array(12, 13, 5, 14), PackedInt32Array(13, 12, 15), PackedInt32Array(5, 7, 16), PackedInt32Array(17, 8, 10), PackedInt32Array(3, 11, 18), PackedInt32Array(19, 20, 13, 15, 21), PackedInt32Array(22, 19, 21, 1), PackedInt32Array(0, 22, 1), PackedInt32Array(23, 4, 3, 24), PackedInt32Array(25, 23, 24), PackedInt32Array(5, 16, 26), PackedInt32Array(27, 17, 10), PackedInt32Array(3, 18, 28, 29), PackedInt32Array(30, 25, 24, 31), PackedInt32Array(32, 14, 5), PackedInt32Array(33, 5, 26, 34, 35), PackedInt32Array(36, 27, 10), PackedInt32Array(29, 28, 37), PackedInt32Array(38, 30, 31, 39), PackedInt32Array(13, 20, 40), PackedInt32Array(38, 39, 41, 42), PackedInt32Array(43, 32, 5), PackedInt32Array(44, 45, 36, 10, 46), PackedInt32Array(29, 37, 35, 47), PackedInt32Array(48, 49, 42, 41, 50), PackedInt32Array(33, 43, 5), PackedInt32Array(35, 34, 47), PackedInt32Array(29, 47, 51), PackedInt32Array(29, 51, 52, 44), PackedInt32Array(44, 52, 45), PackedInt32Array(53, 46, 10), PackedInt32Array(54, 53, 10), PackedInt32Array(55, 54, 10), PackedInt32Array(56, 55, 10), PackedInt32Array(56, 10, 48, 57), PackedInt32Array(50, 57, 48), PackedInt32Array(13, 40, 58), PackedInt32Array(48, 13, 58, 59), PackedInt32Array(49, 48, 59)])
 outlines = Array[PackedVector2Array]([PackedVector2Array(-114, -118, 1143, -118, 1142, 635, -119, 647)])
+agent_radius = 50.0
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_jkdf5"]
+shader = ExtResource("13_fdnlq")
+shader_parameter/shadow_color = Color(0.69965345, 0.69965345, 0.69965345, 0.44313726)
+shader_parameter/cloud_cutoff = 0.26400001254
+shader_parameter/shadow_softness = 0.5370000255075
+shader_parameter/speed_scale = 0.4830000229425
+shader_parameter/cloud_direction = Vector2(0.5, -1)
+
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_6iyac"]
+frequency = 0.0959
+
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_6iyac"]
+noise = SubResource("FastNoiseLite_6iyac")
+seamless = true
+normalize = false
+
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_wsu2k"]
+noise_type = 0
+frequency = 0.02
+
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_k12tt"]
+noise = SubResource("FastNoiseLite_wsu2k")
+seamless = true
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_k12tt"]
+shader = ExtResource("14_wsu2k")
+shader_parameter/rain_amount = 0.4890000232275
+shader_parameter/rain_speed = 8.7010004132975
+shader_parameter/rain_slant = 0.34600006393500005
+shader_parameter/rain_color = Color(0.8, 0.9, 1, 0.5)
+shader_parameter/noise_texture = SubResource("NoiseTexture2D_k12tt")
+shader_parameter/gust_speed = 0.154000007315
+shader_parameter/chaos_scale = 1.0
+
+[sub_resource type="Gradient" id="Gradient_fdnlq"]
+offsets = PackedFloat32Array(0, 0.64666665)
+colors = PackedColorArray(1, 1, 1, 1, 0, 0, 0, 1)
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_jkdf5"]
+gradient = SubResource("Gradient_fdnlq")
+fill = 1
+fill_from = Vector2(0.5, 0.5)
 
 [node name="Main" type="Node2D"]
 script = ExtResource("1_jjvhh")
@@ -198,71 +246,118 @@ script = ExtResource("1_jjvhh")
 tile_map_data = PackedByteArray("AAARAAkAAwACAAIAAAARAAgAAwACAAEAAAARAAcAAwACAAEAAAARAAYAAwACAAEAAAARAAUAAwACAAEAAAARAAQAAwACAAEAAAARAAMAAwACAAEAAAARAAIAAwACAAEAAAARAAEAAwACAAEAAAARAAAAAwACAAEAAAARAP//AwACAAEAAAARAP7/AwACAAAAAAAQAAkAAwABAAIAAAAQAAgAAwABAAEAAAAQAAcAAwABAAEAAAAQAAYAAwABAAEAAAAQAAUAAwABAAEAAAAQAAQAAwABAAEAAAAQAAMAAwABAAEAAAAQAAIAAwABAAEAAAAQAAEAAwABAAEAAAAQAAAAAwABAAEAAAAQAP//AwABAAEAAAAQAP7/AwABAAAAAAAPAAkAAwABAAIAAAAPAAgAAwABAAEAAAAPAAcAAwABAAEAAAAPAAYAAwABAAEAAAAPAAUAAwABAAEAAAAPAAQAAwABAAEAAAAPAAMAAwABAAEAAAAPAAIAAwABAAEAAAAPAAEAAwABAAEAAAAPAAAAAwABAAEAAAAPAP//AwABAAEAAAAPAP7/AwABAAAAAAAOAAkAAwABAAIAAAAOAAgAAwABAAEAAAAOAAcAAwABAAEAAAAOAAYAAwABAAEAAAAOAAUAAwABAAEAAAAOAAQAAwABAAEAAAAOAAMAAwABAAEAAAAOAAIAAwABAAEAAAAOAAEAAwABAAEAAAAOAAAAAwABAAEAAAAOAP//AwABAAEAAAAOAP7/AwABAAAAAAANAAkAAwABAAIAAAANAAgAAwABAAEAAAANAAcAAwABAAEAAAANAAYAAwABAAEAAAANAAUAAwABAAEAAAANAAQAAwABAAEAAAANAAMAAwABAAEAAAANAAIAAwABAAEAAAANAAEAAwABAAEAAAANAAAAAwABAAEAAAANAP//AwABAAEAAAANAP7/AwABAAAAAAAMAAkAAwABAAIAAAAMAAgAAwABAAEAAAAMAAcAAwABAAEAAAAMAAYAAwABAAEAAAAMAAUAAwABAAEAAAAMAAQAAwABAAEAAAAMAAMAAwABAAEAAAAMAAIAAwABAAEAAAAMAAEAAwABAAEAAAAMAAAAAwABAAEAAAAMAP//AwABAAEAAAAMAP7/AwABAAAAAAALAAkAAwABAAIAAAALAAgAAwABAAEAAAALAAcAAwABAAEAAAALAAYAAwABAAEAAAALAAUAAwABAAEAAAALAAQAAwABAAEAAAALAAMAAwABAAEAAAALAAIAAwABAAEAAAALAAEAAwABAAEAAAALAAAAAwABAAEAAAALAP//AwABAAEAAAALAP7/AwABAAAAAAAKAAkAAwABAAIAAAAKAAgAAwABAAEAAAAKAAcAAwABAAEAAAAKAAYAAwABAAEAAAAKAAUAAwABAAEAAAAKAAQAAwABAAEAAAAKAAMAAwABAAEAAAAKAAIAAwABAAEAAAAKAAEAAwABAAEAAAAKAAAAAwABAAEAAAAKAP//AwABAAEAAAAKAP7/AwABAAAAAAAJAAkAAwABAAIAAAAJAAgAAwABAAEAAAAJAAcAAwABAAEAAAAJAAYAAwABAAEAAAAJAAUAAwABAAEAAAAJAAQAAwABAAEAAAAJAAMAAwABAAEAAAAJAAIAAwABAAEAAAAJAAEAAwABAAEAAAAJAAAAAwABAAEAAAAJAP//AwABAAEAAAAJAP7/AwABAAAAAAAIAAkAAwABAAIAAAAIAAgAAwABAAEAAAAIAAcAAwABAAEAAAAIAAYAAwABAAEAAAAIAAUAAwABAAEAAAAIAAQAAwABAAEAAAAIAAMAAwABAAEAAAAIAAIAAwABAAEAAAAIAAEAAwABAAEAAAAIAAAAAwABAAEAAAAIAP//AwABAAEAAAAIAP7/AwABAAAAAAAHAAkAAwABAAIAAAAHAAgAAwABAAEAAAAHAAcAAwABAAEAAAAHAAYAAwABAAEAAAAHAAUAAwABAAEAAAAHAAQAAwABAAEAAAAHAAMAAwABAAEAAAAHAAIAAwABAAEAAAAHAAEAAwABAAEAAAAHAAAAAwABAAEAAAAHAP//AwABAAEAAAAHAP7/AwABAAAAAAAGAAkAAwABAAIAAAAGAAgAAwABAAEAAAAGAAcAAwABAAEAAAAGAAYAAwABAAEAAAAGAAUAAwABAAEAAAAGAAQAAwABAAEAAAAGAAMAAwABAAEAAAAGAAIAAwABAAEAAAAGAAEAAwABAAEAAAAGAAAAAwABAAEAAAAGAP//AwABAAEAAAAGAP7/AwABAAAAAAAFAAkAAwABAAIAAAAFAAgAAwABAAEAAAAFAAcAAwABAAEAAAAFAAYAAwABAAEAAAAFAAUAAwABAAEAAAAFAAQAAwABAAEAAAAFAAMAAwABAAEAAAAFAAIAAwABAAEAAAAFAAEAAwABAAEAAAAFAAAAAwABAAEAAAAFAP//AwABAAEAAAAFAP7/AwABAAAAAAAEAAkAAwABAAIAAAAEAAgAAwABAAEAAAAEAAcAAwABAAEAAAAEAAYAAwABAAEAAAAEAAUAAwABAAEAAAAEAAQAAwABAAEAAAAEAAMAAwABAAEAAAAEAAIAAwABAAEAAAAEAAEAAwABAAEAAAAEAAAAAwABAAEAAAAEAP//AwABAAEAAAAEAP7/AwABAAAAAAADAAkAAwABAAIAAAADAAgAAwABAAEAAAADAAcAAwABAAEAAAADAAYAAwABAAEAAAADAAUAAwABAAEAAAADAAQAAwABAAEAAAADAAMAAwABAAEAAAADAAIAAwABAAEAAAADAAEAAwABAAEAAAADAAAAAwABAAEAAAADAP//AwABAAEAAAADAP7/AwABAAAAAAACAAkAAwABAAIAAAACAAgAAwABAAEAAAACAAcAAwABAAEAAAACAAYAAwABAAEAAAACAAUAAwABAAEAAAACAAQAAwABAAEAAAACAAMAAwABAAEAAAACAAIAAwABAAEAAAACAAEAAwABAAEAAAACAAAAAwABAAEAAAACAP//AwABAAEAAAACAP7/AwABAAAAAAABAAkAAwABAAIAAAABAAgAAwABAAEAAAABAAcAAwABAAEAAAABAAYAAwABAAEAAAABAAUAAwABAAEAAAABAAQAAwABAAEAAAABAAMAAwABAAEAAAABAAIAAwABAAEAAAABAAEAAwABAAEAAAABAAAAAwABAAEAAAABAP//AwABAAEAAAABAP7/AwABAAAAAAAAAAkAAwABAAIAAAAAAAgAAwABAAEAAAAAAAcAAwABAAEAAAAAAAYAAwABAAEAAAAAAAUAAwABAAEAAAAAAAQAAwABAAEAAAAAAAMAAwABAAEAAAAAAAIAAwABAAEAAAAAAAEAAwABAAEAAAAAAAAAAwABAAEAAAAAAP//AwABAAEAAAAAAP7/AwABAAAAAAD//wkAAwABAAIAAAD//wgAAwABAAEAAAD//wcAAwABAAEAAAD//wYAAwABAAEAAAD//wUAAwABAAEAAAD//wQAAwABAAEAAAD//wMAAwABAAEAAAD//wIAAwABAAEAAAD//wEAAwABAAEAAAD//wAAAwABAAEAAAD/////AwABAAEAAAD///7/AwABAAAAAAD+/wkAAwAAAAIAAAD+/wgAAwAAAAEAAAD+/wcAAwAAAAEAAAD+/wYAAwAAAAEAAAD+/wUAAwAAAAEAAAD+/wQAAwAAAAEAAAD+/wMAAwAAAAEAAAD+/wIAAwAAAAEAAAD+/wEAAwAAAAEAAAD+/wAAAwAAAAEAAAD+////AwAAAAEAAAD+//7/AwAAAAAAAAA=")
 tile_set = SubResource("TileSet_8gbba")
 
-[node name="Projectiles" type="Node2D" parent="."]
+[node name="EnvironmentalObjects" type="Node2D" parent="."]
+y_sort_enabled = true
 
-[node name="Units" type="Node2D" parent="."]
-
-[node name="Player" parent="Units" instance=ExtResource("2_bo1nx")]
-position = Vector2(499, 83)
-
-[node name="Camera2D" type="Camera2D" parent="Units/Player"]
-position = Vector2(0, 1)
-
-[node name="Worker" parent="Units" node_paths=PackedStringArray("castle") instance=ExtResource("4_jjvhh")]
-position = Vector2(794, 143)
-player = 1
-castle = NodePath("../../NavigationRegion2D/Buildings/Castle")
-
-[node name="Peasant" parent="Units" node_paths=PackedStringArray("castle") instance=ExtResource("5_ynf5e")]
-player = 1
-castle = NodePath("../../NavigationRegion2D/Buildings/Castle")
-
-[node name="Peasant2" parent="Units" node_paths=PackedStringArray("castle") instance=ExtResource("5_ynf5e")]
-position = Vector2(200, 24)
-player = 1
-castle = NodePath("../../NavigationRegion2D/Buildings/Castle")
-
-[node name="Lord" parent="Units" node_paths=PackedStringArray("castle") instance=ExtResource("6_d1ilt")]
-position = Vector2(567, 306)
-player = 1
-castle = NodePath("../../NavigationRegion2D/Buildings/Castle")
-
-[node name="Trees" type="Node2D" parent="."]
-
-[node name="Tree2" parent="Trees" node_paths=PackedStringArray("castle") instance=ExtResource("7_344ge")]
-position = Vector2(1062, -20)
-castle = NodePath("../../NavigationRegion2D/Buildings/Castle")
-
-[node name="Tree3" parent="Trees" node_paths=PackedStringArray("castle") instance=ExtResource("7_344ge")]
-position = Vector2(1006, 60)
-castle = NodePath("../../NavigationRegion2D/Buildings/Castle")
-
-[node name="Tree4" parent="Trees" node_paths=PackedStringArray("castle") instance=ExtResource("7_344ge")]
-position = Vector2(942, -20)
-castle = NodePath("../../NavigationRegion2D/Buildings/Castle")
-
-[node name="Tree5" parent="Trees" node_paths=PackedStringArray("castle") instance=ExtResource("7_344ge")]
-position = Vector2(854, 60)
-castle = NodePath("../../NavigationRegion2D/Buildings/Castle")
-
-[node name="NavigationRegion2D" type="NavigationRegion2D" parent="."]
+[node name="NavigationRegion2D" type="NavigationRegion2D" parent="EnvironmentalObjects"]
+y_sort_enabled = true
 navigation_polygon = SubResource("NavigationPolygon_fvkhu")
 
-[node name="Buildings" type="Node2D" parent="NavigationRegion2D"]
+[node name="Buildings" type="Node2D" parent="EnvironmentalObjects/NavigationRegion2D"]
+y_sort_enabled = true
 
-[node name="ArcheryRange" parent="NavigationRegion2D/Buildings" node_paths=PackedStringArray("castle") instance=ExtResource("8_344ge")]
+[node name="ArcheryRange" parent="EnvironmentalObjects/NavigationRegion2D/Buildings" node_paths=PackedStringArray("castle") instance=ExtResource("8_344ge")]
 position = Vector2(824, 406)
 player = 1
 castle = NodePath("../Castle")
 state = 0
 
-[node name="House" parent="NavigationRegion2D/Buildings" node_paths=PackedStringArray("castle") instance=ExtResource("6_21xkr")]
+[node name="House" parent="EnvironmentalObjects/NavigationRegion2D/Buildings" node_paths=PackedStringArray("castle") instance=ExtResource("6_21xkr")]
 position = Vector2(622, 36)
 player = 1
 castle = NodePath("../Castle")
-state = 0
 
-[node name="Castle" parent="NavigationRegion2D/Buildings" instance=ExtResource("5_kry3j")]
+[node name="Castle" parent="EnvironmentalObjects/NavigationRegion2D/Buildings" instance=ExtResource("5_kry3j")]
 position = Vector2(246, 289)
 
+[node name="Barracks" parent="EnvironmentalObjects/NavigationRegion2D/Buildings" node_paths=PackedStringArray("castle") instance=ExtResource("10_6iyac")]
+position = Vector2(485, 499)
+player = 1
+castle = NodePath("../Castle")
+
+[node name="Units" type="Node2D" parent="EnvironmentalObjects"]
+y_sort_enabled = true
+
+[node name="Player" parent="EnvironmentalObjects/Units" instance=ExtResource("2_bo1nx")]
+position = Vector2(499, 83)
+
+[node name="Camera2D" type="Camera2D" parent="EnvironmentalObjects/Units/Player"]
+position = Vector2(0, 1)
+
+[node name="Worker" parent="EnvironmentalObjects/Units" node_paths=PackedStringArray("castle") instance=ExtResource("4_jjvhh")]
+position = Vector2(794, 143)
+player = 1
+castle = NodePath("../../NavigationRegion2D/Buildings/Castle")
+
+[node name="Peasant" parent="EnvironmentalObjects/Units" node_paths=PackedStringArray("castle") instance=ExtResource("5_ynf5e")]
+player = 1
+castle = NodePath("../../NavigationRegion2D/Buildings/Castle")
+
+[node name="Peasant2" parent="EnvironmentalObjects/Units" node_paths=PackedStringArray("castle") instance=ExtResource("5_ynf5e")]
+position = Vector2(200, 24)
+player = 1
+castle = NodePath("../../NavigationRegion2D/Buildings/Castle")
+
+[node name="Lord" parent="EnvironmentalObjects/Units" node_paths=PackedStringArray("castle") instance=ExtResource("6_d1ilt")]
+position = Vector2(567, 306)
+player = 1
+castle = NodePath("../../NavigationRegion2D/Buildings/Castle")
+
+[node name="Trees" type="Node2D" parent="EnvironmentalObjects"]
+y_sort_enabled = true
+
+[node name="Tree2" parent="EnvironmentalObjects/Trees" node_paths=PackedStringArray("castle") instance=ExtResource("7_344ge")]
+position = Vector2(1030, 516)
+castle = NodePath("../../NavigationRegion2D/Buildings/Castle")
+
+[node name="Tree3" parent="EnvironmentalObjects/Trees" node_paths=PackedStringArray("castle") instance=ExtResource("7_344ge")]
+position = Vector2(1006, 60)
+castle = NodePath("../../NavigationRegion2D/Buildings/Castle")
+
+[node name="Tree4" parent="EnvironmentalObjects/Trees" node_paths=PackedStringArray("castle") instance=ExtResource("7_344ge")]
+position = Vector2(942, -20)
+castle = NodePath("../../NavigationRegion2D/Buildings/Castle")
+
+[node name="Tree5" parent="EnvironmentalObjects/Trees" node_paths=PackedStringArray("castle") instance=ExtResource("7_344ge")]
+position = Vector2(854, 60)
+castle = NodePath("../../NavigationRegion2D/Buildings/Castle")
+
+[node name="Projectiles" type="Node2D" parent="EnvironmentalObjects"]
+
 [node name="GoldUi" parent="." instance=ExtResource("10_hptm8")]
+
+[node name="CloudShadows" type="TextureRect" parent="."]
+texture_repeat = 2
+material = SubResource("ShaderMaterial_jkdf5")
+offset_left = -498.0
+offset_top = -355.0
+offset_right = 1946.0
+offset_bottom = 1157.0
+texture = SubResource("NoiseTexture2D_6iyac")
+
+[node name="Rain" type="ColorRect" parent="."]
+material = SubResource("ShaderMaterial_k12tt")
+offset_left = -474.0
+offset_top = -352.0
+offset_right = 1973.0
+offset_bottom = 1147.0
+
+[node name="Sunlight" type="CanvasModulate" parent="."]
+
+[node name="PointLight2D" type="PointLight2D" parent="."]
+position = Vector2(317.00003, 425)
+scale = Vector2(7.546876, 7.546876)
+color = Color(1, 0.7607843, 0.40784314, 1)
+energy = 2.0
+shadow_enabled = true
+texture = SubResource("GradientTexture2D_jkdf5")
+script = ExtResource("14_jkdf5")
+
+[node name="PointLight2D2" type="PointLight2D" parent="."]
+position = Vector2(709, 161.00002)
+scale = Vector2(7.546876, 7.546876)
+color = Color(1, 0.7607843, 0.40784314, 1)
+energy = 2.0
+shadow_enabled = true
+texture = SubResource("GradientTexture2D_jkdf5")
+script = ExtResource("14_jkdf5")

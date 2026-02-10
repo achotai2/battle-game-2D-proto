@@ -22,7 +22,7 @@ radius = 500.0
 
 [node name="Archer" type="CharacterBody2D" node_paths=PackedStringArray("health", "movement", "pathfinding", "animation", "attack", "detection", "tactical", "gold", "hunger", "foodTasker") groups=["Attackable", "Interactable", "Minions"]]
 collision_layer = 16
-collision_mask = 31
+collision_mask = 11
 script = ExtResource("1_0r5lf")
 health = NodePath("Health")
 movement = NodePath("AgentMovement")
@@ -38,10 +38,6 @@ current_role = 3
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 shape = SubResource("CapsuleShape2D_ta2g1")
-
-[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
-sprite_frames = ExtResource("2_xbs6w")
-animation = &"walk"
 
 [node name="AgentAnimate" type="Node" parent="." node_paths=PackedStringArray("sprite")]
 script = ExtResource("3_22n53")
@@ -86,7 +82,7 @@ metadata/_custom_type_script = "uid://drugelqbde4x8"
 avoidance_enabled = true
 radius = 50.0
 avoidance_layers = 8
-avoidance_mask = 255
+avoidance_mask = 7
 
 [node name="HungerHolder" parent="." node_paths=PackedStringArray("movement", "food_tasker") instance=ExtResource("10_rrgl8")]
 movement = NodePath("../AgentMovement")
@@ -106,3 +102,9 @@ work_range = 100.0
 kind = 2
 auto_get_work_when_idle = false
 metadata/_custom_type_script = "uid://d1ucmtjtmh4hm"
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+y_sort_enabled = true
+sprite_frames = ExtResource("2_xbs6w")
+animation = &"walk"
+offset = Vector2(0, -20)
