@@ -179,6 +179,26 @@ func _reselect_target() -> void:
 			if d < best_dist_sq:
 				best_dist_sq = d
 				best = b
+	elif target_bias == "Lowest Health":
+		var my_pos := global_position
+		var best_health := INF
+		var best_dist_sq := INF
+
+		for b in bodies:
+			if not _is_candidate(b):
+				continue
+
+			var h := _health_value(b)
+
+			if h < best_health:
+				best_health = h
+				best_dist_sq = my_pos.distance_squared_to(b.global_position)
+				best = b
+			elif h == best_health:
+				var d := my_pos.distance_squared_to(b.global_position)
+				if d < best_dist_sq:
+					best_dist_sq = d
+					best = b
 	else:
 		for b in bodies:
 			if not _is_candidate(b):
