@@ -5,7 +5,7 @@ signal sunset
 
 # --- CONFIGURATION ---
 @export_group("Time Settings")
-@export var day_duration: float = 20.0 # Seconds per day
+@export var day_duration: float = 60.0 # Seconds per day
 @export_range(0.0, 1.0) var time_of_day: float = 0.3 # 0.0=Midnight, 0.5=Noon
 @export var pause_time: bool = false
 

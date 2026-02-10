@@ -1,4 +1,4 @@
-[gd_scene load_steps=15 format=3 uid="uid://sy3ke7fhk1uv"]
+[gd_scene load_steps=18 format=3 uid="uid://sy3ke7fhk1uv"]
 
 [ext_resource type="Script" uid="uid://b3iqpgjb0vtvl" path="res://Scripts/UnitBase/agent_base.gd" id="1_jq3hr"]
 [ext_resource type="SpriteFrames" uid="uid://rc30dymytbcd" path="res://Art/SpriteFrames/Soldier_Red.tres" id="2_gqo0k"]
@@ -12,6 +12,8 @@
 [ext_resource type="PackedScene" uid="uid://c8o4373okv5fq" path="res://Scenes/AgentNodes/HungerHolder.tscn" id="10_jghxd"]
 [ext_resource type="PackedScene" uid="uid://c4n5elrxg64hp" path="res://Scenes/AgentNodes/GoldHolder.tscn" id="11_iaeu3"]
 [ext_resource type="Script" uid="uid://d1ucmtjtmh4hm" path="res://Scripts/AgentNodes/minion_tasker.gd" id="12_g0yrv"]
+[ext_resource type="Shader" uid="uid://cmsuxok158t72" path="res://Scripts/Shaders/shadow.gdshader" id="12_x32bv"]
+[ext_resource type="Script" uid="uid://bts71s2mlomuh" path="res://Scripts/AgentNodes/shadow_sprite.gd" id="13_gqo0k"]
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_ta2g1"]
 radius = 23.0
@@ -19,6 +21,9 @@ height = 74.0
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_65o65"]
 radius = 500.0
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_80g1m"]
+shader = ExtResource("12_x32bv")
 
 [node name="Soldier" type="CharacterBody2D" node_paths=PackedStringArray("health", "movement", "pathfinding", "animation", "attack", "detection", "tactical", "gold", "hunger", "foodTasker") groups=["Attackable", "Interactable", "Minions"]]
 collision_layer = 16
@@ -45,9 +50,10 @@ radius = 50.0
 avoidance_layers = 8
 avoidance_mask = 7
 
-[node name="AgentAnimate" type="Node" parent="." node_paths=PackedStringArray("sprite")]
+[node name="AgentAnimate" type="Node" parent="." node_paths=PackedStringArray("sprite", "shadow_sprite")]
 script = ExtResource("3_x32bv")
-sprite = NodePath("../AnimatedSprite2D")
+sprite = NodePath("../Sprites/AnimatedSprite2D")
+shadow_sprite = NodePath("../Sprites/ShadowSprite")
 metadata/_custom_type_script = "uid://cjjdaf7vlfs4k"
 
 [node name="AgentMovement" type="Node" parent="." node_paths=PackedStringArray("agent", "animation")]
@@ -98,7 +104,17 @@ kind = 2
 auto_get_work_when_idle = false
 metadata/_custom_type_script = "uid://d1ucmtjtmh4hm"
 
-[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+[node name="Sprites" type="Node2D" parent="."]
+
+[node name="ShadowSprite" type="AnimatedSprite2D" parent="Sprites"]
+y_sort_enabled = true
+material = SubResource("ShaderMaterial_80g1m")
+sprite_frames = ExtResource("2_gqo0k")
+animation = &"idle"
+offset = Vector2(0, -20)
+script = ExtResource("13_gqo0k")
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="Sprites"]
 y_sort_enabled = true
 sprite_frames = ExtResource("2_gqo0k")
 animation = &"idle"

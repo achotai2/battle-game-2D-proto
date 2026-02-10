@@ -1,4 +1,4 @@
-[gd_scene load_steps=15 format=3 uid="uid://dvgilnkmeqdfu"]
+[gd_scene load_steps=18 format=3 uid="uid://dvgilnkmeqdfu"]
 
 [ext_resource type="Script" uid="uid://b3iqpgjb0vtvl" path="res://Scripts/UnitBase/agent_base.gd" id="1_0r5lf"]
 [ext_resource type="SpriteFrames" uid="uid://bgouc0jxjgtus" path="res://Art/SpriteFrames/Archer_Red.tres" id="2_xbs6w"]
@@ -12,6 +12,8 @@
 [ext_resource type="PackedScene" uid="uid://c8o4373okv5fq" path="res://Scenes/AgentNodes/HungerHolder.tscn" id="10_rrgl8"]
 [ext_resource type="PackedScene" uid="uid://c4n5elrxg64hp" path="res://Scenes/AgentNodes/GoldHolder.tscn" id="11_yp0bp"]
 [ext_resource type="Script" uid="uid://d1ucmtjtmh4hm" path="res://Scripts/AgentNodes/minion_tasker.gd" id="12_1wuid"]
+[ext_resource type="Shader" uid="uid://cmsuxok158t72" path="res://Scripts/Shaders/shadow.gdshader" id="12_xbs6w"]
+[ext_resource type="Script" uid="uid://bts71s2mlomuh" path="res://Scripts/AgentNodes/shadow_sprite.gd" id="14_22n53"]
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_ta2g1"]
 radius = 23.0
@@ -19,6 +21,9 @@ height = 74.0
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_65o65"]
 radius = 500.0
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_22n53"]
+shader = ExtResource("12_xbs6w")
 
 [node name="Archer" type="CharacterBody2D" node_paths=PackedStringArray("health", "movement", "pathfinding", "animation", "attack", "detection", "tactical", "gold", "hunger", "foodTasker") groups=["Attackable", "Interactable", "Minions"]]
 collision_layer = 16
@@ -39,9 +44,10 @@ current_role = 3
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 shape = SubResource("CapsuleShape2D_ta2g1")
 
-[node name="AgentAnimate" type="Node" parent="." node_paths=PackedStringArray("sprite")]
+[node name="AgentAnimate" type="Node" parent="." node_paths=PackedStringArray("sprite", "shadow_sprite")]
 script = ExtResource("3_22n53")
-sprite = NodePath("../AnimatedSprite2D")
+sprite = NodePath("../Sprites/AnimatedSprite2D")
+shadow_sprite = NodePath("../Sprites/ShadowSprite")
 metadata/_custom_type_script = "uid://cjjdaf7vlfs4k"
 
 [node name="AgentMovement" type="Node" parent="." node_paths=PackedStringArray("agent", "animation")]
@@ -103,7 +109,17 @@ kind = 2
 auto_get_work_when_idle = false
 metadata/_custom_type_script = "uid://d1ucmtjtmh4hm"
 
-[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+[node name="Sprites" type="Node2D" parent="."]
+
+[node name="ShadowSprite" type="AnimatedSprite2D" parent="Sprites"]
+y_sort_enabled = true
+material = SubResource("ShaderMaterial_22n53")
+sprite_frames = ExtResource("2_xbs6w")
+animation = &"walk"
+offset = Vector2(0, -20)
+script = ExtResource("14_22n53")
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="Sprites"]
 y_sort_enabled = true
 sprite_frames = ExtResource("2_xbs6w")
 animation = &"walk"

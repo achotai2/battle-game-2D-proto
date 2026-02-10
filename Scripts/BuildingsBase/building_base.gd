@@ -5,6 +5,7 @@ class_name BuildingBase
 @export var castle: Node2D
 @export var building_type: BuildingDefs.BuildingType = BuildingDefs.BuildingType.BARRACKS
 @export var visual: Node
+@export var shadowVisual: Node
 @export var interactable: Interactable
 @export var worksite: WorkSite
 @export var spawnsite: WorkSite
@@ -101,8 +102,10 @@ func _update_visuals() -> void:
 		animated.play()
 	elif visual is Sprite2D and frames is Texture2D:
 		(visual as Sprite2D).texture = frames
+		if shadowVisual: (shadowVisual as Sprite2D).texture = frames
 	elif frames is Texture2D and visual.has_method("set_texture"):
 		visual.call("set_texture", frames)
+		if shadowVisual: shadowVisual.call("set_texture", frames)
 
 
 func _configure_interactable() -> void:

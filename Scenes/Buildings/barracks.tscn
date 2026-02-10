@@ -19,9 +19,10 @@ polygon = PackedVector2Array(-48, 15, -49, -36, 51, -34, 49, 18)
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_krvd1"]
 shader = ExtResource("6_ua3nw")
 
-[node name="Barracks" type="StaticBody2D" node_paths=PackedStringArray("visual", "interactable", "worksite", "spawnsite", "gold")]
+[node name="Barracks" type="StaticBody2D" node_paths=PackedStringArray("visual", "shadowVisual", "interactable", "worksite", "spawnsite", "gold")]
 script = ExtResource("1_24hde")
 visual = NodePath("Sprites/Sprite2D")
+shadowVisual = NodePath("Sprites/ShadowSprite")
 interactable = NodePath("Interactable")
 worksite = NodePath("WorkSite")
 spawnsite = NodePath("SpawnSite")

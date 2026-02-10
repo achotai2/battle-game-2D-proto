@@ -1,4 +1,4 @@
-[gd_scene load_steps=20 format=3 uid="uid://bx0vujr38q8pu"]
+[gd_scene load_steps=23 format=3 uid="uid://bx0vujr38q8pu"]
 
 [ext_resource type="Texture2D" uid="uid://dr73w3j5yj2n6" path="res://Art/Tree.png" id="1_0vwjc"]
 [ext_resource type="Script" uid="uid://dw0fsj8gi8e1m" path="res://Scripts/BuildingsBase/tree.gd" id="1_l3oha"]
@@ -6,9 +6,14 @@
 [ext_resource type="PackedScene" uid="uid://d1275k0u0fsn" path="res://Scenes/AgentNodes/interactable.tscn" id="3_l7sa7"]
 [ext_resource type="Script" uid="uid://bk5we0bsn6qwl" path="res://Scripts/Resources/resource_site.gd" id="5_m36md"]
 [ext_resource type="PackedScene" uid="uid://c4n5elrxg64hp" path="res://Scenes/AgentNodes/GoldHolder.tscn" id="6_0s2l4"]
+[ext_resource type="Shader" uid="uid://cmsuxok158t72" path="res://Scripts/Shaders/shadow.gdshader" id="6_efeq4"]
+[ext_resource type="Script" uid="uid://bts71s2mlomuh" path="res://Scripts/AgentNodes/shadow_sprite.gd" id="8_rg3ib"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_0vwjc"]
 radius = 16.0
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_rg3ib"]
+shader = ExtResource("6_efeq4")
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_rsuno"]
 atlas = ExtResource("1_0vwjc")
@@ -110,13 +115,14 @@ animations = [{
 "speed": 5.0
 }]
 
-[node name="Tree" type="StaticBody2D" node_paths=PackedStringArray("visual", "interactable", "worksite", "gold", "resourcesite", "regrow_timer", "spawn_timer")]
+[node name="Tree" type="StaticBody2D" node_paths=PackedStringArray("visual", "shadowVisual", "interactable", "worksite", "gold", "resourcesite", "regrow_timer", "spawn_timer")]
 y_sort_enabled = true
 collision_layer = 128
 collision_mask = 11
 script = ExtResource("1_l3oha")
 building_type = &"tree"
-visual = NodePath("AnimatedSprite2D")
+visual = NodePath("Sprites/AnimatedSprite2D")
+shadowVisual = NodePath("Sprites/ShadowSprite")
 interactable = NodePath("Interactable")
 worksite = NodePath("WorkSite")
 gold = NodePath("GoldHolder")
@@ -162,7 +168,16 @@ metadata/_custom_type_script = "uid://bk5we0bsn6qwl"
 
 [node name="GoldHolder" parent="." instance=ExtResource("6_0s2l4")]
 
-[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+[node name="Sprites" type="Node2D" parent="."]
+
+[node name="ShadowSprite" type="AnimatedSprite2D" parent="Sprites"]
+material = SubResource("ShaderMaterial_rg3ib")
+sprite_frames = SubResource("SpriteFrames_0jkly")
+animation = &"idle"
+offset = Vector2(0, -70)
+script = ExtResource("8_rg3ib")
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="Sprites"]
 sprite_frames = SubResource("SpriteFrames_0jkly")
 animation = &"idle"
 offset = Vector2(0, -60)

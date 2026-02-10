@@ -1,4 +1,4 @@
-[gd_scene load_steps=8 format=3 uid="uid://boksm60la2s5a"]
+[gd_scene load_steps=11 format=3 uid="uid://boksm60la2s5a"]
 
 [ext_resource type="Script" uid="uid://cjbrsf0fmsehe" path="res://Scripts/BuildingsBase/building_base.gd" id="1_aww4k"]
 [ext_resource type="Texture2D" uid="uid://b14ppbcjet2cp" path="res://Art/Tiny Swords (Update 010)/Factions/Goblins/Buildings/Wood_House/Goblin_House_Destroyed.png" id="2_aww4k"]
@@ -6,15 +6,21 @@
 [ext_resource type="Script" uid="uid://dqu3s3kqb7wj6" path="res://Scripts/BuildingNodes/spawnsite.gd" id="4_5cnks"]
 [ext_resource type="PackedScene" uid="uid://d1275k0u0fsn" path="res://Scenes/AgentNodes/interactable.tscn" id="5_q2yk0"]
 [ext_resource type="PackedScene" uid="uid://c4n5elrxg64hp" path="res://Scenes/AgentNodes/GoldHolder.tscn" id="6_2yu6c"]
+[ext_resource type="Shader" uid="uid://cmsuxok158t72" path="res://Scripts/Shaders/shadow.gdshader" id="6_0214s"]
+[ext_resource type="Script" uid="uid://bts71s2mlomuh" path="res://Scripts/AgentNodes/shadow_sprite.gd" id="8_6hpmx"]
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_coeoc"]
 radius = 47.999996
 height = 110.0
 
-[node name="ArcheryRange" type="StaticBody2D" node_paths=PackedStringArray("visual", "interactable", "worksite", "spawnsite", "gold")]
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_tvgge"]
+shader = ExtResource("6_0214s")
+
+[node name="ArcheryRange" type="StaticBody2D" node_paths=PackedStringArray("visual", "shadowVisual", "interactable", "worksite", "spawnsite", "gold")]
 script = ExtResource("1_aww4k")
 building_type = 2
-visual = NodePath("Sprite2D")
+visual = NodePath("Sprites/Sprite2D")
+shadowVisual = NodePath("Sprites/ShadowSprite")
 interactable = NodePath("Interactable")
 worksite = NodePath("WorkSite")
 spawnsite = NodePath("SpawnSite")
@@ -71,7 +77,16 @@ carve_navigation_mesh = true
 
 [node name="GoldHolder" parent="." instance=ExtResource("6_2yu6c")]
 
-[node name="Sprite2D" type="Sprite2D" parent="."]
+[node name="Sprites" type="Node2D" parent="."]
+
+[node name="ShadowSprite" type="Sprite2D" parent="Sprites"]
+y_sort_enabled = true
+material = SubResource("ShaderMaterial_tvgge")
+texture = ExtResource("2_aww4k")
+offset = Vector2(0, -50)
+script = ExtResource("8_6hpmx")
+
+[node name="Sprite2D" type="Sprite2D" parent="Sprites"]
 y_sort_enabled = true
 texture = ExtResource("2_aww4k")
 offset = Vector2(0, -50)

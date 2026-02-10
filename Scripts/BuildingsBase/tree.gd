@@ -6,6 +6,7 @@ enum TreeState { NORMAL, MARKED, CUT }
 @export var castle: Node2D
 @export var building_type: StringName = &""
 @export var visual: Node
+@export var shadowVisual: Node
 @export var interactable: Interactable
 @export var worksite: WorkSite
 @export var gold: GoldHolder
@@ -89,6 +90,7 @@ func _on_work_applied(_site: WorkSite) -> void:
 		return
 
 	visual.play("chop")
+	if shadowVisual: shadowVisual.play("chop")
 
 
 func _update_visuals() -> void:
@@ -98,10 +100,13 @@ func _update_visuals() -> void:
 	match state:
 		TreeState.NORMAL:
 			visual.play("idle")
+			if shadowVisual: shadowVisual.play("idle")
 		TreeState.MARKED:
 			visual.play("idle_marked")
+			if shadowVisual: shadowVisual.play("idle_marked")
 		TreeState.CUT:
 			visual.play("chopped")
+			if shadowVisual: shadowVisual.play("chopped")
 
 
 func _configure_interactable() -> void:
