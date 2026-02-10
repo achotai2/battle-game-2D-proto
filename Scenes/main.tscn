@@ -1,4 +1,4 @@
-[gd_scene load_steps=23 format=4 uid="uid://denj1nj2jkqg1"]
+[gd_scene load_steps=27 format=4 uid="uid://denj1nj2jkqg1"]
 
 [ext_resource type="Texture2D" uid="uid://b48b8ua5c4hra" path="res://Art/Tiny Swords (Update 010)/Terrain/Ground/Tilemap_Flat.png" id="1_jjgbg"]
 [ext_resource type="Script" uid="uid://6hbmeykuynas" path="res://Scripts/main.gd" id="1_jjvhh"]
@@ -14,6 +14,7 @@
 [ext_resource type="PackedScene" uid="uid://d4k6usdi8l0w0" path="res://Scenes/UI/GoldUI.tscn" id="10_hptm8"]
 [ext_resource type="Shader" uid="uid://clbugf03j2rkc" path="res://Scripts/Shaders/cloud.gdshader" id="13_fdnlq"]
 [ext_resource type="Script" uid="uid://bvlh6f3r7x1kb" path="res://Scripts/Resources/point_light_2d.gd" id="14_jkdf5"]
+[ext_resource type="Shader" uid="uid://d1flwqvfy5jwu" path="res://Scripts/Shaders/rain.gdshader" id="14_wsu2k"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_6bp64"]
 texture = ExtResource("1_jjgbg")
@@ -198,16 +199,36 @@ agent_radius = 50.0
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_jkdf5"]
 shader = ExtResource("13_fdnlq")
 shader_parameter/shadow_color = Color(0.69965345, 0.69965345, 0.69965345, 0.44313726)
-shader_parameter/cloud_cutoff = 0.574000027265
-shader_parameter/shadow_softness = 0.0890000042275
+shader_parameter/cloud_cutoff = 0.26400001254
+shader_parameter/shadow_softness = 0.5370000255075
+shader_parameter/speed_scale = 0.4830000229425
+shader_parameter/cloud_direction = Vector2(0.5, -1)
 
 [sub_resource type="FastNoiseLite" id="FastNoiseLite_6iyac"]
-frequency = 0.0018
+frequency = 0.0959
 
 [sub_resource type="NoiseTexture2D" id="NoiseTexture2D_6iyac"]
 noise = SubResource("FastNoiseLite_6iyac")
 seamless = true
 normalize = false
+
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_wsu2k"]
+noise_type = 0
+frequency = 0.02
+
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_k12tt"]
+noise = SubResource("FastNoiseLite_wsu2k")
+seamless = true
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_k12tt"]
+shader = ExtResource("14_wsu2k")
+shader_parameter/rain_amount = 0.4890000232275
+shader_parameter/rain_speed = 8.7010004132975
+shader_parameter/rain_slant = 0.34600006393500005
+shader_parameter/rain_color = Color(0.8, 0.9, 1, 0.5)
+shader_parameter/noise_texture = SubResource("NoiseTexture2D_k12tt")
+shader_parameter/gust_speed = 0.154000007315
+shader_parameter/chaos_scale = 1.0
 
 [sub_resource type="Gradient" id="Gradient_fdnlq"]
 offsets = PackedFloat32Array(0, 0.64666665)
@@ -314,6 +335,15 @@ offset_right = 1946.0
 offset_bottom = 1157.0
 texture = SubResource("NoiseTexture2D_6iyac")
 
+[node name="Rain" type="ColorRect" parent="."]
+material = SubResource("ShaderMaterial_k12tt")
+offset_left = -474.0
+offset_top = -352.0
+offset_right = 1973.0
+offset_bottom = 1147.0
+
+[node name="Sunlight" type="CanvasModulate" parent="."]
+
 [node name="PointLight2D" type="PointLight2D" parent="."]
 position = Vector2(317.00003, 425)
 scale = Vector2(7.546876, 7.546876)
@@ -331,5 +361,3 @@ energy = 2.0
 shadow_enabled = true
 texture = SubResource("GradientTexture2D_jkdf5")
 script = ExtResource("14_jkdf5")
-
-[node name="Sunlight" type="CanvasModulate" parent="."]

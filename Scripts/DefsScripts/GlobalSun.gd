@@ -12,7 +12,7 @@ signal sunset
 @export_group("Sun Cycle")
 @export_range(0.0, 1.0) var sunrise_time: float = 0.25 # 6:00 AM
 @export_range(0.0, 1.0) var sunset_time: float = 0.75  # 6:00 PM
-@export var transition_duration: float = 0.15 # How long the sunrise/sunset lasts (0.1 = 10% of day)
+@export var transition_duration: float = 0.1 # How long the sunrise/sunset lasts (0.1 = 10% of day)
 
 # ANGLE: -90 = Left, 90 = Right
 @export var sunrise_angle: float = -90.0 

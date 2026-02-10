@@ -54,6 +54,7 @@ carve_navigation_mesh = true
 
 [node name="ShadowSprite" type="Sprite2D" parent="Sprites"]
 material = SubResource("ShaderMaterial_mx46n")
+scale = Vector2(0.9, 1)
 texture = ExtResource("1_ayoda")
 offset = Vector2(0, -80)
 script = ExtResource("4_40flp")
