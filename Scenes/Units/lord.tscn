@@ -54,10 +54,12 @@ metadata/_custom_type_script = "uid://cjjdaf7vlfs4k"
 [node name="AgentMovement" type="Node" parent="." node_paths=PackedStringArray("agent", "animation", "pathfinding")]
 script = ExtResource("4_24sip")
 max_speed = 200.0
+meander_speed = null
 can_meander = true
 agent = NodePath("..")
 animation = NodePath("../AgentAnimate")
 pathfinding = NodePath("../MinionPathfinding")
+accel = null
 metadata/_custom_type_script = "uid://58qm17emnwvd"
 
 [node name="Health" type="Node" parent="."]

@@ -18,6 +18,7 @@ class_name WeaponRanged
 @export var projectile_speed: float = 700.0
 @export var attack_power: int = 10
 @export var movement: AgentMovement = null
+@export var attack_priority: int = 5
 
 @onready var tracking: AgentTracking = $AgentTracking
 @onready var cooldown: Timer = $cooldown
@@ -50,15 +51,18 @@ func set_player(owner_agent: Node2D) -> void:
 	tracking.set_myself(owner_agent)
 
 
-func pause_attack() -> void:
-	# Called by tactical player node
-	_attack_paused = true
-	cooldown.stop()
-	attack_delay.stop() # prevent firing while player is moving
+func pause_attack(priority: int = 5) -> void:
+	# Called by player controls node
+	if cooldown.is_stopped():
+		_attack_paused = true
+		cooldown.stop()
+		attack_delay.stop() # prevent firing while player is moving
+		if is_instance_valid(movement):
+			movement.clear_movement_order(priority)
 
 
-func restart_attack() -> void:
-	# Called by tactical player node
+func restart_attack(priority: int = 5) -> void:
+	# Called by player controls node
 	_attack_paused = false
 	if _current_target == null and tracking.get_target():
 		_current_target = tracking.get_target()
@@ -75,9 +79,6 @@ func _on_target_lost() -> void:
 
 
 func _try_attack() -> void:
-	if is_instance_valid(movement):
-		movement.unfreeze(AgentMovement.LOCK_ATTACK)
-
 	if _attack_paused:
 		return
 	if _current_target == null:
@@ -94,7 +95,7 @@ func _try_attack() -> void:
 	if projectile_scene == null:
 		return
 
-	if is_instance_valid(movement) and movement.start_attack(_current_target):
+	if is_instance_valid(movement) and movement.command_start_attack(_current_target, attack_priority):
 		cooldown.start()
 		attack_delay.start()
 

@@ -145,7 +145,6 @@ func _on_think() -> void:
 			if _is_in_work_range(_site):
 				_enter_work_state()
 		State.WORKING:
-			_hold_position()
 			if not _is_in_work_range(_site):
 				_state = State.MOVING
 				_work_timer.stop()
@@ -173,15 +172,8 @@ func _on_work_tick() -> void:
 		_work_timer.stop()
 		return
 
-	_hold_position()
-	var can_apply := true
-	if is_instance_valid(movement):
-		can_apply = movement.start_work()
-	if can_apply:
+	if is_instance_valid(movement) and movement.start_work():
 		_apply_work(_site, work_amount)
-
-	if is_instance_valid(movement):
-		movement.unfreeze(AgentMovement.LOCK_WORK)
 
 	if not _site_needs_work(_site):
 		_release_job(true)
@@ -193,7 +185,6 @@ func _enter_work_state() -> void:
 		return
 
 	_state = State.WORKING
-	_hold_position()
 
 	_on_work_tick()
 
@@ -206,7 +197,7 @@ func _set_idle_state() -> void:
 	_work_timer.stop()
 
 	if is_instance_valid(movement):
-		movement.unfreeze(AgentMovement.LOCK_WORK)
+		movement.clear_movement_order(job_priority)
 
 
 func _request_job_if_idle() -> void:
@@ -235,12 +226,6 @@ func _command_move_to_site() -> void:
 	if not is_instance_valid(movement):
 		return
 	movement.command_move_to_position(_get_work_position(_site), job_priority)
-
-
-func _hold_position() -> void:
-	if not is_instance_valid(movement):
-		return
-	movement.command_move_velocity(Vector2.ZERO, job_priority)
 
 
 func _release_job(release_to_board: bool) -> void:

@@ -19,26 +19,14 @@ var _action_state: int = 0
 var _pf_velocity: Vector2 = Vector2.ZERO
 var _last_anim_velocity: Vector2 = Vector2(INF, INF)
 
-enum OrderType { NONE, MEANDER, MOVE_TO_POS, CHASE_NODE, RAW_VELOCITY, PLAYER_DIRECTION }
+enum OrderType { NONE, MEANDER, MOVE_TO_POS, CHASE_NODE, RAW_VELOCITY, PLAYER_DIRECTION, FROZEN }
 
-var _order_type: int = OrderType.NONE
+var _order_type: OrderType = OrderType.NONE
 var _order_priority: int = -1
 var _order_target_pos: Vector2 = Vector2.ZERO
 var _order_target_node: Node2D = null
 var _order_raw_velocity: Vector2 = Vector2.ZERO
 var _order_direction: Vector2 = Vector2.ZERO
-
-const LOCK_ATTACK := &"attack"
-const LOCK_INTERACT := &"interact"
-const LOCK_WORK := &"work"
-const LOCK_STUN := &"stun"
-
-var _freeze_locks: Dictionary = {}
-
-const ACTION_NONE := 0
-const ACTION_ATTACK := 1
-const ACTION_WORK := 2
-const ACTION_INTERACT := 3
 
 
 func _ready() -> void:
@@ -46,6 +34,29 @@ func _ready() -> void:
 
 
 # --- Public control API ---
+
+func tick(delta: float) -> void:
+	if is_frozen():
+		move_with_velocity(Vector2.ZERO, delta)
+		return
+
+	if _order_type == OrderType.NONE and can_meander:
+		_start_self_meander()
+
+	match _order_type:
+		OrderType.MEANDER, OrderType.MOVE_TO_POS, OrderType.CHASE_NODE:
+			if is_instance_valid(pathfinding) and is_instance_valid(agent):
+				pathfinding.tick(agent.global_position, return_speed(), delta)
+				move_with_velocity(_pf_velocity, delta)
+			else:
+				move_with_velocity(Vector2.ZERO, delta)
+		OrderType.PLAYER_DIRECTION:
+			move_in_direction(_order_direction, delta)
+		OrderType.RAW_VELOCITY:
+			move_with_velocity(_order_raw_velocity, delta)
+		OrderType.NONE:
+			move_with_velocity(Vector2.ZERO, delta)
+
 
 func set_animation(anim: AgentAnimate) -> void:
 	animation = anim
@@ -60,70 +71,7 @@ func set_pathfinding(value: MinionPathfinding) -> void:
 
 
 func is_frozen() -> bool:
-	return _freeze_locks.size() > 0
-
-
-func freeze(reason: StringName = &"generic") -> void:
-	# Called by action start or external systems.
-	_freeze_locks[reason] = true
-	_current_velocity = Vector2.ZERO
-	_notify_moved(Vector2.ZERO)
-
-
-func unfreeze(reason: StringName = &"generic") -> void:
-	# Called to unfreeze movement.
-	# Can be called by signal from agent animation when a frozen animation is finished.
-	_freeze_locks.erase(reason)
-	if ((reason == LOCK_ATTACK and _action_state == ACTION_ATTACK)
-		or (reason == LOCK_WORK and _action_state == ACTION_WORK)
-		or (reason == LOCK_INTERACT and _action_state == ACTION_INTERACT)
-		or reason == &"generic"):
-			_action_state = ACTION_NONE
-			_order_type = OrderType.NONE
-
-
-func clear_freeze_locks(keep: Array[StringName] = []) -> void:
-	for lock in _freeze_locks.keys():
-		if not keep.has(lock):
-			_freeze_locks.erase(lock)
-	_action_state = ACTION_NONE
-
-
-func debug_freeze_locks() -> Array[StringName]:
-	return _freeze_locks.keys()
-
-
-func _to_string() -> String:
-	return "AgentMovement locks=%s" % [debug_freeze_locks()]
-
-
-func start_work() -> bool:
-	if _action_state != ACTION_NONE and _action_state != ACTION_WORK:
-		return false
-	if _action_state == ACTION_WORK and is_frozen():
-		return true
-
-	_action_state = ACTION_WORK
-	freeze(LOCK_WORK)
-
-	if is_instance_valid(animation):
-		animation.play_work()
-
-	return true
-
-
-func start_interaction() -> bool:
-	if _action_state != ACTION_NONE and _action_state != ACTION_INTERACT:
-		return false
-	if _action_state == ACTION_INTERACT and is_frozen():
-		return true
-
-	_action_state = ACTION_INTERACT
-	freeze(LOCK_INTERACT)
-	if is_instance_valid(animation):
-		animation.play_work()
-
-	return true
+	return _order_type == OrderType.FROZEN
 
 
 # --- Movement entry points ---
@@ -182,8 +130,6 @@ func set_my_agent(owner_agent: Node2D) -> void:
 	agent = owner_agent
 
 
-
-
 func _notify_moved(vel: Vector2) -> void:
 	if is_instance_valid(agent):
 		agent.velocity = vel
@@ -194,43 +140,85 @@ func _notify_moved(vel: Vector2) -> void:
 			_last_anim_velocity = vel
 
 
-func tick(delta: float) -> void:
-	if is_frozen():
-		move_with_velocity(Vector2.ZERO, delta)
+func _accept_order(priority: int) -> bool:
+	if priority < _order_priority:
+		return false
+	_order_priority = priority
+	return true
+
+
+func _disable_meander() -> void:
+	if is_instance_valid(pathfinding):
+		pathfinding.set_meander(false)
+
+
+func _start_self_meander() -> void:
+	_order_type = OrderType.MEANDER
+	_order_priority = 0
+	if is_instance_valid(pathfinding):
+		pathfinding.set_meander(true)
+
+
+func _bind_pathfinding() -> void:
+	if not is_instance_valid(pathfinding):
 		return
-
-	if _action_state == ACTION_NONE and _order_type == OrderType.NONE and can_meander:
-		_start_self_meander()
-
-	match _order_type:
-		OrderType.MEANDER, OrderType.MOVE_TO_POS, OrderType.CHASE_NODE:
-			if is_instance_valid(pathfinding) and is_instance_valid(agent):
-				pathfinding.tick(agent.global_position, return_speed(), delta)
-				move_with_velocity(_pf_velocity, delta)
-			else:
-				move_with_velocity(Vector2.ZERO, delta)
-		OrderType.PLAYER_DIRECTION:
-			move_in_direction(_order_direction, delta)
-		OrderType.RAW_VELOCITY:
-			move_with_velocity(_order_raw_velocity, delta)
-		OrderType.NONE:
-			move_with_velocity(Vector2.ZERO, delta)
+	if not pathfinding.desired_velocity.is_connected(_on_pf_desired_velocity):
+		pathfinding.desired_velocity.connect(_on_pf_desired_velocity)
+	if not pathfinding.nav_finished.is_connected(_on_pf_nav_finished):
+		pathfinding.nav_finished.connect(_on_pf_nav_finished)
+	if _order_type == OrderType.MEANDER and can_meander:
+		pathfinding.set_meander(true)
+	else:
+		pathfinding.set_meander(false)
 
 
-func start_attack(target: Node2D, priority: int = 5) -> bool:
+func _unbind_pathfinding() -> void:
+	if is_instance_valid(pathfinding):
+		if pathfinding.desired_velocity.is_connected(_on_pf_desired_velocity):
+			pathfinding.desired_velocity.disconnect(_on_pf_desired_velocity)
+
+
+func no_order_check() -> bool:
+	return _order_type == OrderType.NONE
+
+
+#---- MOVEMENT COMMAND FUNCTIONS ----
+
+func command_start_attack(target: Node2D, priority: int = 5) -> bool:
 	if not _accept_order(priority):
 		return false
 
-	if _action_state != ACTION_NONE and _action_state != ACTION_ATTACK:
-		return false
-	if _action_state == ACTION_ATTACK and is_frozen():
-		return true
-
-	_action_state = ACTION_ATTACK
-	freeze(LOCK_ATTACK)
+	command_move_velocity(Vector2.ZERO, priority)
+	_order_type = OrderType.FROZEN
 
 	if is_instance_valid(animation):
 		animation.play_attack(target)
+
+	return true
+
+
+func command_start_interaction(priority: int = 5) -> bool:
+	if not _accept_order(priority):
+		return false
+
+	command_move_velocity(Vector2.ZERO, priority)
+	_order_type = OrderType.FROZEN
+
+	if is_instance_valid(animation):
+		animation.play_work()
+
+	return true
+
+
+func command_start_work(priority: int = 5) -> bool:
+	if not _accept_order(priority):
+		return false
+
+	command_move_velocity(Vector2.ZERO, priority)
+	_order_type = OrderType.FROZEN
+
+	if is_instance_valid(animation):
+		animation.play_work()
 
 	return true
 
@@ -304,7 +292,6 @@ func clear_movement_order(priority: int = 5) -> void:
 		return
 
 	_order_type = OrderType.NONE
-	_action_state = ACTION_NONE
 	_order_priority = -1
 	_order_target_pos = Vector2.ZERO
 	_order_target_node = null
@@ -313,45 +300,3 @@ func clear_movement_order(priority: int = 5) -> void:
 	_disable_meander()
 	if is_instance_valid(pathfinding):
 		pathfinding.clear_target()
-
-
-func _accept_order(priority: int) -> bool:
-	if priority < _order_priority:
-		return false
-	_order_priority = priority
-	return true
-
-
-func _disable_meander() -> void:
-	if is_instance_valid(pathfinding):
-		pathfinding.set_meander(false)
-
-
-func _start_self_meander() -> void:
-	_order_type = OrderType.MEANDER
-	_order_priority = 0
-	if is_instance_valid(pathfinding):
-		pathfinding.set_meander(true)
-
-
-func _bind_pathfinding() -> void:
-	if not is_instance_valid(pathfinding):
-		return
-	if not pathfinding.desired_velocity.is_connected(_on_pf_desired_velocity):
-		pathfinding.desired_velocity.connect(_on_pf_desired_velocity)
-	if not pathfinding.nav_finished.is_connected(_on_pf_nav_finished):
-		pathfinding.nav_finished.connect(_on_pf_nav_finished)
-	if _order_type == OrderType.MEANDER and can_meander:
-		pathfinding.set_meander(true)
-	else:
-		pathfinding.set_meander(false)
-
-
-func _unbind_pathfinding() -> void:
-	if is_instance_valid(pathfinding):
-		if pathfinding.desired_velocity.is_connected(_on_pf_desired_velocity):
-			pathfinding.desired_velocity.disconnect(_on_pf_desired_velocity)
-
-
-func no_order_check() -> bool:
-	return _order_type == OrderType.NONE

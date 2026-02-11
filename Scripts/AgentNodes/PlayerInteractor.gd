@@ -12,6 +12,7 @@ signal interaction_suspended(target: Interactable)
 @export var movement: AgentMovement
 @export var interact_action: StringName = &"interact"
 @export var freeze_movement: bool = true
+@export var interact_priority: int = 10
 
 var _nearby: Array[Interactable] = []
 var _current_target: Interactable = null
@@ -165,7 +166,7 @@ func _try_start_interaction() -> void:
 
 	_is_interacting = true
 	if freeze_movement and is_instance_valid(movement):
-		movement.start_interaction()
+		movement.command_start_interaction(interact_priority)
 
 	_current_target.begin_interact(owner_node)
 	interaction_started.emit(_current_target)
@@ -194,7 +195,7 @@ func _finish_interaction() -> void:
 			interaction_suspended.emit(_current_target)
 
 	if is_instance_valid(movement):
-		movement.unfreeze(AgentMovement.LOCK_INTERACT)
+		movement.clear_movement_order(interact_priority)
 
 	_refresh_target()
 

@@ -16,6 +16,7 @@ class_name PlayerControls
 var _last_dir: Vector2 = Vector2.ZERO
 var _is_moving: bool = false
 var _interaction_active: bool = false
+var controls_priority: int = 99999
 
 
 func _ready() -> void:
@@ -62,11 +63,12 @@ func _physics_process(_delta: float) -> void:
 	if emit_zero_direction:
 		if dir != _last_dir:
 			if is_instance_valid(movement):
-				movement.command_player_direction(dir, 5)
+				movement.command_player_direction(dir, controls_priority)
 	else:
 		if dir != Vector2.ZERO and dir != _last_dir:
 			if is_instance_valid(movement):
-				movement.command_player_direction(dir, 5)
+				movement.command_player_direction(dir, controls_priority)
+
 
 	_is_moving = dir != Vector2.ZERO
 	if _is_moving:
@@ -87,12 +89,12 @@ func _unhandled_input(event: InputEvent) -> void:
 
 func _pause_attack() -> void:
 	if is_instance_valid(attackNode):
-		attackNode.pause_attack()
+		attackNode.pause_attack(controls_priority)
 
 
 func _unpause_attack() -> void:
 	if is_instance_valid(attackNode):
-		attackNode.restart_attack()
+		attackNode.restart_attack(controls_priority)
 
 
 func _on_interaction_started(_target: Interactable) -> void:

@@ -328,7 +328,6 @@ func apply_role(role: UnitRoles.UnitType, p: int) -> void:
 	# --- tracking refresh ---
 	# Cancel transient action states when swapping role
 	if is_instance_valid(movement):
-		movement.clear_freeze_locks([AgentMovement.LOCK_STUN])
 		movement.clear_movement_order(10)
 
 	if is_instance_valid(pathfinding):
