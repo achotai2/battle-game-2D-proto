@@ -16,6 +16,7 @@ class_name TacticalArcher
 @export_range(0.05, 1.0, 0.05) var update_rate: float = 0.20
 @export var keep_line_of_fire: bool = true     # simple: bias sideways movement a bit
 @export var movement: AgentMovement = null
+@export var archer_priority: int = 6
 
 var _target: Node2D = null
 var _agent: Node2D = null
@@ -110,4 +111,4 @@ func _on_tick() -> void:
 
 func _move_to_position(dest: Vector2) -> void:
 	if is_instance_valid(movement):
-		movement.command_move_to_position(dest, 5)
+		movement.command_move_to_position(dest, archer_priority)

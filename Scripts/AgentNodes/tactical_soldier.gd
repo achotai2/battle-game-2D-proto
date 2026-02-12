@@ -10,6 +10,7 @@ signal combat_started(target: Node2D)
 signal combat_ended()
 
 @export var movement: AgentMovement = null
+@export var soldier_priority: int = 6
 
 var _target: Node2D = null
 var _agent: Node2D = null
@@ -50,5 +51,5 @@ func set_movement(m: AgentMovement) -> void:
 
 func _chase_target(target: Node2D) -> void:
 	if is_instance_valid(movement):
-		movement.command_chase_target(target, 5)
+		movement.command_chase_target(target, soldier_priority)
 	chase_target.emit(target)
