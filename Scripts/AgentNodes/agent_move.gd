@@ -249,10 +249,12 @@ func _pick_new_patrol_point(force: bool) -> void:
 		if candidate.distance_squared_to(_target_pos) < 64.0:
 			continue
 
+		_order_target_pos = candidate
 		_set_target_pos(candidate)
 		return
 
 	# Fallback: just stand near castle
+	_order_target_pos = center
 	_set_target_pos(center)
 
 
@@ -408,12 +410,6 @@ func _process_pathfinding(my_pos: Vector2, speed_limit: float, delta: float) -> 
 		else:
 			_refresh_target_and_repath(true)
 
-	if not nav_agent.is_target_reachable():
-		if _order_type == OrderType.MEANDER:
-			_pick_new_patrol_point(true)
-		else:
-			move_with_velocity(Vector2.ZERO, delta)
-		return
 
 	if nav_agent.is_navigation_finished():
 		# Handled by signal _on_nav_finished
