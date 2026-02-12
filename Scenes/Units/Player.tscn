@@ -55,6 +55,7 @@ metadata/_custom_type_script = "uid://cjjdaf7vlfs4k"
 
 [node name="AgentMovement" type="Node" parent="." node_paths=PackedStringArray("agent", "animation")]
 script = ExtResource("5_5ixxa")
+can_meander = false
 agent = NodePath("..")
 animation = NodePath("../AgentAnimate")
 metadata/_custom_type_script = "uid://58qm17emnwvd"

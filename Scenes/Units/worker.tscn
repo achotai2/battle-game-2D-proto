@@ -1,4 +1,4 @@
-[gd_scene load_steps=17 format=3 uid="uid://mvfvmj8qom4v"]
+[gd_scene load_steps=16 format=3 uid="uid://mvfvmj8qom4v"]
 
 [ext_resource type="Script" uid="uid://b3iqpgjb0vtvl" path="res://Scripts/UnitBase/agent_base.gd" id="1_r0ip0"]
 [ext_resource type="SpriteFrames" uid="uid://iwhusndso2py" path="res://Art/SpriteFrames/Worker_Blue.tres" id="2_r0ip0"]
@@ -51,7 +51,6 @@ metadata/_custom_type_script = "uid://cjjdaf7vlfs4k"
 [node name="AgentMovement" type="Node" parent="." node_paths=PackedStringArray("agent", "animation", "nav_agent")]
 script = ExtResource("4_8gahr")
 max_speed = 200.0
-can_meander = true
 agent = NodePath("..")
 animation = NodePath("../AgentAnimate")
 nav_agent = NodePath("../NavigationAgent2D2")

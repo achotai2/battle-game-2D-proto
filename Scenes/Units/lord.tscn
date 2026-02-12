@@ -1,4 +1,4 @@
-[gd_scene load_steps=15 format=3 uid="uid://cwsleixsa262m"]
+[gd_scene load_steps=14 format=3 uid="uid://cwsleixsa262m"]
 
 [ext_resource type="Script" uid="uid://b3iqpgjb0vtvl" path="res://Scripts/UnitBase/agent_base.gd" id="1_pu4ol"]
 [ext_resource type="Script" uid="uid://cjjdaf7vlfs4k" path="res://Scripts/AgentNodes/agent_animate.gd" id="3_ygrm2"]
@@ -52,16 +52,9 @@ metadata/_custom_type_script = "uid://cjjdaf7vlfs4k"
 [node name="AgentMovement" type="Node" parent="." node_paths=PackedStringArray("agent", "animation", "nav_agent")]
 script = ExtResource("4_24sip")
 max_speed = 200.0
-meander_speed = null
-can_meander = true
 agent = NodePath("..")
 animation = NodePath("../AgentAnimate")
 nav_agent = NodePath("../NavigationAgent2D")
-accel = null
-patrol_radius = null
-patrol_arrival_radius = null
-patrol_pause_seconds = null
-patrol_pick_attempts = null
 metadata/_custom_type_script = "uid://58qm17emnwvd"
 
 [node name="Health" type="Node" parent="."]

@@ -6,7 +6,7 @@ signal move_to_pos_finished(agent: Node2D)
 @export_range(0, 500, 10) var max_speed: float = 300.0
 @export_range(0, 500, 10) var meander_speed: float = 50.0
 
-@export var can_meander: bool = false
+@export var can_meander: bool = true
 @export var agent: Node2D = null
 @export var animation: AgentAnimate = null
 
@@ -14,7 +14,7 @@ signal move_to_pos_finished(agent: Node2D)
 @export var nav_agent: NavigationAgent2D
 
 # --- Repath tuning ---
-@export_range(0.05, 2.0, 0.05) var repath_interval: float = 2.0
+@export_range(0.05, 20.0, 0.05) var repath_interval: float = 2.0
 @export_range(1.0, 200.0, 1.0) var target_repath_distance: float = 250.0
 
 # --- Stuck detection ---
@@ -30,7 +30,8 @@ signal move_to_pos_finished(agent: Node2D)
 # --- Patrol / meander ---
 @export var assigned_castle: Node2D
 @export_range(0.0, 2000.0, 10.0) var patrol_radius: float = 500.0
-@export_range(0.0, 200.0, 1.0) var patrol_arrival_radius: float = 24.0
+@export_range(0.0, 200.0, 1.0) var patrol_arrival_radius: float = 50.0
+@export_range(0.0, 200.0, 1.0) var path_desired_distance: float = 50.0
 @export_range(0.0, 10.0, 0.1) var patrol_pause_seconds: float = 0.5
 @export_range(1, 20, 1) var patrol_pick_attempts: int = 8
 
@@ -42,13 +43,12 @@ var _patrol_pause_timer: Timer
 var _last_my_pos: Vector2 = Vector2.ZERO
 var _stuck_accum: float = 0.0
 
-var _target_node: Node2D = null
+#var _target_node: Node2D = null
 var _target_pos: Vector2 = Vector2.ZERO
 var _last_target_pos: Vector2 = Vector2.ZERO
 
 var _current_velocity: Vector2 = Vector2.ZERO
-var _action_state: int = 0
-var _pf_velocity: Vector2 = Vector2.ZERO
+#var _pf_velocity: Vector2 = Vector2.ZERO
 var _last_anim_velocity: Vector2 = Vector2(INF, INF)
 
 enum OrderType { NONE, MEANDER, MOVE_TO_POS, CHASE_NODE, RAW_VELOCITY, PLAYER_DIRECTION, FROZEN }
@@ -67,8 +67,8 @@ func _ready() -> void:
 		return
 
 	nav_agent.avoidance_enabled = true
-	nav_agent.path_desired_distance = 20.0
-	nav_agent.target_desired_distance = 10.0
+	nav_agent.path_desired_distance = path_desired_distance
+	nav_agent.target_desired_distance = patrol_arrival_radius
 	nav_agent.velocity_computed.connect(_on_velocity_computed)
 	nav_agent.navigation_finished.connect(_on_nav_finished)
 
@@ -88,6 +88,7 @@ func _ready() -> void:
 # --- Public control API ---
 
 func tick(delta: float) -> void:
+	print(get_parent().name, ", ", _order_type)
 	if is_frozen():
 		move_with_velocity(Vector2.ZERO, delta)
 		return
@@ -167,12 +168,12 @@ func _on_nav_finished() -> void:
 		if patrol_pause_seconds > 0.0:
 			_patrol_pause_timer.start(patrol_pause_seconds)
 		else:
-			_pick_new_patrol_point(true)
+			_pick_new_patrol_point()
 
 
 func _on_patrol_pause_timeout() -> void:
 	if _order_type == OrderType.MEANDER:
-		_pick_new_patrol_point(true)
+		_pick_new_patrol_point()
 
 
 # Convenience: direction in (unit or not)
@@ -217,16 +218,18 @@ func _disable_meander() -> void:
 
 
 func _start_self_meander() -> void:
+	if not is_instance_valid(assigned_castle):
+		can_meander = false
 	_order_type = OrderType.MEANDER
 	_order_priority = 0
-	_pick_new_patrol_point(true)
+	_pick_new_patrol_point()
 
 
 func no_order_check() -> bool:
 	return _order_type == OrderType.NONE
 
 
-func _pick_new_patrol_point(force: bool) -> void:
+func _pick_new_patrol_point() -> void:
 	if _order_type != OrderType.MEANDER:
 		return
 	if not is_instance_valid(assigned_castle):
@@ -243,6 +246,8 @@ func _pick_new_patrol_point(force: bool) -> void:
 		var angle := randf() * TAU
 		var r := sqrt(randf()) * patrol_radius
 		var candidate := center + Vector2(cos(angle), sin(angle)) * r
+		var map = nav_agent.get_navigation_map()
+		candidate = NavigationServer2D.map_get_closest_point(map, candidate)
 
 		# Basic sanity: avoid choosing basically the same target
 		# Bolt: Squared distance check (8^2 = 64)
@@ -406,7 +411,7 @@ func _process_pathfinding(my_pos: Vector2, speed_limit: float, delta: float) -> 
 		_stuck_accum = 0.0
 		# push_warning("AgentMovement: Agent stuck at " + str(my_pos))
 		if _order_type == OrderType.MEANDER:
-			_pick_new_patrol_point(true)
+			_pick_new_patrol_point()
 		else:
 			_refresh_target_and_repath(true)
 
