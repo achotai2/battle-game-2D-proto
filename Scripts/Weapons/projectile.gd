@@ -158,22 +158,23 @@ func _apply_visual_scale() -> void:
 
 
 func _calculate_start_values(projectile_speed: float) -> void:
-	var distance_to: float = position2d.distance_to(target_position2d)
+	var distance_sq: float = position2d.distance_squared_to(target_position2d)
 
 	var v2 := projectile_speed * projectile_speed
 	var v4 := v2 * v2
 	var g := GRAVITY
 
 	# Discriminant for ballistic arc
-	var disc := v4 - (g * g * distance_to * distance_to) + (2.0 * g * v2 * launch_height)
+	var disc := v4 - (g * g * distance_sq) + (2.0 * g * v2 * launch_height)
 
 	# If target is too far for the speed, just shoot flat
-	if disc <= 0.0 or distance_to <= 0.001:
+	if disc <= 0.0 or distance_sq <= 0.000001:
 		velocity_z = 0.0
 		velocity_2d = position2d.direction_to(target_position2d) * projectile_speed
 		_peak_height = max(launch_height, 1.0)
 		return
 
+	var distance_to: float = sqrt(distance_sq)
 	var s := sqrt(disc)
 	var n := g * distance_to
 
