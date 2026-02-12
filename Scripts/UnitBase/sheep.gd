@@ -83,6 +83,7 @@ func _physics_process(delta: float) -> void:
 	move_and_slide()
 
 	if is_returning:
+		# Use distance_squared_to to avoid expensive sqrt every physics frame
 		if global_position.distance_squared_to(_spawn_position) < 100.0:
 			queue_free()
 
