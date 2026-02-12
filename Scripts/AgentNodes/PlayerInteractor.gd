@@ -21,6 +21,7 @@ var _interaction_timer: Timer
 var _target_refresh_timer: Timer
 var _is_interacting: bool = false
 var _target_refresh_interval: float = 0.1
+var _initial_sync_done: bool = false
 
 
 func _ready() -> void:
@@ -212,7 +213,9 @@ func _refresh_target() -> void:
 	if _is_interacting:
 		return
 
-	_sync_nearby_from_sensor()
+	if not _initial_sync_done:
+		_sync_nearby_from_sensor()
+		_initial_sync_done = true
 
 	# Select new best target.
 	var best := _select_best_target()
