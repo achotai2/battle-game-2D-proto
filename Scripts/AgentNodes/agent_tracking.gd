@@ -179,6 +179,10 @@ func _is_valid_target(body: Node2D) -> bool:
 	if not is_instance_valid(body):
 		return false
 
+	# Ensure the body still matches the targeting criteria (e.g. group membership)
+	if not _is_candidate_type(body):
+		return false
+
 	# Team gate (Dynamic Check)
 	return _team_allowed(body.return_player())
 
