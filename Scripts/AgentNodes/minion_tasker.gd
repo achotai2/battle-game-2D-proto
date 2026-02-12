@@ -129,13 +129,13 @@ func _on_think() -> void:
 		set_castle(agent.call("return_castle"))
 
 	if _site == null or not is_instance_valid(_site):
-		_set_idle_state()
+		if _state != State.IDLE:
+			_set_idle_state()
 		_request_job_if_idle()
 		return
 
 	if not _site_needs_work(_site):
 		_release_job(true)
-		_set_idle_state()
 		_request_job_if_idle()
 		return
 
@@ -164,7 +164,6 @@ func _on_work_tick() -> void:
 
 	if not _site_needs_work(_site):
 		_release_job(true)
-		_set_idle_state()
 		return
 
 	if not _is_in_work_range(_site):
@@ -177,7 +176,6 @@ func _on_work_tick() -> void:
 
 	if not _site_needs_work(_site):
 		_release_job(true)
-		_set_idle_state()
 
 
 func _enter_work_state() -> void:
