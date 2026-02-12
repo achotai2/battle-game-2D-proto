@@ -399,13 +399,14 @@ func _process_pathfinding(my_pos: Vector2, speed_limit: float, delta: float) -> 
 	# --- stuck detection ---
 	# Bolt: Use squared distance to avoid sqrt every frame
 	var progress_sq := my_pos.distance_squared_to(_last_my_pos)
-	_last_my_pos = my_pos
+	# _last_my_pos updated only when we move enough (see below)
 
 	var min_dist_frame := min_progress_per_sec * delta
 	if progress_sq < (min_dist_frame * min_dist_frame):
 		_stuck_accum += delta
 	else:
 		_stuck_accum = 0.0
+		_last_my_pos = my_pos
 
 	if _stuck_accum >= stuck_time:
 		_stuck_accum = 0.0
