@@ -1,4 +1,4 @@
-[gd_scene load_steps=17 format=3 uid="uid://ctx2ge4w4wad7"]
+[gd_scene load_steps=16 format=3 uid="uid://ctx2ge4w4wad7"]
 
 [ext_resource type="Script" uid="uid://b3iqpgjb0vtvl" path="res://Scripts/UnitBase/agent_base.gd" id="1_wen5c"]
 [ext_resource type="SpriteFrames" uid="uid://b16w7vlo5c8qt" path="res://Art/SpriteFrames/Peasant_Red.tres" id="2_7mdye"]
@@ -49,7 +49,6 @@ metadata/_custom_type_script = "uid://cjjdaf7vlfs4k"
 [node name="AgentMovement" type="Node" parent="." node_paths=PackedStringArray("agent", "animation", "nav_agent")]
 script = ExtResource("4_kqf48")
 max_speed = 200.0
-can_meander = true
 agent = NodePath("..")
 animation = NodePath("../AgentAnimate")
 nav_agent = NodePath("../NavigationAgent2D2")

@@ -291,11 +291,11 @@ position = Vector2(794, 143)
 player = 1
 castle = NodePath("../../NavigationRegion2D/Buildings/Castle")
 
-[node name="Peasant" parent="EnvironmentalObjects/Units" node_paths=PackedStringArray("castle") instance=ExtResource("5_ynf5e")]
+[node name="Peasant" parent="EnvironmentalObjects/Units" node_paths=PackedStringArray("castle") groups=["Attackable"] instance=ExtResource("5_ynf5e")]
 player = 1
 castle = NodePath("../../NavigationRegion2D/Buildings/Castle")
 
-[node name="Peasant2" parent="EnvironmentalObjects/Units" node_paths=PackedStringArray("castle") instance=ExtResource("5_ynf5e")]
+[node name="Peasant2" parent="EnvironmentalObjects/Units" node_paths=PackedStringArray("castle") groups=["Attackable"] instance=ExtResource("5_ynf5e")]
 position = Vector2(200, 24)
 player = 1
 castle = NodePath("../../NavigationRegion2D/Buildings/Castle")
@@ -305,21 +305,25 @@ position = Vector2(567, 306)
 player = 1
 castle = NodePath("../../NavigationRegion2D/Buildings/Castle")
 
-[node name="Archer" parent="EnvironmentalObjects/Units" instance=ExtResource("16_h1bgf")]
+[node name="Archer" parent="EnvironmentalObjects/Units" node_paths=PackedStringArray("castle") instance=ExtResource("16_h1bgf")]
 position = Vector2(229, 520)
 player = 2
+castle = NodePath("../../NavigationRegion2D/Buildings/Castle")
 
-[node name="Archer2" parent="EnvironmentalObjects/Units" instance=ExtResource("16_h1bgf")]
+[node name="Archer2" parent="EnvironmentalObjects/Units" node_paths=PackedStringArray("castle") instance=ExtResource("16_h1bgf")]
 position = Vector2(-19, 454)
 player = 1
+castle = NodePath("../../NavigationRegion2D/Buildings/Castle")
 
-[node name="Soldier" parent="EnvironmentalObjects/Units" instance=ExtResource("17_b3802")]
+[node name="Soldier" parent="EnvironmentalObjects/Units" node_paths=PackedStringArray("castle") instance=ExtResource("17_b3802")]
 position = Vector2(646, 460)
 player = 2
+castle = NodePath("../../NavigationRegion2D/Buildings/Castle")
 
-[node name="Soldier2" parent="EnvironmentalObjects/Units" instance=ExtResource("17_b3802")]
+[node name="Soldier2" parent="EnvironmentalObjects/Units" node_paths=PackedStringArray("castle") instance=ExtResource("17_b3802")]
 position = Vector2(10, 132)
 player = 1
+castle = NodePath("../../NavigationRegion2D/Buildings/Castle")
 
 [node name="Trees" type="Node2D" parent="EnvironmentalObjects"]
 y_sort_enabled = true

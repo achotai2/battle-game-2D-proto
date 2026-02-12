@@ -29,9 +29,6 @@ func _physics_process(_delta: float) -> void:
 	var y: float = Input.get_axis(move_up, move_down)
 	var dir := Vector2(x, y)
 
-	if _attacking() or _interacting():
-		dir = Vector2.ZERO
-
 	# Optional deadzone (helps analog sticks; harmless for keyboard)
 	if dir.length() < deadzone:
 		dir = Vector2.ZERO
@@ -44,19 +41,20 @@ func _physics_process(_delta: float) -> void:
 			if is_instance_valid(movement):
 				if dir == Vector2.ZERO:
 					movement.clear_movement_order(controls_priority)
+					_unpause_attack()
 				else:
 					movement.command_player_direction(dir, controls_priority)
+					_pause_attack()
 	else:
 		if dir != Vector2.ZERO and dir != _last_dir:
 			if is_instance_valid(movement):
 				movement.command_player_direction(dir, controls_priority)
 
-
-	_is_moving = dir != Vector2.ZERO
-	if _is_moving:
-		_pause_attack()
-	elif not _interaction_active:
-		_unpause_attack()
+		_is_moving = dir != Vector2.ZERO
+		if _is_moving:
+			_pause_attack()
+		elif not _interaction_active:
+			_unpause_attack()
 
 	_last_dir = dir
 

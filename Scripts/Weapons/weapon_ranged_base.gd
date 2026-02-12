@@ -18,7 +18,7 @@ class_name WeaponRanged
 @export var projectile_speed: float = 700.0
 @export var attack_power: int = 10
 @export var movement: AgentMovement = null
-@export var attack_priority: int = 5
+@export var attack_priority: int = 7
 
 @onready var tracking: AgentTracking = $AgentTracking
 @onready var cooldown: Timer = $cooldown
@@ -69,7 +69,7 @@ func _cancel_attack() -> void:
 	# Called whenever attack is finished or target lost.
 	_current_target = null
 	
-	if is_instance_valid(movement):
+	if is_instance_valid(movement) and _attacking:
 		movement.clear_movement_order(attack_priority)
 
 	cooldown.stop()
@@ -185,9 +185,10 @@ func am_i_attacking() -> bool:
 
 
 func attack_animation_finished() -> void:
-	if is_instance_valid(movement) and _attacking:
-		movement.clear_movement_order(attack_priority)
-	_attacking = false
+	pass
+#	if is_instance_valid(movement) and _attacking:
+#		movement.clear_movement_order(attack_priority)
+#	_attacking = false
 
 
 func set_movement(m: AgentMovement) -> void:

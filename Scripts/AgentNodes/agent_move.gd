@@ -373,9 +373,6 @@ func clear_movement_order(priority: int = 5) -> void:
 	if priority < _order_priority:
 		return
 
-	if get_parent().name == "Player":
-		print(priority)
-
 	_order_type = OrderType.NONE
 	_order_priority = -1
 	_order_target_pos = Vector2.ZERO
