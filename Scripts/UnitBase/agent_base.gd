@@ -152,30 +152,16 @@ func _assign_tasker_refs() -> void:
 	if not is_instance_valid(tasker):
 		return
 
-	if tasker.has_method("set_agent"):
-		tasker.call("set_agent", self)
-	else:
-		print_debug("No function set_agent in tasker.")
-
-	if tasker.has_method("set_movement"):
-		tasker.call("set_movement", movement)
-	else:
-		print_debug("No function set_movement in tasker.")
+	tasker.set_agent(self)
+	tasker.set_movement(movement)
 
 
 func _assign_food_tasker_refs() -> void:
 	if not is_instance_valid(foodTasker):
 		return
 
-	if foodTasker.has_method("set_agent"):
-		foodTasker.call("set_agent", self)
-	else:
-		print_debug("No function set_agent in foodTasker.")
-
-	if foodTasker.has_method("set_movement"):
-		foodTasker.call("set_movement", movement)
-	else:
-		print_debug("No function set_movement in foodTasker.")
+	foodTasker.set_agent(self)
+	foodTasker.set_movement(movement)
 
 
 func _assign_gold_refs() -> void:
@@ -248,11 +234,8 @@ func apply_role(role: UnitRoles.UnitType, p: int) -> void:
 		tactical = null
 
 	if is_instance_valid(tasker):
-		if tasker.has_method("has_task") and tasker.call("has_task"):
-			if tasker.has_method("clear_task"):
-				tasker.call("clear_task")
-			else:
-				print_debug("tasker does not have method clear_task")
+		if tasker.has_task():
+			tasker.clear_task()
 		tasker.queue_free()
 		tasker = null
 
@@ -333,11 +316,11 @@ func set_castle(new_castle: Node) -> void:
 	if is_instance_valid(movement):
 		movement.assigned_castle = castle
 
-	if is_instance_valid(tasker) and tasker.has_method("switch_job_board"):
-		tasker.call("switch_job_board", castle)
+	if is_instance_valid(tasker):
+		tasker.switch_job_board(castle)
 
-	if is_instance_valid(foodTasker) and foodTasker.has_method("switch_job_board"):
-		foodTasker.call("switch_job_board", castle)
+	if is_instance_valid(foodTasker):
+		foodTasker.switch_job_board(castle)
 		
 
 

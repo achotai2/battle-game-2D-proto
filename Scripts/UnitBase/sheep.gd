@@ -60,10 +60,8 @@ func _assign_movement_refs() -> void:
 	if not is_instance_valid(movement):
 		return
 
-	if movement.has_method("set_my_agent"):
-		movement.call("set_my_agent", self)
-	if movement.has_method("set_animation"):
-		movement.call("set_animation", animate)
+	movement.set_my_agent(self)
+	movement.set_animation(animate)
 
 
 func _assign_food_worksite_refs() -> void:
