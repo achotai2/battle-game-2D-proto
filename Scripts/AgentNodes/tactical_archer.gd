@@ -7,7 +7,7 @@ class_name TacticalArcher
 ## - If in the "sweet spot": stop (let weapon handle shooting when in range).
 ##
 ## This node does NOT fire the weapon. Weapon attacks whenever target is in its own range.
-## This node only produces movement intent for AgentBase -> MinionPathfinding.
+## This node only produces movement intent for AgentBase -> AgentMovement.
 
 @export var preferred_range: float = 220.0     # ideal spacing
 @export var min_range: float = 160.0           # if closer than this, retreat

@@ -2,7 +2,6 @@ extends CharacterBody2D
 
 @export var castle: Node2D
 @export var movement: AgentMovement
-@export var pathfinding: MinionPathfinding
 @export var animate: AgentAnimate
 @export var food: HungerHolder
 @export var foodWorkSite: WorkSite
@@ -27,13 +26,9 @@ func _ready() -> void:
 	# Configure movement speeds
 	if is_instance_valid(movement):
 		movement.can_meander = true
-
-	# Configure pathfinding
-	if is_instance_valid(pathfinding):
-		pathfinding.patrol_radius = hop_radius
-		pathfinding.patrol_pause_seconds = wander_interval
-		# The anchor is the "castle" we patrol around
-		pathfinding.set_castle(patrol_anchor)
+		movement.patrol_radius = hop_radius
+		movement.patrol_pause_seconds = wander_interval
+		movement.assigned_castle = patrol_anchor
 
 	if despawn_timer:
 		if not despawn_timer.timeout.is_connected(_on_despawn_timer_timeout):
@@ -52,7 +47,6 @@ func _exit_tree() -> void:
 func _connect_all_refs() -> void:
 	_assign_animation_refs()
 	_assign_movement_refs()
-	_assign_pathfinding_refs()
 	_assign_food_worksite_refs()
 	_assign_food_refs()
 
@@ -70,16 +64,6 @@ func _assign_movement_refs() -> void:
 		movement.call("set_my_agent", self)
 	if movement.has_method("set_animation"):
 		movement.call("set_animation", animate)
-	if movement.has_method("set_pathfinding"):
-		movement.call("set_pathfinding", pathfinding)
-
-
-func _assign_pathfinding_refs() -> void:
-	if not is_instance_valid(pathfinding):
-		return
-	# We set the castle (anchor) in _ready, but this mimics AgentBase structure
-	if pathfinding.has_method("set_castle"):
-		pathfinding.call("set_castle", patrol_anchor)
 
 
 func _assign_food_worksite_refs() -> void:
