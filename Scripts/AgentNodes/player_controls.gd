@@ -100,7 +100,10 @@ func _unpause_attack() -> void:
 
 
 func _attacking() -> bool:
-	return attackNode.am_i_attacking()
+	if attackNode:
+		return attackNode.am_i_attacking()
+	else:
+		return false
 
 
 func _interacting() -> bool:

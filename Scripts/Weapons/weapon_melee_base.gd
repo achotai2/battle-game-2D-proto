@@ -19,6 +19,7 @@ class_name WeaponMelee
 var _owner_agent: Node
 var _current_target: Node2D = null
 var _attack_paused: bool = false
+var _attacking: bool = false
 
 
 func _ready() -> void:
@@ -41,12 +42,28 @@ func set_player(owner_agent: Node2D) -> void:
 
 
 func pause_attack(priority: int = 5) -> void:
+	# Called by player controls node
 	_attack_paused = true
 
 
 func restart_attack(priority: int = 5) -> void:
+	# Called by player controls node
 	_attack_paused = false
+	if _current_target == null and tracking.get_target():
+		_current_target = tracking.get_target()
 	_try_attack()
+
+
+func _cancel_attack() -> void:
+	# Called whenever attack is finished or target lost.
+	_current_target = null
+	
+	if is_instance_valid(movement) and _attacking:
+		movement.clear_movement_order(attack_priority)
+
+	cooldown.stop()
+	attack_delay.stop() # prevent firing while player is moving
+	_attacking = false
 
 
 func _on_target_changed(t: Node2D) -> void:
@@ -55,29 +72,27 @@ func _on_target_changed(t: Node2D) -> void:
 
 
 func _on_target_lost() -> void:
-	_current_target = null
+	_cancel_attack()
 
 
 func am_i_attacking() -> bool:
-	return not cooldown.is_stopped()
+	return _attacking
 
 
 func _try_attack() -> void:
-	if _attack_paused:
-		return
 	if _current_target == null:
+		_cancel_attack()
 		return
 	if not is_instance_valid(_current_target):
-		_current_target = null
-		return
-	if not cooldown.is_stopped():
-		return
-	if not attack_delay.is_stopped():
+		_cancel_attack()
 		return
 
-	if is_instance_valid(movement) and movement.command_start_attack(_current_target, attack_priority):
+	if not _attack_paused and is_instance_valid(movement) and movement.command_start_attack(_current_target, attack_priority):
+		_attacking = true
 		cooldown.start()
 		attack_delay.start()
+	else:
+		_cancel_attack()
 
 
 func _on_attack_delay_timeout() -> void:

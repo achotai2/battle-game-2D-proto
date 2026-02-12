@@ -88,7 +88,6 @@ func _ready() -> void:
 # --- Public control API ---
 
 func tick(delta: float) -> void:
-	print(get_parent().name, ", ", _order_type)
 	if is_frozen():
 		move_with_velocity(Vector2.ZERO, delta)
 		return

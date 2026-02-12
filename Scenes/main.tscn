@@ -1,4 +1,4 @@
-[gd_scene load_steps=27 format=4 uid="uid://denj1nj2jkqg1"]
+[gd_scene load_steps=29 format=4 uid="uid://denj1nj2jkqg1"]
 
 [ext_resource type="Texture2D" uid="uid://b48b8ua5c4hra" path="res://Art/Tiny Swords (Update 010)/Terrain/Ground/Tilemap_Flat.png" id="1_jjgbg"]
 [ext_resource type="Script" uid="uid://6hbmeykuynas" path="res://Scripts/main.gd" id="1_jjvhh"]
@@ -15,6 +15,8 @@
 [ext_resource type="Shader" uid="uid://clbugf03j2rkc" path="res://Scripts/Shaders/cloud.gdshader" id="13_fdnlq"]
 [ext_resource type="Script" uid="uid://bvlh6f3r7x1kb" path="res://Scripts/Resources/point_light_2d.gd" id="14_jkdf5"]
 [ext_resource type="Shader" uid="uid://d1flwqvfy5jwu" path="res://Scripts/Shaders/rain.gdshader" id="14_wsu2k"]
+[ext_resource type="PackedScene" uid="uid://dvgilnkmeqdfu" path="res://Scenes/Units/archer.tscn" id="16_h1bgf"]
+[ext_resource type="PackedScene" uid="uid://sy3ke7fhk1uv" path="res://Scenes/Units/soldier.tscn" id="17_b3802"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_6bp64"]
 texture = ExtResource("1_jjgbg")
@@ -302,6 +304,22 @@ castle = NodePath("../../NavigationRegion2D/Buildings/Castle")
 position = Vector2(567, 306)
 player = 1
 castle = NodePath("../../NavigationRegion2D/Buildings/Castle")
+
+[node name="Archer" parent="EnvironmentalObjects/Units" instance=ExtResource("16_h1bgf")]
+position = Vector2(229, 520)
+player = 2
+
+[node name="Archer2" parent="EnvironmentalObjects/Units" instance=ExtResource("16_h1bgf")]
+position = Vector2(-19, 454)
+player = 1
+
+[node name="Soldier" parent="EnvironmentalObjects/Units" instance=ExtResource("17_b3802")]
+position = Vector2(646, 460)
+player = 2
+
+[node name="Soldier2" parent="EnvironmentalObjects/Units" instance=ExtResource("17_b3802")]
+position = Vector2(10, 132)
+player = 1
 
 [node name="Trees" type="Node2D" parent="EnvironmentalObjects"]
 y_sort_enabled = true

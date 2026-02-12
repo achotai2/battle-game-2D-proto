@@ -69,6 +69,7 @@ metadata/_custom_type_script = "uid://cfiw0qaxe8jxd"
 
 [node name="Health" type="Node" parent="."]
 script = ExtResource("7_52ee3")
+defense = 100
 metadata/_custom_type_script = "uid://c2guvnr3dtafe"
 
 [node name="WeaponSword" parent="." instance=ExtResource("7_bhhdu")]
