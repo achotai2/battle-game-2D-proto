@@ -102,15 +102,8 @@ func _assign_movement_refs() -> void:
 	if not is_instance_valid(movement):
 		return
 
-	if movement.has_method("set_my_agent"):
-		movement.call("set_my_agent", self)
-	else:
-		print_debug("movement does not have function set_my_agent")
-		
-	if movement.has_method("set_animation"):
-		movement.call("set_animation", animation)
-	else:
-		print_debug("movement does not have function set_animation")
+	movement.set_my_agent(self)
+	movement.set_animation(animation)
 
 	if is_instance_valid(castle):
 		movement.assigned_castle = castle
@@ -120,20 +113,9 @@ func _assign_controls_refs() -> void:
 	if not is_instance_valid(controls):
 		return
 	
-	if controls.has_method("set_interactor"):
-		controls.call("set_interactor", interactor)
-	else:
-		print_debug("controls does not have function set_interactor")
-
-	if controls.has_method("set_attackNode"):
-		controls.call("set_attackNode", attack)
-	else:
-		print_debug("controls does not have function set_attackNode")
-
-	if controls.has_method("set_movement"):
-		controls.call("set_movement", movement)
-	else:
-		print_debug("controls does not have function set_movement")
+	controls.set_interactor(interactor)
+	controls.set_attackNode(attack)
+	controls.set_movement(movement)
 
 
 func _assign_detection_refs() -> void:
