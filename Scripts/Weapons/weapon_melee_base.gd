@@ -87,6 +87,9 @@ func _try_attack() -> void:
 		_cancel_attack()
 		return
 
+	if not cooldown.is_stopped() or not attack_delay.is_stopped():
+		return
+
 	if not _attack_paused and is_instance_valid(movement) and movement.command_start_attack(_current_target, attack_priority):
 		_attacking = true
 		cooldown.start()
