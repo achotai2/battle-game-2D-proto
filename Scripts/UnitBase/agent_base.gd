@@ -6,7 +6,6 @@ class_name AgentBase
 @export var health: Health = null
 @export var interactor: PlayerInteractor = null
 @export var movement: AgentMovement = null
-@export var pathfinding: MinionPathfinding = null
 @export var controls: PlayerControls = null
 @export var animation: AgentAnimate = null
 @export var attack: Node = null
@@ -39,9 +38,6 @@ func _connect_all_refs() -> void:
 
 	# Connect signals for MOVEMENT node.
 	_assign_movement_refs()
-
-	# Connect signals for PATHFINDING node.
-	_assign_pathfinding_refs()
 
 	# Connect signals for player CONTROLS node.
 	_assign_controls_refs()
@@ -116,20 +112,8 @@ func _assign_movement_refs() -> void:
 	else:
 		print_debug("movement does not have function set_animation")
 
-	if movement.has_method("set_pathfinding"):
-		movement.call("set_pathfinding", pathfinding)
-	else:
-		print_debug("movement does not have function set_pathfinding")
-
-
-func _assign_pathfinding_refs() -> void:
-	if not is_instance_valid(pathfinding):
-		return
-
-	if pathfinding.has_method("set_castle"):
-		pathfinding.call("set_castle", castle)
-	else:
-		print_debug("pathfinding does not have function set_castle")
+	if is_instance_valid(castle):
+		movement.assigned_castle = castle
 
 
 func _assign_controls_refs() -> void:
@@ -330,9 +314,6 @@ func apply_role(role: UnitRoles.UnitType, p: int) -> void:
 	if is_instance_valid(movement):
 		movement.clear_movement_order(9999)
 
-	if is_instance_valid(pathfinding):
-		pathfinding.clear_target()
-
 	if is_instance_valid(detection):
 		detection.refresh()
 
@@ -363,14 +344,12 @@ func return_castle() -> Node:
 
 # Called externally to update castle agent is assigned to.
 func set_castle(new_castle: Node) -> void:
-	_unregister_myself_with_castle
+	_unregister_myself_with_castle()
 	castle = new_castle
 	_register_myself_with_castle()
 	
-	if is_instance_valid(pathfinding) and pathfinding.has_method("set_castle"):
-		pathfinding.call("set_castle", castle)
-	else:
-		print_debug("pathfinding does not contain function set_castle, or does not exist.")
+	if is_instance_valid(movement):
+		movement.assigned_castle = castle
 
 	if is_instance_valid(tasker) and tasker.has_method("switch_job_board"):
 		tasker.call("switch_job_board", castle)

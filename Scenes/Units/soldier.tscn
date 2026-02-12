@@ -6,7 +6,6 @@
 [ext_resource type="Script" uid="uid://58qm17emnwvd" path="res://Scripts/AgentNodes/agent_move.gd" id="4_80g1m"]
 [ext_resource type="Script" uid="uid://c2guvnr3dtafe" path="res://Scripts/AgentNodes/health.gd" id="5_14jue"]
 [ext_resource type="PackedScene" uid="uid://6it7l8b8yxs" path="res://Scenes/Weapons/weapon_sword.tscn" id="6_k4v4y"]
-[ext_resource type="Script" uid="uid://c1706o51hkau1" path="res://Scripts/AgentNodes/minion_pathfinding.gd" id="7_lel1w"]
 [ext_resource type="Script" uid="uid://bi15gddmxujcs" path="res://Scripts/AgentNodes/agent_tracking.gd" id="8_gdgxh"]
 [ext_resource type="Script" uid="uid://sxvily52588c" path="res://Scripts/AgentNodes/tactical_soldier.gd" id="9_3s4fr"]
 [ext_resource type="PackedScene" uid="uid://c8o4373okv5fq" path="res://Scenes/AgentNodes/HungerHolder.tscn" id="10_jghxd"]
@@ -25,13 +24,12 @@ radius = 500.0
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_80g1m"]
 shader = ExtResource("12_x32bv")
 
-[node name="Soldier" type="CharacterBody2D" node_paths=PackedStringArray("health", "movement", "pathfinding", "animation", "attack", "detection", "tactical", "gold", "hunger", "foodTasker") groups=["Attackable", "Interactable", "Minions"]]
+[node name="Soldier" type="CharacterBody2D" node_paths=PackedStringArray("health", "movement", "animation", "attack", "detection", "tactical", "gold", "hunger", "foodTasker") groups=["Attackable", "Interactable", "Minions"]]
 collision_layer = 16
 collision_mask = 11
 script = ExtResource("1_jq3hr")
 health = NodePath("Health")
 movement = NodePath("AgentMovement")
-pathfinding = NodePath("MinionPathfinding")
 animation = NodePath("AgentAnimate")
 attack = NodePath("WeaponSword")
 detection = NodePath("AgentDetection")
@@ -56,12 +54,13 @@ sprite = NodePath("../Sprites/AnimatedSprite2D")
 shadow_sprite = NodePath("../Sprites/ShadowSprite")
 metadata/_custom_type_script = "uid://cjjdaf7vlfs4k"
 
-[node name="AgentMovement" type="Node" parent="." node_paths=PackedStringArray("agent", "animation")]
+[node name="AgentMovement" type="Node" parent="." node_paths=PackedStringArray("agent", "animation", "nav_agent")]
 script = ExtResource("4_80g1m")
 max_speed = 200.0
 can_meander = true
 agent = NodePath("..")
 animation = NodePath("../AgentAnimate")
+nav_agent = NodePath("../NavigationAgent2D")
 metadata/_custom_type_script = "uid://58qm17emnwvd"
 
 [node name="Health" type="Node" parent="."]
@@ -69,10 +68,6 @@ script = ExtResource("5_14jue")
 metadata/_custom_type_script = "uid://c2guvnr3dtafe"
 
 [node name="WeaponSword" parent="." instance=ExtResource("6_k4v4y")]
-
-[node name="MinionPathfinding" type="Node" parent="." node_paths=PackedStringArray("nav_agent")]
-script = ExtResource("7_lel1w")
-nav_agent = NodePath("../NavigationAgent2D")
 
 [node name="AgentDetection" type="Area2D" parent="." node_paths=PackedStringArray("my_agent", "tactical")]
 collision_layer = 32

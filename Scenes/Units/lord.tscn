@@ -4,7 +4,6 @@
 [ext_resource type="Script" uid="uid://cjjdaf7vlfs4k" path="res://Scripts/AgentNodes/agent_animate.gd" id="3_ygrm2"]
 [ext_resource type="Script" uid="uid://58qm17emnwvd" path="res://Scripts/AgentNodes/agent_move.gd" id="4_24sip"]
 [ext_resource type="Script" uid="uid://c2guvnr3dtafe" path="res://Scripts/AgentNodes/health.gd" id="5_4tqx4"]
-[ext_resource type="Script" uid="uid://c1706o51hkau1" path="res://Scripts/AgentNodes/minion_pathfinding.gd" id="7_p5hcf"]
 [ext_resource type="Script" uid="uid://bi15gddmxujcs" path="res://Scripts/AgentNodes/agent_tracking.gd" id="8_7kbwn"]
 [ext_resource type="Shader" uid="uid://cmsuxok158t72" path="res://Scripts/Shaders/shadow.gdshader" id="9_ahyq5"]
 [ext_resource type="Script" uid="uid://bts71s2mlomuh" path="res://Scripts/AgentNodes/shadow_sprite.gd" id="10_rho4c"]
@@ -22,13 +21,12 @@ radius = 500.0
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_pu4ol"]
 shader = ExtResource("9_ahyq5")
 
-[node name="Lord" type="CharacterBody2D" node_paths=PackedStringArray("health", "movement", "pathfinding", "animation", "detection", "tactical", "gold") groups=["Attackable", "Interactable", "Minions"]]
+[node name="Lord" type="CharacterBody2D" node_paths=PackedStringArray("health", "movement", "animation", "detection", "tactical", "gold") groups=["Attackable", "Interactable", "Minions"]]
 collision_layer = 16
 collision_mask = 11
 script = ExtResource("1_pu4ol")
 health = NodePath("Health")
 movement = NodePath("AgentMovement")
-pathfinding = NodePath("MinionPathfinding")
 animation = NodePath("AgentAnimate")
 detection = NodePath("AgentDetection")
 tactical = NodePath("TacticalLord")
@@ -51,14 +49,14 @@ sprite = NodePath("../Sprites/AnimatedSprite2D")
 shadow_sprite = NodePath("../Sprites/ShadowSprite")
 metadata/_custom_type_script = "uid://cjjdaf7vlfs4k"
 
-[node name="AgentMovement" type="Node" parent="." node_paths=PackedStringArray("agent", "animation", "pathfinding")]
+[node name="AgentMovement" type="Node" parent="." node_paths=PackedStringArray("agent", "animation", "nav_agent")]
 script = ExtResource("4_24sip")
 max_speed = 200.0
 meander_speed = null
 can_meander = true
 agent = NodePath("..")
 animation = NodePath("../AgentAnimate")
-pathfinding = NodePath("../MinionPathfinding")
+nav_agent = NodePath("../NavigationAgent2D")
 accel = null
 patrol_radius = null
 patrol_arrival_radius = null
@@ -69,19 +67,6 @@ metadata/_custom_type_script = "uid://58qm17emnwvd"
 [node name="Health" type="Node" parent="."]
 script = ExtResource("5_4tqx4")
 metadata/_custom_type_script = "uid://c2guvnr3dtafe"
-
-[node name="MinionPathfinding" type="Node" parent="." node_paths=PackedStringArray("nav_agent")]
-script = ExtResource("7_p5hcf")
-nav_agent = NodePath("../NavigationAgent2D")
-repath_interval = null
-target_repath_distance = null
-stuck_time = null
-min_progress_per_sec = null
-slow_radius = null
-patrol_radius = null
-patrol_arrival_radius = null
-patrol_pause_seconds = null
-patrol_pick_attempts = null
 
 [node name="AgentDetection" type="Area2D" parent="." node_paths=PackedStringArray("my_agent", "tactical")]
 collision_layer = 32
