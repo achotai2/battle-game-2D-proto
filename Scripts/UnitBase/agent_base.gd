@@ -328,7 +328,7 @@ func apply_role(role: UnitRoles.UnitType, p: int) -> void:
 	# --- tracking refresh ---
 	# Cancel transient action states when swapping role
 	if is_instance_valid(movement):
-		movement.clear_movement_order(10)
+		movement.clear_movement_order(9999)
 
 	if is_instance_valid(pathfinding):
 		pathfinding.clear_target()

@@ -172,7 +172,7 @@ func _on_work_tick() -> void:
 		_work_timer.stop()
 		return
 
-	if is_instance_valid(movement) and movement.start_work():
+	if is_instance_valid(movement) and movement.command_start_work(job_priority):
 		_apply_work(_site, work_amount)
 
 	if not _site_needs_work(_site):

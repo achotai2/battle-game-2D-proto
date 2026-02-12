@@ -17,23 +17,6 @@ signal nav_finished
 # --- Arrival ---
 @export_range(0.0, 200.0, 1.0) var slow_radius: float = 0.0
 
-# --- Patrol / meander ---
-@export var assigned_castle: Node2D
-@export_range(0.0, 2000.0, 10.0) var patrol_radius: float = 500.0
-@export_range(0.0, 200.0, 1.0) var patrol_arrival_radius: float = 24.0
-@export_range(0.0, 10.0, 0.1) var patrol_pause_seconds: float = 0.5
-@export_range(1, 20, 1) var patrol_pick_attempts: int = 8
-
-var meander_enabled: bool = false
-
-# Target mode
-enum Mode { NONE, MOVE_TO_POS, CHASE_NODE, PATROL }
-var _mode: Mode = Mode.NONE
-
-var _target_node: Node2D = null
-var _target_pos: Vector2 = Vector2.ZERO
-var _last_target_pos: Vector2 = Vector2.ZERO
-
 # timers / tracking
 var _repath_timer: Timer
 var _patrol_pause_timer: Timer
@@ -59,63 +42,13 @@ func _ready() -> void:
 	add_child(_repath_timer)
 	_repath_timer.start(randf() * repath_interval) # stagger
 
-	_patrol_pause_timer = Timer.new()
-	_patrol_pause_timer.one_shot = true
-	_patrol_pause_timer.timeout.connect(_on_patrol_pause_finished)
-	add_child(_patrol_pause_timer)
-
 
 # -------------------------
 # Public API
 # -------------------------
 
-func set_meander(enable: bool) -> void:
-	if enable == meander_enabled:
-		return
-
-	if enable:
-		meander_enabled = true
-		start_patrol()
-	else:
-		meander_enabled = false
-		# Only clear if we were patrolling; otherwise leave current mode alone
-		if _mode == Mode.PATROL:
-			clear_target()
-
-
 func set_move_target_position(pos: Vector2) -> void:
-	_mode = Mode.MOVE_TO_POS
-	_target_node = null
-	if is_instance_valid(nav_agent):
-		nav_agent.target_desired_distance = 10.0
 	_set_target_pos(pos)
-
-
-func set_chase_target(node: Node2D) -> void:
-	_mode = Mode.CHASE_NODE
-	_target_node = node
-	if is_instance_valid(nav_agent):
-		nav_agent.target_desired_distance = 10.0
-	if is_instance_valid(_target_node):
-		_set_target_pos(_target_node.global_position)
-	else:
-		clear_target()
-
-
-func start_patrol() -> void:
-	_mode = Mode.PATROL
-	_target_node = null
-	if is_instance_valid(nav_agent):
-		nav_agent.target_desired_distance = patrol_arrival_radius
-	_pick_new_patrol_point(true)
-
-
-func clear_target() -> void:
-	_mode = Mode.NONE
-	_target_node = null
-	_stuck_accum = 0.0
-	_patrol_pause_timer.stop()
-	_send_desired_velocity(Vector2.ZERO)
 
 
 # Call from Agent._physics_process(delta)
@@ -233,40 +166,6 @@ func _set_target_pos(pos: Vector2) -> void:
 		nav_agent.target_position = pos
 
 
-func _on_patrol_pause_finished() -> void:
-	if _mode == Mode.PATROL:
-		_pick_new_patrol_point(true)
-
-
-func _pick_new_patrol_point(force: bool) -> void:
-	if _mode != Mode.PATROL:
-		return
-	if not is_instance_valid(assigned_castle):
-		# No castle -> can't patrol; just stop
-		clear_target()
-		return
-
-	var center := assigned_castle.global_position
-
-	# Try a few random points; choose the first that is likely reachable.
-	for i in range(patrol_pick_attempts):
-		# Random point inside a circle (uniform-ish)
-		var angle := randf() * TAU
-		var r := sqrt(randf()) * patrol_radius
-		var candidate := center + Vector2(cos(angle), sin(angle)) * r
-
-		# Basic sanity: avoid choosing basically the same target
-		# Bolt: Squared distance check (8^2 = 64)
-		if candidate.distance_squared_to(_target_pos) < 64.0:
-			continue
-
-		_set_target_pos(candidate)
-		return
-
-	# Fallback: just stand near castle
-	_set_target_pos(center)
-
-
 func _on_velocity_computed(safe_velocity: Vector2) -> void:
 	_send_desired_velocity(safe_velocity)
 
@@ -277,7 +176,3 @@ func _on_nav_finished() -> void:
 
 func _send_desired_velocity(velocity: Vector2) -> void:
 	emit_signal("desired_velocity", velocity)
-
-
-func set_castle(c: Node2D) -> void:
-	assigned_castle = c

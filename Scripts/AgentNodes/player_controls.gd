@@ -23,35 +23,14 @@ func _ready() -> void:
 	_bind_interactor()
 
 
-func set_interactor(value: PlayerInteractor) -> void:
-	interactor = value
-	_bind_interactor()
-
-
-func set_attackNode(a: Node) -> void:
-	attackNode = a
-
-
-func set_movement(m: AgentMovement) -> void:
-	movement = m
-
-
-func _bind_interactor() -> void:
-	if is_instance_valid(interactor):
-		if not interactor.interaction_started.is_connected(_on_interaction_started):
-			interactor.interaction_started.connect(_on_interaction_started)
-		if not interactor.interaction_finished.is_connected(_on_interaction_finished):
-			interactor.interaction_finished.connect(_on_interaction_finished)
-		if not interactor.interaction_suspended.is_connected(_on_interaction_finished):
-			interactor.interaction_suspended.connect(_on_interaction_finished)
-
-
 func _physics_process(_delta: float) -> void:
 	# Continuous movement belongs in physics tick
 	var x: float = Input.get_axis(move_left, move_right)
 	var y: float = Input.get_axis(move_up, move_down)
-
 	var dir := Vector2(x, y)
+
+	if _attacking() or _interacting():
+		dir = Vector2.ZERO
 
 	# Optional deadzone (helps analog sticks; harmless for keyboard)
 	if dir.length() < deadzone:
@@ -79,6 +58,29 @@ func _physics_process(_delta: float) -> void:
 	_last_dir = dir
 
 
+func set_interactor(value: PlayerInteractor) -> void:
+	interactor = value
+	_bind_interactor()
+
+
+func set_attackNode(a: Node) -> void:
+	attackNode = a
+
+
+func set_movement(m: AgentMovement) -> void:
+	movement = m
+
+
+func _bind_interactor() -> void:
+	if is_instance_valid(interactor):
+		if not interactor.interaction_started.is_connected(_on_interaction_started):
+			interactor.interaction_started.connect(_on_interaction_started)
+		if not interactor.interaction_finished.is_connected(_on_interaction_finished):
+			interactor.interaction_finished.connect(_on_interaction_finished)
+		if not interactor.interaction_suspended.is_connected(_on_interaction_finished):
+			interactor.interaction_suspended.connect(_on_interaction_finished)
+
+
 func _unhandled_input(event: InputEvent) -> void:
 	# Discrete actions here so UI can consume input first
 	if event.is_action_pressed(interact) and is_instance_valid(interactor):
@@ -95,6 +97,14 @@ func _pause_attack() -> void:
 func _unpause_attack() -> void:
 	if is_instance_valid(attackNode):
 		attackNode.restart_attack(controls_priority)
+
+
+func _attacking() -> bool:
+	return attackNode.am_i_attacking()
+
+
+func _interacting() -> bool:
+	return interactor.am_i_interacting()
 
 
 func _on_interaction_started(_target: Interactable) -> void:

@@ -41,20 +41,11 @@ func set_player(owner_agent: Node2D) -> void:
 
 
 func pause_attack(priority: int = 5) -> void:
-	# Called by controls player node
-	if cooldown.is_stopped():
-		_attack_paused = true
-		cooldown.stop()
-		attack_delay.stop() # prevent firing while player is moving
-		if is_instance_valid(movement):
-			movement.clear_movement_order(priority)
+	_attack_paused = true
 
 
 func restart_attack(priority: int = 5) -> void:
-	# Called by player controls node
 	_attack_paused = false
-	if _current_target == null and tracking.get_target():
-		_current_target = tracking.get_target()
 	_try_attack()
 
 
@@ -65,6 +56,10 @@ func _on_target_changed(t: Node2D) -> void:
 
 func _on_target_lost() -> void:
 	_current_target = null
+
+
+func am_i_attacking() -> bool:
+	return not cooldown.is_stopped()
 
 
 func _try_attack() -> void:

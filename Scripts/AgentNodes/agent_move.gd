@@ -14,6 +14,19 @@ signal move_to_pos_finished(agent: Node2D)
 # Optional smoothing (helps crowd jitter)
 @export_range(0.0, 200.0, 0.5) var accel: float = 0.0
 
+# --- Patrol / meander ---
+@export var assigned_castle: Node2D
+@export_range(0.0, 2000.0, 10.0) var patrol_radius: float = 500.0
+@export_range(0.0, 200.0, 1.0) var patrol_arrival_radius: float = 24.0
+@export_range(0.0, 10.0, 0.1) var patrol_pause_seconds: float = 0.5
+@export_range(1, 20, 1) var patrol_pick_attempts: int = 8
+
+var meander_enabled: bool = false
+
+var _target_node: Node2D = null
+var _target_pos: Vector2 = Vector2.ZERO
+var _last_target_pos: Vector2 = Vector2.ZERO
+
 var _current_velocity: Vector2 = Vector2.ZERO
 var _action_state: int = 0
 var _pf_velocity: Vector2 = Vector2.ZERO
@@ -46,7 +59,7 @@ func tick(delta: float) -> void:
 	match _order_type:
 		OrderType.MEANDER, OrderType.MOVE_TO_POS, OrderType.CHASE_NODE:
 			if is_instance_valid(pathfinding) and is_instance_valid(agent):
-				pathfinding.tick(agent.global_position, return_speed(), delta)
+asdasds				pathfinding.tick(agent.global_position, return_speed(), delta)
 				move_with_velocity(_pf_velocity, delta)
 			else:
 				move_with_velocity(Vector2.ZERO, delta)
@@ -182,6 +195,35 @@ func no_order_check() -> bool:
 	return _order_type == OrderType.NONE
 
 
+func _pick_new_patrol_point(force: bool) -> void:
+	if _mode != Mode.PATROL:
+		return
+	if not is_instance_valid(assigned_castle):
+		# No castle -> can't patrol; just stop
+		clear_target()
+		return
+
+	var center := assigned_castle.global_position
+
+	# Try a few random points; choose the first that is likely reachable.
+	for i in range(patrol_pick_attempts):
+		# Random point inside a circle (uniform-ish)
+		var angle := randf() * TAU
+		var r := sqrt(randf()) * patrol_radius
+		var candidate := center + Vector2(cos(angle), sin(angle)) * r
+
+		# Basic sanity: avoid choosing basically the same target
+		# Bolt: Squared distance check (8^2 = 64)
+		if candidate.distance_squared_to(_target_pos) < 64.0:
+			continue
+
+		_set_target_pos(candidate)
+		return
+
+	# Fallback: just stand near castle
+	_set_target_pos(center)
+
+
 #---- MOVEMENT COMMAND FUNCTIONS ----
 
 func command_start_attack(target: Node2D, priority: int = 5) -> bool:
@@ -290,6 +332,9 @@ func command_player_direction(dir: Vector2, priority: int = 5) -> bool:
 func clear_movement_order(priority: int = 5) -> void:
 	if priority < _order_priority:
 		return
+
+	if get_parent().name == "Player":
+		print(priority)
 
 	_order_type = OrderType.NONE
 	_order_priority = -1

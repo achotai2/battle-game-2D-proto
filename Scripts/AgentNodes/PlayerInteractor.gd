@@ -204,6 +204,10 @@ func _on_interaction_timeout() -> void:
 	_finish_interaction()
 
 
+func am_i_interacting() -> bool:
+	return _is_interacting
+
+
 func _refresh_target() -> void:
 	if _is_interacting:
 		return

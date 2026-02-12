@@ -60,6 +60,10 @@ agent = NodePath("..")
 animation = NodePath("../AgentAnimate")
 pathfinding = NodePath("../MinionPathfinding")
 accel = null
+patrol_radius = null
+patrol_arrival_radius = null
+patrol_pause_seconds = null
+patrol_pick_attempts = null
 metadata/_custom_type_script = "uid://58qm17emnwvd"
 
 [node name="Health" type="Node" parent="."]
@@ -69,6 +73,15 @@ metadata/_custom_type_script = "uid://c2guvnr3dtafe"
 [node name="MinionPathfinding" type="Node" parent="." node_paths=PackedStringArray("nav_agent")]
 script = ExtResource("7_p5hcf")
 nav_agent = NodePath("../NavigationAgent2D")
+repath_interval = null
+target_repath_distance = null
+stuck_time = null
+min_progress_per_sec = null
+slow_radius = null
+patrol_radius = null
+patrol_arrival_radius = null
+patrol_pause_seconds = null
+patrol_pick_attempts = null
 
 [node name="AgentDetection" type="Area2D" parent="." node_paths=PackedStringArray("my_agent", "tactical")]
 collision_layer = 32
