@@ -94,6 +94,9 @@ func _try_attack() -> void:
 		_cancel_attack()
 		return
 
+	if not cooldown.is_stopped() or not attack_delay.is_stopped():
+		return
+
 	# Optional: only fire if we have a projectile scene
 	if projectile_scene == null:
 		return
