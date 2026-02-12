@@ -99,7 +99,7 @@ func _physics_process(delta: float) -> void:
 	move_and_slide()
 
 	if is_returning:
-		if global_position.distance_to(_spawn_position) < 10.0:
+		if global_position.distance_squared_to(_spawn_position) < 100.0:
 			queue_free()
 
 
