@@ -58,7 +58,7 @@ func _cancel_attack() -> void:
 	# Called whenever attack is finished or target lost.
 	_current_target = null
 	
-	if is_instance_valid(movement) and _attacking:
+	if is_instance_valid(movement):
 		movement.clear_movement_order(attack_priority)
 
 	cooldown.stop()
@@ -125,7 +125,9 @@ func _on_attack_delay_timeout() -> void:
 
 
 func attack_animation_finished() -> void:
-	pass
+	if is_instance_valid(movement) and _attacking:
+		movement.clear_movement_order(attack_priority)
+	_attacking = false
 
 
 func set_movement(m: AgentMovement) -> void:
