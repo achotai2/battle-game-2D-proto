@@ -8,7 +8,11 @@ signal target_refreshed(current_target: Node2D)
 enum TargetKind { ATTACKABLE, INTERACTABLE }
 
 @export var my_agent: Node2D
-@export var target_kind: TargetKind = TargetKind.ATTACKABLE
+@export var target_kind: TargetKind = TargetKind.ATTACKABLE:
+	set(v):
+		target_kind = v
+		_refresh_candidates()
+
 @export var tactical: Node = null
 
 # Team filters (works for any number of teams; 0 = neutral)
@@ -24,6 +28,7 @@ enum TargetKind { ATTACKABLE, INTERACTABLE }
 var dont_target: Node2D = null
 
 var _current_target: Node2D = null
+var _candidates: Array[Node2D] = []
 var _timer: Timer
 
 # Bolt Optimization: Cache player ID to avoid repeated function calls
@@ -75,11 +80,19 @@ func get_target() -> Node2D:
 
 
 func get_candidates() -> Array[Node2D]:
-	var candidates: Array[Node2D] = []
+	var valid_candidates: Array[Node2D] = []
+	for body in _candidates:
+		if _is_valid_target(body):
+			valid_candidates.append(body)
+	return valid_candidates
+
+
+func _refresh_candidates() -> void:
+	_candidates.clear()
 	for body in get_overlapping_bodies():
-		if _is_candidate(body):
-			candidates.append(body)
-	return candidates
+		if _is_candidate_type(body):
+			_candidates.append(body)
+	_reselect_target()
 
 
 func refresh() -> void:
@@ -104,10 +117,17 @@ func set_team_filters(same_team: bool, opposing: bool, neutral: bool) -> void:
 # -------------------------
 
 func _on_body_entered(body: Node2D) -> void:
-	if _is_candidate(body):
-		_reselect_target()
+	if _is_candidate_type(body):
+		if not body in _candidates:
+			_candidates.append(body)
+
+		if _is_valid_target(body):
+			_reselect_target()
 
 func _on_body_exited(body: Node2D) -> void:
+	if body in _candidates:
+		_candidates.erase(body)
+
 	if body == _current_target:
 		_reselect_target()
 
@@ -135,14 +155,11 @@ func _is_interactable(body: Node) -> bool:
 	return body.is_in_group(GROUP_INTERACTABLE)
 
 
-func _is_candidate(body: Node2D) -> bool:
-	if body == null or body == dont_target:
-		return false
-
+func _is_candidate_type(body: Node2D) -> bool:
 	if not is_instance_valid(body):
 		return false
 
-	# Capability gate
+	# Capability gate (Static Check)
 	match target_kind:
 		TargetKind.ATTACKABLE:
 			if not _is_attackable(body):
@@ -151,10 +168,18 @@ func _is_candidate(body: Node2D) -> bool:
 			if not _is_interactable(body):
 				return false
 
-	# Team gate
-	if not body.has_method("return_player"):
+	# Team gate (Static Check)
+	return body.has_method("return_player")
+
+
+func _is_valid_target(body: Node2D) -> bool:
+	if body == null or body == dont_target:
 		return false
 
+	if not is_instance_valid(body):
+		return false
+
+	# Team gate (Dynamic Check)
 	return _team_allowed(body.return_player())
 
 
@@ -163,7 +188,7 @@ func _is_candidate(body: Node2D) -> bool:
 # -------------------------
 
 func _reselect_target() -> void:
-	var bodies := get_overlapping_bodies()
+	# Optimization: Iterate cached candidates instead of all overlapping bodies
 	var best: Node2D = null
 
 	# Bolt Optimization: Fast path for Nearest to avoid repeated function calls and property access
@@ -171,8 +196,8 @@ func _reselect_target() -> void:
 		var my_pos := global_position
 		var best_dist_sq := INF
 
-		for b in bodies:
-			if not _is_candidate(b):
+		for b in _candidates:
+			if not _is_valid_target(b):
 				continue
 
 			var d := my_pos.distance_squared_to(b.global_position)
@@ -184,8 +209,8 @@ func _reselect_target() -> void:
 		var best_health := INF
 		var best_dist_sq := INF
 
-		for b in bodies:
-			if not _is_candidate(b):
+		for b in _candidates:
+			if not _is_valid_target(b):
 				continue
 
 			var h := _health_value(b)
@@ -200,8 +225,8 @@ func _reselect_target() -> void:
 					best_dist_sq = d
 					best = b
 	else:
-		for b in bodies:
-			if not _is_candidate(b):
+		for b in _candidates:
+			if not _is_valid_target(b):
 				continue
 
 			if best == null:
