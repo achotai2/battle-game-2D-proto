@@ -41,6 +41,30 @@ func _ready() -> void:
 	if is_instance_valid(gold_display):
 		gold_display.hide()
 
+	if not is_instance_valid(_patience_timer):
+		_patience_timer = Timer.new()
+		_patience_timer.wait_time = 5.0
+		_patience_timer.one_shot = true
+		add_child(_patience_timer)
+
+	if not _patience_timer.timeout.is_connected(_on_delivery_patience_timeout):
+		_patience_timer.timeout.connect(_on_delivery_patience_timeout)
+
+	if not is_instance_valid(_gold_gone_timer):
+		_gold_gone_timer = Timer.new()
+		_gold_gone_timer.wait_time = 2.0
+		_gold_gone_timer.one_shot = true
+		add_child(_gold_gone_timer)
+
+	if not _gold_gone_timer.timeout.is_connected(_on_gold_gone_timeout):
+		_gold_gone_timer.timeout.connect(_on_gold_gone_timeout)
+
+	if not is_instance_valid(_tax_timer):
+		_tax_timer = Timer.new()
+		_tax_timer.wait_time = 10.0
+		_tax_timer.one_shot = true
+		add_child(_tax_timer)
+
 	# Sent to update the UI display for player gold amount.
 	call_deferred("_change_gold_amount", 0)
 
