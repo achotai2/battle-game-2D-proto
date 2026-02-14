@@ -5,29 +5,22 @@ extends Node2D
 
 func _process(_delta):
 	# --- 1. OPTIMIZATION CHECK ---
-	# If the shadow length is near max (Sunrise/Sunset/Night), 
-	# check if we should even be visible.
-	
-	# If the global shadow color is White (Invisible), hide the sprite entirely.
-	# We check if the Red channel is > 0.95 (Almost White).
-	# This saves the GPU from drawing invisible pixels.
-	var color_check = RenderingServer.global_shader_parameter_get("global_shadow_color")
-	if color_check is Color and color_check.r > 0.98:
+	if Sun.current_shadow_color.r > 0.98:
 		visible = false
 		return # Stop processing math
 	else:
 		visible = true
 
 	# --- 2. SYNC ANIMATION ---
-	if main_body:
-		if "animation" in main_body and "animation" in self:
-			self.animation = main_body.animation
-		if "frame" in main_body and "frame" in self:
-			self.frame = main_body.frame
-		if "flip_h" in main_body and "flip_h" in self:
-			self.flip_h = main_body.flip_h
+#	if main_body:
+#		if "animation" in main_body and "animation" in self:
+#			self.animation = main_body.animation
+#		if "frame" in main_body and "frame" in self:
+#			self.frame = main_body.frame
+#		if "flip_h" in main_body and "flip_h" in self:
+#			self.flip_h = main_body.flip_h
 
-	# --- 3. MATH & TRANSFORM (Existing Code) ---
+	# --- 3. MATH & TRANSFORM ---
 	var angle_rad = deg_to_rad(Sun.current_sun_angle)
 	var length = Sun.current_shadow_length
 	var width = Sun.shadow_width

@@ -19,7 +19,8 @@ config/icon="res://icon.svg"
 
 UnitRoles="*res://Scripts/UnitBase/UnitRoles.gd"
 BuildingDefs="*res://Scripts/DefsScripts/BuildingDefs.gd"
-Sun="*res://Scripts/DefsScripts/GlobalSun.gd"
+Sun="*res://Scripts/Weather/GlobalSun.gd"
+Weather="*res://Scripts/Weather/GlobalWeather.gd"
 
 [global_group]
 

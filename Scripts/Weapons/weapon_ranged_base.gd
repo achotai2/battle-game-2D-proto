@@ -1,38 +1,44 @@
 extends Node
 class_name WeaponRanged
 
+# --- WEAPON STATS ---
 @export_range(0, 1000, 1) var damage: int = 10
 @export_range(0, 1000, 1) var heal: int = 0
+@export_range(0.0, 100.0, 1.0) var base_accuracy: float = 50.0 # New: Base skill (0-100)
+@export_range(0.0, 5.0, 0.1) var wind_resistance: float = 1.0 # New: 0.0 = Immune to wind
 
-# Who can this weapon affect?
+# --- TARGETING ---
 @export var affects_own: bool = false
 @export var affects_opposing: bool = true
 @export var affects_neutral: bool = false
 
-# Projectile setup
+# --- PROJECTILE SETUP ---
 @export var projectile_scene: PackedScene
-@export var muzzle: Node2D                      # optional spawn point (e.g. "Muzzle" Node2D)
+@export var muzzle: Node2D # Optional spawn point
 @export var projectile_parent_path: NodePath
-# Tip: set this in the inspector to point at your Projectiles node.
-# If it's invalid, we will fall back to current_scene.
 @export var projectile_speed: float = 700.0
 @export var attack_power: int = 10
-@export var movement: AgentMovement = null
 @export var attack_priority: int = 7
 
+# --- REFS ---
+@export var movement: AgentMovement = null
 @onready var tracking: AgentTracking = $AgentTracking
 @onready var cooldown: Timer = $cooldown
 @onready var attack_delay: Timer = $AttackDelay
 
+# --- INTERNAL STATE ---
 var _owner_agent: Node2D = null
 var _current_target: Node2D = null
 var _projectile_parent: Node = null
 var _attack_paused: bool = false
 var _attacking: bool = false
 
+# --- ACCURACY / BUFF STATE ---
+var accuracy_modifiers: Array = [] # Stores temporary buffs (floats)
+
 
 func _ready() -> void:
-	# Configure tracking for attackable targets (capability: health)
+	# Configure tracking
 	tracking.target_kind = AgentTracking.TargetKind.ATTACKABLE
 	tracking.target_same_team = affects_own
 	tracking.target_opposing = affects_opposing
@@ -52,52 +58,48 @@ func set_player(owner_agent: Node2D) -> void:
 	tracking.set_myself(owner_agent)
 
 
+# --- CONTROL API ---
+
 func pause_attack(priority: int = 5) -> void:
-	# Called by player controls node
 	_attack_paused = true
 
-
 func restart_attack(priority: int = 5) -> void:
-	# Called by player controls node
 	_attack_paused = false
 	if _current_target == null and tracking.get_target():
 		_current_target = tracking.get_target()
 	_try_attack()
 
-
 func _cancel_attack() -> void:
-	# Called whenever attack is finished or target lost.
 	_current_target = null
 	
 	if is_instance_valid(movement) and _attacking:
 		movement.clear_movement_order(attack_priority)
 
 	cooldown.stop()
-	attack_delay.stop() # prevent firing while player is moving
+	attack_delay.stop()
 	_attacking = false
 
+
+# --- TARGETING CALLBACKS ---
 
 func _on_target_changed(t: Node2D) -> void:
 	_current_target = t
 	_try_attack()
 
-
 func _on_target_lost() -> void:
 	_cancel_attack()
 
 
+# --- ATTACK LOGIC ---
+
 func _try_attack() -> void:
-	if _current_target == null:
-		_cancel_attack()
-		return
-	if not is_instance_valid(_current_target):
+	if _current_target == null or not is_instance_valid(_current_target):
 		_cancel_attack()
 		return
 
 	if not cooldown.is_stopped() or not attack_delay.is_stopped():
 		return
 
-	# Optional: only fire if we have a projectile scene
 	if projectile_scene == null:
 		return
 
@@ -110,12 +112,14 @@ func _try_attack() -> void:
 
 
 func _on_attack_delay_timeout() -> void:
-	# Spawn a single projectile at the chosen target if still valid and still in range.
+	# 1. Validate Target
 	var t := _current_target
 	if t == null or not is_instance_valid(t):
 		return
 
-	# Ensure the target is still within weapon range (still a candidate)
+	# Ensure target is still a valid candidate (range check, etc)
+	# Note: get_candidates() might be expensive to check every shot, 
+	# usually relying on tracking signals is enough, but this is safe.
 	if not tracking.get_candidates().has(t):
 		return
 
@@ -124,36 +128,76 @@ func _on_attack_delay_timeout() -> void:
 	if not is_instance_valid(_owner_agent) or not _owner_agent.has_method("return_player"):
 		return
 
+	# 2. Resolve Parent
 	var parent := _projectile_parent
 	if parent == null or not is_instance_valid(parent):
 		parent = get_tree().current_scene
 		_projectile_parent = parent
 
+	# 3. Calculate Spawn & Impact Points
 	var spawn_pos := _get_spawn_position()
-	var target_pos := t.global_position
-	var dir := (target_pos - spawn_pos)
-	if dir.length_squared() < 0.0001:
-		dir = Vector2.RIGHT
-	else:
-		dir = dir.normalized()
+	
+	# [NEW] Calculate the realistic hit position (Accuracy + Wind)
+	var impact_point := get_shot_point(spawn_pos, t.global_position)
 
+	# 4. Instantiate Projectile
 	var proj := projectile_scene.instantiate()
 	parent.add_child(proj)
 
-	# Preferred: projectile has init() / setup() function
-	# Supports different projectile scenes with different scripts.
+	# 5. Setup Attack Data
 	var atk := AttackData.new()
 	atk.attack_power = attack_power
 	atk.attacker_player = _owner_agent.return_player()
 	atk.attacker = _owner_agent
 	atk.source = self
 
+	# 6. Initialize Projectile
 	if proj.has_method("init"):
-		proj.call("init", spawn_pos, t.global_position, projectile_speed, atk)
+		# We pass 'impact_point' instead of 't.global_position'
+		proj.call("init", spawn_pos, impact_point, projectile_speed, atk)
 	else:
-		print_debug("projectile does not have function init.")
+		push_warning("Projectile does not have function init.")
 
 
+# --- ACCURACY & WIND MATH ---
+
+func get_current_accuracy() -> float:
+	var total = base_accuracy
+	for mod in accuracy_modifiers:
+		total += mod
+	return clamp(total, 0.0, 100.0)
+
+
+func add_accuracy_buff(amount: float, duration: float) -> void:
+	accuracy_modifiers.append(amount)
+	# Auto-remove buff after duration
+	get_tree().create_timer(duration).timeout.connect(func(): accuracy_modifiers.erase(amount))
+
+
+func get_shot_point(origin: Vector2, target_pos: Vector2) -> Vector2:
+	var dist = origin.distance_to(target_pos)
+	
+	# 1. Calculate Inaccuracy (Standard Gaussian)
+	var acc_score = get_current_accuracy()
+	var inaccuracy = (100.0 - acc_score) / 100.0 
+	var spread_factor = 0.05 
+	var deviation = dist * inaccuracy * spread_factor
+	var error_offset = Vector2(randfn(0.0, deviation), randfn(0.0, deviation))
+
+	# 2. Calculate Wind Drift (UPDATED)
+	# OLD: Weather.wind_direction * Weather.wind_speed
+	# NEW: Weather.current_wind_dir * (Weather.current_wind_speed * FORCE_MULTIPLIER)
+	
+	# We multiply by 10.0 because the new scale is 0-10, 
+	# but we want the wind to push arrows by ~100 pixels in a storm.
+	var physics_wind_speed = Weather.current_wind_speed * 10.0 
+	
+	var wind_push = Weather.current_wind_dir * physics_wind_speed * (dist / 1000.0) * wind_resistance
+	
+	return target_pos + error_offset + wind_push
+	
+
+# --- HELPERS ---
 
 func _get_spawn_position() -> Vector2:
 	if is_instance_valid(muzzle):
@@ -162,17 +206,13 @@ func _get_spawn_position() -> Vector2:
 	if is_instance_valid(_owner_agent):
 		return _owner_agent.global_position
 
-	# Should never happen, but be safe
-	push_warning("WeaponRanged has no owner agent or muzzle")
 	return Vector2.ZERO
 
 
 func _resolve_projectile_parent() -> Node:
-	# If you set projectile_parent_path in the inspector, we try that first.
 	if projectile_parent_path != NodePath() and has_node(projectile_parent_path):
 		return get_node(projectile_parent_path)
 
-	# If you prefer, you can also just name the node "Projectiles" under current_scene:
 	var scene := get_tree().current_scene
 	if scene and scene.has_node("Projectiles"):
 		return scene.get_node("Projectiles")
@@ -183,13 +223,8 @@ func _resolve_projectile_parent() -> Node:
 func am_i_attacking() -> bool:
 	return _attacking
 
-
 func attack_animation_finished() -> void:
 	pass
-#	if is_instance_valid(movement) and _attacking:
-#		movement.clear_movement_order(attack_priority)
-#	_attacking = false
-
 
 func set_movement(m: AgentMovement) -> void:
 	movement = m

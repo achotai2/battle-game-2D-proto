@@ -117,10 +117,14 @@ func _land(hit_target: Node2D) -> void:
 		return
 	_landed = true
 
-	# Stop further hit checks
-	monitoring = false
-	monitorable = false
-	shape.disabled = true
+	# --- FIX START ---
+	# We must use set_deferred because this function can be called from _on_body_entered
+	set_deferred("monitoring", false)
+	set_deferred("monitorable", false)
+	
+	# You must also defer disabling the collision shape
+	shape.set_deferred("disabled", true)
+	# --- FIX END ---
 
 	# Clamp height for ground
 	height = max(launch_height, 0.0)
@@ -131,8 +135,9 @@ func _land(hit_target: Node2D) -> void:
 		sprite.play("landed")
 
 	# Stick into target (keep world transform)
+	# (You already had this correct!)
 	if stick_into_target and is_instance_valid(hit_target):
-		reparent(hit_target, true)
+		call_deferred("reparent", hit_target, true)
 
 	# Disappear shortly
 	death_timer.start()

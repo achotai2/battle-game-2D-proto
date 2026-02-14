@@ -8,19 +8,14 @@ enum JobBoardType {
 }
 
 @export var castle: Node2D
-## Deprecated: slot-based capacity now comes from WorkSite.can_reserve/reserve.
-## This flag is kept for compatibility but no longer used.
 
 var _sites: Array[WorkSite] = []
 var _reserved_by: Dictionary = {} # site: Array[Node2D] (agents)
-
 var _idle_minions: Array[WorkSiteWorker] = []
-
 
 func _ready() -> void:
 	if castle == null:
 		castle = get_parent() as Node2D
-
 
 # -------------------------
 # Work sites
@@ -33,7 +28,12 @@ func register_site(site: WorkSite) -> void:
 		return
 
 	_sites.append(site)
-	site.tree_exited.connect(_on_site_exited.bind(site), CONNECT_ONE_SHOT)
+	
+	# [FIX] Check if already connected before connecting
+	# We create the callable variable so we can check the exact bind signature
+	var exit_callable = _on_site_exited.bind(site)
+	if not site.tree_exited.is_connected(exit_callable):
+		site.tree_exited.connect(exit_callable, CONNECT_ONE_SHOT)
 
 	# New work appeared -> try assign immediately
 	_assign_if_possible()
@@ -44,31 +44,44 @@ func unregister_site(site: WorkSite) -> void:
 	var idx := _sites.find(site)
 	if idx != -1:
 		_sites.remove_at(idx)
+		
+		# [FIX] Clean up the signal connection
+		# If we don't do this, re-registering this site later will crash
+		var exit_callable = _on_site_exited.bind(site)
+		if site.tree_exited.is_connected(exit_callable):
+			site.tree_exited.disconnect(exit_callable)
 
 	_assign_if_possible()
 
 
 func _on_site_exited(site: WorkSite) -> void:
+	# Note: We don't need to manually disconnect here because 
+	# CONNECT_ONE_SHOT handles it automatically upon firing.
 	unregister_site(site)
 
-
 # -------------------------
-# minions
+# Minions
 # -------------------------
 
 func register_minion(minion: WorkSiteWorker) -> void:
 	if minion == null or not is_instance_valid(minion):
 		return
 
-	# Clean up if minion is freed
-	minion.tree_exited.connect(_on_minion_exited.bind(minion), CONNECT_ONE_SHOT)
-
+	# [FIX] Same safety check for minions
+	var exit_callable = _on_minion_exited.bind(minion)
+	if not minion.tree_exited.is_connected(exit_callable):
+		minion.tree_exited.connect(exit_callable, CONNECT_ONE_SHOT)
 
 func unregister_minion(minion: WorkSiteWorker) -> void:
 	# Remove from idle list if present
 	var idx := _idle_minions.find(minion)
 	if idx != -1:
 		_idle_minions.remove_at(idx)
+	
+	# [FIX] Clean up signal so minion can be re-registered safely
+	var exit_callable = _on_minion_exited.bind(minion)
+	if minion.tree_exited.is_connected(exit_callable):
+		minion.tree_exited.disconnect(exit_callable)
 
 	# Release any reservations held by this minion
 	var agent := _resolve_agent(minion)
@@ -158,6 +171,9 @@ func _assign_if_possible() -> void:
 func _pick_best_site_for_minion(minion: WorkSiteWorker, agent: Node2D, excluded_sites: Array[WorkSite] = []) -> WorkSite:
 	var best: WorkSite = null
 	var best_score: float = INF
+	
+	# Cache minion position once
+	var minion_pos = minion.return_position()
 
 	for site in _sites:
 		if excluded_sites.has(site):
@@ -167,13 +183,11 @@ func _pick_best_site_for_minion(minion: WorkSiteWorker, agent: Node2D, excluded_
 
 		# Optional site-side reservation rule
 		if site.has_method("can_reserve"):
-			if not bool(site.call("can_reserve", agent)):
+			if not site.can_reserve(agent):
 				continue
-		else:
-			print_debug("site does not have function can_reserve")
-
+		
 		var wp := _get_site_pos(site, agent)
-		var d2 : float = minion.return_position().distance_squared_to(wp)
+		var d2 : float = minion_pos.distance_squared_to(wp)
 		if d2 < best_score:
 			best_score = d2
 			best = site
@@ -189,10 +203,8 @@ func _reserve(site: WorkSite, agent: Node2D) -> bool:
 	if not is_instance_valid(site):
 		return false
 	if site.has_method("reserve"):
-		if not bool(site.call("reserve", agent)):
+		if not site.reserve(agent):
 			return false
-	else:
-		print_debug("site does not have function reserve")
 
 	var reserved = _reserved_by.get(site, [])
 	if not reserved.has(agent):
@@ -208,17 +220,18 @@ func _release_site(site: WorkSite) -> void:
 		if is_instance_valid(site) and site.has_method("unreserve"):
 			for agent in agents:
 				if is_instance_valid(agent):
-					if is_instance_valid(site) and site.has_method("unreserve"):
-						site.call("unreserve", agent)
-					else:
-						print_debug("site doesn't exist or doesnt have function unreserve.")
+					# Check validity again for safety
+					if is_instance_valid(site):
+						site.unreserve(agent)
+					
 					if is_instance_valid(agent.tasker) and agent.tasker.has_method("clear_task"):
-						agent.tasker.call("clear_task")
-					else:
-						print_debug("agent doesn't exist or doesnt have function clear_task.")
+						agent.tasker.clear_task()
 			
 		else:
-			print_debug("site does not exist or does not have function unreserve")
+			# If site is gone, we can't unreserve on it, but we should clear agent tasks
+			for agent in agents:
+				if is_instance_valid(agent) and is_instance_valid(agent.tasker) and agent.tasker.has_method("clear_task"):
+					agent.tasker.clear_task()
 
 
 func _release_reservation(site: WorkSite, agent: Node2D) -> void:
@@ -230,9 +243,7 @@ func _release_reservation(site: WorkSite, agent: Node2D) -> void:
 	if idx != -1:
 		agents.remove_at(idx)
 		if is_instance_valid(site) and site.has_method("unreserve"):
-			site.call("unreserve", agent)
-		else:
-			print_debug("site does not exist or does not have function unreserve")
+			site.unreserve(agent)
 
 	if agents.is_empty():
 		_reserved_by.erase(site)
@@ -241,7 +252,9 @@ func _release_reservation(site: WorkSite, agent: Node2D) -> void:
 
 
 func _release_reservations_for_agent(agent: Node2D) -> void:
-	for site in _reserved_by.keys():
+	# Duplicate keys to avoid modification during iteration issues
+	var sites = _reserved_by.keys()
+	for site in sites:
 		_release_reservation(site, agent)
 
 
@@ -265,14 +278,11 @@ func _site_needs_work(site: WorkSite) -> bool:
 
 func _get_site_pos(site: WorkSite, agent: Node2D) -> Vector2:
 	if site.has_method("get_work_position_for"):
-		return site.call("get_work_position_for", agent)
-	else:
-		print_debug("site does not have function get_work_position_for")
+		return site.get_work_position_for(agent)
 	return site.get_work_position()
 
 
 func _resolve_agent(minion: WorkSiteWorker) -> Node2D:
 	if minion == null:
 		return null
-
 	return minion.get_agent()

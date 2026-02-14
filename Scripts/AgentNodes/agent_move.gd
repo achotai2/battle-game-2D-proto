@@ -14,7 +14,7 @@ signal move_to_pos_finished(agent: Node2D)
 @export var nav_agent: NavigationAgent2D
 
 # --- Repath tuning ---
-@export_range(0.05, 20.0, 0.05) var repath_interval: float = 2.0
+@export_range(0.05, 20.0, 0.05) var repath_interval: float = 1.0
 @export_range(1.0, 200.0, 1.0) var target_repath_distance: float = 250.0
 
 # --- Stuck detection ---
@@ -135,9 +135,8 @@ func move_with_velocity(desired_velocity: Vector2, delta: float) -> void:
 	var v := desired_velocity
 
 	# Clamp to current speed cap
-	var len := v.length()
-	if len > speed_cap:
-		v = v * (speed_cap / len)
+	if v.length() > speed_cap:
+		v = v * (speed_cap / v.length())
 
 	# Optional acceleration smoothing
 	if accel > 0.0 and delta > 0.0:

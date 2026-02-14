@@ -69,6 +69,7 @@ metadata/_custom_type_script = "uid://cfiw0qaxe8jxd"
 
 [node name="Health" type="Node" parent="."]
 script = ExtResource("7_52ee3")
+max_hp = 50
 defense = 100
 metadata/_custom_type_script = "uid://c2guvnr3dtafe"
 
@@ -111,8 +112,7 @@ position = Vector2(0, -5.9604645e-08)
 occluder = SubResource("OccluderPolygon2D_u2egk")
 
 [node name="PointLight2D" type="PointLight2D" parent="."]
-visible = false
-position = Vector2(-4, -77)
+position = Vector2(4, -53.000004)
 scale = Vector2(7.546876, 7.546876)
 shadow_enabled = true
 texture = SubResource("GradientTexture2D_u2egk")
