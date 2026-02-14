@@ -49,9 +49,8 @@ var _last_phase: int = -1
 func _process(delta: float) -> void:
 	if not pause_time:
 		_advance_time(delta)
-	
-	_update_sun_position()
-	_calculate_colors()
+		_update_sun_position()
+		_calculate_colors()
 
 
 func _advance_time(delta: float) -> void:

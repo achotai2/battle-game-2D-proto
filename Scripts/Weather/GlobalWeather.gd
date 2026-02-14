@@ -61,9 +61,10 @@ func _process(delta: float) -> void:
 	# Smoothly Interpolate values
 	var t = delta * _transition_speed
 	
-	current_clouds = move_toward(current_clouds, _target_clouds, t)
-	current_rain = move_toward(current_rain, _target_rain, t)
-	current_wind_speed = move_toward(current_wind_speed, _target_wind_speed, t)
+	# Variables with range 0-10 need to move 10x faster to match duration of 0-1 variables
+	current_clouds = move_toward(current_clouds, _target_clouds, t * 10.0)
+	current_rain = move_toward(current_rain, _target_rain, t * 10.0)
+	current_wind_speed = move_toward(current_wind_speed, _target_wind_speed, t * 10.0)
 	
 	# Smoothly rotate wind direction (Slerp is better for rotation, but Lerp is fine here)
 	current_wind_dir = current_wind_dir.lerp(_target_wind_dir, t).normalized()
@@ -77,10 +78,23 @@ func _process(delta: float) -> void:
 	if current_rain > current_clouds:
 		current_rain = current_clouds
 
+	# Optimization: Stop processing if targets are reached
+	if _are_targets_reached():
+		set_process(false)
+
+func _are_targets_reached() -> bool:
+	return is_equal_approx(current_clouds, _target_clouds) and \
+		   is_equal_approx(current_rain, _target_rain) and \
+		   is_equal_approx(current_wind_speed, _target_wind_speed) and \
+		   current_wind_dir.distance_squared_to(_target_wind_dir) < 0.001 and \
+		   current_mood_color.is_equal_approx(_target_mood_color)
+
 
 # --- API ---
 
 func set_weather_state(state_dict: Dictionary, wind_dir: Vector2 = Vector2.ZERO, instant: bool = false) -> void:
+	set_process(true)
+
 	_target_clouds = state_dict.get("clouds", 0.0)
 	_target_rain = state_dict.get("rain", 0.0)
 	_target_wind_speed = state_dict.get("wind_speed", 0.0)
