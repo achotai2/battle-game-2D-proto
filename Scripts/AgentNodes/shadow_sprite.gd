@@ -7,7 +7,7 @@ func _ready() -> void:
 	if has_node("/root/Sun"):
 		Sun.sun_updated.connect(_on_sun_updated)
 		# Force initial update
-		_on_sun_updated(null, Sun.current_shadow_color)
+		_on_sun_updated(Color.WHITE, Sun.current_shadow_color)
 
 func _on_sun_updated(_ambient_color: Color, shadow_color: Color) -> void:
 	# --- 1. OPTIMIZATION CHECK ---
