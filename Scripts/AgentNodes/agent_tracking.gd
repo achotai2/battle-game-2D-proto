@@ -122,7 +122,11 @@ func _on_body_entered(body: Node2D) -> void:
 			_candidates.append(body)
 
 		if _is_valid_target(body):
-			_reselect_target()
+			# Optimization: Only reselect if we have no target or new body is better.
+			if _current_target == null:
+				_reselect_target()
+			elif _is_better(body, _current_target):
+				_reselect_target()
 
 func _on_body_exited(body: Node2D) -> void:
 	if body in _candidates:
@@ -288,6 +292,14 @@ func _dist2(n: Node2D) -> float:
 
 
 func _health_value(n: Node) -> float:
+	# Fast path for AgentBase
+	if n is AgentBase and n.health:
+		return float(n.health.return_health())
+
+	# Fast path for Health nodes directly
+	if n is Health:
+		return float(n.return_health())
+
 	# Only meaningful if the target has a valid health reference
 	var h = n.get("health")
 
