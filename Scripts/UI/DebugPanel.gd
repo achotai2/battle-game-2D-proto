@@ -5,11 +5,20 @@ const WeatherControlScript = preload("res://Scripts/Weather/WorldEnvironmentCont
 var weather_node: Node = null
 var panel_container: PanelContainer
 
+var selected_unit_type = null
+var unit_scene_map = {}
+var selected_unit_label: Label
+var units_node: Node2D = null
+
 func _ready():
 	# Find WeatherState node
 	weather_node = get_tree().root.find_child("WeatherState", true, false)
 	if not weather_node:
 		push_error("DebugPanel: Could not find WeatherState node!")
+
+	units_node = get_tree().current_scene.find_child("Units", true, false)
+	if not units_node:
+		push_warning("DebugPanel: Could not find Units node!")
 
 	_build_ui()
 	visible = false
@@ -21,22 +30,27 @@ func _build_ui():
 	# Center the panel
 	panel_container.set_anchors_preset(Control.PRESET_CENTER)
 
-	var vbox = VBoxContainer.new()
-	panel_container.add_child(vbox)
+	var tab_container = TabContainer.new()
+	panel_container.add_child(tab_container)
+
+	# --- Weather Tab ---
+	var weather_tab = VBoxContainer.new()
+	weather_tab.name = "Weather"
+	tab_container.add_child(weather_tab)
 
 	var title = Label.new()
-	title.text = "Debug Panel"
+	title.text = "Weather Controls"
 	title.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	vbox.add_child(title)
+	weather_tab.add_child(title)
 
 	# Weather State Buttons
 	var weather_label = Label.new()
 	weather_label.text = "Weather State"
-	vbox.add_child(weather_label)
+	weather_tab.add_child(weather_label)
 
 	var grid = GridContainer.new()
 	grid.columns = 2
-	vbox.add_child(grid)
+	weather_tab.add_child(grid)
 
 	var states = {
 		"Clear": WeatherControlScript.WeatherState.CLEAR,
@@ -54,7 +68,7 @@ func _build_ui():
 	# Time of Day
 	var time_label = Label.new()
 	time_label.text = "Time of Day"
-	vbox.add_child(time_label)
+	weather_tab.add_child(time_label)
 
 	var time_slider = HSlider.new()
 	time_slider.min_value = 0.0
@@ -64,7 +78,7 @@ func _build_ui():
 	if weather_node:
 		time_slider.value = weather_node.set_time_of_day
 	time_slider.value_changed.connect(_on_time_slider_changed)
-	vbox.add_child(time_slider)
+	weather_tab.add_child(time_slider)
 
 	# Pause Day Cycle
 	var pause_check = CheckButton.new()
@@ -72,12 +86,12 @@ func _build_ui():
 	if weather_node:
 		pause_check.button_pressed = weather_node.pause_day_cycle
 	pause_check.toggled.connect(_on_pause_toggled)
-	vbox.add_child(pause_check)
+	weather_tab.add_child(pause_check)
 
 	# Transition Duration
 	var trans_label = Label.new()
 	trans_label.text = "Transition Duration"
-	vbox.add_child(trans_label)
+	weather_tab.add_child(trans_label)
 
 	var trans_slider = HSlider.new()
 	trans_slider.min_value = 0.0
@@ -86,7 +100,80 @@ func _build_ui():
 	if weather_node:
 		trans_slider.value = weather_node.transition_duration
 	trans_slider.value_changed.connect(_on_trans_slider_changed)
-	vbox.add_child(trans_slider)
+	weather_tab.add_child(trans_slider)
+
+	# --- Spawn Tab ---
+	var spawn_tab = VBoxContainer.new()
+	spawn_tab.name = "Spawn"
+	tab_container.add_child(spawn_tab)
+
+	var spawn_label = Label.new()
+	spawn_label.text = "Spawn Units"
+	spawn_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	spawn_tab.add_child(spawn_label)
+
+	selected_unit_label = Label.new()
+	selected_unit_label.text = "Selected: None"
+	spawn_tab.add_child(selected_unit_label)
+
+	var spawn_grid = GridContainer.new()
+	spawn_grid.columns = 4
+	spawn_tab.add_child(spawn_grid)
+
+	unit_scene_map = {
+		UnitRoles.UnitType.PLAYER: "res://Scenes/Units/Player.tscn",
+		UnitRoles.UnitType.PEASANT: "res://Scenes/Units/peasant.tscn",
+		UnitRoles.UnitType.SOLDIER: "res://Scenes/Units/soldier.tscn",
+		UnitRoles.UnitType.ARCHER: "res://Scenes/Units/archer.tscn",
+		UnitRoles.UnitType.WORKER: "res://Scenes/Units/worker.tscn",
+		UnitRoles.UnitType.LORD: "res://Scenes/Units/lord.tscn"
+	}
+
+	for unit_type in unit_scene_map:
+		var btn = Button.new()
+		var frames = UnitRoles.get_frames(unit_type, 1)
+		var texture = null
+		if frames:
+			if frames.has_animation("idle"):
+				texture = frames.get_frame_texture("idle", 0)
+			elif frames.has_animation("walk"):
+				texture = frames.get_frame_texture("walk", 0)
+			elif frames.has_animation("default"):
+				texture = frames.get_frame_texture("default", 0)
+
+		if texture:
+			btn.icon = texture
+			btn.expand_icon = true
+			btn.custom_minimum_size = Vector2(64, 64)
+			btn.icon_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		else:
+			btn.text = str(unit_type)
+
+		btn.pressed.connect(_on_unit_selected.bind(unit_type))
+		spawn_grid.add_child(btn)
+
+func _on_unit_selected(type):
+	selected_unit_type = type
+	var type_name = UnitRoles.UnitType.find_key(type)
+	selected_unit_label.text = "Selected: " + str(type_name)
+
+func _unhandled_input(event):
+	if not visible:
+		return
+
+	if not units_node:
+		return
+
+	if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
+		if selected_unit_type != null:
+			var scene_path = unit_scene_map.get(selected_unit_type)
+			if scene_path:
+				var scene = load(scene_path)
+				if scene:
+					var instance = scene.instantiate()
+					units_node.add_child(instance)
+					instance.global_position = units_node.get_global_mouse_position()
+					get_viewport().set_input_as_handled()
 
 func _input(event):
 	if event is InputEventKey and event.pressed and event.keycode == KEY_QUOTELEFT:
