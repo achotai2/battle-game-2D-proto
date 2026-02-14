@@ -1,6 +1,6 @@
-[gd_scene load_steps=2 format=3]
+[gd_scene load_steps=2 format=3 uid="uid://cov6dh253xj6j"]
 
-[ext_resource type="Script" path="res://Scripts/UI/DebugPanel.gd" id="1_debug"]
+[ext_resource type="Script" uid="uid://cb8bcovobtbdp" path="res://Scripts/UI/DebugPanel.gd" id="1_debug"]
 
 [node name="DebugPanel" type="CanvasLayer"]
 script = ExtResource("1_debug")

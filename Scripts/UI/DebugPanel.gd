@@ -28,7 +28,7 @@ func _build_ui():
 	add_child(panel_container)
 
 	# Center the panel
-	panel_container.set_anchors_preset(Control.PRESET_CENTER)
+	panel_container.set_anchors_preset(Control.PRESET_TOP_RIGHT)
 
 	var tab_container = TabContainer.new()
 	panel_container.add_child(tab_container)
