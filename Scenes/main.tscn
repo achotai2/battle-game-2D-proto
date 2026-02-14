@@ -1,4 +1,4 @@
-[gd_scene load_steps=34 format=4 uid="uid://denj1nj2jkqg1"]
+[gd_scene load_steps=32 format=4 uid="uid://denj1nj2jkqg1"]
 
 [ext_resource type="Texture2D" uid="uid://b48b8ua5c4hra" path="res://Art/Tiny Swords (Update 010)/Terrain/Ground/Tilemap_Flat.png" id="1_jjgbg"]
 [ext_resource type="Script" uid="uid://6hbmeykuynas" path="res://Scripts/main.gd" id="1_jjvhh"]
@@ -17,11 +17,9 @@
 [ext_resource type="Shader" uid="uid://d1flwqvfy5jwu" path="res://Scripts/Shaders/rain.gdshader" id="14_wsu2k"]
 [ext_resource type="Script" uid="uid://dp8yuovi3hu7d" path="res://Scripts/Weather/WorldEnvironmentControl.gd" id="15_hibaj"]
 [ext_resource type="Script" uid="uid://bvu70n5b0l3kf" path="res://Scripts/Weather/cloud_shadows.gd" id="16_b3802"]
-[ext_resource type="PackedScene" uid="uid://dvgilnkmeqdfu" path="res://Scenes/Units/archer.tscn" id="16_h1bgf"]
-[ext_resource type="PackedScene" uid="uid://sy3ke7fhk1uv" path="res://Scenes/Units/soldier.tscn" id="17_b3802"]
 [ext_resource type="Script" uid="uid://dr8y21rcmpibl" path="res://Scripts/Weather/rain.gd" id="18_fevyy"]
 [ext_resource type="Script" uid="uid://cnam6bddvgr7k" path="res://Scripts/Weather/sunlight.gd" id="20_pdsj5"]
-[ext_resource type="PackedScene" path="res://Scenes/UI/DebugPanel.tscn" id="debug_panel_scn"]
+[ext_resource type="PackedScene" uid="uid://cov6dh253xj6j" path="res://Scenes/UI/DebugPanel.tscn" id="debug_panel_scn"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_6bp64"]
 texture = ExtResource("1_jjgbg")
@@ -198,9 +196,9 @@ terrain_set_0/terrain_1/color = Color(0.5, 0.4375, 0.25, 1)
 sources/3 = SubResource("TileSetAtlasSource_6bp64")
 
 [sub_resource type="NavigationPolygon" id="NavigationPolygon_fvkhu"]
-vertices = PackedVector2Array(678.8828, 122.39844, 837.5781, 308, 810.4219, 308, 464.7578, 289, 635.5781, 134, 1092.0625, 585.46875, 521.34375, 590.89844, 541.8828, 585.39844, 428.1172, 585.39844, 451.14844, 591.5625, -68.65625, 596.5078, 767.1172, 319.60156, 930.7578, 406, 1092.9297, -68, 917.39844, 455.8828, 917.39844, 356.1172, 578.39844, 548.8828, 391.60156, 548.8828, 730.60156, 356.1172, 728.7578, 36, 715.39844, -13.8828125, 880.8828, 319.60156, 715.39844, 85.88281, 608.4219, 134, 450.60156, 236.11719, 565.1172, 122.39844, 591.7578, 499, 378.2422, 499, 717.2422, 406, 450.60156, 341.8828, 528.60156, 85.88281, 411.8828, 197.39844, 880.8828, 492.39844, 810.4219, 504, 578.39844, 449.1172, 767.1172, 492.39844, 391.60156, 449.1172, 730.60156, 455.8828, 515.2422, 36, 365.57813, 185, 678.8828, -50.398438, 126.421875, 185, 528.60156, -13.8828125, 837.5781, 504, 411.8828, 380.60156, 428.1172, 412.60156, 365.57813, 393, 541.8828, 412.60156, -64.32031, -68, 565.1172, -50.398438, 80.11719, 197.39844, 498.57813, 401, 471.42188, 401, 126.421875, 393, 80.11719, 380.60156, 41.398438, 341.8828, 27.242188, 289, 41.398438, 236.11719, 635.5781, -62, 608.4219, -62)
-polygons = Array[PackedInt32Array]([PackedInt32Array(0, 1, 2, 3, 4), PackedInt32Array(5, 6, 7), PackedInt32Array(8, 9, 10), PackedInt32Array(3, 2, 11), PackedInt32Array(12, 13, 5, 14), PackedInt32Array(13, 12, 15), PackedInt32Array(5, 7, 16), PackedInt32Array(17, 8, 10), PackedInt32Array(3, 11, 18), PackedInt32Array(19, 20, 13, 15, 21), PackedInt32Array(22, 19, 21, 1), PackedInt32Array(0, 22, 1), PackedInt32Array(23, 4, 3, 24), PackedInt32Array(25, 23, 24), PackedInt32Array(5, 16, 26), PackedInt32Array(27, 17, 10), PackedInt32Array(3, 18, 28, 29), PackedInt32Array(30, 25, 24, 31), PackedInt32Array(32, 14, 5), PackedInt32Array(33, 5, 26, 34, 35), PackedInt32Array(36, 27, 10), PackedInt32Array(29, 28, 37), PackedInt32Array(38, 30, 31, 39), PackedInt32Array(13, 20, 40), PackedInt32Array(38, 39, 41, 42), PackedInt32Array(43, 32, 5), PackedInt32Array(44, 45, 36, 10, 46), PackedInt32Array(29, 37, 35, 47), PackedInt32Array(48, 49, 42, 41, 50), PackedInt32Array(33, 43, 5), PackedInt32Array(35, 34, 47), PackedInt32Array(29, 47, 51), PackedInt32Array(29, 51, 52, 44), PackedInt32Array(44, 52, 45), PackedInt32Array(53, 46, 10), PackedInt32Array(54, 53, 10), PackedInt32Array(55, 54, 10), PackedInt32Array(56, 55, 10), PackedInt32Array(56, 10, 48, 57), PackedInt32Array(50, 57, 48), PackedInt32Array(13, 40, 58), PackedInt32Array(48, 13, 58, 59), PackedInt32Array(49, 48, 59)])
-outlines = Array[PackedVector2Array]([PackedVector2Array(-114, -118, 1143, -118, 1142, 635, -119, 647)])
+vertices = PackedVector2Array(678.8828, 122.39844, 837.5781, 308, 810.4219, 308, 464.7578, 289, 635.5781, 134, 591.7578, 499, 767.1172, 492.39844, 810.4219, 504, 578.39844, 548.8828, 767.1172, 319.60156, 730.60156, 455.8828, 578.39844, 449.1172, 730.60156, 356.1172, 930.7578, 406, 1886.2891, -297.1797, 1894.6875, 1089.0781, 917.39844, 455.8828, 917.39844, 356.1172, 728.7578, 36, 715.39844, -13.8828125, 880.8828, 319.60156, 715.39844, 85.88281, 608.4219, 134, 450.60156, 236.11719, 565.1172, 122.39844, 717.2422, 406, 541.8828, 412.60156, 498.57813, 401, 450.60156, 341.8828, 471.42188, 401, 411.8828, 380.60156, 428.1172, 412.60156, 365.57813, 393, 528.60156, 85.88281, 411.8828, 197.39844, 391.60156, 449.1172, 126.421875, 393, 880.8828, 492.39844, -433.5625, 1092.9063, 837.5781, 504, 541.8828, 585.39844, 378.2422, 499, 515.2422, 36, 365.57813, 185, 678.8828, -50.398438, 391.60156, 548.8828, 80.11719, 380.60156, 528.60156, -13.8828125, 126.421875, 185, -449.42188, -305.8125, 498.57813, 597, 471.42188, 597, 428.1172, 585.39844, 41.398438, 341.8828, 27.242188, 289, 41.398438, 236.11719, 80.11719, 197.39844, 565.1172, -50.398438, 608.4219, -62, 635.5781, -62)
+polygons = Array[PackedInt32Array]([PackedInt32Array(0, 1, 2, 3, 4), PackedInt32Array(5, 6, 7, 8), PackedInt32Array(3, 2, 9), PackedInt32Array(10, 6, 5, 11), PackedInt32Array(3, 9, 12), PackedInt32Array(13, 14, 15, 16), PackedInt32Array(14, 13, 17), PackedInt32Array(18, 19, 14, 17, 20), PackedInt32Array(21, 18, 20, 1), PackedInt32Array(0, 21, 1), PackedInt32Array(22, 4, 3, 23), PackedInt32Array(24, 22, 23), PackedInt32Array(3, 25, 10, 11, 26), PackedInt32Array(3, 12, 25), PackedInt32Array(3, 26, 27, 28), PackedInt32Array(28, 27, 29, 30), PackedInt32Array(30, 29, 31, 32), PackedInt32Array(33, 24, 23, 34), PackedInt32Array(32, 31, 35, 36), PackedInt32Array(37, 16, 15), PackedInt32Array(37, 15, 38, 39), PackedInt32Array(7, 39, 38, 40), PackedInt32Array(36, 35, 41), PackedInt32Array(42, 33, 34, 43), PackedInt32Array(14, 19, 44), PackedInt32Array(36, 41, 45, 38, 46), PackedInt32Array(47, 42, 43, 48, 49), PackedInt32Array(40, 8, 7), PackedInt32Array(50, 40, 38), PackedInt32Array(51, 50, 38), PackedInt32Array(52, 51, 38), PackedInt32Array(45, 52, 38), PackedInt32Array(53, 46, 38), PackedInt32Array(53, 38, 49, 54), PackedInt32Array(55, 54, 49), PackedInt32Array(56, 55, 49), PackedInt32Array(48, 56, 49), PackedInt32Array(57, 47, 49), PackedInt32Array(58, 57, 49), PackedInt32Array(58, 49, 14, 59), PackedInt32Array(59, 14, 44)])
+outlines = Array[PackedVector2Array]([PackedVector2Array(-500, -356, 1936, -347, 1945, 1139, -483, 1143)])
 agent_radius = 50.0
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_jkdf5"]
@@ -310,41 +308,6 @@ position = Vector2(567, 306)
 player = 1
 castle = NodePath("../../NavigationRegion2D/Buildings/Castle")
 
-[node name="Soldier" parent="EnvironmentalObjects/Units" node_paths=PackedStringArray("castle") instance=ExtResource("17_b3802")]
-position = Vector2(646, 460)
-player = 2
-castle = NodePath("../../NavigationRegion2D/Buildings/Castle")
-
-[node name="Soldier2" parent="EnvironmentalObjects/Units" node_paths=PackedStringArray("castle") instance=ExtResource("17_b3802")]
-position = Vector2(10, 132)
-player = 2
-castle = NodePath("../../NavigationRegion2D/Buildings/Castle")
-
-[node name="Soldier3" parent="EnvironmentalObjects/Units" node_paths=PackedStringArray("castle") instance=ExtResource("17_b3802")]
-position = Vector2(646, 460)
-player = 2
-castle = NodePath("../../NavigationRegion2D/Buildings/Castle")
-
-[node name="Archer" parent="EnvironmentalObjects/Units" instance=ExtResource("16_h1bgf")]
-player = 1
-
-[node name="Archer2" parent="EnvironmentalObjects/Units" instance=ExtResource("16_h1bgf")]
-player = 1
-
-[node name="Archer3" parent="EnvironmentalObjects/Units" instance=ExtResource("16_h1bgf")]
-player = 1
-
-[node name="Archer4" parent="EnvironmentalObjects/Units" instance=ExtResource("16_h1bgf")]
-player = 1
-
-[node name="Archer5" parent="EnvironmentalObjects/Units" instance=ExtResource("16_h1bgf")]
-player = 1
-
-[node name="Soldier4" parent="EnvironmentalObjects/Units" node_paths=PackedStringArray("castle") instance=ExtResource("17_b3802")]
-position = Vector2(10, 132)
-player = 2
-castle = NodePath("../../NavigationRegion2D/Buildings/Castle")
-
 [node name="Trees" type="Node2D" parent="EnvironmentalObjects"]
 y_sort_enabled = true
 
@@ -391,6 +354,7 @@ offset_left = -474.0
 offset_top = -352.0
 offset_right = 1973.0
 offset_bottom = 1147.0
+mouse_filter = 1
 script = ExtResource("18_fevyy")
 
 [node name="Sunlight" type="CanvasModulate" parent="WeatherState"]

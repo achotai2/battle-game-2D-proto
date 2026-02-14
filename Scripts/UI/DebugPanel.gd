@@ -205,7 +205,7 @@ func _unhandled_input(event):
 		if not units_node:
 			return
 
-	if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
+	if event.is_action_pressed("click"):
 		if selected_unit_type != null:
 			var scene_path = unit_scene_map.get(selected_unit_type)
 			if scene_path:
