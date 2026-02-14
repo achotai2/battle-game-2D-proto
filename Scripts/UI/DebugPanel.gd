@@ -6,8 +6,10 @@ var weather_node: Node = null
 var panel_container: PanelContainer
 
 var selected_unit_type = null
+var selected_player_id = 1
 var unit_scene_map = {}
 var selected_unit_label: Label
+var selected_player_label: Label
 var units_node: Node2D = null
 
 func _ready():
@@ -112,8 +114,35 @@ func _build_ui():
 	spawn_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	spawn_tab.add_child(spawn_label)
 
+	# --- Player Selection ---
+	var player_label = Label.new()
+	player_label.text = "Select Player"
+	spawn_tab.add_child(player_label)
+
+	selected_player_label = Label.new()
+	_update_player_label()
+	spawn_tab.add_child(selected_player_label)
+
+	var player_grid = GridContainer.new()
+	player_grid.columns = 2
+	spawn_tab.add_child(player_grid)
+
+	var players = {
+		"Neutral (0)": 0,
+		"Player (1)": 1,
+		"Enemy (2)": 2,
+		"Random (1/2)": -1
+	}
+
+	for p_name in players:
+		var btn = Button.new()
+		btn.text = p_name
+		btn.pressed.connect(_on_player_selected.bind(players[p_name]))
+		player_grid.add_child(btn)
+
+	# --- Unit Selection ---
 	selected_unit_label = Label.new()
-	selected_unit_label.text = "Selected: None"
+	selected_unit_label.text = "Selected Unit: None"
 	spawn_tab.add_child(selected_unit_label)
 
 	var spawn_grid = GridContainer.new()
@@ -155,14 +184,26 @@ func _build_ui():
 func _on_unit_selected(type):
 	selected_unit_type = type
 	var type_name = UnitRoles.UnitType.find_key(type)
-	selected_unit_label.text = "Selected: " + str(type_name)
+	selected_unit_label.text = "Selected Unit: " + str(type_name)
+
+func _on_player_selected(id: int):
+	selected_player_id = id
+	_update_player_label()
+
+func _update_player_label():
+	if selected_player_id == -1:
+		selected_player_label.text = "Selected Player: Random (1 or 2)"
+	else:
+		selected_player_label.text = "Selected Player: " + str(selected_player_id)
 
 func _unhandled_input(event):
 	if not visible:
 		return
 
 	if not units_node:
-		return
+		units_node = get_tree().current_scene.find_child("Units", true, false)
+		if not units_node:
+			return
 
 	if event is InputEventMouseButton and event.pressed and event.button_index == MOUSE_BUTTON_LEFT:
 		if selected_unit_type != null:
@@ -171,6 +212,14 @@ func _unhandled_input(event):
 				var scene = load(scene_path)
 				if scene:
 					var instance = scene.instantiate()
+
+					var pid = selected_player_id
+					if pid == -1:
+						pid = randi_range(1, 2)
+
+					if "player" in instance:
+						instance.player = pid
+
 					units_node.add_child(instance)
 					instance.global_position = units_node.get_global_mouse_position()
 					get_viewport().set_input_as_handled()
