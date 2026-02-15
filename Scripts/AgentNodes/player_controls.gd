@@ -38,7 +38,7 @@ func _physics_process(_delta: float) -> void:
 	# Emit only on change, or always (your choice)
 	if emit_zero_direction:
 		if dir != _last_dir:
-			if is_instance_valid(movement):
+			if movement:
 				if dir == Vector2.ZERO:
 					movement.clear_movement_order(controls_priority)
 					_unpause_attack()
@@ -47,7 +47,7 @@ func _physics_process(_delta: float) -> void:
 					_pause_attack()
 	else:
 		if dir != Vector2.ZERO and dir != _last_dir:
-			if is_instance_valid(movement):
+			if movement:
 				movement.command_player_direction(dir, controls_priority)
 
 		_is_moving = dir != Vector2.ZERO
@@ -73,7 +73,7 @@ func set_movement(m: AgentMovement) -> void:
 
 
 func _bind_interactor() -> void:
-	if is_instance_valid(interactor):
+	if interactor:
 		if not interactor.interaction_started.is_connected(_on_interaction_started):
 			interactor.interaction_started.connect(_on_interaction_started)
 		if not interactor.interaction_finished.is_connected(_on_interaction_finished):
@@ -84,19 +84,19 @@ func _bind_interactor() -> void:
 
 func _unhandled_input(event: InputEvent) -> void:
 	# Discrete actions here so UI can consume input first
-	if event.is_action_pressed(interact) and is_instance_valid(interactor):
+	if event.is_action_pressed(interact) and interactor:
 		interactor.interaction_pressed()
 	elif event.is_action_released(interact):
 		interactor.interaction_released()
 
 
 func _pause_attack() -> void:
-	if is_instance_valid(attackNode):
+	if attackNode:
 		attackNode.pause_attack(controls_priority)
 
 
 func _unpause_attack() -> void:
-	if is_instance_valid(attackNode):
+	if attackNode:
 		attackNode.restart_attack(controls_priority)
 
 

@@ -24,7 +24,7 @@ func _ready() -> void:
 	add_child(patrol_anchor)
 
 	# Configure movement speeds
-	if is_instance_valid(movement):
+	if movement:
 		movement.can_meander = true
 		movement.patrol_radius = hop_radius
 		movement.patrol_pause_seconds = wander_interval
@@ -40,7 +40,7 @@ func _ready() -> void:
 
 
 func _exit_tree() -> void:
-	if is_instance_valid(patrol_anchor):
+	if patrol_anchor:
 		patrol_anchor.queue_free()
 
 
@@ -52,12 +52,12 @@ func _connect_all_refs() -> void:
 
 
 func _assign_animation_refs() -> void:
-	if is_instance_valid(animate):
+	if animate:
 		animate.set_my_agent(self)
 
 
 func _assign_movement_refs() -> void:
-	if not is_instance_valid(movement):
+	if not movement:
 		return
 
 	movement.set_my_agent(self)
@@ -75,7 +75,7 @@ func _assign_food_refs() -> void:
 
 
 func _physics_process(delta: float) -> void:
-	if is_instance_valid(movement):
+	if movement:
 		movement.tick(delta)
 
 	move_and_slide()
@@ -88,7 +88,7 @@ func _physics_process(delta: float) -> void:
 
 func _on_despawn_timer_timeout() -> void:
 	is_returning = true
-	if is_instance_valid(movement):
+	if movement:
 		# Stop meandering and move to spawn
 		movement.command_move_to_position(_spawn_position)
 		

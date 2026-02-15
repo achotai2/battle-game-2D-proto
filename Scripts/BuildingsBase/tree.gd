@@ -23,7 +23,7 @@ var _is_ready: bool = false
 func _ready() -> void:
 	_is_ready = true
 
-	if is_instance_valid(worksite) and worksite.has_method("assign_boss"):
+	if worksite and worksite.has_method("assign_boss"):
 		worksite.call("assign_boss", self)
 	else:
 		print_debug("worksite does not have function assign_boss")
@@ -31,7 +31,7 @@ func _ready() -> void:
 	_connect_signals()
 	apply_state(state)
 
-	if is_instance_valid(spawn_timer):
+	if spawn_timer:
 		# Stagger start
 		spawn_timer.stop()
 		var stagger_time = randf_range(0.0, 5.0)
@@ -40,7 +40,7 @@ func _ready() -> void:
 
 func set_castle(c: Node2D) -> void:
 	castle = c
-	if is_instance_valid(worksite) and state == TreeState.MARKED:
+	if worksite and state == TreeState.MARKED:
 		worksite.refresh_registration()
 
 
@@ -86,7 +86,7 @@ func _on_work_completed(_site: WorkSite, _worker: WorkSiteWorker) -> void:
 
 
 func _on_work_applied(_site: WorkSite) -> void:
-	if not is_instance_valid(visual):
+	if not visual:
 		return
 
 	visual.play("chop")
@@ -94,7 +94,7 @@ func _on_work_applied(_site: WorkSite) -> void:
 
 
 func _update_visuals() -> void:
-	if not is_instance_valid(visual):
+	if not visual:
 		return
 
 	match state:
@@ -110,7 +110,7 @@ func _update_visuals() -> void:
 
 
 func _configure_interactable() -> void:
-	if not is_instance_valid(interactable):
+	if not interactable:
 		return
 
 	var enabled := state == TreeState.NORMAL
@@ -119,17 +119,17 @@ func _configure_interactable() -> void:
 
 
 func _configure_worksite() -> void:
-	if state == TreeState.MARKED and is_instance_valid(worksite):
-		if is_instance_valid(worksite):
+	if state == TreeState.MARKED and worksite:
+		if worksite:
 			worksite.reset_progress()
 			worksite.set_enabled(true)
 			worksite.refresh_registration()
 	else:
-		if is_instance_valid(worksite): worksite.set_enabled(false)
+		if worksite: worksite.set_enabled(false)
 
 
 func _connect_signals() -> void:
-	if is_instance_valid(worksite):
+	if worksite:
 		if worksite.work_completed.is_connected(_on_work_completed):
 			worksite.work_completed.disconnect(_on_work_completed)
 		worksite.work_completed.connect(_on_work_completed)
@@ -138,7 +138,7 @@ func _connect_signals() -> void:
 			worksite.work_applied.disconnect(_on_work_applied)
 		worksite.work_applied.connect(_on_work_applied)
 
-	if is_instance_valid(interactable):
+	if interactable:
 		if interactable.interaction_finished.is_connected(_on_interacted):
 			interactable.interaction_finished.disconnect(_on_interacted)
 		interactable.interaction_finished.connect(_on_interacted)
@@ -160,7 +160,7 @@ func _enable_collision() -> void:
 
 
 func _on_spawn_timer_timeout() -> void:
-	if is_instance_valid(resourcesite) and resourcesite.has_method("spawn"):
+	if resourcesite and resourcesite.has_method("spawn"):
 		if randf() < spawn_probability: # 25% probability
 			resourcesite.call("spawn")
 	else:
