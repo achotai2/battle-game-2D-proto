@@ -50,6 +50,7 @@ var _last_target_pos: Vector2 = Vector2.ZERO
 var _current_velocity: Vector2 = Vector2.ZERO
 #var _pf_velocity: Vector2 = Vector2.ZERO
 var _last_anim_velocity: Vector2 = Vector2(INF, INF)
+const ANIM_JITTER_THRESHOLD_SQ: float = 4.0 # (2 pixels)^2
 
 enum OrderType { NONE, MEANDER, MOVE_TO_POS, CHASE_NODE, RAW_VELOCITY, PLAYER_DIRECTION, FROZEN }
 
@@ -113,6 +114,8 @@ func tick(delta: float) -> void:
 		OrderType.NONE:
 			move_with_velocity(Vector2.ZERO, delta)
 
+	_update_visuals()
+
 
 func set_animation(anim: AgentAnimate) -> void:
 	animation = anim
@@ -128,28 +131,37 @@ func is_frozen() -> bool:
 func move_with_velocity(desired_velocity: Vector2, delta: float) -> void:
 	if is_frozen():
 		_current_velocity = Vector2.ZERO
-		_notify_moved(Vector2.ZERO)
+		if agent: agent.velocity = Vector2.ZERO
 		return
 
+	# 1. OPTIMIZATION: Use C++ optimized functions instead of manual math
 	var speed_cap := meander_speed if _order_type == OrderType.MEANDER else max_speed
-	var v := desired_velocity
 
-	# Clamp to current speed cap
-	if v.length() > speed_cap:
-		v = v * (speed_cap / v.length())
+	# This single line replaces your manual length() check and division
+	var v := desired_velocity.limit_length(speed_cap)
 
-	# Optional acceleration smoothing
+	# 2. OPTIMIZATION: Fast path for no smoothing
 	if accel > 0.0 and delta > 0.0:
 		_current_velocity = _current_velocity.move_toward(v, accel * delta)
 	else:
 		_current_velocity = v
 
-	_notify_moved(_current_velocity)
+	# 3. APPLY PHYSICS DIRECTLY (Skip _notify_moved function overhead)
+	# We assume 'agent' is valid because this script is likely a child of agent
+	if agent:
+		agent.velocity = _current_velocity
+
+	# NOTE: We DO NOT update animation here anymore.
+	# That is now handled in tick() to prevent signal thrashing.
 
 
 func _on_velocity_computed(safe_velocity: Vector2) -> void:
-	# Use physics delta for consistent simulation step
-	move_with_velocity(safe_velocity, get_physics_process_delta_time())
+	# 1. OPTIMIZATION: Skip delta fetching if no acceleration is used
+	if accel == 0.0:
+		move_with_velocity(safe_velocity, 0.0)
+	else:
+		# Only fetch delta if we actually need it for smoothing
+		move_with_velocity(safe_velocity, get_physics_process_delta_time())
 
 
 func _on_nav_finished() -> void:
@@ -194,14 +206,24 @@ func set_my_agent(owner_agent: Node2D) -> void:
 	agent = owner_agent
 
 
-func _notify_moved(vel: Vector2) -> void:
-	if is_instance_valid(agent):
-		agent.velocity = vel
+func _update_visuals() -> void:
+	# Call this at the end of your tick(delta) function!
+	if not animation:
+		return
 
-	if is_instance_valid(animation):
-		if not vel.is_equal_approx(_last_anim_velocity):
-			animation.agent_moved(vel)
-			_last_anim_velocity = vel
+	# 1. OPTIMIZATION: Jitter Filter
+	# RVO Avoidance creates tiny micro-movements. We don't want to
+	# retune the AnimationTree for a 0.1 pixel change.
+
+	# Check squared distance to avoid Sqrt()
+	if _current_velocity.distance_squared_to(_last_anim_velocity) > ANIM_JITTER_THRESHOLD_SQ:
+		animation.agent_moved(_current_velocity)
+		_last_anim_velocity = _current_velocity
+
+	# Edge case: If we stopped completely, force an update to play Idle
+	elif _current_velocity.is_zero_approx() and not _last_anim_velocity.is_zero_approx():
+		animation.agent_moved(Vector2.ZERO)
+		_last_anim_velocity = Vector2.ZERO
 
 
 func _accept_order(priority: int) -> bool:
