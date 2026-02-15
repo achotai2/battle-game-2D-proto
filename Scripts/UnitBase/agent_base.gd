@@ -68,31 +68,31 @@ func _connect_all_refs() -> void:
 
 
 func _physics_process(_delta: float) -> void:
-	if is_instance_valid(movement):
+	if movement:
 		movement.tick(_delta)
 
 	move_and_slide()
 
 
 func _assign_weapon_refs() -> void:
-	if not is_instance_valid(attack):
+	if not attack:
 		return
 
 	attack.set_player(self)
 
-	if is_instance_valid(movement) and is_instance_valid(attack) and attack.has_method("set_movement"):
+	if movement and attack and attack.has_method("set_movement"):
 		attack.call("set_movement", movement)
 	else:
 		print_debug("attack node does not contain function set_movement")
 
 
 func _disconnect_weapon_signals() -> void:
-	if not is_instance_valid(attack):
+	if not attack:
 		return
 
 
 func _disconnect_detection_signals_to_tactical() -> void:
-	if is_instance_valid(tactical):
+	if tactical:
 		if tactical.has_method("set_target") and detection.target_changed.is_connected(tactical.set_target):
 			detection.target_changed.disconnect(tactical.set_target)
 		if tactical.has_method("clear_target") and detection.target_lost.is_connected(tactical.clear_target):
@@ -100,14 +100,14 @@ func _disconnect_detection_signals_to_tactical() -> void:
 
 
 func _assign_animation_refs() -> void:
-	if not is_instance_valid(animation):
+	if not animation:
 		return
 
 	animation.set_my_agent(self)
 
 
 func _assign_movement_refs() -> void:
-	if not is_instance_valid(movement):
+	if not movement:
 		return
 
 	movement.set_my_agent(self)
@@ -118,7 +118,7 @@ func _assign_movement_refs() -> void:
 
 
 func _assign_controls_refs() -> void:
-	if not is_instance_valid(controls):
+	if not controls:
 		return
 	
 	controls.set_interactor(interactor)
@@ -127,12 +127,12 @@ func _assign_controls_refs() -> void:
 
 
 func _assign_detection_refs() -> void:
-	if not is_instance_valid(detection):
+	if not detection:
 		return
 
 	detection.setup_player(player)
 
-	if is_instance_valid(tactical):
+	if tactical:
 		if tactical.has_method("set_target") and not detection.target_changed.is_connected(tactical.set_target):
 			detection.target_changed.connect(tactical.set_target)
 		if tactical.has_method("clear_target") and not detection.target_lost.is_connected(tactical.clear_target):
@@ -140,7 +140,7 @@ func _assign_detection_refs() -> void:
 
 
 func _assign_tactical_refs() -> void:
-	if not is_instance_valid(tactical):
+	if not tactical:
 		return
 
 	if tactical.has_method("set_agent"):
@@ -155,7 +155,7 @@ func _assign_tactical_refs() -> void:
 
 
 func _assign_tasker_refs() -> void:
-	if not is_instance_valid(tasker):
+	if not tasker:
 		return
 
 	tasker.set_agent(self)
@@ -163,7 +163,7 @@ func _assign_tasker_refs() -> void:
 
 
 func _assign_food_tasker_refs() -> void:
-	if not is_instance_valid(foodTasker):
+	if not foodTasker:
 		return
 
 	foodTasker.set_agent(self)
@@ -171,7 +171,7 @@ func _assign_food_tasker_refs() -> void:
 
 
 func _assign_gold_refs() -> void:
-	if not is_instance_valid(gold):
+	if not gold:
 		return
 	
 	if gold.has_method("set_movement") and not is_in_group("Player"):
@@ -181,7 +181,7 @@ func _assign_gold_refs() -> void:
 
 
 func _assign_health_refs() -> void:
-	if not is_instance_valid(health):
+	if not health:
 		return
 
 	if not health.damaged.is_connected(_im_damaged):
@@ -191,15 +191,15 @@ func _assign_health_refs() -> void:
 
 
 func _assign_hunger_refs() -> void:
-	if not is_instance_valid(hunger):
+	if not hunger:
 		return
 		
-	if is_instance_valid(movement) and hunger.has_method("set_movement"):	
+	if movement and hunger.has_method("set_movement"):
 		hunger.call("set_movement", movement)
 
 
 func _im_damaged() -> void:
-#	if is_instance_valid(animation):
+#	if animation:
 #		animation.show_damage()
 	pass
 
@@ -233,19 +233,19 @@ func apply_role(role: UnitRoles.UnitType, p: int) -> void:
 				remove_from_group(g)
 
 	# --- remove old role-dependent nodes ---
-	if is_instance_valid(attack):
+	if attack:
 		_disconnect_weapon_signals()
 		attack.queue_free()
 		attack = null
 
-	if is_instance_valid(tactical):
+	if tactical:
 		tactical.queue_free()
 		tactical = null
 
-	if is_instance_valid(detection):
+	if detection:
 		_disconnect_detection_signals_to_tactical()
 
-	if is_instance_valid(tasker):
+	if tasker:
 		if tasker.has_task():
 			tasker.clear_task()
 			tasker.unregister_from_board()
@@ -275,7 +275,7 @@ func apply_role(role: UnitRoles.UnitType, p: int) -> void:
 
 	# --- visuals ---
 	var frames: SpriteFrames = UnitRoles.get_frames(role, player)
-	if frames != null and is_instance_valid(animation):
+	if frames != null and animation:
 		animation.set_sprite_frames(frames)
 
 	# --- add new role groups ---
@@ -289,11 +289,11 @@ func apply_role(role: UnitRoles.UnitType, p: int) -> void:
 
 	# --- movement and animation refresh ---
 	# Cancel transient action states when swapping role
-	if is_instance_valid(movement):
+	if movement:
 		movement.clear_movement_order(9999)
 
 	# If you have flags on animation like `attacking`, clear them too
-	if is_instance_valid(animation):
+	if animation:
 		animation.cancel_action_state()
 
 
@@ -323,13 +323,13 @@ func set_castle(new_castle: Node) -> void:
 	castle = new_castle
 	_register_myself_with_castle()
 	
-	if is_instance_valid(movement):
+	if movement:
 		movement.assigned_castle = castle
 
-	if is_instance_valid(tasker):
+	if tasker:
 		tasker.switch_job_board(castle)
 
-	if is_instance_valid(foodTasker):
+	if foodTasker:
 		foodTasker.switch_job_board(castle)
 		
 

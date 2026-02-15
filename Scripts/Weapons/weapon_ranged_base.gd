@@ -72,7 +72,7 @@ func restart_attack(priority: int = 5) -> void:
 func _cancel_attack() -> void:
 	_current_target = null
 	
-	if is_instance_valid(movement) and _attacking:
+	if movement and _attacking:
 		movement.clear_movement_order(attack_priority)
 
 	cooldown.stop()
@@ -103,7 +103,7 @@ func _try_attack() -> void:
 	if projectile_scene == null:
 		return
 
-	if not _attack_paused and is_instance_valid(movement) and movement.command_start_attack(_current_target, attack_priority):
+	if not _attack_paused and movement and movement.command_start_attack(_current_target, attack_priority):
 		_attacking = true
 		cooldown.start()
 		attack_delay.start()
@@ -125,7 +125,7 @@ func _on_attack_delay_timeout() -> void:
 
 	if projectile_scene == null:
 		return
-	if not is_instance_valid(_owner_agent) or not _owner_agent.has_method("return_player"):
+	if not _owner_agent or not _owner_agent.has_method("return_player"):
 		return
 
 	# 2. Resolve Parent
@@ -200,10 +200,10 @@ func get_shot_point(origin: Vector2, target_pos: Vector2) -> Vector2:
 # --- HELPERS ---
 
 func _get_spawn_position() -> Vector2:
-	if is_instance_valid(muzzle):
+	if muzzle:
 		return muzzle.global_position
 
-	if is_instance_valid(_owner_agent):
+	if _owner_agent:
 		return _owner_agent.global_position
 
 	return Vector2.ZERO

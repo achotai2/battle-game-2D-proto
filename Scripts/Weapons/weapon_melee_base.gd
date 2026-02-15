@@ -57,7 +57,7 @@ func _cancel_attack() -> void:
 	# Called whenever attack is finished or target lost.
 	_current_target = null
 	
-	if is_instance_valid(movement) and _attacking:
+	if movement and _attacking:
 		movement.clear_movement_order(attack_priority)
 
 	cooldown.stop()
@@ -89,7 +89,7 @@ func _try_attack() -> void:
 	if not cooldown.is_stopped() or not attack_delay.is_stopped():
 		return
 
-	if not _attack_paused and is_instance_valid(movement) and movement.command_start_attack(_current_target, attack_priority):
+	if not _attack_paused and movement and movement.command_start_attack(_current_target, attack_priority):
 		_attacking = true
 		cooldown.start()
 		attack_delay.start()
@@ -111,7 +111,7 @@ func _on_attack_delay_timeout() -> void:
 	var h: Health = t.get("health")
 	if not is_instance_valid(h):
 		return
-	if not is_instance_valid(_owner_agent) or not _owner_agent.has_method("return_player"):
+	if not _owner_agent or not _owner_agent.has_method("return_player"):
 		return
 
 	var atk := AttackData.new()

@@ -63,7 +63,7 @@ var _order_direction: Vector2 = Vector2.ZERO
 
 
 func _ready() -> void:
-	if not is_instance_valid(nav_agent):
+	if not nav_agent:
 		push_warning("AgentMovement: nav_agent is not assigned.")
 		return
 
@@ -99,7 +99,7 @@ func tick(delta: float) -> void:
 	# Process movement logic based on order type
 	match _order_type:
 		OrderType.MEANDER, OrderType.MOVE_TO_POS, OrderType.CHASE_NODE:
-			if is_instance_valid(nav_agent) and is_instance_valid(agent):
+			if nav_agent and agent:
 				_process_pathfinding(agent.global_position, return_speed(), delta)
 				# move_with_velocity is called via _on_velocity_computed callback from nav_agent
 			else:
@@ -292,7 +292,7 @@ func command_start_attack(target: Node2D, priority: int = 5) -> bool:
 	command_move_velocity(Vector2.ZERO, priority)
 	_order_type = OrderType.FROZEN
 
-	if is_instance_valid(animation):
+	if animation:
 		animation.play_attack(target)
 
 	return true
@@ -305,7 +305,7 @@ func command_start_interaction(priority: int = 5) -> bool:
 	command_move_velocity(Vector2.ZERO, priority)
 	_order_type = OrderType.FROZEN
 
-	if is_instance_valid(animation):
+	if animation:
 		animation.play_work()
 
 	return true
@@ -318,7 +318,7 @@ func command_start_work(priority: int = 5) -> bool:
 	command_move_velocity(Vector2.ZERO, priority)
 	_order_type = OrderType.FROZEN
 
-	if is_instance_valid(animation):
+	if animation:
 		animation.play_work()
 
 	return true
@@ -367,7 +367,7 @@ func command_move_velocity(vel: Vector2, priority: int = 5) -> bool:
 	_order_direction = Vector2.ZERO
 	_disable_meander()
 
-	if is_instance_valid(nav_agent) and is_instance_valid(agent):
+	if nav_agent and agent:
 		nav_agent.target_position = agent.global_position
 
 	return true
@@ -384,7 +384,7 @@ func command_player_direction(dir: Vector2, priority: int = 5) -> bool:
 	_order_raw_velocity = Vector2.ZERO
 	_disable_meander()
 
-	if is_instance_valid(nav_agent) and is_instance_valid(agent):
+	if nav_agent and agent:
 		nav_agent.target_position = agent.global_position
 		
 	return true
@@ -402,14 +402,14 @@ func clear_movement_order(priority: int = 5) -> void:
 	_order_direction = Vector2.ZERO
 	_disable_meander()
 
-	if is_instance_valid(nav_agent) and is_instance_valid(agent):
+	if nav_agent and agent:
 		nav_agent.target_position = agent.global_position
 
 
 # --- Pathfinding Logic ---
 
 func _process_pathfinding(my_pos: Vector2, speed_limit: float, delta: float) -> void:
-	if not is_instance_valid(nav_agent) or speed_limit <= 0.0:
+	if not nav_agent or speed_limit <= 0.0:
 		move_with_velocity(Vector2.ZERO, delta)
 		return
 
@@ -465,7 +465,7 @@ func _on_repath_tick() -> void:
 
 
 func _refresh_target_and_repath(force: bool) -> void:
-	if not is_instance_valid(nav_agent):
+	if not nav_agent:
 		return
 
 	# If chasing, update chase position (or clear if target died)
@@ -491,5 +491,5 @@ func _refresh_target_and_repath(force: bool) -> void:
 func _set_target_pos(pos: Vector2) -> void:
 	_target_pos = pos
 	_last_target_pos = pos
-	if is_instance_valid(nav_agent):
+	if nav_agent:
 		nav_agent.target_position = pos

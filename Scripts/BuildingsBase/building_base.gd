@@ -21,11 +21,11 @@ func _ready() -> void:
 
 	collision_layer = GamePhysics.get_building_layer()
 
-	if is_instance_valid(worksite) and worksite.has_method("assign_boss"):
+	if worksite and worksite.has_method("assign_boss"):
 		worksite.call("assign_boss", self)
 	else:
 		print_debug("worksite does not have function assign_boss")
-	if is_instance_valid(spawnsite) and spawnsite.has_method("assign_boss"):
+	if spawnsite and spawnsite.has_method("assign_boss"):
 		spawnsite.call("assign_boss", self)
 	else:
 		print_debug("spawnsite does not have function assign_boss")
@@ -42,7 +42,7 @@ func set_player(p: int) -> void:
 
 func set_castle(c: Node2D) -> void:
 	castle = c
-	if is_instance_valid(worksite) and state == BuildingDefs.BuildingState.CONSTRUCTING:
+	if worksite and state == BuildingDefs.BuildingState.CONSTRUCTING:
 		worksite.refresh_registration()
 
 
@@ -89,7 +89,7 @@ func _on_destroyed() -> void:
 
 
 func _update_visuals() -> void:
-	if not is_instance_valid(visual):
+	if not visual:
 		return
 
 	var frames := BuildingDefs.get_frames(building_type, state, player)
@@ -111,7 +111,7 @@ func _update_visuals() -> void:
 
 
 func _configure_interactable() -> void:
-	if not is_instance_valid(interactable):
+	if not interactable:
 		return
 
 	var enabled := state != BuildingDefs.BuildingState.CONSTRUCTING
@@ -128,7 +128,7 @@ func _configure_interactable() -> void:
 
 
 func _configure_worksite() -> void:
-	if not is_instance_valid(worksite):
+	if not worksite:
 		return
 	
 	if state == BuildingDefs.BuildingState.CONSTRUCTING:
@@ -144,7 +144,7 @@ func _configure_spawnsite() -> void:
 
 
 func _activate_spawnsite() -> void:
-	if not is_instance_valid(spawnsite):
+	if not spawnsite:
 		return
 	if spawnsite.has_method("enqueue_spawn"):
 		spawnsite.call("enqueue_spawn", 1)
@@ -158,12 +158,12 @@ func _activate_spawnsite() -> void:
 
 
 func _connect_signals() -> void:
-	if is_instance_valid(worksite):
+	if worksite:
 		if worksite.work_completed.is_connected(_on_work_completed):
 			worksite.work_completed.disconnect(_on_work_completed)
 		worksite.work_completed.connect(_on_work_completed)
 
-	if is_instance_valid(interactable):
+	if interactable:
 		if interactable.interaction_finished.is_connected(_on_interacted):
 			interactable.interaction_finished.disconnect(_on_interacted)
 		interactable.interaction_finished.connect(_on_interacted)
