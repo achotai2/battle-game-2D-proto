@@ -24,8 +24,8 @@ radius = 500.0
 shader = ExtResource("11_oe5x5")
 
 [node name="Peasant" type="CharacterBody2D" node_paths=PackedStringArray("health", "movement", "animation", "detection", "tactical", "gold", "hunger", "foodTasker") groups=["Interactable", "Minions"]]
-collision_layer = 16
-collision_mask = 11
+collision_layer = 2048
+collision_mask = 3
 script = ExtResource("1_wen5c")
 health = NodePath("Health")
 movement = NodePath("AgentMovement")
@@ -58,12 +58,11 @@ metadata/_custom_type_script = "uid://58qm17emnwvd"
 script = ExtResource("5_pnucv")
 metadata/_custom_type_script = "uid://c2guvnr3dtafe"
 
-[node name="AgentDetection" type="Area2D" parent="." node_paths=PackedStringArray("my_agent", "tactical")]
-collision_layer = 32
-collision_mask = 1023
+[node name="AgentDetection" type="Area2D" parent="." node_paths=PackedStringArray("my_agent")]
+collision_layer = 256
+collision_mask = 28
 script = ExtResource("8_3pkjs")
 my_agent = NodePath("..")
-tactical = NodePath("../TacticalPeasant")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="AgentDetection"]
 shape = SubResource("CircleShape2D_65o65")
@@ -78,7 +77,7 @@ metadata/_custom_type_script = "uid://cfisvjx2cjr0f"
 avoidance_enabled = true
 radius = 50.0
 avoidance_layers = 8
-avoidance_mask = 7
+avoidance_mask = 15
 debug_enabled = true
 
 [node name="HungerHolder" parent="." node_paths=PackedStringArray("movement", "food_tasker") instance=ExtResource("10_t6mam")]

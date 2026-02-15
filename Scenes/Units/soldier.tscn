@@ -1,4 +1,4 @@
-[gd_scene load_steps=18 format=3 uid="uid://sy3ke7fhk1uv"]
+[gd_scene load_steps=17 format=3 uid="uid://sy3ke7fhk1uv"]
 
 [ext_resource type="Script" uid="uid://b3iqpgjb0vtvl" path="res://Scripts/UnitBase/agent_base.gd" id="1_jq3hr"]
 [ext_resource type="SpriteFrames" uid="uid://rc30dymytbcd" path="res://Art/SpriteFrames/Soldier_Red.tres" id="2_gqo0k"]
@@ -25,8 +25,8 @@ radius = 500.0
 shader = ExtResource("12_x32bv")
 
 [node name="Soldier" type="CharacterBody2D" node_paths=PackedStringArray("health", "movement", "animation", "attack", "detection", "tactical", "gold", "hunger", "foodTasker") groups=["Attackable", "Interactable", "Minions"]]
-collision_layer = 16
-collision_mask = 11
+collision_layer = 4
+collision_mask = 3
 script = ExtResource("1_jq3hr")
 health = NodePath("Health")
 movement = NodePath("AgentMovement")
@@ -46,7 +46,7 @@ shape = SubResource("CapsuleShape2D_ta2g1")
 avoidance_enabled = true
 radius = 50.0
 avoidance_layers = 8
-avoidance_mask = 7
+avoidance_mask = 15
 
 [node name="AgentAnimate" type="Node" parent="." node_paths=PackedStringArray("sprite", "shadow_sprite")]
 script = ExtResource("3_x32bv")
@@ -57,7 +57,6 @@ metadata/_custom_type_script = "uid://cjjdaf7vlfs4k"
 [node name="AgentMovement" type="Node" parent="." node_paths=PackedStringArray("agent", "animation", "nav_agent")]
 script = ExtResource("4_80g1m")
 max_speed = 200.0
-can_meander = true
 agent = NodePath("..")
 animation = NodePath("../AgentAnimate")
 nav_agent = NodePath("../NavigationAgent2D")
@@ -69,12 +68,11 @@ metadata/_custom_type_script = "uid://c2guvnr3dtafe"
 
 [node name="WeaponSword" parent="." instance=ExtResource("6_k4v4y")]
 
-[node name="AgentDetection" type="Area2D" parent="." node_paths=PackedStringArray("my_agent", "tactical")]
-collision_layer = 32
-collision_mask = 1023
+[node name="AgentDetection" type="Area2D" parent="." node_paths=PackedStringArray("my_agent")]
+collision_layer = 256
+collision_mask = 28
 script = ExtResource("8_gdgxh")
 my_agent = NodePath("..")
-tactical = NodePath("../TacticalSoldier")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="AgentDetection"]
 shape = SubResource("CircleShape2D_65o65")

@@ -33,7 +33,7 @@ fill_from = Vector2(0.5, 0.5)
 
 [node name="Player" type="CharacterBody2D" node_paths=PackedStringArray("health", "interactor", "movement", "controls", "animation", "attack", "gold") groups=["Attackable", "Player"]]
 collision_layer = 4
-collision_mask = 15
+collision_mask = 3
 script = ExtResource("1_rpqav")
 player = 1
 health = NodePath("Health")
@@ -81,7 +81,7 @@ movement = NodePath("../AgentMovement")
 
 [node name="NavigationObstacle2D" type="NavigationObstacle2D" parent="."]
 radius = 50.0
-avoidance_layers = 8
+avoidance_layers = 4
 
 [node name="GoldHolder" parent="." instance=ExtResource("9_jokor")]
 gold = 100

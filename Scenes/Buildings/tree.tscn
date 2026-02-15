@@ -117,8 +117,8 @@ animations = [{
 
 [node name="Tree" type="StaticBody2D" node_paths=PackedStringArray("visual", "shadowVisual", "interactable", "worksite", "gold", "resourcesite", "regrow_timer", "spawn_timer")]
 y_sort_enabled = true
-collision_layer = 128
-collision_mask = 11
+collision_layer = 2
+collision_mask = 3
 script = ExtResource("1_l3oha")
 building_type = &"tree"
 visual = NodePath("Sprites/AnimatedSprite2D")
