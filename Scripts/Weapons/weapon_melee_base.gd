@@ -38,7 +38,7 @@ func _ready() -> void:
 
 func set_player(owner_agent: Node2D) -> void:
 	_owner_agent = owner_agent
-	tracking.set_myself(owner_agent)
+	tracking.setup_player(owner_agent.player)
 
 
 func pause_attack(priority: int = 5) -> void:
@@ -49,8 +49,7 @@ func pause_attack(priority: int = 5) -> void:
 func restart_attack(priority: int = 5) -> void:
 	# Called by player controls node
 	_attack_paused = false
-	if _current_target == null and tracking.get_target():
-		_current_target = tracking.get_target()
+	_current_target = tracking.current_target
 	_try_attack()
 
 
@@ -105,7 +104,7 @@ func _on_attack_delay_timeout() -> void:
 		return
 
 	# Ensure the target is still within tracking range (still a candidate)
-	if not tracking.get_candidates().has(t):
+	if not tracking.current_target == t:
 		return
 
 	# Capability reference stored on the target's main script

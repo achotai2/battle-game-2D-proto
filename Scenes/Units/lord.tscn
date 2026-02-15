@@ -66,13 +66,6 @@ collision_layer = 256
 collision_mask = 28
 script = ExtResource("8_7kbwn")
 my_agent = NodePath("..")
-target_kind = null
-my_team_id = null
-target_hostiles = null
-target_friendlies = null
-target_neutral = null
-target_bias = null
-scan_interval = null
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="AgentDetection"]
 shape = SubResource("CircleShape2D_65o65")

@@ -67,7 +67,7 @@ func set_castle(new_castle: Node2D) -> void:
 		return
 
 	_release_job(true)
-	_unregister_from_board()
+	unregister_from_board()
 
 	castle = new_castle
 	_job_board = _resolve_job_board(castle)
@@ -244,7 +244,7 @@ func _resolve_job_board(new_castle: Node2D) -> CastleJobBoard:
 	return new_castle.return_job_board(kind)
 
 
-func _unregister_from_board() -> void:
+func unregister_from_board() -> void:
 	if is_instance_valid(_job_board):
 		if _job_board.has_method("unregister_minion"):
 			_job_board.call("unregister_minion", self)

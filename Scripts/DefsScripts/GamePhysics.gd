@@ -16,6 +16,7 @@ const LAYER_PEASANTS = 12
 static func get_mask_bit(layer: int) -> int:
 	return 1 << (layer - 1)
 
+
 static func get_minion_layer(player_id: int, is_peasant: bool = false) -> int:
 	if is_peasant:
 		return get_mask_bit(LAYER_PEASANTS)
@@ -25,8 +26,15 @@ static func get_minion_layer(player_id: int, is_peasant: bool = false) -> int:
 		2: return get_mask_bit(LAYER_ATTACKABLE_PLAYER_2)
 	return 0
 
+
+static func get_minion_movement_mask() -> int:
+	# Only collide with the World (TileMap) and Buildings
+	return get_mask_bit(LAYER_TILESET) | get_mask_bit(LAYER_BUILDINGS)
+	
+
 static func get_building_layer() -> int:
 	return get_mask_bit(LAYER_BUILDINGS)
+
 
 static func get_tracking_mask(my_player_id: int, target_neutral: bool, target_opposing: bool, target_own: bool) -> int:
 	var mask = 0
@@ -56,6 +64,7 @@ static func get_tracking_mask(my_player_id: int, target_neutral: bool, target_op
 			2: mask |= p1
 
 	return mask
+
 
 static func get_projectile_mask() -> int:
 	return get_mask_bit(LAYER_ATTACKABLE_NEUTRAL) | \

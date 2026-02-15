@@ -55,7 +55,7 @@ func _ready() -> void:
 
 func set_player(owner_agent: Node2D) -> void:
 	_owner_agent = owner_agent
-	tracking.set_myself(owner_agent)
+	tracking.setup_player(owner_agent.player)
 
 
 # --- CONTROL API ---
@@ -63,10 +63,10 @@ func set_player(owner_agent: Node2D) -> void:
 func pause_attack(priority: int = 5) -> void:
 	_attack_paused = true
 
+
 func restart_attack(priority: int = 5) -> void:
 	_attack_paused = false
-	if _current_target == null and tracking.get_target():
-		_current_target = tracking.get_target()
+	_current_target = tracking.current_target
 	_try_attack()
 
 func _cancel_attack() -> void:
@@ -120,7 +120,7 @@ func _on_attack_delay_timeout() -> void:
 	# Ensure target is still a valid candidate (range check, etc)
 	# Note: get_candidates() might be expensive to check every shot, 
 	# usually relying on tracking signals is enough, but this is safe.
-	if not tracking.get_candidates().has(t):
+	if not tracking.current_target:
 		return
 
 	if projectile_scene == null:

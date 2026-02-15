@@ -10,7 +10,7 @@ class_name AgentBase
 @export var animation: AgentAnimate = null
 @export var attack: Node = null
 @export var interactable: Node = null
-@export var detection: Area2D = null
+@export var detection: AgentTracking = null
 @export var tactical: Node = null
 @export var tasker: MinionTasker = null
 @export var gold: GoldHolder = null
@@ -91,6 +91,14 @@ func _disconnect_weapon_signals() -> void:
 		return
 
 
+func _disconnect_detection_signals_to_tactical() -> void:
+	if is_instance_valid(tactical):
+		if tactical.has_method("set_target") and detection.target_changed.is_connected(tactical.set_target):
+			detection.target_changed.disconnect(tactical.set_target)
+		if tactical.has_method("clear_target") and detection.target_lost.is_connected(tactical.clear_target):
+			detection.target_lost.disconnect(tactical.clear_target)
+
+
 func _assign_animation_refs() -> void:
 	if not is_instance_valid(animation):
 		return
@@ -122,15 +130,13 @@ func _assign_detection_refs() -> void:
 	if not is_instance_valid(detection):
 		return
 
-	if is_instance_valid(detection) and detection.has_method("set_myself"):
-		detection.call("set_myself", self)
-	else:
-		print_debug("detection does not have function set_myself")
+	detection.setup_player(player)
 
-	if is_instance_valid(detection) and detection.has_method("set_tactical"):
-		detection.call("set_tactical", tactical)
-	else:
-		print_debug("detection does not have function set_tactical")
+	if is_instance_valid(tactical):
+		if tactical.has_method("set_target") and not detection.target_changed.is_connected(tactical.set_target):
+			detection.target_changed.connect(tactical.set_target)
+		if tactical.has_method("clear_target") and not detection.target_lost.is_connected(tactical.clear_target):
+			detection.target_lost.connect(tactical.clear_target)
 
 
 func _assign_tactical_refs() -> void:
@@ -218,6 +224,7 @@ func apply_role(role: UnitRoles.UnitType, p: int) -> void:
 	player = p
 
 	collision_layer = GamePhysics.get_minion_layer(player, role == UnitRoles.UnitType.PEASANT)
+	collision_mask = GamePhysics.get_minion_movement_mask()
 
 	# --- remove old role groups ---
 	if current_role != null:
@@ -235,9 +242,13 @@ func apply_role(role: UnitRoles.UnitType, p: int) -> void:
 		tactical.queue_free()
 		tactical = null
 
+	if is_instance_valid(detection):
+		_disconnect_detection_signals_to_tactical()
+
 	if is_instance_valid(tasker):
 		if tasker.has_task():
 			tasker.clear_task()
+			tasker.unregister_from_board()
 		tasker.queue_free()
 		tasker = null
 
@@ -276,13 +287,10 @@ func apply_role(role: UnitRoles.UnitType, p: int) -> void:
 	# Configure all refs.
 	_connect_all_refs()
 
-	# --- tracking refresh ---
+	# --- movement and animation refresh ---
 	# Cancel transient action states when swapping role
 	if is_instance_valid(movement):
 		movement.clear_movement_order(9999)
-
-	if is_instance_valid(detection):
-		detection.refresh()
 
 	# If you have flags on animation like `attacking`, clear them too
 	if is_instance_valid(animation):
