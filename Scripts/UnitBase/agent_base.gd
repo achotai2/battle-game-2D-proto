@@ -110,8 +110,8 @@ func _assign_movement_refs() -> void:
 	if not movement:
 		return
 
-	movement.set_my_agent(self)
-	movement.set_animation(animation)
+	movement.agent = self
+	movement.animation = animation
 
 	if is_instance_valid(castle):
 		movement.assigned_castle = castle

@@ -60,8 +60,8 @@ func _assign_movement_refs() -> void:
 	if not movement:
 		return
 
-	movement.set_my_agent(self)
-	movement.set_animation(animate)
+	movement.agent = self
+	movement.animation = animate
 
 
 func _assign_food_worksite_refs() -> void:
