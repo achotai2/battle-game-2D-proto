@@ -217,6 +217,8 @@ func apply_role(role: UnitRoles.UnitType, p: int) -> void:
 	# Set the new player number.
 	player = p
 
+	collision_layer = GamePhysics.get_minion_layer(player, role == UnitRoles.UnitType.PEASANT)
+
 	# --- remove old role groups ---
 	if current_role != null:
 		for g: StringName in UnitRoles.get_role_groups(current_role):

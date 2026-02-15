@@ -12,9 +12,9 @@ enum TargetKind { ATTACKABLE, INTERACTABLE }
 # --- Team Logic ---
 # 0 = Neutral, 1 = Team 1, 2 = Team 2
 @export var my_team_id: int = 1 
-@export var target_neutral: bool = false
-@export var target_1: bool = true
-@export var target_2: bool = false
+@export var target_same_team: bool = false
+@export var target_opposing: bool = true
+@export var target_neutral: bool = true
 
 # --- Tuning ---
 @export_enum("Nearest", "Lowest Health") var target_bias: String = "Nearest"
@@ -44,29 +44,10 @@ func _update_collision_mask() -> void:
 	# Reset mask (scan nothing)
 	collision_mask = 0 
 	
-	# Determine which layers represent "Hostiles" based on my team
-	var neutral_attack = 1 << 2 
-	var team_1_attack = 1 << 3
-	var team_2_attack = 1 << 4
-	var neutral_interact = 1 << 5
-	var team_1_interact = 1 << 6
-	var team_2_interact = 1 << 7
+	collision_layer = GamePhysics.get_mask_bit(GamePhysics.LAYER_TRACKING)
 
-	if my_team_id == 0:
-		if target_kind == TargetKind.ATTACKABLE:
-			collision_mask |= neutral_attack
-		elif target_kind == TargetKind.INTERACTABLE:
-			collision_mask |= neutral_interact
-	elif my_team_id == 1:
-		if target_kind == TargetKind.ATTACKABLE:
-			collision_mask |= team_1_attack
-		elif target_kind == TargetKind.INTERACTABLE:
-			collision_mask |= team_1_interact
-	elif my_team_id == 2:
-		if target_kind == TargetKind.ATTACKABLE:
-			collision_mask |= team_2_attack
-		elif target_kind == TargetKind.INTERACTABLE:
-			collision_mask |= team_2_interact
+	if target_kind == TargetKind.ATTACKABLE:
+		collision_mask = GamePhysics.get_tracking_mask(my_team_id, target_neutral, target_opposing, target_same_team)
 
 
 func _scan_for_targets() -> void:

@@ -37,6 +37,9 @@ var _tan_camera_angle: float = 0.0
 func _ready() -> void:
 	_tan_camera_angle = tan(deg_to_rad(camera_angle))
 
+	collision_layer = GamePhysics.get_mask_bit(GamePhysics.LAYER_PROJECTILE)
+	collision_mask = GamePhysics.get_projectile_mask()
+
 	body_entered.connect(_on_body_entered)
 	monitoring = true
 	monitorable = true

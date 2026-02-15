@@ -19,6 +19,8 @@ var _is_ready: bool = false
 func _ready() -> void:
 	_is_ready = true
 
+	collision_layer = GamePhysics.get_building_layer()
+
 	if is_instance_valid(worksite) and worksite.has_method("assign_boss"):
 		worksite.call("assign_boss", self)
 	else:
