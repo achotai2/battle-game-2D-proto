@@ -18,8 +18,8 @@ class_name TacticalArcher
 @export var movement: AgentMovement = null
 @export var archer_priority: int = 6
 
-var _target: Node2D = null
-var _agent: Node2D = null
+var _target: CharacterBody2D = null
+var _agent: CharacterBody2D = null
 var _timer: Timer
 
 
@@ -31,11 +31,11 @@ func _ready() -> void:
 	add_child(_timer)
 
 
-func set_agent(agent: Node2D) -> void:
+func set_agent(agent: CharacterBody2D) -> void:
 	_agent = agent
 
 
-func set_target(t: Node2D) -> void:
+func set_target(t: CharacterBody2D) -> void:
 	# Called by detection node. Found a target.
 	_target = t if is_instance_valid(t) else null
 
@@ -57,7 +57,7 @@ func clear_target() -> void:
 	_timer.stop()
 
 
-func detection_refreshed(t: Node2D) -> void:
+func detection_refreshed(t: CharacterBody2D) -> void:
 	# Called by detection node.
 	pass
 

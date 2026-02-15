@@ -15,8 +15,8 @@ func assign_job(_site: WorkSite) -> void:
 	pass
 
 
-func get_agent() -> Node2D:
+func get_agent() -> CharacterBody2D:
 	var a = get("agent")
-	if a is Node2D:
+	if a is CharacterBody2D:
 		return a
 	return null

@@ -17,11 +17,11 @@ func _ready() -> void:
 
 
 # Standard Tactical Interface (required by AgentBase but maybe unused by Lord)
-func set_target(t: Node2D) -> void:
+func set_target(t: CharacterBody2D) -> void:
 	pass
 
 
-func set_agent(t: Node2D) -> void:
+func set_agent(t: CharacterBody2D) -> void:
 	pass
 
 

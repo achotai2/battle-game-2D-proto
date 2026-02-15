@@ -1,4 +1,5 @@
 extends StaticBody2D
+class_name Castle
 
 @export var player: int = 0
 @export var worker_job_board: CastleJobBoard

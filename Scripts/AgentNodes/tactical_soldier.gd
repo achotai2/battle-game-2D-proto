@@ -2,21 +2,21 @@ extends Node
 class_name TacticalSoldier
 
 # These are intentionally high-level. The Agent decides how to implement them.
-signal chase_target(target: Node2D)
+signal chase_target(target: CharacterBody2D)
 signal move_to_position(pos: Vector2)
 
 # Optional: you can expose this if you want the agent to change movement state when fighting
-signal combat_started(target: Node2D)
+signal combat_started(target: CharacterBody2D)
 signal combat_ended()
 
 @export var movement: AgentMovement = null
 @export var soldier_priority: int = 6
 
-var _target: Node2D = null
-var _agent: Node2D = null
+var _target: CharacterBody2D = null
+var _agent: CharacterBody2D = null
 
 
-func set_target(t: Node2D) -> void:
+func set_target(t: CharacterBody2D) -> void:
 	# Called by detection node. Found a target.
 	_target = t if is_instance_valid(t) else null
 	if _target:
@@ -32,16 +32,16 @@ func clear_target() -> void:
 	combat_ended.emit()
 
 
-func detection_refreshed(t: Node2D) -> void:
+func detection_refreshed(t: CharacterBody2D) -> void:
 	# Called by detection node.
 	pass
 
 
-func get_target() -> Node2D:
+func get_target() -> CharacterBody2D:
 	return _target
 
 
-func set_agent(my_agent: Node2D) -> void:
+func set_agent(my_agent: CharacterBody2D) -> void:
 	_agent = my_agent
 
 
@@ -49,7 +49,7 @@ func set_movement(m: AgentMovement) -> void:
 	movement = m
 
 
-func _chase_target(target: Node2D) -> void:
+func _chase_target(target: CharacterBody2D) -> void:
 	if is_instance_valid(movement):
 		movement.command_chase_target(target, soldier_priority)
 	chase_target.emit(target)
