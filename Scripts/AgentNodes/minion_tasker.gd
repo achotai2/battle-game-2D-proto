@@ -50,10 +50,6 @@ func _ready() -> void:
 		if agent.has_method("return_castle"):
 			set_castle(agent.return_castle())
 
-	if movement:
-		if not movement.move_to_pos_finished.is_connected(_on_movement_finished):
-			movement.move_to_pos_finished.connect(_on_movement_finished)
-
 func set_castle(new_castle: Castle) -> void:
 	if new_castle == castle: return
 
@@ -237,18 +233,7 @@ func _on_movement_finished(_agent_node: Node2D) -> void:
 
 # --- COMPATIBILITY / SETTERS ---
 func set_agent(a: CharacterBody2D) -> void: agent = a
-
-func set_movement(m: AgentMovement) -> void:
-	if movement == m: return
-
-	if movement and movement.move_to_pos_finished.is_connected(_on_movement_finished):
-		movement.move_to_pos_finished.disconnect(_on_movement_finished)
-
-	movement = m
-
-	if movement and not movement.move_to_pos_finished.is_connected(_on_movement_finished):
-		movement.move_to_pos_finished.connect(_on_movement_finished)
-
+func set_movement(m: AgentMovement) -> void: movement = m
 func clear_task() -> void: _release_job(true); _set_idle_state()
 func has_task() -> bool: return _site != null
 func get_agent() -> CharacterBody2D: return agent
