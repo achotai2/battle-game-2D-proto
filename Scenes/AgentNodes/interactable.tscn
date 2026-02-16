@@ -16,4 +16,4 @@ shape = SubResource("CircleShape2D_pmsje")
 debug_color = Color(0.099311404, 0.6314879, 0.42991528, 0.41960785)
 
 [node name="PromptAnchor" type="Marker3D" parent="."]
-position = Vector3(0, 0, -123)
+position = Vector3(0, 2.5, 0)

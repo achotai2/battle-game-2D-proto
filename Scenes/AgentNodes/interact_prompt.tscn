@@ -5,42 +5,32 @@
 [ext_resource type="Texture2D" uid="uid://dm6x3sreah3wi" path="res://Art/Icons/circleEmpty.png" id="3_0lluy"]
 [ext_resource type="Texture2D" uid="uid://dkyh46mh70hjj" path="res://Art/Icons/TaxIcon.png" id="4_stv28"]
 
-[node name="InteractPrompt" type="CanvasLayer" node_paths=PackedStringArray("con", "circle", "circleEmpty", "type_icon", "costLabel")]
-layer = 10
+[node name="InteractPrompt" type="Node3D" node_paths=PackedStringArray("visuals", "circle", "circleEmpty", "type_icon", "costLabel")]
 script = ExtResource("1_ps6gp")
-con = NodePath("Control")
-circle = NodePath("Control/Circle")
-circleEmpty = NodePath("Control/CircleEmpty")
-type_icon = NodePath("Control/TypeIcon")
-costLabel = NodePath("Control/Cost")
+visuals = NodePath("Visuals")
+circle = NodePath("Visuals/Circle")
+circleEmpty = NodePath("Visuals/CircleEmpty")
+type_icon = NodePath("Visuals/TypeIcon")
+costLabel = NodePath("Visuals/Cost")
 
-[node name="Control" type="Control" parent="."]
-layout_mode = 3
-anchors_preset = 0
-offset_right = 40.0
-offset_bottom = 40.0
+[node name="Visuals" type="Node3D" parent="."]
 
-[node name="Circle" type="Sprite3D" parent="Control"]
-scale = Vector3(0.13611111, 1, 0.13611111)
+[node name="Circle" type="Sprite3D" parent="Visuals"]
+billboard = 1
 texture = ExtResource("2_stv28")
 
-[node name="CircleEmpty" type="Sprite3D" parent="Control"]
-position = Vector3(-9.23872e-06, 0, 7.0929527e-06)
-scale = Vector3(0.1333333, 1, 0.13333331)
+[node name="CircleEmpty" type="Sprite3D" parent="Visuals"]
+billboard = 1
 texture = ExtResource("3_0lluy")
 
-[node name="Cost" type="Label" parent="Control"]
-layout_mode = 0
-offset_left = -18.0
-offset_top = -15.0
-offset_right = 18.0
-offset_bottom = 14.0
-theme_override_colors/font_color = Color(0, 0, 0, 1)
-text = "8"
-horizontal_alignment = 1
-vertical_alignment = 1
-
-[node name="TypeIcon" type="Sprite3D" parent="Control"]
-position = Vector3(60, 0, 0)
-scale = Vector3(0.20555557, 1, 0.20555557)
+[node name="TypeIcon" type="Sprite3D" parent="Visuals"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.4, 0)
+billboard = 1
 texture = ExtResource("4_stv28")
+
+[node name="Cost" type="Label3D" parent="Visuals"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.4, 0)
+billboard = 1
+text = "8"
+font_size = 64
+outline_render_priority = 2
