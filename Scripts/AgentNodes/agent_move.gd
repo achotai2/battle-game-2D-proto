@@ -250,6 +250,7 @@ func _update_speed_cap() -> void:
 
 func command_move_to_position(pos: Vector2, priority: int = 5) -> bool:
 	if not _accept_order(priority): return false
+	_cancel_anim_actions()
 	_order_type = OrderType.MOVE_TO_POS
 	_update_speed_cap() # Update Cache
 	_set_target_pos(pos)
@@ -257,6 +258,7 @@ func command_move_to_position(pos: Vector2, priority: int = 5) -> bool:
 
 func command_player_direction(dir: Vector2, priority: int = 5) -> bool:
 	if not _accept_order(priority): return false
+	_cancel_anim_actions()
 	_order_type = OrderType.PLAYER_DIRECTION
 	_order_direction = dir
 	_order_target_node = null
@@ -267,6 +269,7 @@ func command_player_direction(dir: Vector2, priority: int = 5) -> bool:
 
 func command_chase_target(node: Node2D, priority: int = 5) -> bool:
 	if not _accept_order(priority): return false
+	_cancel_anim_actions()
 	_order_type = OrderType.CHASE_NODE
 	_order_target_node = node
 	_update_speed_cap() # Update Cache
@@ -300,6 +303,7 @@ func _accept_order(priority: int) -> bool:
 func _start_self_meander() -> void:
 	if not is_instance_valid(assigned_castle):
 		can_meander = false; return
+	_cancel_anim_actions()
 	_order_type = OrderType.MEANDER
 	_order_priority = 0
 	_update_speed_cap() # Update Cache
@@ -310,11 +314,15 @@ func move_in_direction(direction: Vector2, delta: float) -> void:
 
 func clear_movement_order(priority: int = 5) -> void:
 	if priority < _order_priority: return
+	_cancel_anim_actions()
 	_order_type = OrderType.NONE
 	_order_priority = -1
 	_update_speed_cap()
 
 # --- HELPERS ---
+
+func _cancel_anim_actions() -> void:
+	if animation: animation.cancel_action_state()
 
 func _set_target_pos(pos: Vector2) -> void:
 	_target_pos = pos

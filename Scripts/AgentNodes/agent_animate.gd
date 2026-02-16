@@ -52,7 +52,7 @@ func _animation_finished() -> void:
 
 	if is_instance_valid(sprite):
 		attacking = false
-		working = false
+		# working = false # Removed to allow looping work animation
 		_update_idle_walk_anim()
 	
 
@@ -115,6 +115,7 @@ func play_attack(target: Node2D) -> bool:
 		return false
 
 	attacking = true
+	working = false
 	var dir: Vector2 = _my_agent.return_position().direction_to(target.return_position())
 	var frames := sprite.sprite_frames
 
@@ -201,6 +202,7 @@ func play_work() -> bool:
 	var frames := sprite.sprite_frames
 	if frames.has_animation("work"):
 		working = true
+		attacking = false
 		sprite.play("work")
 		if is_instance_valid(shadow_sprite): shadow_sprite.play("work")
 		return true
