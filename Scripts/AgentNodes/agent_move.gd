@@ -17,7 +17,7 @@ signal move_to_pos_finished(agent: Node2D)
 # --- TUNING ---
 @export_range(0.05, 20.0, 0.05) var repath_interval: float = 1.0
 @export_range(1.0, 200.0, 1.0) var target_repath_distance: float = 250.0
-@export_range(0.1, 5.0, 0.1) var stuck_check_interval: float = 1.0 
+@export_range(0.1, 5.0, 0.1) var stuck_check_interval: float = 4.0 
 @export_range(0.0, 200.0, 1.0) var min_progress_per_sec: float = 10.0
 @export_range(0.0, 200.0, 1.0) var slow_radius: float = 0.0
 @export_range(0.0, 200.0, 0.5) var accel: float = 0.0
@@ -94,8 +94,14 @@ func _ready() -> void:
 # --- MAIN LOOP ---
 
 func tick(delta: float) -> void:
+	# [FIX] Check for auto-meander FIRST.
+	# If we are supposed to meander, start immediately so we don't get put to sleep below.
+	if _order_type == OrderType.NONE and can_meander:
+		_start_self_meander()
+
+	# [OPTIMIZATION] Sleep Check
+	# Now this only triggers if we are NONE (and didn't start meandering) or FROZEN
 	if (_order_type == OrderType.NONE or _order_type == OrderType.FROZEN) and _current_velocity.is_zero_approx():
-		# Still update visuals strictly for Idle animation, then exit
 		if animation: _update_visuals()
 		return
 	
@@ -103,8 +109,7 @@ func tick(delta: float) -> void:
 		move_with_velocity(Vector2.ZERO, delta)
 		return
 
-	if _order_type == OrderType.NONE and can_meander:
-		_start_self_meander()
+	# ... (Rest of logic remains the same) ...
 
 	match _order_type:
 		OrderType.MEANDER, OrderType.MOVE_TO_POS, OrderType.CHASE_NODE:
@@ -121,13 +126,17 @@ func tick(delta: float) -> void:
 			move_with_velocity(Vector2.ZERO, delta)
 
 	_update_visuals()
+	
 
 # --- PATHFINDING CORE ---
 
 func _process_pathfinding(my_pos: Vector2, delta: float) -> void:
 	if nav_agent.is_navigation_finished():
+		# If we return early without this, the unit keeps the last known velocity 
+		# and slides off the map (Cruise Control bug).
+		move_with_velocity(Vector2.ZERO, delta)
 		return
-
+		
 	# [OPTIMIZATION] Throttled Path Calculation
 	if (Engine.get_physics_frames() + _frame_offset) % PATH_UPDATE_INTERVAL == 0:
 		var next_pos = nav_agent.get_next_path_position()
