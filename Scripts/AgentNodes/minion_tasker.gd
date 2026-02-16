@@ -160,6 +160,9 @@ func _enter_work_state() -> void:
 	if _state == State.WORKING: return
 	_state = State.WORKING
 	
+	if movement:
+		movement.command_start_work(job_priority)
+
 	# Do one tick immediately
 	_on_work_tick()
 	
