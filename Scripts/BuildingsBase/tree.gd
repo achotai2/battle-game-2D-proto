@@ -3,7 +3,7 @@ class_name TreeBase
 
 enum TreeState { NORMAL, MARKED, CUT }
 
-@export var castle: Node2D
+@export var castle: Castle
 @export var building_type: StringName = &""
 @export var visual: Node
 @export var shadowVisual: Node
@@ -38,7 +38,7 @@ func _ready() -> void:
 		spawn_timer.start(stagger_time)
 
 
-func set_castle(c: Node2D) -> void:
+func set_castle(c: Castle) -> void:
 	castle = c
 	if worksite and state == TreeState.MARKED:
 		worksite.refresh_registration()
@@ -60,7 +60,7 @@ func apply_state(new_state: TreeState) -> void:
 	_connect_signals()
 
 
-func return_castle() -> Node2D:
+func return_castle() -> Castle:
 	return castle
 
 
@@ -68,7 +68,7 @@ func return_position() -> Vector3:
 	return global_position
 
 
-func _on_interacted(interactor: Node2D) -> void:
+func _on_interacted(interactor: CharacterBody3D) -> void:
 	if state == TreeState.NORMAL and is_instance_valid(interactor.gold) and interactor.gold.gold >= worksite.total_work:
 		interactor.gold.give_gold(self, worksite.total_work)
 		set_state(TreeState.MARKED)

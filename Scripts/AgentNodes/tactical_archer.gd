@@ -100,12 +100,12 @@ func _on_tick() -> void:
 
 	# Slight sideways bias to avoid straight-line oscillation (kite feel).
 	if keep_line_of_fire:
-		var perp := Vector3(-dir_to.y, dir_to.x)
+		var perp := Vector3(-dir_to.y, dir_to.x, 0)
 		# Choose a consistent side each tick based on target id (stable, no random jitter)
 		var side := 1.0 if int(_target.get_instance_id()) % 2 == 0 else -1.0
 		desired_dir = (desired_dir + perp * 0.35 * side).normalized()
-
 	var dest := my_pos + desired_dir * reposition_step
+
 	_move_to_position(dest)
 
 

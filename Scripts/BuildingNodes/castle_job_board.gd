@@ -7,15 +7,15 @@ enum JobBoardType {
 	FOOD,
 }
 
-@export var castle: Node2D
+@export var castle: Castle
 
 var _sites: Array[WorkSite] = []
-var _reserved_by: Dictionary = {} # site: Array[Node2D] (agents)
+var _reserved_by: Dictionary = {} # site: Array[CharacterBody3D] (agents)
 var _idle_minions: Array[MinionTasker] = []
 
 func _ready() -> void:
 	if castle == null:
-		castle = get_parent() as Node2D
+		castle = get_parent() as Castle
 
 # -------------------------
 # Work sites
@@ -168,7 +168,7 @@ func _assign_if_possible() -> void:
 			site = _pick_best_site_for_minion(w, agent, attempted)
 
 
-func _pick_best_site_for_minion(minion: MinionTasker, agent: Node2D, excluded_sites: Array[WorkSite] = []) -> WorkSite:
+func _pick_best_site_for_minion(minion: MinionTasker, agent: CharacterBody3D, excluded_sites: Array[WorkSite] = []) -> WorkSite:
 	var best: WorkSite = null
 	var best_score: float = INF
 	
@@ -199,7 +199,7 @@ func _pick_best_site_for_minion(minion: MinionTasker, agent: Node2D, excluded_si
 # Internals
 # -------------------------
 
-func _reserve(site: WorkSite, agent: Node2D) -> bool:
+func _reserve(site: WorkSite, agent: CharacterBody3D) -> bool:
 	if not is_instance_valid(site):
 		return false
 	if site.has_method("reserve"):
@@ -234,7 +234,7 @@ func _release_site(site: WorkSite) -> void:
 					agent.tasker.clear_task()
 
 
-func _release_reservation(site: WorkSite, agent: Node2D) -> void:
+func _release_reservation(site: WorkSite, agent: CharacterBody3D) -> void:
 	if not _reserved_by.has(site):
 		return
 	var agents: Array = _reserved_by[site]
@@ -251,7 +251,7 @@ func _release_reservation(site: WorkSite, agent: Node2D) -> void:
 		_reserved_by[site] = agents
 
 
-func _release_reservations_for_agent(agent: Node2D) -> void:
+func _release_reservations_for_agent(agent: CharacterBody3D) -> void:
 	# Duplicate keys to avoid modification during iteration issues
 	var sites = _reserved_by.keys()
 	for site in sites:
@@ -276,13 +276,13 @@ func _site_needs_work(site: WorkSite) -> bool:
 	return site.needs_work()
 
 
-func _get_site_pos(site: WorkSite, agent: Node2D) -> Vector3:
+func _get_site_pos(site: WorkSite, agent: CharacterBody3D) -> Vector3:
 	if site.has_method("get_work_position_for"):
 		return site.get_work_position_for(agent)
 	return site.get_work_position()
 
 
-func _resolve_agent(minion: MinionTasker) -> Node2D:
+func _resolve_agent(minion: MinionTasker) -> CharacterBody3D:
 	if minion == null:
 		return null
 	return minion.get_agent()

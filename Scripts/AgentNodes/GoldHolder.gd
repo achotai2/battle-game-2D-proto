@@ -28,7 +28,7 @@ signal goldChanged(amount_of_gold: int)
 
 # Internal state
 var _agent: CharacterBody3D
-var _target_to_give: Node2D
+var _target_to_give: CharacterBody3D
 var _amount_to_give: int
 
 enum State { IDLE, GIVING, RECEIVING }
@@ -70,7 +70,7 @@ func _ready() -> void:
 
 
 ## Command the agent to run to a target and give them the gold.
-func give_gold(target: Node2D, amount: int) -> void:
+func give_gold(target: CharacterBody3D, amount: int) -> void:
 	if gold <= 0 or not is_instance_valid(target) and not _state == State.IDLE:
 		return
 
@@ -90,7 +90,7 @@ func give_gold(target: Node2D, amount: int) -> void:
 		_gold_handover()
 
 
-func _issue_movement_command(target_node: Node2D) -> bool:
+func _issue_movement_command(target_node: CharacterBody3D) -> bool:
 	if not is_instance_valid(_agent):
 		return false
 		
@@ -136,7 +136,7 @@ func _gold_handover() -> void:
 	_finish_action()
 
 
-func _on_body_entered(body: Node2D) -> void:
+func _on_body_entered(body: Node3D) -> void:
 		match _state:
 			State.GIVING:
 				if is_instance_valid(_target_to_give) and body == _target_to_give:
@@ -172,7 +172,7 @@ func _change_gold_amount(amount: int) -> void:
 	goldChanged.emit(gold)
 
 
-func can_i_tax_you(lord: Node2D) -> void:
+func can_i_tax_you(lord: CharacterBody3D) -> void:
 	# Must NOT be player (already filtered by detection team? No, detection same team includes player)
 	if get_parent().is_in_group("Player"):
 		return

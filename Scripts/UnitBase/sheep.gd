@@ -10,7 +10,7 @@ extends CharacterBody3D
 @export var wander_interval: float = 2.0 # Not actively used by MinionPathfinding but kept for API compatibility if needed
 
 var _spawn_position: Vector3
-var patrol_anchor: Node2D = null
+var patrol_anchor: Node3D = null
 var is_returning: bool = false
 
 
@@ -20,7 +20,7 @@ func _ready() -> void:
 
 	_connect_all_refs()
 
-	patrol_anchor = Node2D.new()
+	patrol_anchor = Node3D.new()
 	add_child(patrol_anchor)
 
 	# Configure movement speeds

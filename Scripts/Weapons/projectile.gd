@@ -98,7 +98,7 @@ func _process(delta: float) -> void:
 		_land(null)
 
 
-func _on_body_entered(body: Node2D) -> void:
+func _on_body_entered(body: Node3D) -> void:
 	if _landed:
 		return
 	if not _armed:
@@ -115,7 +115,7 @@ func _on_body_entered(body: Node2D) -> void:
 	_land(body)
 
 
-func _land(hit_target: Node2D) -> void:
+func _land(hit_target: Node3D) -> void:
 	if _landed:
 		return
 	_landed = true
@@ -148,7 +148,7 @@ func _land(hit_target: Node2D) -> void:
 
 func _new_global_position() -> Vector3:
 	# fake camera tilt: higher Z lifts sprite upward on screen
-	return Vector3(position2d.x, position2d.y - (height * _tan_camera_angle))
+	return Vector3(position2d.x, position2d.y - (height * _tan_camera_angle), launch_height)
 
 
 func _change_sprite_angle(look_to: Vector3) -> void:

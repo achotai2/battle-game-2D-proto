@@ -4,7 +4,7 @@ class_name WorkSite
 ##
 ## Intended usage:
 ## - This node is a *child* of some parent object (building, tree, construction site, repair target).
-## - The parent object stores a reference to its castle (Node2D).
+## - The parent object stores a reference to its castle (Castle).
 ## - This WorkSite finds the castle by calling parent.get_castle() (preferred) or reading parent.castle (fallback).
 ## - It registers itself with the castle’s JobBoard (CastleJobBoard) so workers can be assigned here.
 ##
@@ -24,7 +24,7 @@ signal work_applied(site: WorkSite)
 # Editor / tuning variables
 # -------------------------
 
-@export var my_boss: Node2D = null
+@export var my_boss: Node3D = null
 ## Cached parent reference.
 
 @export var total_work: float = 10.0
@@ -38,7 +38,7 @@ signal work_applied(site: WorkSite)
 ## If true, the WorkSite automatically resolves its castle and registers with the job board in _ready().
 ## If false, you can call refresh_registration() manually after setting up parent/castle references.
 
-@export var work_offset: Marker2D = null
+@export var work_offset: Marker3D = null
 ## Optional offset (in global space) where workers should stand to work.
 ## Useful if the building's sprite origin isn't where you want workers to path to.
 
@@ -58,7 +58,7 @@ var _work_done: float = 0.0
 var _job_board: CastleJobBoard = null
 ## Cached job board reference resolved from castle. We keep it so we can unregister cleanly.
 
-var _slot_markers: Array[Marker2D] = []
+var _slot_markers: Array[Marker3D] = []
 var _slot_for_agent: Dictionary = {} # agent: slot_index
 var _agent_for_slot: Dictionary = {} # slot_index: agent
 
@@ -100,7 +100,7 @@ func get_work_position() -> Vector3:
 	if not is_instance_valid(my_boss) or not my_boss.has_method("return_position"):
 		return Vector3.ZERO
 
-	var base_pos: Vector3 = my_boss.return_position()
+	var base_pos: Vector3 = my_boss.global_position
 	if is_instance_valid(work_offset):
 		return base_pos + work_offset.position
 	return base_pos
@@ -117,7 +117,7 @@ func has_free_slot() -> bool:
 	return _agent_for_slot.size() < _slot_markers.size()
 
 
-func can_reserve(agent: Node2D) -> bool:
+func can_reserve(agent: CharacterBody3D) -> bool:
 	## Optional hook: JobBoard can ask if this site can be reserved by a given agent.
 	if not needs_work():
 		return false
@@ -128,7 +128,7 @@ func can_reserve(agent: Node2D) -> bool:
 	return has_free_slot()
 
 
-func reserve(agent: Node2D) -> bool:
+func reserve(agent: CharacterBody3D) -> bool:
 	## Optional hook: JobBoard calls this when it assigns/reserves the job for an agent.
 	if agent == null or not is_instance_valid(agent):
 		return false
@@ -147,7 +147,7 @@ func reserve(agent: Node2D) -> bool:
 	return true
 
 
-func unreserve(agent: Node2D) -> void:
+func unreserve(agent: CharacterBody3D) -> void:
 	## Optional hook: JobBoard calls this when releasing the reservation (worker changed jobs, etc.)
 	if agent == null:
 		return
@@ -159,7 +159,7 @@ func unreserve(agent: Node2D) -> void:
 	_agent_for_slot.erase(slot_index)
 
 
-func get_work_position_for(agent: Node2D) -> Vector3:
+func get_work_position_for(agent: CharacterBody3D) -> Vector3:
 	## Returns the per-agent work position (slot) if reserved.
 	_cleanup_invalid_agents()
 	if agent != null and _slot_for_agent.has(agent):
@@ -223,7 +223,7 @@ func get_progress_ratio() -> float:
 	return clampf(_work_done / total_work, 0.0, 1.0)
 
 
-func assign_boss(boss: Node2D) -> void:
+func assign_boss(boss: Node3D) -> void:
 	my_boss = boss
 
 	if auto_register and enabled:
@@ -259,9 +259,9 @@ func _collect_slots() -> void:
 		_gather_marker_descendants(self, _slot_markers)
 
 
-func _gather_marker_descendants(root: Node, out: Array[Marker2D]) -> void:
+func _gather_marker_descendants(root: Node, out: Array[Marker3D]) -> void:
 	for child in root.get_children():
-		if child is Marker2D:
+		if child is Marker3D:
 			out.append(child)
 		_gather_marker_descendants(child, out)
 
@@ -276,7 +276,7 @@ func _find_free_slot_index() -> int:
 	return -1
 
 
-func _assign_slot(agent: Node2D, slot_index: int) -> void:
+func _assign_slot(agent: CharacterBody3D, slot_index: int) -> void:
 	_slot_for_agent[agent] = slot_index
 	_agent_for_slot[slot_index] = agent
 	if agent is Node:
@@ -308,7 +308,7 @@ func _clear_all_reservations() -> void:
 		unreserve(agent)
 
 
-func _on_agent_exited(agent: Node2D) -> void:
+func _on_agent_exited(agent: CharacterBody3D) -> void:
 	unreserve(agent)
 
 
@@ -334,9 +334,9 @@ func _resolve_castle_and_register() -> void:
 		_job_board.register_site(self)
 
 
-func _get_castle_from_parent() -> Node2D:
+func _get_castle_from_parent() -> Castle:
 	## Attempts to find a castle reference from our parent using conventions.
-	## Convention A (preferred): parent implements get_castle() -> Node2D
+	## Convention A (preferred): parent implements get_castle() -> Castle
 	## Convention B (fallback): parent has a variable/property called "castle"
 	if my_boss == null:
 		return null
@@ -344,20 +344,15 @@ func _get_castle_from_parent() -> Node2D:
 	# Convention A: method
 	if my_boss.has_method("return_castle"):
 		var c = my_boss.call("return_castle")
-		if c is Node2D:
+		if c is Castle:
 			return c
 	else:
 		print_debug("my_boss does not have function return_castle.")
 
-	# Convention B: property
-	#var prop = my_boss.get("castle")
-	#if prop is Node2D:
-	#	return prop
-
 	return null
 
 
-func _resolve_job_board(castle: Node2D) -> CastleJobBoard:
+func _resolve_job_board(castle: Castle) -> CastleJobBoard:
 	## Locates the job board node using conventions.
 	## Convention: castle has a child node named "JobBoard"
 	if castle == null or not is_instance_valid(castle):

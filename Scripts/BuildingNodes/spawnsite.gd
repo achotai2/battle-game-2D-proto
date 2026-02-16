@@ -2,7 +2,7 @@ extends WorkSite
 class_name SpawnSite
 ## A WorkSite variant that queues spawn/transform requests and applies roles to peasants.
 
-signal spawn_completed(agent: Node2D, role: StringName, player: int)
+signal spawn_completed(agent: CharacterBody3D, role: StringName, player: int)
 
 @export var spawn_role: UnitRoles.UnitType = UnitRoles.UnitType.SOLDIER
 @export var work_per_spawn: float = 5.0
@@ -62,7 +62,7 @@ func apply_work(amount: float, worker: MinionTasker) -> void:
 					
 
 
-func _peasant_move_finished(_peasant: Node2D) -> void:
+func _peasant_move_finished(_peasant: CharacterBody3D) -> void:
 	_peasants_qeued -= 1
 	if _peasants_qeued < 0:
 		print_debug("Peasants queud went less than 0")
@@ -103,7 +103,7 @@ func _get_boss_property() -> BuildingDefs.BuildingType:
 	return get_parent().building_type
 
 
-func _resolve_agent(minion: MinionTasker) -> Node2D:
+func _resolve_agent(minion: MinionTasker) -> CharacterBody3D:
 	if minion == null:
 		return null
 

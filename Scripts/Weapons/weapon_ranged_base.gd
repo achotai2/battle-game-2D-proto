@@ -14,7 +14,7 @@ class_name WeaponRanged
 
 # --- PROJECTILE SETUP ---
 @export var projectile_scene: PackedScene
-@export var muzzle: Node2D # Optional spawn point
+@export var muzzle: Node3D # Optional spawn point
 @export var projectile_parent_path: NodePath
 @export var projectile_speed: float = 700.0
 @export var attack_power: int = 10
@@ -182,7 +182,7 @@ func get_shot_point(origin: Vector3, target_pos: Vector3) -> Vector3:
 	var inaccuracy = (100.0 - acc_score) / 100.0 
 	var spread_factor = 0.05 
 	var deviation = dist * inaccuracy * spread_factor
-	var error_offset = Vector3(randfn(0.0, deviation), randfn(0.0, deviation))
+	var error_offset = Vector3(randfn(0.0, deviation), randfn(0.0, deviation), 0)
 
 	# 2. Calculate Wind Drift (UPDATED)
 	# OLD: Weather.wind_direction * Weather.wind_speed

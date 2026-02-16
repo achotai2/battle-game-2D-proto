@@ -11,7 +11,7 @@ var unit_scene_map = {}
 var selected_unit_label: Label
 var selected_player_label: Label
 var unit_count_label: Label
-var units_node: Node2D = null
+var units_node: Nodee = null
 
 func _ready():
 	# Find WeatherState node

@@ -24,7 +24,7 @@ signal move_to_pos_finished(agent: CharacterBody3D)
 @export_range(0.0, 200.0, 0.5) var accel: float = 0.0
 
 # --- PATROL ---
-@export var assigned_castle: Node2D
+@export var assigned_castle: Castle
 @export_range(0.0, 2000.0, 10.0) var patrol_radius: float = 500.0
 @export_range(0.0, 200.0, 1.0) var patrol_arrival_radius: float = 50.0
 @export_range(0.0, 10.0, 0.1) var patrol_pause_seconds: float = 0.5
@@ -55,7 +55,7 @@ var _frame_offset: int = 0
 const PATH_UPDATE_INTERVAL: int = 4 
 
 # Temporary command storage
-var _order_target_node: Node2D = null
+var _order_target_node: CharacterBody3D = null
 var _order_direction: Vector3 = Vector3.ZERO
 
 # Timers
@@ -288,7 +288,7 @@ func command_player_direction(dir: Vector3, priority: int = 5) -> bool:
 	_update_speed_cap() # Update Cache
 	return true
 
-func command_chase_target(node: Node2D, priority: int = 5) -> bool:
+func command_chase_target(node: Node3D, priority: int = 5) -> bool:
 	if not _accept_order(priority): return false
 	_cancel_anim_actions()
 	_order_type = OrderType.CHASE_NODE

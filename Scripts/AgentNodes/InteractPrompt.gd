@@ -56,15 +56,15 @@ func _process(delta: float) -> void:
 # world_pos: the target's world position
 # percent_left: 0..1 for fill/progress
 # world_offset: world-space offset above the target (e.g. (0, -32))
-func set_world_target(world_pos: Vector3, percent_left: float, world_offset: Vector3 = Vector3(0, -32)) -> void:
+func set_world_target(world_pos: Vector3, percent_left: float, world_offset: Vector3 = Vector3(0, 0, -32)) -> void:
 	var viewport := get_viewport()
 	if viewport == null:
 		return
-	var cam := viewport.get_camera_2d()
+	var cam := viewport.get_camera_3d()
 	if cam == null:
 		return  # No camera yet (e.g., during scene boot); caller can retry
 
-	var canvas_xform: Transform2D = viewport.get_canvas_transform()
+	var canvas_xform: Transform3D = viewport.get_canvas_transform()
 	_base_screen_pos = canvas_xform * (world_pos + world_offset)
 	_set_percent(percent_left)
 
@@ -91,7 +91,7 @@ func _set_percent(percent_left: float) -> void:
 		circle.scale = circleEmpty.scale * p
 
 # Optional convenience if you attach this prompt to a specific Node3D target at runtime:
-func follow_target(target: CharacterBody3D, percent_left: float, world_offset: Vector3 = Vector3(0, -32)) -> void:
+func follow_target(target: CharacterBody3D, percent_left: float, world_offset: Vector3 = Vector3(0, 0, -32)) -> void:
 	if not is_instance_valid(target):
 		return
 	set_world_target(target.global_position, percent_left, world_offset)

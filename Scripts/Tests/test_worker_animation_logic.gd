@@ -48,7 +48,7 @@ func _ready():
 	agent.add_child(tasker)
 
 	# Mock WorkSite
-	var site = Node2D.new()
+	var site = WorkSite.new()
 	# Add methods dynamically or use script
 	var site_script = GDScript.new()
 	site_script.source_code = """
@@ -117,7 +117,7 @@ func get_work_position_for(agent): return global_position
 	# animate.play_attack(...)
 	# check working == false
 
-	var dummy_target = Node2D.new()
+	var dummy_target = CharacterBody3D.new()
 	add_child(dummy_target)
 	dummy_target.global_position = Vector3(200, 0, 200)
 

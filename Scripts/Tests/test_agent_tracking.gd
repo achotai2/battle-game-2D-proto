@@ -4,13 +4,13 @@ const AgentTracking = preload("res://Scripts/AgentNodes/agent_tracking.gd")
 # const Health = preload("res://Scripts/AgentNodes/health.gd") # If needed
 
 class MockAgentTracking extends AgentTracking:
-	var _mock_bodies: Array[Node2D] = []
+	var _mock_bodies: Array[Node3D] = []
 
-	func set_mock_bodies(bodies: Array[Node2D]):
+	func set_mock_bodies(bodies: Array[Node3D]):
 		_mock_bodies = bodies
 
 	# Override get_overlapping_bodies to return our mock list
-	func get_overlapping_bodies() -> Array[Node2D]:
+	func get_overlapping_bodies() -> Array[Node3D]:
 		return _mock_bodies
 
 class MockBody extends Node3D:

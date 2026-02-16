@@ -41,7 +41,7 @@ signal food_handed
 
 # Internal state
 var _agent: CharacterBody3D
-var _target_to_give: Node2D
+var _target_to_give: CharacterBody3D
 var _amount_to_give: int
 
 enum State { IDLE, GIVING, RECEIVING }
@@ -91,7 +91,7 @@ func _on_hunger_timer_timeout() -> void:
 
 
 ## Command the agent to run to a target and give them the food.
-func give_food(target: Node2D, amount: int) -> void:
+func give_food(target: CharacterBody3D, amount: int) -> void:
 	if food <= 0 or not is_instance_valid(target) and not _state == State.IDLE:
 		return
 
@@ -109,7 +109,7 @@ func give_food(target: Node2D, amount: int) -> void:
 			_food_handover()
 
 
-func _issue_movement_command(target_node: Node2D) -> bool:
+func _issue_movement_command(target_node: CharacterBody3D) -> bool:
 	if not is_instance_valid(_agent):
 		return false
 		
@@ -157,7 +157,7 @@ func _food_handover() -> void:
 	_finish_action()
 
 
-func _on_body_entered(body: Node2D) -> void:
+func _on_body_entered(body: CharacterBody3D) -> void:
 		match _state:
 			State.GIVING:
 				if is_instance_valid(_target_to_give) and body == _target_to_give:

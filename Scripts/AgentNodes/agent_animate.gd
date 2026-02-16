@@ -13,7 +13,7 @@ var attacking: bool = false
 var working: bool = false
 
 var _move_anim: StringName = &""
-var _my_agent: Node2D = null
+var _my_agent: CharacterBody3D = null
 
 
 # Called when the node enters the scene tree for the first time.
@@ -69,7 +69,7 @@ func _update_idle_walk_anim() -> void:
 	agent_moved(vel)
 
 
-func set_my_agent(ag: Node2D) -> void:
+func set_my_agent(ag: CharacterBody3D) -> void:
 	_my_agent = ag
 
 
