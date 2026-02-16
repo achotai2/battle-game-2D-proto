@@ -10,6 +10,7 @@ var selected_player_id = 1
 var unit_scene_map = {}
 var selected_unit_label: Label
 var selected_player_label: Label
+var unit_count_label: Label
 var units_node: Node2D = null
 
 func _ready():
@@ -113,6 +114,10 @@ func _build_ui():
 	spawn_label.text = "Spawn Units"
 	spawn_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 	spawn_tab.add_child(spawn_label)
+
+	unit_count_label = Label.new()
+	unit_count_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+	spawn_tab.add_child(unit_count_label)
 
 	# --- Player Selection ---
 	var player_label = Label.new()
@@ -244,3 +249,7 @@ func _on_pause_toggled(pressed: bool):
 func _on_trans_slider_changed(value: float):
 	if weather_node:
 		weather_node.transition_duration = value
+
+func _process(_delta):
+	if visible and units_node:
+		unit_count_label.text = "Unit Count: " + str(units_node.get_child_count())
