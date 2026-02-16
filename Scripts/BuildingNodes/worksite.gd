@@ -15,7 +15,7 @@ class_name WorkSite
 
 
 # Emitted once, when total work has been completed.
-signal work_completed(site: WorkSite, worker: WorkSiteWorker)
+signal work_completed(site: WorkSite, worker: MinionTasker)
 
 # Emitted when work is applied to site.
 signal work_applied(site: WorkSite)
@@ -174,7 +174,7 @@ func get_work_position_for(agent: Node2D) -> Vector2:
 	return _get_slot_position(0)
 
 
-func apply_work(amount: float, worker: WorkSiteWorker) -> void:
+func apply_work(amount: float, worker: MinionTasker) -> void:
 	## Called by a worker to contribute progress toward completion.
 	## - amount: how much work this "hit" contributes
 	## - worker: the worker doing the work (useful if you want to attribute credit)
@@ -379,7 +379,7 @@ func _unregister_from_job_board() -> void:
 # Internals: completion
 # -------------------------
 
-func _complete(worker: WorkSiteWorker) -> void:
+func _complete(worker: MinionTasker) -> void:
 	## Called once when work is finished.
 	## We unregister from the job board so new workers won't be assigned here,
 	## then emit a signal so the parent/building can react (upgrade, spawn loot, etc).

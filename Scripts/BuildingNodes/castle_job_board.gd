@@ -11,7 +11,7 @@ enum JobBoardType {
 
 var _sites: Array[WorkSite] = []
 var _reserved_by: Dictionary = {} # site: Array[Node2D] (agents)
-var _idle_minions: Array[WorkSiteWorker] = []
+var _idle_minions: Array[MinionTasker] = []
 
 func _ready() -> void:
 	if castle == null:
@@ -63,7 +63,7 @@ func _on_site_exited(site: WorkSite) -> void:
 # Minions
 # -------------------------
 
-func register_minion(minion: WorkSiteWorker) -> void:
+func register_minion(minion: MinionTasker) -> void:
 	if minion == null or not is_instance_valid(minion):
 		return
 
@@ -72,7 +72,7 @@ func register_minion(minion: WorkSiteWorker) -> void:
 	if not minion.tree_exited.is_connected(exit_callable):
 		minion.tree_exited.connect(exit_callable, CONNECT_ONE_SHOT)
 
-func unregister_minion(minion: WorkSiteWorker) -> void:
+func unregister_minion(minion: MinionTasker) -> void:
 	# Remove from idle list if present
 	var idx := _idle_minions.find(minion)
 	if idx != -1:
@@ -95,7 +95,7 @@ func _on_minion_exited(minion: Node) -> void:
 	unregister_minion(minion)
 
 
-func minion_idle(minion: WorkSiteWorker) -> void:
+func minion_idle(minion: MinionTasker) -> void:
 	if minion == null or not is_instance_valid(minion):
 		return
 	if not _idle_minions.has(minion):
@@ -103,16 +103,16 @@ func minion_idle(minion: WorkSiteWorker) -> void:
 	_assign_if_possible()
 
 
-func register_worker(minion: WorkSiteWorker) -> void:
+func register_worker(minion: MinionTasker) -> void:
 	register_minion(minion)
 
 
-func unregister_worker(minion: WorkSiteWorker) -> void:
+func unregister_worker(minion: MinionTasker) -> void:
 	unregister_minion(minion)
 
 
 # minion calls this when abandoning/completing a job
-func release_job(site: WorkSite, minion: WorkSiteWorker) -> void:
+func release_job(site: WorkSite, minion: MinionTasker) -> void:
 	if site == null:
 		return
 	var agent := _resolve_agent(minion)
@@ -121,7 +121,7 @@ func release_job(site: WorkSite, minion: WorkSiteWorker) -> void:
 		_assign_if_possible()
 
 
-func request_job(minion: WorkSiteWorker) -> WorkSite:
+func request_job(minion: MinionTasker) -> WorkSite:
 	if minion == null or not is_instance_valid(minion):
 		return null
 
@@ -168,7 +168,7 @@ func _assign_if_possible() -> void:
 			site = _pick_best_site_for_minion(w, agent, attempted)
 
 
-func _pick_best_site_for_minion(minion: WorkSiteWorker, agent: Node2D, excluded_sites: Array[WorkSite] = []) -> WorkSite:
+func _pick_best_site_for_minion(minion: MinionTasker, agent: Node2D, excluded_sites: Array[WorkSite] = []) -> WorkSite:
 	var best: WorkSite = null
 	var best_score: float = INF
 	
@@ -282,7 +282,7 @@ func _get_site_pos(site: WorkSite, agent: Node2D) -> Vector2:
 	return site.get_work_position()
 
 
-func _resolve_agent(minion: WorkSiteWorker) -> Node2D:
+func _resolve_agent(minion: MinionTasker) -> Node2D:
 	if minion == null:
 		return null
 	return minion.get_agent()
