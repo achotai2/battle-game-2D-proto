@@ -276,7 +276,7 @@ func _site_needs_work(site: WorkSite) -> bool:
 	return site.needs_work()
 
 
-func _get_site_pos(site: WorkSite, agent: Node2D) -> Vector2:
+func _get_site_pos(site: WorkSite, agent: Node2D) -> Vector3:
 	if site.has_method("get_work_position_for"):
 		return site.get_work_position_for(agent)
 	return site.get_work_position()

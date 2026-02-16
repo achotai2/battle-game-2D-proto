@@ -1,4 +1,4 @@
-extends Node2D
+extends Node3D
 class_name PlayerInteractor
 
 signal target_changed(target: Interactable)
@@ -6,7 +6,7 @@ signal interaction_started(target: Interactable)
 signal interaction_finished(target: Interactable)
 signal interaction_suspended(target: Interactable)
 
-@export var sensor: Area2D
+@export var sensor: Area3D
 @export var prompt_scene: PackedScene
 @export var prompt_parent: Node
 @export var movement: AgentMovement
@@ -37,9 +37,9 @@ func _ready() -> void:
 	add_child(_target_refresh_timer)
 
 	if sensor == null:
-		sensor = get_node_or_null("Sensor") as Area2D
+		sensor = get_node_or_null("Sensor") as Area3D
 	if sensor == null:
-		sensor = get_node_or_null("Area2D") as Area2D
+		sensor = get_node_or_null("Area3D") as Area3D
 
 	if is_instance_valid(sensor):
 		sensor.area_entered.connect(_on_area_entered)
@@ -126,7 +126,7 @@ func _update_prompt() -> void:
 	var percent_left: float = 1.0
 	if not _interaction_timer.is_stopped():
 		percent_left = _interaction_timer.time_left / _current_target.get_interaction_time()
-	_prompt.set_world_target(anchor_position, percent_left, Vector2.ZERO)
+	_prompt.set_world_target(anchor_position, percent_left, Vector3.ZERO)
 	_show_prompt()
 
 
@@ -223,14 +223,14 @@ func _refresh_target() -> void:
 		_set_target(best)
 
 
-func _on_area_entered(area: Area2D) -> void:
+func _on_area_entered(area: Area3D) -> void:
 	if area is Interactable:
 		var interactable := area as Interactable
 		if not _nearby.has(interactable):
 			_nearby.append(interactable)
 
 
-func _on_area_exited(area: Area2D) -> void:
+func _on_area_exited(area: Area3D) -> void:
 	if area is Interactable:
 		var interactable := area as Interactable
 		_nearby.erase(interactable)

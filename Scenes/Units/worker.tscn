@@ -13,17 +13,17 @@
 [ext_resource type="Shader" uid="uid://cmsuxok158t72" path="res://Scripts/Shaders/shadow.gdshader" id="11_16r2s"]
 [ext_resource type="Script" uid="uid://bts71s2mlomuh" path="res://Scripts/AgentNodes/shadow_sprite.gd" id="13_d0fno"]
 
-[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_ta2g1"]
+[sub_resource type="CapsuleShape3D" id="CapsuleShape2D_ta2g1"]
 radius = 23.0
 height = 74.0
 
-[sub_resource type="CircleShape2D" id="CircleShape2D_65o65"]
+[sub_resource type="CylinderShape3D" id="CircleShape2D_65o65"]
 radius = 500.0
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_ttij7"]
 shader = ExtResource("11_16r2s")
 
-[node name="Worker" type="CharacterBody2D" node_paths=PackedStringArray("health", "movement", "animation", "detection", "tactical", "tasker", "gold", "hunger", "foodTasker") groups=["Attackable", "Interactable", "Minions", "Workers"]]
+[node name="Worker" type="CharacterBody3D" node_paths=PackedStringArray("health", "movement", "animation", "detection", "tactical", "tasker", "gold", "hunger", "foodTasker") groups=["Attackable", "Interactable", "Minions", "Workers"]]
 y_sort_enabled = true
 collision_layer = 4
 collision_mask = 3
@@ -39,7 +39,7 @@ hunger = NodePath("HungerHolder")
 foodTasker = NodePath("FoodTasker")
 current_role = 4
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+[node name="CollisionShape2D" type="CollisionShape3D" parent="."]
 shape = SubResource("CapsuleShape2D_ta2g1")
 
 [node name="AgentAnimate" type="Node" parent="." node_paths=PackedStringArray("sprite", "shadow_sprite")]
@@ -60,13 +60,13 @@ metadata/_custom_type_script = "uid://58qm17emnwvd"
 script = ExtResource("5_ddptx")
 metadata/_custom_type_script = "uid://c2guvnr3dtafe"
 
-[node name="AgentDetection" type="Area2D" parent="." node_paths=PackedStringArray("my_agent")]
+[node name="AgentDetection" type="Area3D" parent="." node_paths=PackedStringArray("my_agent")]
 collision_layer = 256
 collision_mask = 28
 script = ExtResource("8_kdem7")
 my_agent = NodePath("..")
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="AgentDetection"]
+[node name="CollisionShape2D" type="CollisionShape3D" parent="AgentDetection"]
 shape = SubResource("CircleShape2D_65o65")
 debug_color = Color(0.498544, 0.546397, 0.554583, 0.42)
 
@@ -80,7 +80,7 @@ agent = NodePath("..")
 movement = NodePath("../AgentMovement")
 metadata/_custom_type_script = "uid://d1ucmtjtmh4hm"
 
-[node name="NavigationAgent2D2" type="NavigationAgent2D" parent="."]
+[node name="NavigationAgent2D2" type="NavigationAgent3D" parent="."]
 avoidance_enabled = true
 radius = 50.0
 avoidance_layers = 8
@@ -103,9 +103,9 @@ kind = 2
 auto_get_work_when_idle = false
 metadata/_custom_type_script = "uid://d1ucmtjtmh4hm"
 
-[node name="Sprites" type="Node2D" parent="."]
+[node name="Sprites" type="Node3D" parent="."]
 
-[node name="ShadowSprite" type="AnimatedSprite2D" parent="Sprites"]
+[node name="ShadowSprite" type="AnimatedSprite3D" parent="Sprites"]
 y_sort_enabled = true
 material = SubResource("ShaderMaterial_ttij7")
 sprite_frames = ExtResource("2_r0ip0")
@@ -113,7 +113,7 @@ animation = &"work"
 offset = Vector2(0, -20)
 script = ExtResource("13_d0fno")
 
-[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="Sprites"]
+[node name="AnimatedSprite2D" type="AnimatedSprite3D" parent="Sprites"]
 y_sort_enabled = true
 sprite_frames = ExtResource("2_r0ip0")
 animation = &"work"

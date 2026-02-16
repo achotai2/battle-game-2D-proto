@@ -1,4 +1,4 @@
-extends Node2D
+extends Node3D
 
 var playerOneTarget: Node
 var playerTwoTarget: Node

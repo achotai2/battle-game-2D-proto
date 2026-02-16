@@ -9,7 +9,7 @@
 [ext_resource type="Shader" uid="uid://cmsuxok158t72" path="res://Scripts/Shaders/shadow.gdshader" id="6_ua3nw"]
 [ext_resource type="Script" uid="uid://bts71s2mlomuh" path="res://Scripts/AgentNodes/shadow_sprite.gd" id="8_ua3nw"]
 
-[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_coeoc"]
+[sub_resource type="CapsuleShape3D" id="CapsuleShape2D_coeoc"]
 radius = 47.999996
 height = 110.0
 
@@ -19,7 +19,7 @@ polygon = PackedVector2Array(-48, 15, -49, -36, 51, -34, 49, 18)
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_krvd1"]
 shader = ExtResource("6_ua3nw")
 
-[node name="Barracks" type="StaticBody2D" node_paths=PackedStringArray("visual", "shadowVisual", "interactable", "worksite", "spawnsite", "gold")]
+[node name="Barracks" type="StaticBody3D" node_paths=PackedStringArray("visual", "shadowVisual", "interactable", "worksite", "spawnsite", "gold")]
 script = ExtResource("1_24hde")
 visual = NodePath("Sprites/Sprite2D")
 shadowVisual = NodePath("Sprites/ShadowSprite")
@@ -29,74 +29,74 @@ spawnsite = NodePath("SpawnSite")
 gold = NodePath("GoldHolder")
 state = 2
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
-rotation = 1.5707964
+[node name="CollisionShape2D" type="CollisionShape3D" parent="."]
+rotation = Vector3(0, -1.5707964, 0)
 shape = SubResource("CapsuleShape2D_coeoc")
 
-[node name="WorkSite" type="Node2D" parent="." node_paths=PackedStringArray("my_boss", "work_offset")]
+[node name="WorkSite" type="Node3D" parent="." node_paths=PackedStringArray("my_boss", "work_offset")]
 script = ExtResource("3_0ywlv")
 my_boss = NodePath("..")
 auto_register = false
 work_offset = NodePath("Marker2D")
 metadata/_custom_type_script = "uid://qumqy1omy72i"
 
-[node name="Marker2D" type="Marker2D" parent="WorkSite"]
-position = Vector2(0, 96)
+[node name="Marker2D" type="Marker3D" parent="WorkSite"]
+position = Vector3(0, 0, 96)
 
-[node name="Marker2D2" type="Marker2D" parent="WorkSite"]
-position = Vector2(-96, 0)
+[node name="Marker2D2" type="Marker3D" parent="WorkSite"]
+position = Vector3(-96, 0, 0)
 
-[node name="Marker2D3" type="Marker2D" parent="WorkSite"]
-position = Vector2(96, 0)
+[node name="Marker2D3" type="Marker3D" parent="WorkSite"]
+position = Vector3(96, 0, 0)
 
-[node name="Marker2D6" type="Marker2D" parent="WorkSite"]
-position = Vector2(0, -96)
+[node name="Marker2D6" type="Marker3D" parent="WorkSite"]
+position = Vector3(0, 0, -96)
 
-[node name="SpawnSite" type="Node2D" parent="." node_paths=PackedStringArray("spawn_location")]
+[node name="SpawnSite" type="Node3D" parent="." node_paths=PackedStringArray("spawn_location")]
 script = ExtResource("4_ua3nw")
 spawn_location = NodePath("Marker2D")
 metadata/_custom_type_script = "uid://dqu3s3kqb7wj6"
 
-[node name="Marker2D" type="Marker2D" parent="SpawnSite"]
-position = Vector2(0, 96)
+[node name="Marker2D" type="Marker3D" parent="SpawnSite"]
+position = Vector3(0, 0, 96)
 
-[node name="Marker2D2" type="Marker2D" parent="SpawnSite"]
-position = Vector2(-96, 0)
+[node name="Marker2D2" type="Marker3D" parent="SpawnSite"]
+position = Vector3(-96, 0, 0)
 
-[node name="Marker2D3" type="Marker2D" parent="SpawnSite"]
-position = Vector2(96, 0)
+[node name="Marker2D3" type="Marker3D" parent="SpawnSite"]
+position = Vector3(96, 0, 0)
 
-[node name="Marker2D6" type="Marker2D" parent="SpawnSite"]
-position = Vector2(0, -96)
+[node name="Marker2D6" type="Marker3D" parent="SpawnSite"]
+position = Vector3(0, 0, -96)
 
 [node name="Interactable" parent="." instance=ExtResource("5_krvd1")]
 icon_type = 1
 
-[node name="NavigationObstacle2D" type="NavigationObstacle2D" parent="."]
+[node name="NavigationObstacle2D" type="NavigationObstacle3D" parent="."]
 vertices = PackedVector2Array(-51, -15, -16, -53, 21, -53, 53, -20, 52, 13, 24, 48, -15, 51, -51, 21)
 affect_navigation_mesh = true
 carve_navigation_mesh = true
 
 [node name="GoldHolder" parent="." instance=ExtResource("6_2u44n")]
 
-[node name="LightOccluder2D" type="LightOccluder2D" parent="."]
+[node name="LightOccluder2D" type="Node3D" parent="."]
 visible = false
 occluder = SubResource("OccluderPolygon2D_ua3nw")
 
-[node name="Sprites" type="Node2D" parent="."]
-scale = Vector2(0.359375, 0.359375)
+[node name="Sprites" type="Node3D" parent="."]
+scale = Vector3(0.359375, 1, 0.359375)
 
-[node name="ShadowSprite" type="Sprite2D" parent="Sprites"]
+[node name="ShadowSprite" type="Sprite3D" parent="Sprites"]
 y_sort_enabled = true
 material = SubResource("ShaderMaterial_krvd1")
-position = Vector2(1.5735626e-05, 0)
+position = Vector3(1.5735626e-05, 0, 0)
 texture = ExtResource("6_0ywlv")
 offset = Vector2(0, -80)
 script = ExtResource("8_ua3nw")
 main_body_path = null
 
-[node name="Sprite2D" type="Sprite2D" parent="Sprites"]
+[node name="Sprite2D" type="Sprite3D" parent="Sprites"]
 y_sort_enabled = true
-position = Vector2(-1.4781952e-05, 0)
+position = Vector3(-1.4781952e-05, 0, 0)
 texture = ExtResource("6_0ywlv")
 offset = Vector2(0, -50)

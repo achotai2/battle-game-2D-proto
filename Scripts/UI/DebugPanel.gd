@@ -178,7 +178,7 @@ func _build_ui():
 		if texture:
 			btn.icon = texture
 			btn.expand_icon = true
-			btn.custom_minimum_size = Vector2(64, 64)
+			btn.custom_minimum_size = Vector3(64, 0, 64)
 			btn.icon_alignment = HORIZONTAL_ALIGNMENT_CENTER
 		else:
 			btn.text = str(unit_type)

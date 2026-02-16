@@ -27,8 +27,8 @@ class_name WeaponRanged
 @onready var attack_delay: Timer = $AttackDelay
 
 # --- INTERNAL STATE ---
-var _owner_agent: CharacterBody2D = null
-var _current_target: CharacterBody2D = null
+var _owner_agent: CharacterBody3D = null
+var _current_target: CharacterBody3D = null
 var _projectile_parent: Node = null
 var _attack_paused: bool = false
 var _attacking: bool = false
@@ -53,7 +53,7 @@ func _ready() -> void:
 	_projectile_parent = _resolve_projectile_parent()
 
 
-func set_player(owner_agent: CharacterBody2D) -> void:
+func set_player(owner_agent: CharacterBody3D) -> void:
 	_owner_agent = owner_agent
 	tracking.setup_player(owner_agent.player)
 
@@ -82,7 +82,7 @@ func _cancel_attack() -> void:
 
 # --- TARGETING CALLBACKS ---
 
-func _on_target_changed(t: CharacterBody2D) -> void:
+func _on_target_changed(t: CharacterBody3D) -> void:
 	_current_target = t
 	_try_attack()
 
@@ -174,7 +174,7 @@ func add_accuracy_buff(amount: float, duration: float) -> void:
 	get_tree().create_timer(duration).timeout.connect(func(): accuracy_modifiers.erase(amount))
 
 
-func get_shot_point(origin: Vector2, target_pos: Vector2) -> Vector2:
+func get_shot_point(origin: Vector3, target_pos: Vector3) -> Vector3:
 	var dist = origin.distance_to(target_pos)
 	
 	# 1. Calculate Inaccuracy (Standard Gaussian)
@@ -182,7 +182,7 @@ func get_shot_point(origin: Vector2, target_pos: Vector2) -> Vector2:
 	var inaccuracy = (100.0 - acc_score) / 100.0 
 	var spread_factor = 0.05 
 	var deviation = dist * inaccuracy * spread_factor
-	var error_offset = Vector2(randfn(0.0, deviation), randfn(0.0, deviation))
+	var error_offset = Vector3(randfn(0.0, deviation), randfn(0.0, deviation))
 
 	# 2. Calculate Wind Drift (UPDATED)
 	# OLD: Weather.wind_direction * Weather.wind_speed
@@ -199,14 +199,14 @@ func get_shot_point(origin: Vector2, target_pos: Vector2) -> Vector2:
 
 # --- HELPERS ---
 
-func _get_spawn_position() -> Vector2:
+func _get_spawn_position() -> Vector3:
 	if muzzle:
 		return muzzle.global_position
 
 	if _owner_agent:
 		return _owner_agent.global_position
 
-	return Vector2.ZERO
+	return Vector3.ZERO
 
 
 func _resolve_projectile_parent() -> Node:

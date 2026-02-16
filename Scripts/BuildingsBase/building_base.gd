@@ -1,4 +1,4 @@
-extends StaticBody2D
+extends StaticBody3D
 class_name BuildingBase
 
 @export var player: int = 0
@@ -67,11 +67,11 @@ func return_castle() -> Castle:
 	return castle
 
 
-func return_position() -> Vector2:
+func return_position() -> Vector3:
 	return global_position
 
 
-func _on_interacted(interactor: CharacterBody2D) -> void:
+func _on_interacted(interactor: CharacterBody3D) -> void:
 	if state == BuildingDefs.BuildingState.DESTROYED:
 		# If DESTROYED then Player gives building gold (to give to Workers) and sets state to CONSTRUCTING.
 		set_state(BuildingDefs.BuildingState.CONSTRUCTING)
@@ -96,15 +96,15 @@ func _update_visuals() -> void:
 	if frames == null:
 		return
 
-	if visual is AnimatedSprite2D and frames is SpriteFrames:
-		var animated := visual as AnimatedSprite2D
+	if visual is AnimatedSprite3D and frames is SpriteFrames:
+		var animated := visual as AnimatedSprite3D
 		animated.sprite_frames = frames
 		if animated.sprite_frames.get_animation_names().size() > 0 and animated.animation == "":
 			animated.animation = animated.sprite_frames.get_animation_names()[0]
 		animated.play()
-	elif visual is Sprite2D and frames is Texture2D:
-		(visual as Sprite2D).texture = frames
-		if shadowVisual: (shadowVisual as Sprite2D).texture = frames
+	elif visual is Sprite3D and frames is Texture2D:
+		(visual as Sprite3D).texture = frames
+		if shadowVisual: (shadowVisual as Sprite3D).texture = frames
 	elif frames is Texture2D and visual.has_method("set_texture"):
 		visual.call("set_texture", frames)
 		if shadowVisual: shadowVisual.call("set_texture", frames)

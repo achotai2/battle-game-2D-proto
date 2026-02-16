@@ -1,4 +1,4 @@
-extends StaticBody2D
+extends StaticBody3D
 class_name Castle
 
 @export var player: int = 0
@@ -17,12 +17,12 @@ func return_job_board(kind: CastleJobBoard.JobBoardType) -> CastleJobBoard:
 		return null
 
 
-func register_minion(minion: CharacterBody2D) -> void:
+func register_minion(minion: CharacterBody3D) -> void:
 	if not minions.has(minion):
 		minions[minion] = true
 
 
-func unregister_minion(minion: CharacterBody2D) -> void:
+func unregister_minion(minion: CharacterBody3D) -> void:
 	minions.erase(minion)
 
 

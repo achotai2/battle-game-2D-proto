@@ -12,7 +12,7 @@
 [ext_resource type="PackedScene" uid="uid://by5ppm4d4bxev" path="res://Scenes/AgentNodes/player_interactor.tscn" id="9_yoq75"]
 [ext_resource type="Script" uid="uid://bts71s2mlomuh" path="res://Scripts/AgentNodes/shadow_sprite.gd" id="11_u2egk"]
 
-[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_kyqiw"]
+[sub_resource type="CapsuleShape3D" id="CapsuleShape2D_kyqiw"]
 radius = 26.0
 height = 82.0
 
@@ -29,9 +29,9 @@ colors = PackedColorArray(1, 1, 1, 1, 0, 0, 0, 1)
 [sub_resource type="GradientTexture2D" id="GradientTexture2D_u2egk"]
 gradient = SubResource("Gradient_d1ilt")
 fill = 1
-fill_from = Vector2(0.5, 0.5)
+fill_from = Vector3(0.5, 0, 0.5)
 
-[node name="Player" type="CharacterBody2D" node_paths=PackedStringArray("health", "interactor", "movement", "controls", "animation", "attack", "gold") groups=["Attackable", "Player"]]
+[node name="Player" type="CharacterBody3D" node_paths=PackedStringArray("health", "interactor", "movement", "controls", "animation", "attack", "gold") groups=["Attackable", "Player"]]
 collision_layer = 4
 collision_mask = 3
 script = ExtResource("1_rpqav")
@@ -44,7 +44,7 @@ animation = NodePath("AgentAnimate")
 attack = NodePath("WeaponSword")
 gold = NodePath("GoldHolder")
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+[node name="CollisionShape2D" type="CollisionShape3D" parent="."]
 shape = SubResource("CapsuleShape2D_kyqiw")
 
 [node name="AgentAnimate" type="Node" parent="." node_paths=PackedStringArray("sprite", "shadow_sprite")]
@@ -60,7 +60,7 @@ agent = NodePath("..")
 animation = NodePath("../AgentAnimate")
 metadata/_custom_type_script = "uid://58qm17emnwvd"
 
-[node name="PlayerControls" type="Node2D" parent="." node_paths=PackedStringArray("interactor", "attackNode", "movement")]
+[node name="PlayerControls" type="Node3D" parent="." node_paths=PackedStringArray("interactor", "attackNode", "movement")]
 script = ExtResource("6_nn08x")
 interactor = NodePath("../PlayerInteractor")
 attackNode = NodePath("../WeaponSword")
@@ -76,21 +76,21 @@ metadata/_custom_type_script = "uid://c2guvnr3dtafe"
 [node name="WeaponSword" parent="." instance=ExtResource("7_bhhdu")]
 
 [node name="PlayerInteractor" parent="." node_paths=PackedStringArray("movement") instance=ExtResource("9_yoq75")]
-position = Vector2(0, -1)
+position = Vector3(0, 0, -1)
 movement = NodePath("../AgentMovement")
 
-[node name="NavigationObstacle2D" type="NavigationObstacle2D" parent="."]
+[node name="NavigationObstacle2D" type="NavigationObstacle3D" parent="."]
 radius = 50.0
 avoidance_layers = 4
 
 [node name="GoldHolder" parent="." instance=ExtResource("9_jokor")]
 gold = 100
 
-[node name="Sprites" type="Node2D" parent="."]
-position = Vector2(0.499996, -0.499995)
-scale = Vector2(2.81, 2.81)
+[node name="Sprites" type="Node3D" parent="."]
+position = Vector3(0.499996, 0, -0.499995)
+scale = Vector3(2.81, 1, 2.81)
 
-[node name="ShadowSprite" type="AnimatedSprite2D" parent="Sprites"]
+[node name="ShadowSprite" type="AnimatedSprite3D" parent="Sprites"]
 modulate = Color(0.32941177, 0.32941177, 0.32941177, 1)
 y_sort_enabled = true
 material = SubResource("ShaderMaterial_ehya8")
@@ -99,20 +99,20 @@ animation = &"walk"
 offset = Vector2(0, -10)
 script = ExtResource("11_u2egk")
 
-[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="Sprites"]
+[node name="AnimatedSprite2D" type="AnimatedSprite3D" parent="Sprites"]
 y_sort_enabled = true
 sprite_frames = ExtResource("3_bhhdu")
 animation = &"walk"
 offset = Vector2(0, -5)
 
-[node name="LightOccluder2D" type="LightOccluder2D" parent="."]
+[node name="LightOccluder2D" type="Node3D" parent="."]
 z_index = -1
 y_sort_enabled = true
-position = Vector2(0, -5.9604645e-08)
+position = Vector3(0, 0, -5.9604645e-08)
 occluder = SubResource("OccluderPolygon2D_u2egk")
 
 [node name="PointLight2D" type="PointLight2D" parent="."]
-position = Vector2(4, -53.000004)
-scale = Vector2(7.546876, 7.546876)
+position = Vector3(4, 0, -53.000004)
+scale = Vector3(7.546876, 1, 7.546876)
 shadow_enabled = true
 texture = SubResource("GradientTexture2D_u2egk")

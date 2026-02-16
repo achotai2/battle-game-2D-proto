@@ -1,4 +1,4 @@
-extends CharacterBody2D
+extends CharacterBody3D
 class_name AgentBase
 
 ## Player number (0 = neutral).
@@ -214,7 +214,7 @@ func _im_dead() -> void:
 		apply_role(UnitRoles.UnitType.PEASANT, player)
 
 
-func _agent_moved(vel: Vector2) -> void:
+func _agent_moved(vel: Vector3) -> void:
 	# Called by signal from movement when movement occurs.
 	self.velocity = vel
 
@@ -309,11 +309,11 @@ func return_player() -> int:
 	return player
 
 
-func return_position() -> Vector2:
+func return_position() -> Vector3:
 	return self.global_position
 
 
-func return_velocity() -> Vector2:
+func return_velocity() -> Vector3:
 	return self.velocity
 
 

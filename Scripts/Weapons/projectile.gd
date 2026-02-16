@@ -1,4 +1,4 @@
-extends Area2D
+extends Area3D
 class_name ArrowProjectileArc
 
 const GRAVITY: float = 981.0
@@ -16,15 +16,15 @@ const GRAVITY: float = 981.0
 # Stick behavior
 @export var stick_into_target: bool = true
 
-@onready var sprite: AnimatedSprite2D = $AnimatedSprite2D
-@onready var shape: CollisionShape2D = $CollisionShape2D
+@onready var sprite: AnimatedSprite3D = $AnimatedSprite3D
+@onready var shape: CollisionShape3D = $CollisionShape3D
 @onready var death_timer: Timer = $DeathTimer
 
 var _attack_data: AttackData
-var position2d: Vector2
-var target_position2d: Vector2
+var position2d: Vector3
+var target_position2d: Vector3
 var velocity_z: float = 0.0
-var velocity_2d: Vector2 = Vector2.ZERO
+var velocity_2d: Vector3 = Vector3.ZERO
 var height: float = 0.0
 var _peak_height: float = 1.0
 var _age: float = 0.0
@@ -51,7 +51,7 @@ func _ready() -> void:
 	death_timer.one_shot = true
 
 
-func init(spawn_pos: Vector2, target_pos: Vector2, projectile_speed: float, attack_data: AttackData) -> void:
+func init(spawn_pos: Vector3, target_pos: Vector3, projectile_speed: float, attack_data: AttackData) -> void:
 	_attack_data = attack_data
 	position2d = spawn_pos
 	target_position2d = target_pos
@@ -146,12 +146,12 @@ func _land(hit_target: Node2D) -> void:
 	death_timer.start()
 
 
-func _new_global_position() -> Vector2:
+func _new_global_position() -> Vector3:
 	# fake camera tilt: higher Z lifts sprite upward on screen
-	return Vector2(position2d.x, position2d.y - (height * _tan_camera_angle))
+	return Vector3(position2d.x, position2d.y - (height * _tan_camera_angle))
 
 
-func _change_sprite_angle(look_to: Vector2) -> void:
+func _change_sprite_angle(look_to: Vector3) -> void:
 	look_at(look_to)
 
 
@@ -162,7 +162,7 @@ func _apply_visual_scale() -> void:
 
 	var t: float = clamp(height / _peak_height, 0.0, 1.0)
 	var s: float = 1.0 + max_scale_boost * t
-	scale = Vector2.ONE * s
+	scale = Vector3.ONE * s
 
 
 func _calculate_start_values(projectile_speed: float) -> void:

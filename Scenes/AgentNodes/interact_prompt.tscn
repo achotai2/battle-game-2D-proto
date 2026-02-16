@@ -20,13 +20,13 @@ anchors_preset = 0
 offset_right = 40.0
 offset_bottom = 40.0
 
-[node name="Circle" type="Sprite2D" parent="Control"]
-scale = Vector2(0.13611111, 0.13611111)
+[node name="Circle" type="Sprite3D" parent="Control"]
+scale = Vector3(0.13611111, 1, 0.13611111)
 texture = ExtResource("2_stv28")
 
-[node name="CircleEmpty" type="Sprite2D" parent="Control"]
-position = Vector2(-9.23872e-06, 7.0929527e-06)
-scale = Vector2(0.1333333, 0.13333331)
+[node name="CircleEmpty" type="Sprite3D" parent="Control"]
+position = Vector3(-9.23872e-06, 0, 7.0929527e-06)
+scale = Vector3(0.1333333, 1, 0.13333331)
 texture = ExtResource("3_0lluy")
 
 [node name="Cost" type="Label" parent="Control"]
@@ -40,7 +40,7 @@ text = "8"
 horizontal_alignment = 1
 vertical_alignment = 1
 
-[node name="TypeIcon" type="Sprite2D" parent="Control"]
-position = Vector2(60, 0)
-scale = Vector2(0.20555557, 0.20555557)
+[node name="TypeIcon" type="Sprite3D" parent="Control"]
+position = Vector3(60, 0, 0)
+scale = Vector3(0.20555557, 1, 0.20555557)
 texture = ExtResource("4_stv28")

@@ -5,7 +5,7 @@ extends Node
 # Clouds: 0.0 (Clear) to 10.0 (Full Blockout)
 # Rain: 0.0 (Dry) to 10.0 (Torrential)
 # Wind Speed: 0.0 (Calm) to 10.0 (Hurricane)
-# Wind Dir: Normalized Vector2
+# Wind Dir: Normalized Vector3
 
 const STATE_CLEAR = {
 	"clouds": 0.0,
@@ -39,14 +39,14 @@ const STATE_STORM = {
 var current_clouds: float = 0.0
 var current_rain: float = 0.0
 var current_wind_speed: float = 0.0
-var current_wind_dir: Vector2 = Vector2(1, 0) # Default East
+var current_wind_dir: Vector3 = Vector3(1, 0, 0) # Default East
 var current_mood_color: Color = Color.WHITE
 
 # --- 3. TARGETS (Internal) ---
 var _target_clouds: float = 0.0
 var _target_rain: float = 0.0
 var _target_wind_speed: float = 0.0
-var _target_wind_dir: Vector2 = Vector2(1, 0)
+var _target_wind_dir: Vector3 = Vector3(1, 0, 0)
 var _target_mood_color: Color = Color.WHITE
 
 var _transition_speed: float = 0.5 # How fast we change states
@@ -54,7 +54,7 @@ var _transition_speed: float = 0.5 # How fast we change states
 
 func _ready() -> void:
 	# Start Clear
-	set_weather_state(STATE_CLEAR, Vector2(1, 0), true)
+	set_weather_state(STATE_CLEAR, Vector3(1, 0, 0), true)
 
 
 func _process(delta: float) -> void:
@@ -92,7 +92,7 @@ func _are_targets_reached() -> bool:
 
 # --- API ---
 
-func set_weather_state(state_dict: Dictionary, wind_dir: Vector2 = Vector2.ZERO, instant: bool = false) -> void:
+func set_weather_state(state_dict: Dictionary, wind_dir: Vector3 = Vector3.ZERO, instant: bool = false) -> void:
 	set_process(true)
 
 	_target_clouds = state_dict.get("clouds", 0.0)
@@ -101,7 +101,7 @@ func set_weather_state(state_dict: Dictionary, wind_dir: Vector2 = Vector2.ZERO,
 	_target_mood_color = state_dict.get("color_mood", Color.WHITE)
 	
 	# If direction isn't provided, keep the old one
-	if wind_dir != Vector2.ZERO:
+	if wind_dir != Vector3.ZERO:
 		_target_wind_dir = wind_dir.normalized()
 		
 	if instant:
