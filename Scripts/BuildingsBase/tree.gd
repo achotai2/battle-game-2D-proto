@@ -1,4 +1,4 @@
-extends StaticBody2D
+extends StaticBody3D
 class_name TreeBase
 
 enum TreeState { NORMAL, MARKED, CUT }
@@ -64,7 +64,7 @@ func return_castle() -> Node2D:
 	return castle
 
 
-func return_position() -> Vector2:
+func return_position() -> Vector3:
 	return global_position
 
 
@@ -151,12 +151,12 @@ func _on_regrow_timer_timeout() -> void:
 
 func _disable_collision() -> void:
 	pass
-#	$CollisionShape2D.disabled = true
+#	$CollisionShape3D.disabled = true
 
 
 func _enable_collision() -> void:
 	pass
-#	$CollisionShape2D.disabled = true
+#	$CollisionShape3D.disabled = true
 
 
 func _on_spawn_timer_timeout() -> void:

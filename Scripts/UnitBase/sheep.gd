@@ -1,4 +1,4 @@
-extends CharacterBody2D
+extends CharacterBody3D
 
 @export var castle: Castle
 @export var movement: AgentMovement
@@ -9,7 +9,7 @@ extends CharacterBody2D
 @export var hop_radius: float = 100.0
 @export var wander_interval: float = 2.0 # Not actively used by MinionPathfinding but kept for API compatibility if needed
 
-var _spawn_position: Vector2
+var _spawn_position: Vector3
 var patrol_anchor: Node2D = null
 var is_returning: bool = false
 
@@ -102,12 +102,12 @@ func _food_handed() -> void:
 
 func _food_harvested(f: WorkSite, _attacker: MinionTasker) -> void:
 	# Spawn food and hand it over to attacker.
-	var attackerNode: CharacterBody2D = _attacker.get_parent()
+	var attackerNode: CharacterBody3D = _attacker.get_parent()
 	if is_instance_valid(attackerNode.hunger) and attackerNode.hunger.has_method("receive_food"):
 		food.give_food(attackerNode, food.food)
 
 
-func return_position() -> Vector2:
+func return_position() -> Vector3:
 	return global_position
 
 

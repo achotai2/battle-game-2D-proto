@@ -5,11 +5,11 @@ extends Node
 # or review the logic to ensure the optimization works as intended.
 
 # Mock Agent class
-class MockAgent extends Node2D:
+class MockAgent extends Node3D:
 	var player = 0
 	var health_obj = null
 
-	func _init(p_pos: Vector2, p_player: int):
+	func _init(p_pos: Vector3, p_player: int):
 		position = p_pos
 		player = p_player
 		add_to_group("Attackable")
@@ -35,7 +35,7 @@ func _ready():
 	add_child(tracking)
 
 	# Configure Tracking
-	var me = MockAgent.new(Vector2.ZERO, 1) # Player 1
+	var me = MockAgent.new(Vector3.ZERO, 1) # Player 1
 	add_child(me)
 	tracking.set_myself(me)
 	tracking.target_kind = tracking.TargetKind.ATTACKABLE
@@ -49,7 +49,7 @@ func _ready():
 	# Test 1: First enemy enters (Far)
 	# Expectation: Becomes target because current is null.
 	# ---------------------------------------------------------
-	var enemy_far = MockAgent.new(Vector2(100, 0), 2) # Player 2 (Enemy)
+	var enemy_far = MockAgent.new(Vector3(100, 0, 0), 2) # Player 2 (Enemy)
 	add_child(enemy_far)
 
 	tracking._on_body_entered(enemy_far)
@@ -63,7 +63,7 @@ func _ready():
 	# Test 2: Second enemy enters (Close)
 	# Expectation: Switches target because it is closer (better).
 	# ---------------------------------------------------------
-	var enemy_close = MockAgent.new(Vector2(50, 0), 2)
+	var enemy_close = MockAgent.new(Vector3(50, 0, 0), 2)
 	add_child(enemy_close)
 
 	tracking._on_body_entered(enemy_close)
@@ -77,7 +77,7 @@ func _ready():
 	# Test 3: Third enemy enters (Farther than current)
 	# Expectation: DOES NOT switch target. Optimization should prevent reselection.
 	# ---------------------------------------------------------
-	var enemy_farthest = MockAgent.new(Vector2(200, 0), 2)
+	var enemy_farthest = MockAgent.new(Vector3(200, 0, 0), 2)
 	add_child(enemy_farthest)
 
 	tracking._on_body_entered(enemy_farthest)

@@ -18,8 +18,8 @@ class_name TacticalArcher
 @export var movement: AgentMovement = null
 @export var archer_priority: int = 6
 
-var _target: CharacterBody2D = null
-var _agent: CharacterBody2D = null
+var _target: CharacterBody3D = null
+var _agent: CharacterBody3D = null
 var _timer: Timer
 
 
@@ -31,11 +31,11 @@ func _ready() -> void:
 	add_child(_timer)
 
 
-func set_agent(agent: CharacterBody2D) -> void:
+func set_agent(agent: CharacterBody3D) -> void:
 	_agent = agent
 
 
-func set_target(t: CharacterBody2D) -> void:
+func set_target(t: CharacterBody3D) -> void:
 	# Called by detection node. Found a target.
 	_target = t if is_instance_valid(t) else null
 
@@ -57,7 +57,7 @@ func clear_target() -> void:
 	_timer.stop()
 
 
-func detection_refreshed(t: CharacterBody2D) -> void:
+func detection_refreshed(t: CharacterBody3D) -> void:
 	# Called by detection node.
 	pass
 
@@ -87,7 +87,7 @@ func _on_tick() -> void:
 		# but that can cause repathing noise. Usually better to do nothing.
 		return
 
-	var desired_dir: Vector2
+	var desired_dir: Vector3
 
 	if dist < min_range:
 		# Too close: retreat
@@ -100,7 +100,7 @@ func _on_tick() -> void:
 
 	# Slight sideways bias to avoid straight-line oscillation (kite feel).
 	if keep_line_of_fire:
-		var perp := Vector2(-dir_to.y, dir_to.x)
+		var perp := Vector3(-dir_to.y, dir_to.x)
 		# Choose a consistent side each tick based on target id (stable, no random jitter)
 		var side := 1.0 if int(_target.get_instance_id()) % 2 == 0 else -1.0
 		desired_dir = (desired_dir + perp * 0.35 * side).normalized()
@@ -109,6 +109,6 @@ func _on_tick() -> void:
 	_move_to_position(dest)
 
 
-func _move_to_position(dest: Vector2) -> void:
+func _move_to_position(dest: Vector3) -> void:
 	if is_instance_valid(movement):
 		movement.command_move_to_position(dest, archer_priority)

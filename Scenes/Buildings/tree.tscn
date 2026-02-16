@@ -9,7 +9,7 @@
 [ext_resource type="Shader" uid="uid://cmsuxok158t72" path="res://Scripts/Shaders/shadow.gdshader" id="6_efeq4"]
 [ext_resource type="Script" uid="uid://bts71s2mlomuh" path="res://Scripts/AgentNodes/shadow_sprite.gd" id="8_rg3ib"]
 
-[sub_resource type="CircleShape2D" id="CircleShape2D_0vwjc"]
+[sub_resource type="CylinderShape3D" id="CircleShape2D_0vwjc"]
 radius = 16.0
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_rg3ib"]
@@ -115,7 +115,7 @@ animations = [{
 "speed": 5.0
 }]
 
-[node name="Tree" type="StaticBody2D" node_paths=PackedStringArray("visual", "shadowVisual", "interactable", "worksite", "gold", "resourcesite", "regrow_timer", "spawn_timer")]
+[node name="Tree" type="StaticBody3D" node_paths=PackedStringArray("visual", "shadowVisual", "interactable", "worksite", "gold", "resourcesite", "regrow_timer", "spawn_timer")]
 y_sort_enabled = true
 collision_layer = 2
 collision_mask = 3
@@ -131,27 +131,27 @@ regrow_timer = NodePath("RegrowTimer")
 spawn_timer = NodePath("SpawnTimer")
 spawn_probability = 0.001
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+[node name="CollisionShape2D" type="CollisionShape3D" parent="."]
 shape = SubResource("CircleShape2D_0vwjc")
 
-[node name="WorkSite" type="Node2D" parent="." node_paths=PackedStringArray("work_offset")]
+[node name="WorkSite" type="Node3D" parent="." node_paths=PackedStringArray("work_offset")]
 script = ExtResource("2_rsuno")
 total_work = 1.0
 auto_register = false
 work_offset = NodePath("Marker2D")
 metadata/_custom_type_script = "uid://qumqy1omy72i"
 
-[node name="Marker2D" type="Marker2D" parent="WorkSite"]
-position = Vector2(0, 72)
+[node name="Marker2D" type="Marker3D" parent="WorkSite"]
+position = Vector3(0, 0, 72)
 
-[node name="Marker2D2" type="Marker2D" parent="WorkSite"]
-position = Vector2(-80, 0)
+[node name="Marker2D2" type="Marker3D" parent="WorkSite"]
+position = Vector3(-80, 0, 0)
 
-[node name="Marker2D3" type="Marker2D" parent="WorkSite"]
-position = Vector2(80, 0)
+[node name="Marker2D3" type="Marker3D" parent="WorkSite"]
+position = Vector3(80, 0, 0)
 
-[node name="Marker2D6" type="Marker2D" parent="WorkSite"]
-position = Vector2(0, -72)
+[node name="Marker2D6" type="Marker3D" parent="WorkSite"]
+position = Vector3(0, 0, -72)
 
 [node name="RegrowTimer" type="Timer" parent="."]
 wait_time = 10.0
@@ -162,22 +162,22 @@ autostart = true
 
 [node name="Interactable" parent="." instance=ExtResource("3_l7sa7")]
 
-[node name="ResourceSite" type="Node2D" parent="."]
+[node name="ResourceSite" type="Node3D" parent="."]
 script = ExtResource("5_m36md")
 metadata/_custom_type_script = "uid://bk5we0bsn6qwl"
 
 [node name="GoldHolder" parent="." instance=ExtResource("6_0s2l4")]
 
-[node name="Sprites" type="Node2D" parent="."]
+[node name="Sprites" type="Node3D" parent="."]
 
-[node name="ShadowSprite" type="AnimatedSprite2D" parent="Sprites"]
+[node name="ShadowSprite" type="AnimatedSprite3D" parent="Sprites"]
 material = SubResource("ShaderMaterial_rg3ib")
 sprite_frames = SubResource("SpriteFrames_0jkly")
 animation = &"idle"
 offset = Vector2(0, -70)
 script = ExtResource("8_rg3ib")
 
-[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="Sprites"]
+[node name="AnimatedSprite2D" type="AnimatedSprite3D" parent="Sprites"]
 sprite_frames = SubResource("SpriteFrames_0jkly")
 animation = &"idle"
 offset = Vector2(0, -60)

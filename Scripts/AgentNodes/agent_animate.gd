@@ -4,8 +4,8 @@ class_name AgentAnimate
 signal interactAnimationFinished
 signal attackAnimationFinished
 
-@export var sprite: AnimatedSprite2D
-@export var shadow_sprite: AnimatedSprite2D
+@export var sprite: AnimatedSprite3D
+@export var shadow_sprite: AnimatedSprite3D
 @export_range(0, 3, 0.1) var damageVisualTime: float = 0.2
 
 var damageTimer := Timer.new()
@@ -40,7 +40,7 @@ func _update_damage_visual() -> void:
 	if is_instance_valid(sprite) and is_instance_valid(sprite.material):
 		var percent: float = float(damageTimer.wait_time - damageTimer.time_left) / damageTimer.wait_time
 		sprite.material.set_shader_parameter("progress", percent)
-#		animation.position = Vector2(randi_range(-1, 1), randi_range(-1, 1))
+#		animation.position = Vector3(randi_range(-1, 1), randi_range(-1, 1))
 
 
 func _animation_finished() -> void:
@@ -59,11 +59,11 @@ func _animation_finished() -> void:
 func _on_timer_timeout() -> void:
 	if is_instance_valid(sprite) and is_instance_valid(sprite.material):
 		sprite.material.set_shader_parameter("progress", 0)
-#		animation.position = Vector2(0, 0)
+#		animation.position = Vector3(0, 0, 0)
 
 
 func _update_idle_walk_anim() -> void:
-	var vel = Vector2.ZERO
+	var vel = Vector3.ZERO
 	if is_instance_valid(_my_agent) and "velocity" in _my_agent:
 		vel = _my_agent.velocity
 	agent_moved(vel)
@@ -79,13 +79,13 @@ func set_my_agent(ag: Node2D) -> void:
 		#health.tookHeal.connect(_show_heal)
 
 
-func agent_moved(velocity: Vector2) -> void:
+func agent_moved(velocity: Vector3) -> void:
 # Called by Agent when movement occurs, to run animation.
 	if not is_instance_valid(sprite):
 		return 
 
 	if not attacking and not working:
-		if velocity != Vector2(0, 0):
+		if velocity != Vector3(0, 0, 0):
 			if _move_anim != &"":
 				sprite.play(_move_anim)
 				if is_instance_valid(shadow_sprite): shadow_sprite.play(_move_anim)
@@ -116,7 +116,7 @@ func play_attack(target: Node2D) -> bool:
 
 	attacking = true
 	working = false
-	var dir: Vector2 = _my_agent.return_position().direction_to(target.return_position())
+	var dir: Vector3 = _my_agent.return_position().direction_to(target.return_position())
 	var frames := sprite.sprite_frames
 
 	var variant := "attack1"

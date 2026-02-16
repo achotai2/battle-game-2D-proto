@@ -1,4 +1,4 @@
-extends Node2D
+extends Node3D
 
 @export var main_body_path: NodePath
 @onready var main_body = get_node_or_null(main_body_path)
@@ -26,8 +26,8 @@ func _on_sun_updated(_ambient_color: Color, shadow_color: Color) -> void:
 	var length = Sun.current_shadow_length
 	var width = Sun.shadow_width
 
-	var shadow_vec = Vector2(sin(angle_rad), -cos(angle_rad)) * length
+	var shadow_vec = Vector3(sin(angle_rad), -cos(angle_rad)) * length
 
-	transform.x = Vector2(width, 0.0)
+	transform.x = Vector3(width, 0, 0.0)
 	transform.y = -shadow_vec 
-	position = Vector2.ZERO
+	position = Vector3.ZERO

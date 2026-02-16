@@ -71,3 +71,15 @@ static func get_projectile_mask() -> int:
 		   get_mask_bit(LAYER_ATTACKABLE_PLAYER_1) | \
 		   get_mask_bit(LAYER_ATTACKABLE_PLAYER_2) | \
 		   get_mask_bit(LAYER_BUILDINGS)
+
+
+static func get_global_mouse_position_3d(camera: Camera3D, mouse_pos: Vector2) -> Vector3:
+	if not camera:
+		return Vector3.ZERO
+	var from = camera.project_ray_origin(mouse_pos)
+	var dir = camera.project_ray_normal(mouse_pos)
+	var plane = Plane(Vector3.UP, 0)
+	var intersection = plane.intersects_ray(from, dir)
+	if intersection != null:
+		return intersection
+	return Vector3.ZERO

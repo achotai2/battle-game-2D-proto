@@ -1,4 +1,4 @@
-extends Area2D
+extends Area3D
 class_name GoldHolder
 
 signal goldChanged(amount_of_gold: int)
@@ -9,7 +9,7 @@ signal goldChanged(amount_of_gold: int)
 		gold = max(0, v)
 
 ## The scene used to represent gold on the ground when dropped.
-@export var gold_display: AnimatedSprite2D
+@export var gold_display: AnimatedSprite3D
 
 ## Connects to the agents move node to call commands to it.
 @export var movement: AgentMovement
@@ -27,7 +27,7 @@ signal goldChanged(amount_of_gold: int)
 @export var _tax_timer: Timer = null
 
 # Internal state
-var _agent: CharacterBody2D
+var _agent: CharacterBody3D
 var _target_to_give: Node2D
 var _amount_to_give: int
 
@@ -36,7 +36,7 @@ var _state: State = State.IDLE
 
 
 func _ready() -> void:
-	_agent = get_parent() as CharacterBody2D
+	_agent = get_parent() as CharacterBody3D
 
 	if is_instance_valid(gold_display):
 		gold_display.hide()

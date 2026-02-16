@@ -1,12 +1,12 @@
-extends Area2D
+extends Area3D
 class_name AgentTracking
 
-signal target_changed(new_target: Node2D)
+signal target_changed(new_target: Node3D)
 signal target_lost()
 
 enum TargetKind { ATTACKABLE, INTERACTABLE }
 
-@export var my_agent: Node2D
+@export var my_agent: Node3D
 @export var target_kind: TargetKind = TargetKind.ATTACKABLE
 
 # --- Team Logic ---
@@ -19,30 +19,30 @@ enum TargetKind { ATTACKABLE, INTERACTABLE }
 @export_enum("Nearest", "Lowest Health") var target_bias: String = "Nearest"
 @export_range(0.1, 2.0) var scan_interval: float = 0.5
 
-var current_target: Node2D = null
+var current_target: Node3D = null
 var _timer: Timer
-var _scan_shape_query: PhysicsShapeQueryParameters2D
+var _scan_shape_query: PhysicsShapeQueryParameters3D
 var _active_collision_mask: int = 0
 
 func _ready() -> void:
-	# [OPTIMIZATION] 1. Turn off the Area2D. 
+	# [OPTIMIZATION] 1. Turn off the Area3D.
 	# We will not use the built-in overlapping signals.
 	# This stops the engine from calculating overlaps every frame.
 	monitoring = false
 	monitorable = false
 	
 	# 2. Prepare the Shape Query (Re-usable object)
-	_scan_shape_query = PhysicsShapeQueryParameters2D.new()
+	_scan_shape_query = PhysicsShapeQueryParameters3D.new()
 	_scan_shape_query.collide_with_bodies = true
 	_scan_shape_query.collide_with_areas = false # Unless you target Areas?
 	
-	# Grab the shape from our child CollisionShape2D
-	# (Assumes you have a CollisionShape2D child)
-	var shape_node = find_child("CollisionShape2D")
+	# Grab the shape from our child CollisionShape3D
+	# (Assumes you have a CollisionShape3D child)
+	var shape_node = find_child("CollisionShape3D")
 	if shape_node and shape_node.shape:
 		_scan_shape_query.shape = shape_node.shape
 	else:
-		push_warning("AgentTracking: No CollisionShape2D found!")
+		push_warning("AgentTracking: No CollisionShape3D found!")
 		set_physics_process(false)
 		return
 
@@ -63,7 +63,7 @@ func _update_collision_mask() -> void:
 	if target_kind == TargetKind.ATTACKABLE:
 		mask = GamePhysics.get_tracking_mask(my_team_id, target_neutral, target_opposing, target_same_team)
 	
-	# [OPTIMIZATION] Store it in a variable, don't set the Area2D's mask
+	# [OPTIMIZATION] Store it in a variable, don't set the Area3D's mask
 	_active_collision_mask = mask
 	_scan_shape_query.collision_mask = _active_collision_mask
 
@@ -75,7 +75,7 @@ func _scan_for_targets() -> void:
 	_scan_shape_query.transform = global_transform
 	
 	# Execute Query (Get up to 32 results to keep it fast)
-	var space_state = get_world_2d().direct_space_state
+	var space_state = get_world_3d().direct_space_state
 	var results = space_state.intersect_shape(_scan_shape_query, 32)
 	
 	if results.is_empty():

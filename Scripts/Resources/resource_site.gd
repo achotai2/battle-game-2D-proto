@@ -1,4 +1,4 @@
-extends Node2D
+extends Node3D
 class_name ResourceSite
 
 @export var resource_type: ResourceSiteDefs.ResourceType = ResourceSiteDefs.ResourceType.SHEEP
@@ -25,6 +25,6 @@ func spawn() -> void:
 		# Position nearby
 		var random_angle = randf() * TAU
 		var random_dist = randf() * spawn_radius
-		var offset = Vector2(cos(random_angle), sin(random_angle)) * random_dist
+		var offset = Vector3(cos(random_angle), sin(random_angle)) * random_dist
 
 		instance.global_position = global_position + offset

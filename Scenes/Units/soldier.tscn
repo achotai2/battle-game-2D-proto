@@ -14,17 +14,17 @@
 [ext_resource type="Shader" uid="uid://cmsuxok158t72" path="res://Scripts/Shaders/shadow.gdshader" id="12_x32bv"]
 [ext_resource type="Script" uid="uid://bts71s2mlomuh" path="res://Scripts/AgentNodes/shadow_sprite.gd" id="13_gqo0k"]
 
-[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_ta2g1"]
+[sub_resource type="CapsuleShape3D" id="CapsuleShape2D_ta2g1"]
 radius = 23.0
 height = 74.0
 
-[sub_resource type="CircleShape2D" id="CircleShape2D_65o65"]
+[sub_resource type="CylinderShape3D" id="CircleShape2D_65o65"]
 radius = 500.0
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_80g1m"]
 shader = ExtResource("12_x32bv")
 
-[node name="Soldier" type="CharacterBody2D" node_paths=PackedStringArray("health", "movement", "animation", "attack", "detection", "tactical", "gold", "hunger", "foodTasker") groups=["Attackable", "Interactable", "Minions"]]
+[node name="Soldier" type="CharacterBody3D" node_paths=PackedStringArray("health", "movement", "animation", "attack", "detection", "tactical", "gold", "hunger", "foodTasker") groups=["Attackable", "Interactable", "Minions"]]
 collision_layer = 4
 collision_mask = 3
 script = ExtResource("1_jq3hr")
@@ -40,10 +40,10 @@ hunger = NodePath("HungerHolder")
 foodTasker = NodePath("FoodTasker")
 current_role = 2
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+[node name="CollisionShape2D" type="CollisionShape3D" parent="."]
 shape = SubResource("CapsuleShape2D_ta2g1")
 
-[node name="NavigationAgent2D" type="NavigationAgent2D" parent="."]
+[node name="NavigationAgent2D" type="NavigationAgent3D" parent="."]
 avoidance_enabled = true
 radius = 50.0
 avoidance_layers = 8
@@ -69,13 +69,13 @@ metadata/_custom_type_script = "uid://c2guvnr3dtafe"
 
 [node name="WeaponSword" parent="." instance=ExtResource("6_k4v4y")]
 
-[node name="AgentDetection" type="Area2D" parent="." node_paths=PackedStringArray("my_agent")]
+[node name="AgentDetection" type="Area3D" parent="." node_paths=PackedStringArray("my_agent")]
 collision_layer = 256
 collision_mask = 28
 script = ExtResource("8_gdgxh")
 my_agent = NodePath("..")
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="AgentDetection"]
+[node name="CollisionShape2D" type="CollisionShape3D" parent="AgentDetection"]
 shape = SubResource("CircleShape2D_65o65")
 debug_color = Color(0.498544, 0.546397, 0.554583, 0.42)
 
@@ -98,9 +98,9 @@ kind = 2
 auto_get_work_when_idle = false
 metadata/_custom_type_script = "uid://d1ucmtjtmh4hm"
 
-[node name="Sprites" type="Node2D" parent="."]
+[node name="Sprites" type="Node3D" parent="."]
 
-[node name="ShadowSprite" type="AnimatedSprite2D" parent="Sprites"]
+[node name="ShadowSprite" type="AnimatedSprite3D" parent="Sprites"]
 y_sort_enabled = true
 material = SubResource("ShaderMaterial_80g1m")
 sprite_frames = ExtResource("2_gqo0k")
@@ -108,7 +108,7 @@ animation = &"idle"
 offset = Vector2(0, -20)
 script = ExtResource("13_gqo0k")
 
-[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="Sprites"]
+[node name="AnimatedSprite2D" type="AnimatedSprite3D" parent="Sprites"]
 y_sort_enabled = true
 sprite_frames = ExtResource("2_gqo0k")
 animation = &"idle"

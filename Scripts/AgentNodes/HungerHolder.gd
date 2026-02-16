@@ -1,10 +1,10 @@
-extends Area2D
+extends Area3D
 class_name HungerHolder
 
 signal food_handed
 
 ## The scene used to represent food on the ground when dropped.
-@export var food_display: AnimatedSprite2D
+@export var food_display: AnimatedSprite3D
 
 ## Connects to the agents move node to call commands to it.
 @export var movement: AgentMovement
@@ -40,7 +40,7 @@ signal food_handed
 
 
 # Internal state
-var _agent: CharacterBody2D
+var _agent: CharacterBody3D
 var _target_to_give: Node2D
 var _amount_to_give: int
 
@@ -56,7 +56,7 @@ func _ready() -> void:
 	var stagger_time = randf_range(0.0, 1.0)
 	_hunger_timer.start(stagger_time)
 
-	_agent = get_parent() as CharacterBody2D
+	_agent = get_parent() as CharacterBody3D
 
 	if is_instance_valid(food_display):
 		food_display.hide()

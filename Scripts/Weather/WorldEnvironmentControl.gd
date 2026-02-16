@@ -9,7 +9,7 @@ enum WeatherState { CLEAR, OVERCAST, LIGHT_RAIN, STORM }
 		current_state = value
 		_apply_weather()
 
-@export var wind_direction: Vector2 = Vector2(1, 0):
+@export var wind_direction: Vector3 = Vector3(1, 0, 0):
 	set(value):
 		wind_direction = value.normalized()
 		_apply_weather()

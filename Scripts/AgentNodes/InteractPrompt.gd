@@ -11,13 +11,13 @@ const ICONS := {
 @export_range(0.0, 64.0, 0.5) var bob_height: float = 6.0
 @export_range(0.0, 10.0, 0.1) var bob_speed: float = 2.0
 @export var con: Control
-@export var circle: Sprite2D
-@export var circleEmpty: Sprite2D
-@export var type_icon: Sprite2D
+@export var circle: Sprite3D
+@export var circleEmpty: Sprite3D
+@export var type_icon: Sprite3D
 @export var costLabel: Label
 
 # Screen-space anchor for the whole prompt (CanvasLayer uses 'offset' in screen coords)
-var _base_screen_pos: Vector2 = Vector2.ZERO
+var _base_screen_pos: Vector3 = Vector3.ZERO
 var _time: float = 0.0
 
 func _ready() -> void:
@@ -32,9 +32,9 @@ func _ready() -> void:
 	if con == null:
 		push_warning("InteractPrompt: 'con' Control export is not set.")
 	if circle == null:
-		push_warning("InteractPrompt: 'circle' Sprite2D export is not set.")
+		push_warning("InteractPrompt: 'circle' Sprite3D export is not set.")
 	if circleEmpty == null:
-		push_warning("InteractPrompt: 'circleEmpty' Sprite2D export is not set.")
+		push_warning("InteractPrompt: 'circleEmpty' Sprite3D export is not set.")
 	if costLabel == null:
 		push_warning("InteractPrompt: 'costLabel' Label export is not set.")
 
@@ -56,7 +56,7 @@ func _process(delta: float) -> void:
 # world_pos: the target's world position
 # percent_left: 0..1 for fill/progress
 # world_offset: world-space offset above the target (e.g. (0, -32))
-func set_world_target(world_pos: Vector2, percent_left: float, world_offset: Vector2 = Vector2(0, -32)) -> void:
+func set_world_target(world_pos: Vector3, percent_left: float, world_offset: Vector3 = Vector3(0, -32)) -> void:
 	var viewport := get_viewport()
 	if viewport == null:
 		return
@@ -69,7 +69,7 @@ func set_world_target(world_pos: Vector2, percent_left: float, world_offset: Vec
 	_set_percent(percent_left)
 
 # If caller already has a screen-space point, use this:
-func set_screen_target(screen_pos: Vector2, percent_left: float) -> void:
+func set_screen_target(screen_pos: Vector3, percent_left: float) -> void:
 	_base_screen_pos = screen_pos
 	_set_percent(percent_left)
 
@@ -91,7 +91,7 @@ func _set_percent(percent_left: float) -> void:
 		circle.scale = circleEmpty.scale * p
 
 # Optional convenience if you attach this prompt to a specific Node2D target at runtime:
-func follow_target(target: CharacterBody2D, percent_left: float, world_offset: Vector2 = Vector2(0, -32)) -> void:
+func follow_target(target: CharacterBody3D, percent_left: float, world_offset: Vector3 = Vector3(0, -32)) -> void:
 	if not is_instance_valid(target):
 		return
 	set_world_target(target.global_position, percent_left, world_offset)

@@ -7,7 +7,7 @@
 [ext_resource type="PackedScene" uid="uid://c8o4373okv5fq" path="res://Scenes/AgentNodes/HungerHolder.tscn" id="6_xvpfm"]
 [ext_resource type="Script" uid="uid://qumqy1omy72i" path="res://Scripts/BuildingNodes/worksite.gd" id="7_v65j7"]
 
-[sub_resource type="CircleShape2D" id="CircleShape2D_2teul"]
+[sub_resource type="CylinderShape3D" id="CircleShape2D_2teul"]
 radius = 20.0
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_4j78d"]
@@ -121,7 +121,7 @@ animations = [{
 "speed": 5.0
 }]
 
-[node name="Sheep" type="CharacterBody2D" node_paths=PackedStringArray("movement", "animate", "food", "foodWorkSite", "despawn_timer")]
+[node name="Sheep" type="CharacterBody3D" node_paths=PackedStringArray("movement", "animate", "food", "foodWorkSite", "despawn_timer")]
 collision_layer = 512
 collision_mask = 3
 slide_on_ceiling = false
@@ -133,10 +133,10 @@ foodWorkSite = NodePath("FoodWorkSite")
 despawn_timer = NodePath("DespawnTimer")
 hop_radius = 300.0
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+[node name="CollisionShape2D" type="CollisionShape3D" parent="."]
 shape = SubResource("CircleShape2D_2teul")
 
-[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+[node name="AnimatedSprite2D" type="AnimatedSprite3D" parent="."]
 sprite_frames = SubResource("SpriteFrames_pwd00")
 animation = &"walk"
 
@@ -149,7 +149,7 @@ script = ExtResource("3_8m012")
 nav_agent = NodePath("../NavigationAgent2D")
 metadata/_custom_type_script = "uid://58qm17emnwvd"
 
-[node name="NavigationAgent2D" type="NavigationAgent2D" parent="."]
+[node name="NavigationAgent2D" type="NavigationAgent3D" parent="."]
 avoidance_enabled = true
 
 [node name="AgentAnimate" type="Node" parent="." node_paths=PackedStringArray("sprite")]
@@ -162,7 +162,7 @@ movement = NodePath("../AgentMovement")
 food = 5
 lose_food = false
 
-[node name="FoodWorkSite" type="Node2D" parent="." node_paths=PackedStringArray("my_boss")]
+[node name="FoodWorkSite" type="Node3D" parent="." node_paths=PackedStringArray("my_boss")]
 script = ExtResource("7_v65j7")
 my_boss = NodePath("..")
 total_work = 1.0

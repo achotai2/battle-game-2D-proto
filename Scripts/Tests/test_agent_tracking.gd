@@ -13,7 +13,7 @@ class MockAgentTracking extends AgentTracking:
 	func get_overlapping_bodies() -> Array[Node2D]:
 		return _mock_bodies
 
-class MockBody extends Node2D:
+class MockBody extends Node3D:
 	var _groups = []
 	var _player = 0
 	var strength = 0
@@ -67,15 +67,15 @@ func test_nearest():
 	print("Testing Nearest...")
 	var t = MockAgentTracking.new()
 	var me = MockBody.new(1)
-	me.position = Vector2(0, 0)
+	me.position = Vector3(0, 0, 0)
 	t.set_myself(me)
 	t.target_bias = "Nearest"
 	t.target_kind = AgentTracking.TargetKind.ATTACKABLE
 
 	var b1 = MockBody.new(2, ["Attackable"])
-	b1.position = Vector2(100, 0)
+	b1.position = Vector3(100, 0, 0)
 	var b2 = MockBody.new(2, ["Attackable"])
-	b2.position = Vector2(50, 0)
+	b2.position = Vector3(50, 0, 0)
 
 	t.set_mock_bodies([b1, b2])
 	t._reselect_target()
@@ -123,12 +123,12 @@ func test_lowest_health():
 	t.target_bias = "Lowest Health"
 
 	var b1 = MockBody.new(2, ["Attackable"])
-	b1.position = Vector2(10, 0)
+	b1.position = Vector3(10, 0, 0)
 	b1.health_comp = MockHealth.new()
 	b1.health_comp.hp = 100
 
 	var b2 = MockBody.new(2, ["Attackable"])
-	b2.position = Vector2(20, 0) # Further away
+	b2.position = Vector3(20, 0, 0) # Further away
 	b2.health_comp = MockHealth.new()
 	b2.health_comp.hp = 50 # Lower health
 

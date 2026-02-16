@@ -2,7 +2,7 @@ extends Node
 class_name MinionTasker
 
 # --- CONFIGURATION ---
-@export var agent: CharacterBody2D = null # Strict type
+@export var agent: CharacterBody3D = null # Strict type
 @export var movement: AgentMovement = null
 @export var castle: Castle = null
 @export var work_range: float = 50.0
@@ -208,7 +208,7 @@ func _release_job(release_to_board: bool) -> void:
 func _command_move_to_site() -> void:
 	if not movement or not _site: return
 	
-	var target_pos = Vector2.ZERO
+	var target_pos = Vector3.ZERO
 	if _site.has_method("get_work_position_for"):
 		target_pos = _site.get_work_position_for(agent)
 	else:
@@ -219,7 +219,7 @@ func _command_move_to_site() -> void:
 func _is_in_work_range(site: WorkSite) -> bool:
 	if not agent: return false
 	
-	var target_pos = Vector2.ZERO
+	var target_pos = Vector3.ZERO
 	if site.has_method("get_work_position_for"):
 		target_pos = site.get_work_position_for(agent)
 	else:
@@ -232,13 +232,13 @@ func _on_movement_finished(_agent_node: Node2D) -> void:
 		_enter_work_state()
 
 # --- COMPATIBILITY / SETTERS ---
-func set_agent(a: CharacterBody2D) -> void: agent = a
+func set_agent(a: CharacterBody3D) -> void: agent = a
 func set_movement(m: AgentMovement) -> void: movement = m
 func clear_task() -> void: _release_job(true); _set_idle_state()
 func has_task() -> bool: return _site != null
-func get_agent() -> CharacterBody2D: return agent
+func get_agent() -> CharacterBody3D: return agent
 
-func return_position() -> Vector2:
+func return_position() -> Vector3:
 	if agent:
 		return agent.global_position
-	return Vector2.ZERO
+	return Vector3.ZERO

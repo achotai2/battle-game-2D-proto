@@ -7,11 +7,11 @@ func _ready():
 	print("Starting Worker Animation Logic Test...")
 
 	# 1. Setup Mock Environment
-	var agent = CharacterBody2D.new()
+	var agent = CharacterBody3D.new()
 	add_child(agent)
 
 	# Mock Sprite with Animations
-	var sprite = AnimatedSprite2D.new()
+	var sprite = AnimatedSprite3D.new()
 	var frames = SpriteFrames.new()
 	frames.add_animation("work")
 	frames.add_animation("idle")
@@ -52,7 +52,7 @@ func _ready():
 	# Add methods dynamically or use script
 	var site_script = GDScript.new()
 	site_script.source_code = """
-extends Node2D
+extends Node3D
 var work_needed = true
 func needs_work() -> bool: return work_needed
 func apply_work(amount, worker): pass
@@ -61,7 +61,7 @@ func get_work_position_for(agent): return global_position
 	site_script.reload()
 	site.set_script(site_script)
 	add_child(site)
-	site.global_position = Vector2(100, 100)
+	site.global_position = Vector3(100, 0, 100)
 
 	# Wait for _ready
 	await get_tree().process_frame
@@ -119,7 +119,7 @@ func get_work_position_for(agent): return global_position
 
 	var dummy_target = Node2D.new()
 	add_child(dummy_target)
-	dummy_target.global_position = Vector2(200, 200)
+	dummy_target.global_position = Vector3(200, 0, 200)
 
 	animate.working = true
 	animate.play_attack(dummy_target)
@@ -152,7 +152,7 @@ func get_work_position_for(agent): return global_position
 	print("--- Test 6: Cancel Work on Move ---")
 	# Currently working (from Test 5)
 	# Issue move command
-	movement.command_move_to_position(Vector2(50, 50), 10)
+	movement.command_move_to_position(Vector3(50, 0, 50), 10)
 
 	if not animate.working:
 		print("PASS: Move command cleared Working state")

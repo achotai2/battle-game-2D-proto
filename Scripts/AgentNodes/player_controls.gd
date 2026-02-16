@@ -13,7 +13,7 @@ class_name PlayerControls
 @export var move_down: StringName = &"move_down"
 @export var interact: StringName = &"interact"
 
-var _last_dir: Vector2 = Vector2.ZERO
+var _last_dir: Vector3 = Vector3.ZERO
 var _is_moving: bool = false
 var _interaction_active: bool = false
 var controls_priority: int = 99999
@@ -27,11 +27,11 @@ func _physics_process(_delta: float) -> void:
 	# Continuous movement belongs in physics tick
 	var x: float = Input.get_axis(move_left, move_right)
 	var y: float = Input.get_axis(move_up, move_down)
-	var dir := Vector2(x, y)
+	var dir := Vector3(x, 0, y)
 
 	# Optional deadzone (helps analog sticks; harmless for keyboard)
 	if dir.length() < deadzone:
-		dir = Vector2.ZERO
+		dir = Vector3.ZERO
 	else:
 		dir = dir.normalized()
 
@@ -39,18 +39,18 @@ func _physics_process(_delta: float) -> void:
 	if emit_zero_direction:
 		if dir != _last_dir:
 			if movement:
-				if dir == Vector2.ZERO:
+				if dir == Vector3.ZERO:
 					movement.clear_movement_order(controls_priority)
 					_unpause_attack()
 				else:
 					movement.command_player_direction(dir, controls_priority)
 					_pause_attack()
 	else:
-		if dir != Vector2.ZERO and dir != _last_dir:
+		if dir != Vector3.ZERO and dir != _last_dir:
 			if movement:
 				movement.command_player_direction(dir, controls_priority)
 
-		_is_moving = dir != Vector2.ZERO
+		_is_moving = dir != Vector3.ZERO
 		if _is_moving:
 			_pause_attack()
 		elif not _interaction_active:

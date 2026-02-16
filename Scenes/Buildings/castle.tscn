@@ -8,7 +8,7 @@
 
 [sub_resource type="PhysicsMaterial" id="PhysicsMaterial_r1mkv"]
 
-[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_r1mkv"]
+[sub_resource type="CapsuleShape3D" id="CapsuleShape2D_r1mkv"]
 radius = 54.0
 height = 334.0
 
@@ -18,15 +18,15 @@ shader = ExtResource("4_fon5w")
 [sub_resource type="OccluderPolygon2D" id="OccluderPolygon2D_fon5w"]
 polygon = PackedVector2Array(-77, -13, -92, -37, -124, -43, -140, -63, -141, -101, -122, -120, -61, -128, -19, -131, 29, -132, 67, -130, 79, -123, 109, -125, 120, -121, 137, -106, 142, -90, 139, -66, 130, -47, 92, -37, 85, -16)
 
-[node name="Castle" type="StaticBody2D" node_paths=PackedStringArray("worker_job_board", "food_job_board") groups=["Attackable", "Buildings", "Interactable"]]
+[node name="Castle" type="StaticBody3D" node_paths=PackedStringArray("worker_job_board", "food_job_board") groups=["Attackable", "Buildings", "Interactable"]]
 y_sort_enabled = true
 physics_material_override = SubResource("PhysicsMaterial_r1mkv")
 script = ExtResource("1_p6e6l")
 worker_job_board = NodePath("WorkerJobBoard")
 food_job_board = NodePath("FoodJobBoard")
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
-rotation = 1.5707964
+[node name="CollisionShape2D" type="CollisionShape3D" parent="."]
+rotation = Vector3(0, -1.5707964, 0)
 shape = SubResource("CapsuleShape2D_r1mkv")
 
 [node name="WorkerJobBoard" type="Node" parent="." node_paths=PackedStringArray("castle")]
@@ -44,24 +44,24 @@ script = ExtResource("2_r1mkv")
 castle = NodePath("..")
 metadata/_custom_type_script = "uid://ba0yfy3sv1ht2"
 
-[node name="NavigationObstacle2D2" type="NavigationObstacle2D" parent="."]
+[node name="NavigationObstacle2D2" type="NavigationObstacle3D" parent="."]
 radius = 50.46
 vertices = PackedVector2Array(156, 31, 130, 52, 64, 57, -67, 57, -129, 55, -154, 37, -171, -1, -162, -34, -136, -52, 128, -54, 154, -35, 169, -1)
 affect_navigation_mesh = true
 carve_navigation_mesh = true
 
-[node name="Sprites" type="Node2D" parent="."]
+[node name="Sprites" type="Node3D" parent="."]
 
-[node name="ShadowSprite" type="Sprite2D" parent="Sprites"]
+[node name="ShadowSprite" type="Sprite3D" parent="Sprites"]
 material = SubResource("ShaderMaterial_mx46n")
-scale = Vector2(0.9, 1)
+scale = Vector3(0.9, 1, 1)
 texture = ExtResource("1_ayoda")
 offset = Vector2(0, -80)
 script = ExtResource("4_40flp")
 
-[node name="Sprite2D" type="Sprite2D" parent="Sprites"]
+[node name="Sprite2D" type="Sprite3D" parent="Sprites"]
 texture = ExtResource("1_ayoda")
 offset = Vector2(0, -50)
 
-[node name="LightOccluder2D" type="LightOccluder2D" parent="."]
+[node name="LightOccluder2D" type="Node3D" parent="."]
 occluder = SubResource("OccluderPolygon2D_fon5w")

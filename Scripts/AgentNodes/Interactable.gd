@@ -1,4 +1,4 @@
-extends Area2D
+extends Area3D
 class_name Interactable
 
 signal interaction_started(interactor: Node2D)
@@ -78,14 +78,14 @@ func get_interaction_time() -> float:
 	return interaction_time
 
 
-func get_prompt_position() -> Vector2:
+func get_prompt_position() -> Vector3:
 	var anchor := prompt_anchor
 	if anchor == null:
 		anchor = get_node_or_null("PromptAnchor") as Node2D
 	if is_instance_valid(anchor):
 		return anchor.global_position
-	if get_parent() is CharacterBody2D:
-		return (get_parent() as CharacterBody2D).global_position
+	if get_parent() is CharacterBody3D:
+		return (get_parent() as CharacterBody3D).global_position
 	return global_position
 
 

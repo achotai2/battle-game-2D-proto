@@ -11,9 +11,9 @@ signal move_to_pos_finished(agent: Node2D)
 
 # --- ASSIGNMENTS (STRICT TYPED) ---
 # [OPTIMIZATION] strict typing for direct memory access
-@export var agent: CharacterBody2D = null 
+@export var agent: CharacterBody3D = null
 @export var animation: AgentAnimate = null
-@export var nav_agent: NavigationAgent2D
+@export var nav_agent: NavigationAgent3D
 
 # --- TUNING ---
 @export_range(0.05, 20.0, 0.05) var repath_interval: float = 1.0
@@ -35,19 +35,19 @@ enum OrderType { NONE, MEANDER, MOVE_TO_POS, CHASE_NODE, RAW_VELOCITY, PLAYER_DI
 # --- STATE ---
 var _order_type: OrderType = OrderType.NONE
 var _order_priority: int = -1
-var _target_pos: Vector2 = Vector2.ZERO
-var _last_target_pos: Vector2 = Vector2.ZERO 
+var _target_pos: Vector3 = Vector3.ZERO
+var _last_target_pos: Vector3 = Vector3.ZERO
 
 # [OPTIMIZATION] Cache the current speed cap to avoid function calls in the loop
 var _current_speed_cap: float = 0.0
 
 # Stuck detection state
-var _last_stuck_pos: Vector2 = Vector2.ZERO
+var _last_stuck_pos: Vector3 = Vector3.ZERO
 
 # Optimization: Cached Velocity
-var _cached_desired_vel: Vector2 = Vector2.ZERO
-var _current_velocity: Vector2 = Vector2.ZERO
-var _last_anim_velocity: Vector2 = Vector2(INF, INF)
+var _cached_desired_vel: Vector3 = Vector3.ZERO
+var _current_velocity: Vector3 = Vector3.ZERO
+var _last_anim_velocity: Vector3 = Vector3(INF, 0, INF)
 const ANIM_JITTER_THRESHOLD_SQ: float = 4.0 
 
 # Optimization: Staggered Updates
@@ -56,7 +56,7 @@ const PATH_UPDATE_INTERVAL: int = 4
 
 # Temporary command storage
 var _order_target_node: Node2D = null
-var _order_direction: Vector2 = Vector2.ZERO
+var _order_direction: Vector3 = Vector3.ZERO
 
 # Timers
 var _repath_timer: Timer
@@ -117,7 +117,7 @@ func tick(delta: float) -> void:
 		return
 	
 	if _order_type == OrderType.FROZEN:
-		move_with_velocity(Vector2.ZERO, delta)
+		move_with_velocity(Vector3.ZERO, delta)
 		return
 
 	# ... (Rest of logic remains the same) ...
@@ -131,27 +131,28 @@ func tick(delta: float) -> void:
 			move_in_direction(_order_direction, delta)
 
 		OrderType.RAW_VELOCITY:
-			move_with_velocity(Vector2.ZERO, delta) 
+			move_with_velocity(Vector3.ZERO, delta)
 
 		OrderType.NONE:
-			move_with_velocity(Vector2.ZERO, delta)
+			move_with_velocity(Vector3.ZERO, delta)
 
 	_update_visuals()
 	
 
 # --- PATHFINDING CORE ---
 
-func _process_pathfinding(my_pos: Vector2, delta: float) -> void:
+func _process_pathfinding(my_pos: Vector3, delta: float) -> void:
 	if nav_agent.is_navigation_finished():
 		# If we return early without this, the unit keeps the last known velocity 
 		# and slides off the map (Cruise Control bug).
-		move_with_velocity(Vector2.ZERO, delta)
+		move_with_velocity(Vector3.ZERO, delta)
 		return
 		
 	# [OPTIMIZATION] Throttled Path Calculation
 	if (Engine.get_physics_frames() + _frame_offset) % PATH_UPDATE_INTERVAL == 0:
 		var next_pos = nav_agent.get_next_path_position()
 		var to_next = next_pos - my_pos
+		to_next.y = 0 # Force movement on XZ plane
 		
 		if to_next.length_squared() > 1.0:
 			# Use cached speed cap
@@ -164,7 +165,7 @@ func _process_pathfinding(my_pos: Vector2, delta: float) -> void:
 			
 			_cached_desired_vel = desired
 		else:
-			_cached_desired_vel = Vector2.ZERO
+			_cached_desired_vel = Vector3.ZERO
 
 	if nav_agent.avoidance_enabled:
 		nav_agent.set_velocity(_cached_desired_vel)
@@ -173,18 +174,18 @@ func _process_pathfinding(my_pos: Vector2, delta: float) -> void:
 
 # --- VELOCITY & MOVEMENT (HOT PATH) ---
 
-func _on_velocity_computed(safe_velocity: Vector2) -> void:
+func _on_velocity_computed(safe_velocity: Vector3) -> void:
 	if accel == 0.0:
 		move_with_velocity(safe_velocity, 0.0)
 	else:
 		move_with_velocity(safe_velocity, get_physics_process_delta_time())
 
-func move_with_velocity(desired_velocity: Vector2, delta: float) -> void:
+func move_with_velocity(desired_velocity: Vector3, delta: float) -> void:
 	if _order_type == OrderType.FROZEN:
-		_current_velocity = Vector2.ZERO
+		_current_velocity = Vector3.ZERO
 		# [OPTIMIZATION] Only update agent if not already stopped
 		if agent and not agent.velocity.is_zero_approx():
-			agent.velocity = Vector2.ZERO
+			agent.velocity = Vector3.ZERO
 		return
 
 	# [OPTIMIZATION] Use cached variable, not a function call
@@ -210,8 +211,8 @@ func _update_visuals() -> void:
 		animation.agent_moved(_current_velocity)
 		_last_anim_velocity = _current_velocity
 	elif _current_velocity.is_zero_approx() and not _last_anim_velocity.is_zero_approx():
-		animation.agent_moved(Vector2.ZERO)
-		_last_anim_velocity = Vector2.ZERO
+		animation.agent_moved(Vector3.ZERO)
+		_last_anim_velocity = Vector3.ZERO
 
 # --- STUCK DETECTION ---
 
@@ -253,7 +254,7 @@ func _on_repath_timer_tick() -> void:
 				_pick_new_patrol_point()
 			elif _order_type == OrderType.MOVE_TO_POS or _order_type == OrderType.CHASE_NODE:
 				# Force a full path re-query
-				if nav_agent.target_position != Vector2.ZERO:
+				if nav_agent.target_position != Vector3.ZERO:
 					nav_agent.target_position = nav_agent.target_position
 	
 	_last_stuck_pos = agent.global_position
@@ -268,7 +269,7 @@ func _update_speed_cap() -> void:
 	else:
 		_current_speed_cap = max_speed
 
-func command_move_to_position(pos: Vector2, priority: int = 5) -> bool:
+func command_move_to_position(pos: Vector3, priority: int = 5) -> bool:
 	if not _accept_order(priority): return false
 	_cancel_anim_actions()
 	_order_type = OrderType.MOVE_TO_POS
@@ -276,14 +277,14 @@ func command_move_to_position(pos: Vector2, priority: int = 5) -> bool:
 	_set_target_pos(pos)
 	return true
 
-func command_player_direction(dir: Vector2, priority: int = 5) -> bool:
+func command_player_direction(dir: Vector3, priority: int = 5) -> bool:
 	if not _accept_order(priority): return false
 	_cancel_anim_actions()
 	_order_type = OrderType.PLAYER_DIRECTION
 	_order_direction = dir
 	_order_target_node = null
-	_target_pos = Vector2.ZERO 
-	_cached_desired_vel = Vector2.ZERO 
+	_target_pos = Vector3.ZERO
+	_cached_desired_vel = Vector3.ZERO
 	_update_speed_cap() # Update Cache
 	return true
 
@@ -329,7 +330,7 @@ func _start_self_meander() -> void:
 	_update_speed_cap() # Update Cache
 	_pick_new_patrol_point()
 
-func move_in_direction(direction: Vector2, delta: float) -> void:
+func move_in_direction(direction: Vector3, delta: float) -> void:
 	move_with_velocity(direction.normalized() * max_speed, delta)
 
 func clear_movement_order(priority: int = 5) -> void:
@@ -347,7 +348,7 @@ func clear_movement_order(priority: int = 5) -> void:
 func _cancel_anim_actions() -> void:
 	if animation: animation.cancel_action_state()
 
-func _set_target_pos(pos: Vector2) -> void:
+func _set_target_pos(pos: Vector3) -> void:
 	_target_pos = pos
 	_last_target_pos = pos
 	if nav_agent: nav_agent.target_position = pos
@@ -382,7 +383,7 @@ func _pick_new_patrol_point() -> void:
 	var center = assigned_castle.global_position
 	var angle = randf() * TAU
 	var r = sqrt(randf()) * patrol_radius
-	var candidate = center + Vector2(cos(angle), sin(angle)) * r
+	var candidate = center + Vector3(cos(angle), 0, sin(angle)) * r
 	_set_target_pos(candidate)
 
 # --- COMPATIBILITY BLOCK ---
@@ -391,4 +392,4 @@ func is_frozen() -> bool: return _order_type == OrderType.FROZEN
 func no_order_check() -> bool: return _order_type == OrderType.NONE
 func _disable_meander() -> void: pass
 func force_repath() -> void: _on_repath_timer_tick()
-func set_my_agent(owner_agent: CharacterBody2D) -> void: agent = owner_agent
+func set_my_agent(owner_agent: CharacterBody3D) -> void: agent = owner_agent

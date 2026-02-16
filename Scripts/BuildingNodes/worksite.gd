@@ -1,4 +1,4 @@
-extends Node2D
+extends Node3D
 class_name WorkSite
 ## A reusable "work target" that workers can be assigned to by a CastleJobBoard.
 ##
@@ -94,13 +94,13 @@ func needs_work() -> bool:
 	return _work_done < total_work
 
 
-func get_work_position() -> Vector2:
+func get_work_position() -> Vector3:
 	## Returns the world position a worker should move to in order to work on this site.
 	## Workers will typically stand near this position and repeatedly call apply_work().
 	if not is_instance_valid(my_boss) or not my_boss.has_method("return_position"):
-		return Vector2.ZERO
+		return Vector3.ZERO
 
-	var base_pos: Vector2 = my_boss.return_position()
+	var base_pos: Vector3 = my_boss.return_position()
 	if is_instance_valid(work_offset):
 		return base_pos + work_offset.position
 	return base_pos
@@ -159,7 +159,7 @@ func unreserve(agent: Node2D) -> void:
 	_agent_for_slot.erase(slot_index)
 
 
-func get_work_position_for(agent: Node2D) -> Vector2:
+func get_work_position_for(agent: Node2D) -> Vector3:
 	## Returns the per-agent work position (slot) if reserved.
 	_cleanup_invalid_agents()
 	if agent != null and _slot_for_agent.has(agent):
@@ -286,7 +286,7 @@ func _assign_slot(agent: Node2D, slot_index: int) -> void:
 			node_agent.tree_exited.connect(exit_callable, CONNECT_ONE_SHOT)
 
 
-func _get_slot_position(slot_index: int) -> Vector2:
+func _get_slot_position(slot_index: int) -> Vector3:
 	if _slot_markers.is_empty():
 		return global_position
 	if slot_index < 0 or slot_index >= _slot_markers.size():
