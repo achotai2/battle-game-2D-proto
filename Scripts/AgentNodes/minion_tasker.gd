@@ -50,7 +50,7 @@ func _ready() -> void:
 		if agent.has_method("return_castle"):
 			set_castle(agent.return_castle())
 
-func set_castle(new_castle: Node2D) -> void:
+func set_castle(new_castle: Castle) -> void:
 	if new_castle == castle: return
 
 	_release_job(true)
@@ -143,7 +143,7 @@ func _on_work_tick() -> void:
 
 # --- STATE MANAGEMENT ---
 
-func assign_job(site: Node2D) -> void:
+func assign_job(site: WorkSite) -> void:
 	_release_job(true) # Clear old job
 	if not site:
 		_set_idle_state()
@@ -213,7 +213,7 @@ func _command_move_to_site() -> void:
 		
 	movement.command_move_to_position(target_pos, job_priority)
 
-func _is_in_work_range(site: Node2D) -> bool:
+func _is_in_work_range(site: WorkSite) -> bool:
 	if not agent: return false
 	
 	var target_pos = Vector2.ZERO

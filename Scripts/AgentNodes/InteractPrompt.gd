@@ -91,7 +91,7 @@ func _set_percent(percent_left: float) -> void:
 		circle.scale = circleEmpty.scale * p
 
 # Optional convenience if you attach this prompt to a specific Node2D target at runtime:
-func follow_target(target: Node2D, percent_left: float, world_offset: Vector2 = Vector2(0, -32)) -> void:
+func follow_target(target: CharacterBody2D, percent_left: float, world_offset: Vector2 = Vector2(0, -32)) -> void:
 	if not is_instance_valid(target):
 		return
 	set_world_target(target.global_position, percent_left, world_offset)
