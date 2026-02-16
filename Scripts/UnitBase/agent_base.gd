@@ -161,6 +161,9 @@ func _assign_tasker_refs() -> void:
 	tasker.set_agent(self)
 	tasker.set_movement(movement)
 
+	if movement and not movement.move_to_pos_finished.is_connected(tasker._on_movement_finished):
+		movement.move_to_pos_finished.connect(tasker._on_movement_finished)
+
 
 func _assign_food_tasker_refs() -> void:
 	if not foodTasker:
@@ -249,6 +252,11 @@ func apply_role(role: UnitRoles.UnitType, p: int) -> void:
 		if tasker.has_task():
 			tasker.clear_task()
 			tasker.unregister_from_board()
+
+		# [FIX] Disconnect signals managed by AgentBase
+		if movement and movement.move_to_pos_finished.is_connected(tasker._on_movement_finished):
+			movement.move_to_pos_finished.disconnect(tasker._on_movement_finished)
+
 		tasker.queue_free()
 		tasker = null
 

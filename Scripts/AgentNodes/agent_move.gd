@@ -7,6 +7,7 @@ signal move_to_pos_finished(agent: Node2D)
 @export_range(0, 500, 10) var max_speed: float = 300.0
 @export_range(0, 500, 10) var meander_speed: float = 50.0
 @export var can_meander: bool = true
+@export var loiter_duration: float = 2.0
 
 # --- ASSIGNMENTS (STRICT TYPED) ---
 # [OPTIMIZATION] strict typing for direct memory access
@@ -60,6 +61,7 @@ var _order_direction: Vector2 = Vector2.ZERO
 # Timers
 var _repath_timer: Timer
 var _patrol_pause_timer: Timer
+var _loiter_timer: Timer
 
 func _ready() -> void:
 	if not nav_agent:
@@ -88,6 +90,11 @@ func _ready() -> void:
 	_patrol_pause_timer.one_shot = true
 	_patrol_pause_timer.timeout.connect(_on_patrol_pause_timeout)
 	add_child(_patrol_pause_timer)
+
+	_loiter_timer = Timer.new()
+	_loiter_timer.one_shot = true
+	_loiter_timer.timeout.connect(_on_loiter_timeout)
+	add_child(_loiter_timer)
 	
 	if agent: _last_stuck_pos = agent.global_position
 
@@ -97,7 +104,11 @@ func tick(delta: float) -> void:
 	# [FIX] Check for auto-meander FIRST.
 	# If we are supposed to meander, start immediately so we don't get put to sleep below.
 	if _order_type == OrderType.NONE and can_meander:
-		_start_self_meander()
+		if _loiter_timer.is_stopped():
+			_start_self_meander()
+		else:
+			# Loitering (smoking a cigarette)
+			pass
 
 	# [OPTIMIZATION] Sleep Check
 	# Now this only triggers if we are NONE (and didn't start meandering) or FROZEN
@@ -328,6 +339,9 @@ func clear_movement_order(priority: int = 5) -> void:
 	_order_priority = -1
 	_update_speed_cap()
 
+	if can_meander and loiter_duration > 0.0:
+		_loiter_timer.start(loiter_duration)
+
 # --- HELPERS ---
 
 func _cancel_anim_actions() -> void:
@@ -342,6 +356,11 @@ func _on_nav_finished() -> void:
 	if _order_type == OrderType.MOVE_TO_POS:
 		_order_type = OrderType.NONE
 		move_to_pos_finished.emit(get_parent())
+
+		# If no new order came in from the signal (e.g. Work), start loitering
+		if _order_type == OrderType.NONE and can_meander and loiter_duration > 0.0:
+			_loiter_timer.start(loiter_duration)
+
 	elif _order_type == OrderType.MEANDER:
 		if patrol_pause_seconds > 0.0:
 			_patrol_pause_timer.start(patrol_pause_seconds)
@@ -351,6 +370,10 @@ func _on_nav_finished() -> void:
 func _on_patrol_pause_timeout() -> void:
 	if _order_type == OrderType.MEANDER:
 		_pick_new_patrol_point()
+
+func _on_loiter_timeout() -> void:
+	if _order_type == OrderType.NONE and can_meander:
+		_start_self_meander()
 
 func _pick_new_patrol_point() -> void:
 	if not is_instance_valid(assigned_castle):
