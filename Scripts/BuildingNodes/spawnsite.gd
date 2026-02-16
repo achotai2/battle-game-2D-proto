@@ -38,7 +38,7 @@ func enqueue_spawn(amount: int = 1) -> void:
 
 	total_work += work_per_spawn
 
-func apply_work(amount: float, worker: WorkSiteWorker) -> void:
+func apply_work(amount: float, worker: MinionTasker) -> void:
 # Extends the worksite.gd apply work function for spawnsite logic:
 	if not enabled or not needs_work():
 		return
@@ -103,7 +103,7 @@ func _get_boss_property() -> BuildingDefs.BuildingType:
 	return get_parent().building_type
 
 
-func _resolve_agent(minion: WorkSiteWorker) -> Node2D:
+func _resolve_agent(minion: MinionTasker) -> Node2D:
 	if minion == null:
 		return null
 

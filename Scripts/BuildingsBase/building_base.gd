@@ -80,7 +80,7 @@ func _on_interacted(interactor: Node2D) -> void:
 		_activate_spawnsite()
 
 
-func _on_work_completed(_site: WorkSite, _worker: WorkSiteWorker) -> void:
+func _on_work_completed(_site: WorkSite, _worker: MinionTasker) -> void:
 	set_state(BuildingDefs.BuildingState.BUILT)
 
 

@@ -74,7 +74,7 @@ func _on_interacted(interactor: Node2D) -> void:
 		set_state(TreeState.MARKED)
 
 
-func _on_work_completed(_site: WorkSite, _worker: WorkSiteWorker) -> void:
+func _on_work_completed(_site: WorkSite, _worker: MinionTasker) -> void:
 	set_state(TreeState.CUT)
 
 	spawn_timer.stop()

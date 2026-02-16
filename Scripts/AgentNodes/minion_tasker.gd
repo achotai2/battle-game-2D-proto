@@ -230,3 +230,8 @@ func set_movement(m: AgentMovement) -> void: movement = m
 func clear_task() -> void: _release_job(true); _set_idle_state()
 func has_task() -> bool: return _site != null
 func get_agent() -> Node2D: return agent
+
+func return_position() -> Vector2:
+	if agent:
+		return agent.global_position
+	return Vector2.ZERO
