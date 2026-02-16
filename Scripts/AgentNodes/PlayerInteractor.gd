@@ -254,7 +254,7 @@ func _sync_nearby_from_sensor() -> void:
 	_nearby = updated
 
 
-func _get_interactor_node() -> Node2D:
-	if get_parent() is Node2D:
-		return get_parent() as Node2D
+func _get_interactor_node() -> CharacterBody3D:
+	if get_parent() is CharacterBody3D:
+		return get_parent() as CharacterBody3D
 	return self

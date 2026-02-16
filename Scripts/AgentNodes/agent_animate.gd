@@ -110,7 +110,7 @@ func _show_heal() -> void:
 	pass
 
 
-func play_attack(target: Node2D) -> bool:
+func play_attack(target: CharacterBody3D) -> bool:
 	if not is_instance_valid(sprite) or sprite.sprite_frames == null:
 		return false
 

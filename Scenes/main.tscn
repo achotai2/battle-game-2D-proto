@@ -1,369 +1,43 @@
-[gd_scene load_steps=32 format=4 uid="uid://denj1nj2jkqg1"]
+[gd_scene load_steps=7 format=3 uid="uid://denj1nj2jkqg1"]
 
+[sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_7u77a"]
 
-[sub_resource type="NavigationMesh" id="NavigationMesh_new"]
-vertices = PackedVector3Array(-1000, 0, -1000, 1000, 0, -1000, 1000, 0, 1000, -1000, 0, 1000)
-polygons = [PackedInt32Array(0, 1, 2, 3)]
-[ext_resource type="Texture2D" uid="uid://b48b8ua5c4hra" path="res://Art/Tiny Swords (Update 010)/Terrain/Ground/Tilemap_Flat.png" id="1_jjgbg"]
-[ext_resource type="Script" uid="uid://6hbmeykuynas" path="res://Scripts/main.gd" id="1_jjvhh"]
-[ext_resource type="PackedScene" uid="uid://ex22mf26lsid" path="res://Scenes/Units/Player.tscn" id="2_bo1nx"]
-[ext_resource type="PackedScene" uid="uid://mvfvmj8qom4v" path="res://Scenes/Units/worker.tscn" id="4_jjvhh"]
-[ext_resource type="PackedScene" uid="uid://56ng42k13bnj" path="res://Scenes/Buildings/castle.tscn" id="5_kry3j"]
-[ext_resource type="PackedScene" uid="uid://ctx2ge4w4wad7" path="res://Scenes/Units/peasant.tscn" id="5_ynf5e"]
-[ext_resource type="PackedScene" uid="uid://so0ngwg160ke" path="res://Scenes/Buildings/house.tscn" id="6_21xkr"]
-[ext_resource type="PackedScene" uid="uid://cwsleixsa262m" path="res://Scenes/Units/lord.tscn" id="6_d1ilt"]
-[ext_resource type="PackedScene" uid="uid://bx0vujr38q8pu" path="res://Scenes/Buildings/tree.tscn" id="7_344ge"]
-[ext_resource type="PackedScene" uid="uid://boksm60la2s5a" path="res://Scenes/Buildings/archery_range.tscn" id="8_344ge"]
-[ext_resource type="PackedScene" uid="uid://ra0fj2eqns6d" path="res://Scenes/Buildings/barracks.tscn" id="10_6iyac"]
-[ext_resource type="PackedScene" uid="uid://d4k6usdi8l0w0" path="res://Scenes/UI/GoldUI.tscn" id="10_hptm8"]
-[ext_resource type="Shader" uid="uid://clbugf03j2rkc" path="res://Scripts/Shaders/cloud.gdshader" id="13_fdnlq"]
-[ext_resource type="Script" uid="uid://bvlh6f3r7x1kb" path="res://Scripts/Resources/point_light_2d.gd" id="14_jkdf5"]
-[ext_resource type="Shader" uid="uid://d1flwqvfy5jwu" path="res://Scripts/Shaders/rain.gdshader" id="14_wsu2k"]
-[ext_resource type="Script" uid="uid://dp8yuovi3hu7d" path="res://Scripts/Weather/WorldEnvironmentControl.gd" id="15_hibaj"]
-[ext_resource type="Script" uid="uid://bvu70n5b0l3kf" path="res://Scripts/Weather/cloud_shadows.gd" id="16_b3802"]
-[ext_resource type="Script" uid="uid://dr8y21rcmpibl" path="res://Scripts/Weather/rain.gd" id="18_fevyy"]
-[ext_resource type="Script" uid="uid://cnam6bddvgr7k" path="res://Scripts/Weather/sunlight.gd" id="20_pdsj5"]
-[ext_resource type="PackedScene" uid="uid://cov6dh253xj6j" path="res://Scenes/UI/DebugPanel.tscn" id="debug_panel_scn"]
+[sub_resource type="Sky" id="Sky_jjgbg"]
+sky_material = SubResource("ProceduralSkyMaterial_7u77a")
 
-[sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_6bp64"]
-texture = ExtResource("1_jjgbg")
-texture_region_size = Vector2i(64, 64)
-0:0/0 = 0
-0:0/0/terrain_set = 0
-0:0/0/terrain = 0
-0:0/0/terrains_peering_bit/right_side = 0
-0:0/0/terrains_peering_bit/bottom_side = 0
-1:0/0 = 0
-1:0/0/terrain_set = 0
-1:0/0/terrain = 0
-1:0/0/terrains_peering_bit/right_side = 0
-1:0/0/terrains_peering_bit/bottom_side = 0
-1:0/0/terrains_peering_bit/left_side = 0
-2:0/0 = 0
-2:0/0/terrain_set = 0
-2:0/0/terrain = 0
-2:0/0/terrains_peering_bit/bottom_side = 0
-2:0/0/terrains_peering_bit/left_side = 0
-3:0/0 = 0
-3:0/0/terrain_set = 0
-3:0/0/terrain = 0
-3:0/0/terrains_peering_bit/bottom_side = 0
-3:1/0 = 0
-3:1/0/terrain_set = 0
-3:1/0/terrain = 0
-3:1/0/terrains_peering_bit/bottom_side = 0
-3:1/0/terrains_peering_bit/top_side = 0
-2:1/0 = 0
-2:1/0/terrain_set = 0
-2:1/0/terrain = 0
-2:1/0/terrains_peering_bit/bottom_side = 0
-2:1/0/terrains_peering_bit/left_side = 0
-2:1/0/terrains_peering_bit/top_side = 0
-1:1/0 = 0
-1:1/0/terrain_set = 0
-1:1/0/terrain = 0
-1:1/0/terrains_peering_bit/right_side = 0
-1:1/0/terrains_peering_bit/bottom_side = 0
-1:1/0/terrains_peering_bit/left_side = 0
-1:1/0/terrains_peering_bit/top_side = 0
-0:1/0 = 0
-0:1/0/terrain_set = 0
-0:1/0/terrain = 0
-0:1/0/terrains_peering_bit/right_side = 0
-0:1/0/terrains_peering_bit/bottom_side = 0
-0:1/0/terrains_peering_bit/top_side = 0
-0:2/0 = 0
-0:2/0/terrain_set = 0
-0:2/0/terrain = 0
-0:2/0/terrains_peering_bit/right_side = 0
-0:2/0/terrains_peering_bit/top_side = 0
-1:2/0 = 0
-1:2/0/terrain_set = 0
-1:2/0/terrain = 0
-1:2/0/terrains_peering_bit/right_side = 0
-1:2/0/terrains_peering_bit/left_side = 0
-1:2/0/terrains_peering_bit/top_side = 0
-2:2/0 = 0
-2:2/0/terrain_set = 0
-2:2/0/terrain = 0
-2:2/0/terrains_peering_bit/left_side = 0
-2:2/0/terrains_peering_bit/top_side = 0
-3:2/0 = 0
-3:2/0/terrain_set = 0
-3:2/0/terrain = 0
-3:2/0/terrains_peering_bit/top_side = 0
-3:3/0 = 0
-3:3/0/terrain_set = 0
-3:3/0/terrain = 0
-2:3/0 = 0
-2:3/0/terrain_set = 0
-2:3/0/terrain = 0
-2:3/0/terrains_peering_bit/left_side = 0
-1:3/0 = 0
-1:3/0/terrain_set = 0
-1:3/0/terrain = 0
-1:3/0/terrains_peering_bit/right_side = 0
-1:3/0/terrains_peering_bit/left_side = 0
-0:3/0 = 0
-0:3/0/terrain_set = 0
-0:3/0/terrain = 0
-0:3/0/terrains_peering_bit/right_side = 0
-5:0/0 = 0
-5:0/0/terrain_set = 0
-5:0/0/terrain = 1
-5:0/0/terrains_peering_bit/right_side = 1
-5:0/0/terrains_peering_bit/bottom_side = 1
-6:0/0 = 0
-6:0/0/terrain_set = 0
-6:0/0/terrain = 1
-6:0/0/terrains_peering_bit/right_side = 1
-6:0/0/terrains_peering_bit/bottom_side = 1
-6:0/0/terrains_peering_bit/left_side = 1
-7:0/0 = 0
-7:0/0/terrain_set = 0
-7:0/0/terrain = 1
-7:0/0/terrains_peering_bit/bottom_side = 1
-7:0/0/terrains_peering_bit/left_side = 1
-8:0/0 = 0
-8:0/0/terrain_set = 0
-8:0/0/terrain = 1
-8:0/0/terrains_peering_bit/bottom_side = 1
-5:1/0 = 0
-5:1/0/terrain_set = 0
-5:1/0/terrain = 1
-5:1/0/terrains_peering_bit/right_side = 1
-5:1/0/terrains_peering_bit/bottom_side = 1
-5:1/0/terrains_peering_bit/top_side = 1
-6:1/0 = 0
-6:1/0/terrain_set = 0
-6:1/0/terrain = 1
-6:1/0/terrains_peering_bit/right_side = 1
-6:1/0/terrains_peering_bit/bottom_side = 1
-6:1/0/terrains_peering_bit/left_side = 1
-6:1/0/terrains_peering_bit/top_side = 1
-7:1/0 = 0
-7:1/0/terrain_set = 0
-7:1/0/terrain = 1
-7:1/0/terrains_peering_bit/bottom_side = 1
-7:1/0/terrains_peering_bit/left_side = 1
-7:1/0/terrains_peering_bit/top_side = 1
-8:1/0 = 0
-8:1/0/terrain_set = 0
-8:1/0/terrain = 1
-8:1/0/terrains_peering_bit/bottom_side = 1
-8:1/0/terrains_peering_bit/top_side = 1
-8:2/0 = 0
-8:2/0/terrain_set = 0
-8:2/0/terrain = 1
-8:2/0/terrains_peering_bit/top_side = 1
-8:3/0 = 0
-8:3/0/terrain_set = 0
-8:3/0/terrain = 1
-7:3/0 = 0
-7:3/0/terrain_set = 0
-7:3/0/terrain = 1
-7:3/0/terrains_peering_bit/left_side = 1
-6:3/0 = 0
-6:3/0/terrain_set = 0
-6:3/0/terrain = 1
-6:3/0/terrains_peering_bit/right_side = 1
-6:3/0/terrains_peering_bit/left_side = 1
-6:2/0 = 0
-6:2/0/terrain_set = 0
-6:2/0/terrain = 1
-6:2/0/terrains_peering_bit/right_side = 1
-6:2/0/terrains_peering_bit/left_side = 1
-6:2/0/terrains_peering_bit/top_side = 1
-5:2/0 = 0
-5:2/0/terrain_set = 0
-5:2/0/terrain = 1
-5:2/0/terrains_peering_bit/right_side = 1
-5:2/0/terrains_peering_bit/top_side = 1
-5:3/0 = 0
-5:3/0/terrain_set = 0
-5:3/0/terrain = 1
-5:3/0/terrains_peering_bit/right_side = 1
-7:2/0 = 0
-7:2/0/terrain_set = 0
-7:2/0/terrain = 1
-7:2/0/terrains_peering_bit/left_side = 1
-7:2/0/terrains_peering_bit/top_side = 1
+[sub_resource type="Environment" id="Environment_bo1nx"]
+background_mode = 2
+sky = SubResource("Sky_jjgbg")
 
-[sub_resource type="TileSet" id="TileSet_8gbba"]
-tile_size = Vector2i(64, 64)
-physics_layer_0/collision_layer = 1
-terrain_set_0/mode = 0
-terrain_set_0/terrain_0/name = "Grass"
-terrain_set_0/terrain_0/color = Color(0.5019608, 0.91764706, 0.2509804, 1)
-terrain_set_0/terrain_1/name = "Sand"
-terrain_set_0/terrain_1/color = Color(0.5, 0.4375, 0.25, 1)
-sources/3 = SubResource("TileSetAtlasSource_6bp64")
+[sub_resource type="NavigationMesh" id="NavigationMesh_7u77a"]
+vertices = PackedVector3Array(-49.5, 0.5, -49.5, -49.5, 0.5, 49.5, 49.5, 0.5, 49.5, 49.5, 0.5, -49.5)
+polygons = [PackedInt32Array(3, 2, 0), PackedInt32Array(0, 2, 1)]
 
-[sub_resource type="NavigationMesh" id="NavigationPolygon_fvkhu"]
-vertices = PackedVector2Array(678.8828, 122.39844, 837.5781, 308, 810.4219, 308, 464.7578, 289, 635.5781, 134, 591.7578, 499, 767.1172, 492.39844, 810.4219, 504, 578.39844, 548.8828, 767.1172, 319.60156, 730.60156, 455.8828, 578.39844, 449.1172, 730.60156, 356.1172, 930.7578, 406, 1886.2891, -297.1797, 1894.6875, 1089.0781, 917.39844, 455.8828, 917.39844, 356.1172, 728.7578, 36, 715.39844, -13.8828125, 880.8828, 319.60156, 715.39844, 85.88281, 608.4219, 134, 450.60156, 236.11719, 565.1172, 122.39844, 717.2422, 406, 541.8828, 412.60156, 498.57813, 401, 450.60156, 341.8828, 471.42188, 401, 411.8828, 380.60156, 428.1172, 412.60156, 365.57813, 393, 528.60156, 85.88281, 411.8828, 197.39844, 391.60156, 449.1172, 126.421875, 393, 880.8828, 492.39844, -433.5625, 1092.9063, 837.5781, 504, 541.8828, 585.39844, 378.2422, 499, 515.2422, 36, 365.57813, 185, 678.8828, -50.398438, 391.60156, 548.8828, 80.11719, 380.60156, 528.60156, -13.8828125, 126.421875, 185, -449.42188, -305.8125, 498.57813, 597, 471.42188, 597, 428.1172, 585.39844, 41.398438, 341.8828, 27.242188, 289, 41.398438, 236.11719, 80.11719, 197.39844, 565.1172, -50.398438, 608.4219, -62, 635.5781, -62)
-polygons = Array[PackedInt32Array]([PackedInt32Array(0, 1, 2, 3, 4), PackedInt32Array(5, 6, 7, 8), PackedInt32Array(3, 2, 9), PackedInt32Array(10, 6, 5, 11), PackedInt32Array(3, 9, 12), PackedInt32Array(13, 14, 15, 16), PackedInt32Array(14, 13, 17), PackedInt32Array(18, 19, 14, 17, 20), PackedInt32Array(21, 18, 20, 1), PackedInt32Array(0, 21, 1), PackedInt32Array(22, 4, 3, 23), PackedInt32Array(24, 22, 23), PackedInt32Array(3, 25, 10, 11, 26), PackedInt32Array(3, 12, 25), PackedInt32Array(3, 26, 27, 28), PackedInt32Array(28, 27, 29, 30), PackedInt32Array(30, 29, 31, 32), PackedInt32Array(33, 24, 23, 34), PackedInt32Array(32, 31, 35, 36), PackedInt32Array(37, 16, 15), PackedInt32Array(37, 15, 38, 39), PackedInt32Array(7, 39, 38, 40), PackedInt32Array(36, 35, 41), PackedInt32Array(42, 33, 34, 43), PackedInt32Array(14, 19, 44), PackedInt32Array(36, 41, 45, 38, 46), PackedInt32Array(47, 42, 43, 48, 49), PackedInt32Array(40, 8, 7), PackedInt32Array(50, 40, 38), PackedInt32Array(51, 50, 38), PackedInt32Array(52, 51, 38), PackedInt32Array(45, 52, 38), PackedInt32Array(53, 46, 38), PackedInt32Array(53, 38, 49, 54), PackedInt32Array(55, 54, 49), PackedInt32Array(56, 55, 49), PackedInt32Array(48, 56, 49), PackedInt32Array(57, 47, 49), PackedInt32Array(58, 57, 49), PackedInt32Array(58, 49, 14, 59), PackedInt32Array(59, 14, 44)])
-outlines = Array[PackedVector2Array]([PackedVector2Array(-500, -356, 1936, -347, 1945, 1139, -483, 1143)])
-agent_radius = 50.0
+[sub_resource type="PlaneMesh" id="PlaneMesh_7u77a"]
+size = Vector2(100, 100)
 
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_jkdf5"]
-shader = ExtResource("13_fdnlq")
-shader_parameter/shadow_color = Color(0.3019608, 0.3019608, 0.3019608, 1)
-shader_parameter/cloud_cutoff = 0.2010000095475
-shader_parameter/shadow_softness = 0.5370000255075
-shader_parameter/speed_scale = 0.4830000229425
-shader_parameter/cloud_direction = Vector3(0.5, 0, -1)
+[sub_resource type="ConcavePolygonShape3D" id="ConcavePolygonShape3D_7u77a"]
+data = PackedVector3Array(50, 0, 50, -50, 0, 50, 50, 0, -50, -50, 0, 50, -50, 0, -50, 50, 0, -50)
 
-[sub_resource type="FastNoiseLite" id="FastNoiseLite_6iyac"]
-frequency = 0.0396
+[node name="World" type="Node3D"]
 
-[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_6iyac"]
-noise = SubResource("FastNoiseLite_6iyac")
-seamless = true
-normalize = false
-
-[sub_resource type="FastNoiseLite" id="FastNoiseLite_wsu2k"]
-noise_type = 0
-frequency = 0.02
-
-[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_k12tt"]
-noise = SubResource("FastNoiseLite_wsu2k")
-seamless = true
-
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_k12tt"]
-shader = ExtResource("14_wsu2k")
-shader_parameter/rain_amount = 0.51200002432
-shader_parameter/rain_speed = 8.00000038
-shader_parameter/rain_slant = 0.3100000622249999
-shader_parameter/rain_color = Color(3.3691525e-05, 0.6151025, 0.99750835, 0.5019608)
-shader_parameter/noise_texture = SubResource("NoiseTexture2D_k12tt")
-shader_parameter/gust_speed = 0.154000007315
-shader_parameter/chaos_scale = 1.0
-
-[sub_resource type="Gradient" id="Gradient_fdnlq"]
-offsets = PackedFloat32Array(0, 0.64666665)
-colors = PackedColorArray(1, 1, 1, 1, 0, 0, 0, 1)
-
-[sub_resource type="GradientTexture2D" id="GradientTexture2D_jkdf5"]
-gradient = SubResource("Gradient_fdnlq")
-fill = 1
-fill_from = Vector3(0.5, 0, 0.5)
-
-[node name="Main" type="Node3D"]
-script = ExtResource("1_jjvhh")
-
-[node name="Ground" type="CSGBox3D" parent="."]
-size = Vector3(2000, 1, 2000)
-position = Vector3(0, -0.5, 0)
-use_collision = true
-
-[node name="EnvironmentalObjects" type="Node3D" parent="."]
-y_sort_enabled = true
-
-[node name="NavigationRegion3D" type="NavigationRegion3D" parent="EnvironmentalObjects"]
-y_sort_enabled = true
-navigation_mesh = SubResource("NavigationMesh_new")
-
-[node name="Buildings" type="Node3D" parent="EnvironmentalObjects/NavigationRegion3D"]
-y_sort_enabled = true
-
-[node name="ArcheryRange" parent="EnvironmentalObjects/NavigationRegion3D/Buildings" node_paths=PackedStringArray("castle") instance=ExtResource("8_344ge")]
-position = Vector3(824, 0, 406)
-player = 1
-castle = NodePath("../Castle")
-state = 0
-
-[node name="House" parent="EnvironmentalObjects/NavigationRegion3D/Buildings" node_paths=PackedStringArray("castle") instance=ExtResource("6_21xkr")]
-position = Vector3(622, 0, 36)
-player = 1
-castle = NodePath("../Castle")
-
-[node name="Castle" parent="EnvironmentalObjects/NavigationRegion3D/Buildings" instance=ExtResource("5_kry3j")]
-position = Vector3(246, 0, 289)
-
-[node name="Barracks" parent="EnvironmentalObjects/NavigationRegion3D/Buildings" node_paths=PackedStringArray("castle") instance=ExtResource("10_6iyac")]
-position = Vector3(485, 0, 499)
-player = 1
-castle = NodePath("../Castle")
-
-[node name="Units" type="Node3D" parent="EnvironmentalObjects"]
-y_sort_enabled = true
-
-[node name="Player" parent="EnvironmentalObjects/Units" instance=ExtResource("2_bo1nx")]
-position = Vector3(499, 0, 83)
-
-[node name="Camera3D" type="Camera3D" parent="EnvironmentalObjects/Units/Player"]
-position = Vector3(0, 15, 10)
-rotation = Vector3(-1.0, 0, 0)
-
-[node name="Worker" parent="EnvironmentalObjects/Units" node_paths=PackedStringArray("castle") instance=ExtResource("4_jjvhh")]
-position = Vector3(794, 0, 143)
-player = 1
-castle = NodePath("../../NavigationRegion3D/Buildings/Castle")
-
-[node name="Peasant" parent="EnvironmentalObjects/Units" node_paths=PackedStringArray("castle") groups=["Attackable"] instance=ExtResource("5_ynf5e")]
-player = 1
-castle = NodePath("../../NavigationRegion3D/Buildings/Castle")
-
-[node name="Peasant2" parent="EnvironmentalObjects/Units" node_paths=PackedStringArray("castle") groups=["Attackable"] instance=ExtResource("5_ynf5e")]
-position = Vector3(200, 0, 24)
-player = 1
-castle = NodePath("../../NavigationRegion3D/Buildings/Castle")
-
-[node name="Lord" parent="EnvironmentalObjects/Units" node_paths=PackedStringArray("castle") instance=ExtResource("6_d1ilt")]
-position = Vector3(567, 0, 306)
-player = 1
-castle = NodePath("../../NavigationRegion3D/Buildings/Castle")
-
-[node name="Trees" type="Node3D" parent="EnvironmentalObjects"]
-y_sort_enabled = true
-
-[node name="Tree2" parent="EnvironmentalObjects/Trees" node_paths=PackedStringArray("castle") instance=ExtResource("7_344ge")]
-position = Vector3(1030, 0, 516)
-castle = NodePath("../../NavigationRegion3D/Buildings/Castle")
-
-[node name="Tree3" parent="EnvironmentalObjects/Trees" node_paths=PackedStringArray("castle") instance=ExtResource("7_344ge")]
-position = Vector3(1006, 0, 60)
-castle = NodePath("../../NavigationRegion3D/Buildings/Castle")
-
-[node name="Tree4" parent="EnvironmentalObjects/Trees" node_paths=PackedStringArray("castle") instance=ExtResource("7_344ge")]
-position = Vector3(942, 0, -20)
-castle = NodePath("../../NavigationRegion3D/Buildings/Castle")
-
-[node name="Tree5" parent="EnvironmentalObjects/Trees" node_paths=PackedStringArray("castle") instance=ExtResource("7_344ge")]
-position = Vector3(854, 0, 60)
-castle = NodePath("../../NavigationRegion3D/Buildings/Castle")
-
-[node name="Projectiles" type="Node3D" parent="EnvironmentalObjects"]
-
-[node name="UI" type="Node" parent="."]
-
-[node name="GoldUi" parent="UI" instance=ExtResource("10_hptm8")]
-
-[node name="DebugPanel" parent="UI" instance=ExtResource("debug_panel_scn")]
-
-[node name="WeatherState" type="Node" parent="."]
-script = ExtResource("15_hibaj")
-
-[node name="CloudShadows" type="TextureRect" parent="WeatherState"]
-texture_repeat = 2
-material = SubResource("ShaderMaterial_jkdf5")
-offset_left = -498.0
-offset_top = -355.0
-offset_right = 1946.0
-offset_bottom = 1157.0
-texture = SubResource("NoiseTexture2D_6iyac")
-script = ExtResource("16_b3802")
-
-[node name="Rain" type="ColorRect" parent="WeatherState"]
-material = SubResource("ShaderMaterial_k12tt")
-offset_left = -474.0
-offset_top = -352.0
-offset_right = 1973.0
-offset_bottom = 1147.0
-mouse_filter = 1
-script = ExtResource("18_fevyy")
-
-[node name="Sunlight" type="DirectionalLight3D" parent="WeatherState"]
-script = ExtResource("20_pdsj5")
-rotation = Vector3(-1.0, 0.5, 0)
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, -0.52243924, 0.85267663, 0, -0.85267663, -0.52243924, 0.72905016, 1.6209124, -0.93364716)
 shadow_enabled = true
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_bo1nx")
+
+[node name="NavigationRegion3D" type="NavigationRegion3D" parent="."]
+navigation_mesh = SubResource("NavigationMesh_7u77a")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="NavigationRegion3D"]
+mesh = SubResource("PlaneMesh_7u77a")
+
+[node name="StaticBody3D" type="StaticBody3D" parent="NavigationRegion3D"]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="NavigationRegion3D/StaticBody3D"]
+shape = SubResource("ConcavePolygonShape3D_7u77a")
+
+[node name="Camera3D" type="Camera3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 0.49999997, 0.86602545, 0, -0.86602545, 0.49999997, 0, 15, 15)

@@ -227,7 +227,7 @@ func _is_in_work_range(site: WorkSite) -> bool:
 		
 	return agent.global_position.distance_squared_to(target_pos) <= _work_range_sq
 
-func _on_movement_finished(_agent_node: Node2D) -> void:
+func _on_movement_finished(_agent_node: CharacterBody3D) -> void:
 	if _state == State.MOVING and _site:
 		_enter_work_state()
 

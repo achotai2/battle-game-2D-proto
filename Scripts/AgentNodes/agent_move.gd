@@ -1,7 +1,7 @@
 extends Node
 class_name AgentMovement
 
-signal move_to_pos_finished(agent: Node2D)
+signal move_to_pos_finished(agent: CharacterBody3D)
 
 # --- CONFIGURATION ---
 @export_range(0, 500, 10) var max_speed: float = 300.0
@@ -310,7 +310,7 @@ func command_start_work(priority: int = 5) -> bool:
 	if animation: animation.play_work()
 	return true
 
-func command_start_attack(target: Node2D, priority: int = 5) -> bool:
+func command_start_attack(target: CharacterBody3D, priority: int = 5) -> bool:
 	if not _accept_order(priority): return false
 	_order_type = OrderType.FROZEN
 	if animation: animation.play_attack(target)

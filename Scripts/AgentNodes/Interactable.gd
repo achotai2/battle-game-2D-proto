@@ -1,9 +1,9 @@
 extends Area3D
 class_name Interactable
 
-signal interaction_started(interactor: Node2D)
-signal interaction_finished(interactor: Node2D)
-signal interaction_suspended(interactor: Node2D)
+signal interaction_started(interactor: CharacterBody3D)
+signal interaction_finished(interactor: CharacterBody3D)
+signal interaction_suspended(interactor: CharacterBody3D)
 
 @export var interaction_time: float = 1.0
 @export var one_shot: bool = false
@@ -11,10 +11,10 @@ signal interaction_suspended(interactor: Node2D)
 @export var allows_neutral: bool = true
 @export var my_priority: int = 0
 @export var icon_type: BuildingDefs.IconType = BuildingDefs.IconType.CONSTRUCT
-@export var prompt_anchor: Node2D
+@export var prompt_anchor: Node3D
 
 var _disabled: bool = false
-var _active_interactor: Node2D = null
+var _active_interactor: CharacterBody3D = null
 var _interaction_cost: int = 0
 
 
@@ -23,7 +23,7 @@ func _ready() -> void:
 #	_setup_icon_dict()
 
 
-func can_interact(interactor: Node2D) -> bool:
+func can_interact(interactor: CharacterBody3D) -> bool:
 	if _disabled:
 		return false
 	if _active_interactor != null and _active_interactor != interactor:
@@ -41,7 +41,7 @@ func can_interact(interactor: Node2D) -> bool:
 	return true
 
 
-func begin_interact(interactor: Node2D) -> void:
+func begin_interact(interactor: CharacterBody3D) -> void:
 	if _active_interactor != null:
 		return
 	if not can_interact(interactor):
@@ -51,7 +51,7 @@ func begin_interact(interactor: Node2D) -> void:
 	interaction_started.emit(interactor)
 
 
-func finish_interact(interactor: Node2D) -> void:
+func finish_interact(interactor: CharacterBody3D) -> void:
 	if _active_interactor != interactor:
 		return
 
@@ -66,7 +66,7 @@ func finish_interact(interactor: Node2D) -> void:
 		interaction_finished.emit(interactor)
 
 
-func suspend_interact(interactor: Node2D) -> void:
+func suspend_interact(interactor: CharacterBody3D) -> void:
 	if _active_interactor != interactor:
 		return
 
@@ -81,7 +81,7 @@ func get_interaction_time() -> float:
 func get_prompt_position() -> Vector3:
 	var anchor := prompt_anchor
 	if anchor == null:
-		anchor = get_node_or_null("PromptAnchor") as Node2D
+		anchor = get_node_or_null("PromptAnchor") as Node3D
 	if is_instance_valid(anchor):
 		return anchor.global_position
 	if get_parent() is CharacterBody3D:
