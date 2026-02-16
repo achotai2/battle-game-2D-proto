@@ -40,7 +40,7 @@ signal food_handed
 
 
 # Internal state
-var _agent: Node2D
+var _agent: CharacterBody2D
 var _target_to_give: Node2D
 var _amount_to_give: int
 
@@ -56,7 +56,7 @@ func _ready() -> void:
 	var stagger_time = randf_range(0.0, 1.0)
 	_hunger_timer.start(stagger_time)
 
-	_agent = get_parent() as Node2D
+	_agent = get_parent() as CharacterBody2D
 
 	if is_instance_valid(food_display):
 		food_display.hide()

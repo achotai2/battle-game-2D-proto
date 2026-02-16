@@ -16,7 +16,7 @@ class_name AgentBase
 @export var gold: GoldHolder = null
 @export var hunger: HungerHolder = null
 @export var foodTasker: MinionTasker = null
-@export var castle: Node = null
+@export var castle: Castle = null
 @export var current_role: UnitRoles.UnitType
 
 

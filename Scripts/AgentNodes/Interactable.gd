@@ -84,8 +84,8 @@ func get_prompt_position() -> Vector2:
 		anchor = get_node_or_null("PromptAnchor") as Node2D
 	if is_instance_valid(anchor):
 		return anchor.global_position
-	if get_parent() is Node2D:
-		return (get_parent() as Node2D).global_position
+	if get_parent() is CharacterBody2D:
+		return (get_parent() as CharacterBody2D).global_position
 	return global_position
 
 

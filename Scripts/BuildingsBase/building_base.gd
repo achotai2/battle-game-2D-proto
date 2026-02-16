@@ -2,7 +2,7 @@ extends StaticBody2D
 class_name BuildingBase
 
 @export var player: int = 0
-@export var castle: Node2D
+@export var castle: Castle
 @export var building_type: BuildingDefs.BuildingType = BuildingDefs.BuildingType.BARRACKS
 @export var visual: Node
 @export var shadowVisual: Node
@@ -40,7 +40,7 @@ func set_player(p: int) -> void:
 		apply_state(state)
 
 
-func set_castle(c: Node2D) -> void:
+func set_castle(c: Castle) -> void:
 	castle = c
 	if worksite and state == BuildingDefs.BuildingState.CONSTRUCTING:
 		worksite.refresh_registration()
@@ -63,7 +63,7 @@ func apply_state(new_state: BuildingDefs.BuildingState) -> void:
 	_connect_signals()
 
 
-func return_castle() -> Node2D:
+func return_castle() -> Castle:
 	return castle
 
 
@@ -71,7 +71,7 @@ func return_position() -> Vector2:
 	return global_position
 
 
-func _on_interacted(interactor: Node2D) -> void:
+func _on_interacted(interactor: CharacterBody2D) -> void:
 	if state == BuildingDefs.BuildingState.DESTROYED:
 		# If DESTROYED then Player gives building gold (to give to Workers) and sets state to CONSTRUCTING.
 		set_state(BuildingDefs.BuildingState.CONSTRUCTING)

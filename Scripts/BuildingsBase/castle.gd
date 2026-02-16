@@ -17,12 +17,12 @@ func return_job_board(kind: CastleJobBoard.JobBoardType) -> CastleJobBoard:
 		return null
 
 
-func register_minion(minion: Node2D) -> void:
+func register_minion(minion: CharacterBody2D) -> void:
 	if not minions.has(minion):
 		minions[minion] = true
 
 
-func unregister_minion(minion: Node2D) -> void:
+func unregister_minion(minion: CharacterBody2D) -> void:
 	minions.erase(minion)
 
 

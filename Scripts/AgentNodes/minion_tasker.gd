@@ -138,7 +138,7 @@ func _on_work_tick() -> void:
 	_site.apply_work(work_amount, self)
 
 	# Check if finished
-	if not _site.needs_work():
+	if _site and not _site.needs_work():
 		_release_job(true)
 
 # --- STATE MANAGEMENT ---
@@ -225,11 +225,11 @@ func _is_in_work_range(site: WorkSite) -> bool:
 	return agent.global_position.distance_squared_to(target_pos) <= _work_range_sq
 
 # --- COMPATIBILITY / SETTERS ---
-func set_agent(a: Node2D) -> void: agent = a
+func set_agent(a: CharacterBody2D) -> void: agent = a
 func set_movement(m: AgentMovement) -> void: movement = m
 func clear_task() -> void: _release_job(true); _set_idle_state()
 func has_task() -> bool: return _site != null
-func get_agent() -> Node2D: return agent
+func get_agent() -> CharacterBody2D: return agent
 
 func return_position() -> Vector2:
 	if agent:

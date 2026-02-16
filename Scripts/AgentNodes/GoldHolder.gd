@@ -27,7 +27,7 @@ signal goldChanged(amount_of_gold: int)
 @export var _tax_timer: Timer = null
 
 # Internal state
-var _agent: Node2D
+var _agent: CharacterBody2D
 var _target_to_give: Node2D
 var _amount_to_give: int
 
@@ -36,7 +36,7 @@ var _state: State = State.IDLE
 
 
 func _ready() -> void:
-	_agent = get_parent() as Node2D
+	_agent = get_parent() as CharacterBody2D
 
 	if is_instance_valid(gold_display):
 		gold_display.hide()
