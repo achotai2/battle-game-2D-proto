@@ -82,6 +82,7 @@ gold = 100
 transform = Transform3D(2.81, 0, 0, 0, 1, 0, 0, 0, 2.81, 0.499996, 0, -0.499995)
 
 [node name="AnimatedSprite2D" type="AnimatedSprite3D" parent="Sprites"]
+offset = Vector2(0, -5)
 sprite_frames = ExtResource("3_bhhdu")
 animation = &"walk"
 
