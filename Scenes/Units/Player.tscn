@@ -1,4 +1,4 @@
-[gd_scene load_steps=13 format=3 uid="uid://ex22mf26lsid"]
+[gd_scene load_steps=11 format=3 uid="uid://ex22mf26lsid"]
 
 [ext_resource type="Script" uid="uid://b3iqpgjb0vtvl" path="res://Scripts/UnitBase/agent_base.gd" id="1_rpqav"]
 [ext_resource type="Script" uid="uid://cjjdaf7vlfs4k" path="res://Scripts/AgentNodes/agent_animate.gd" id="2_gntrk"]
@@ -11,17 +11,8 @@
 [ext_resource type="PackedScene" uid="uid://by5ppm4d4bxev" path="res://Scenes/AgentNodes/player_interactor.tscn" id="9_yoq75"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape2D_kyqiw"]
-radius = 26.0
-height = 82.0
-
-[sub_resource type="Gradient" id="Gradient_d1ilt"]
-offsets = PackedFloat32Array(0, 0.64666665)
-colors = PackedColorArray(1, 1, 1, 1, 0, 0, 0, 1)
-
-[sub_resource type="GradientTexture2D" id="GradientTexture2D_u2egk"]
-gradient = SubResource("Gradient_d1ilt")
-fill = 1
-fill_from = Vector2(0.5, 0)
+radius = 0.4
+height = 1.8
 
 [node name="Player" type="CharacterBody3D" node_paths=PackedStringArray("health", "interactor", "movement", "controls", "animation", "attack", "gold") groups=["Attackable", "Player"]]
 collision_layer = 4
@@ -36,12 +27,12 @@ animation = NodePath("AgentAnimate")
 attack = NodePath("WeaponSword")
 gold = NodePath("GoldHolder")
 
-[node name="CollisionShape2D" type="CollisionShape3D" parent="."]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
 shape = SubResource("CapsuleShape2D_kyqiw")
 
 [node name="AgentAnimate" type="Node" parent="." node_paths=PackedStringArray("sprite", "shadow_sprite")]
 script = ExtResource("2_gntrk")
-sprite = NodePath("../Sprites/AnimatedSprite2D")
+sprite = NodePath("../Sprites/AnimatedSprite3D")
 shadow_sprite = NodePath("")
 metadata/_custom_type_script = "uid://cjjdaf7vlfs4k"
 
@@ -71,8 +62,8 @@ metadata/_custom_type_script = "uid://c2guvnr3dtafe"
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -1)
 movement = NodePath("../AgentMovement")
 
-[node name="NavigationObstacle2D" type="NavigationObstacle3D" parent="."]
-radius = 50.0
+[node name="NavigationObstacle3D" type="NavigationObstacle3D" parent="."]
+radius = 1.0
 avoidance_layers = 4
 
 [node name="GoldHolder" parent="." instance=ExtResource("9_jokor")]
@@ -81,15 +72,6 @@ gold = 100
 [node name="Sprites" type="Node3D" parent="."]
 transform = Transform3D(2.81, 0, 0, 0, 1, 0, 0, 0, 2.81, 0.499996, 0, -0.499995)
 
-[node name="AnimatedSprite2D" type="AnimatedSprite3D" parent="Sprites"]
+[node name="AnimatedSprite3D" type="AnimatedSprite3D" parent="Sprites"]
 sprite_frames = ExtResource("3_bhhdu")
 animation = &"walk"
-
-[node name="LightOccluder2D" type="Node3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -5.9604645e-08)
-
-[node name="PointLight2D" type="PointLight2D" parent="."]
-position = Vector2(4, 0)
-scale = Vector2(7.546876, 1)
-shadow_enabled = true
-texture = SubResource("GradientTexture2D_u2egk")
