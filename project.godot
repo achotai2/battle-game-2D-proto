@@ -22,6 +22,10 @@ BuildingDefs="*res://Scripts/DefsScripts/BuildingDefs.gd"
 Sun="*res://Scripts/Weather/GlobalSun.gd"
 Weather="*res://Scripts/Weather/GlobalWeather.gd"
 
+[editor_plugins]
+
+enabled=PackedStringArray("res://addons/zylann.hterrain/plugin.cfg")
+
 [global_group]
 
 Buildings=""
@@ -113,7 +117,6 @@ avoidance/layer_4="Small Minions"
 
 [rendering]
 
-renderer/rendering_method="gl_compatibility"
 renderer/rendering_method.mobile="gl_compatibility"
 
 [shader_globals]

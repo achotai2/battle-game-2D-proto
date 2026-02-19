@@ -18,7 +18,7 @@ signal goldChanged(amount_of_gold: int)
 @export var movement_priority: int = 5
 
 ## How long will agent try to deliver gold before giving up.
-@export var _patience_timer: Timer = null
+@export var _patience_timer: Timer = null  
 
 ## Time gold stays in hand after received before despawning, for visual purposes only.
 @export var _gold_gone_timer: Timer = null
@@ -27,8 +27,8 @@ signal goldChanged(amount_of_gold: int)
 @export var _tax_timer: Timer = null
 
 # Internal state
-var _agent: CharacterBody3D
-var _target_to_give: CharacterBody3D
+var _agent: AgentBase
+var _target_to_give: Node3D   
 var _amount_to_give: int
 
 enum State { IDLE, GIVING, RECEIVING }
@@ -36,7 +36,7 @@ var _state: State = State.IDLE
 
 
 func _ready() -> void:
-	_agent = get_parent() as CharacterBody3D
+	_agent = get_parent() as AgentBase
 
 	if is_instance_valid(gold_display):
 		gold_display.hide()
@@ -70,7 +70,7 @@ func _ready() -> void:
 
 
 ## Command the agent to run to a target and give them the gold.
-func give_gold(target: CharacterBody3D, amount: int) -> void:
+func give_gold(target: Node3D, amount: int) -> void:
 	if gold <= 0 or not is_instance_valid(target) and not _state == State.IDLE:
 		return
 
@@ -90,12 +90,12 @@ func give_gold(target: CharacterBody3D, amount: int) -> void:
 		_gold_handover()
 
 
-func _issue_movement_command(target_node: CharacterBody3D) -> bool:
+func _issue_movement_command(target_node: Node3D) -> bool:
 	if not is_instance_valid(_agent):
 		return false
 		
 	# Try to find movement component
-	if is_instance_valid(movement) and movement.has_method("command_chase_target"):
+	if is_instance_valid(movement):
 		if movement.command_chase_target(target_node, movement_priority):
 			return true
 	
@@ -172,9 +172,9 @@ func _change_gold_amount(amount: int) -> void:
 	goldChanged.emit(gold)
 
 
-func can_i_tax_you(lord: CharacterBody3D) -> void:
+func can_i_tax_you(lord: Node3D) -> void:
 	# Must NOT be player (already filtered by detection team? No, detection same team includes player)
-	if get_parent().is_in_group("Player"):
+	if get_parent().is_in_group("Player") or get_parent().is_in_group("Buildings"):
 		return
 
 	if not _tax_timer.is_stopped():

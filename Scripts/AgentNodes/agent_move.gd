@@ -1,32 +1,32 @@
 extends Node
 class_name AgentMovement
 
-signal move_to_pos_finished(agent: CharacterBody3D)
+signal move_to_pos_finished(agent: AgentBase)
 
 # --- CONFIGURATION ---
-@export_range(0, 500, 10) var max_speed: float = 300.0
-@export_range(0, 500, 10) var meander_speed: float = 50.0
+@export_range(0, 500, 0.0) var max_speed: float = 5.0
+@export_range(0, 500, 0.0) var meander_speed: float = 1.0
 @export var can_meander: bool = true
 @export var loiter_duration: float = 2.0
 
 # --- ASSIGNMENTS (STRICT TYPED) ---
 # [OPTIMIZATION] strict typing for direct memory access
-@export var agent: CharacterBody3D = null
+@export var agent: AgentBase = null
 @export var animation: AgentAnimate = null
 @export var nav_agent: NavigationAgent3D
 
 # --- TUNING ---
 @export_range(0.05, 20.0, 0.05) var repath_interval: float = 1.0
-@export_range(1.0, 200.0, 1.0) var target_repath_distance: float = 250.0
+@export_range(1.0, 200.0, 1.0) var target_repath_distance: float = 2.0
 @export_range(0.1, 5.0, 0.1) var stuck_check_interval: float = 4.0 
-@export_range(0.0, 200.0, 1.0) var min_progress_per_sec: float = 10.0
+@export_range(0.0, 200.0, 1.0) var min_progress_per_sec: float = 0.5
 @export_range(0.0, 200.0, 1.0) var slow_radius: float = 0.0
 @export_range(0.0, 200.0, 0.5) var accel: float = 0.0
 
 # --- PATROL ---
 @export var assigned_castle: Castle
-@export_range(0.0, 2000.0, 10.0) var patrol_radius: float = 500.0
-@export_range(0.0, 200.0, 1.0) var patrol_arrival_radius: float = 50.0
+@export_range(0.0, 2000.0, 10.0) var patrol_radius: float = 10.0
+@export_range(0.0, 200.0, 1.0) var patrol_arrival_radius: float = 1.0
 @export_range(0.0, 10.0, 0.1) var patrol_pause_seconds: float = 0.5
 @export_range(1, 20, 1) var patrol_pick_attempts: int = 8
 
@@ -55,7 +55,7 @@ var _frame_offset: int = 0
 const PATH_UPDATE_INTERVAL: int = 4 
 
 # Temporary command storage
-var _order_target_node: CharacterBody3D = null
+var _order_target_node: AgentBase = null
 var _order_direction: Vector3 = Vector3.ZERO
 
 # Timers
@@ -295,6 +295,8 @@ func command_chase_target(node: Node3D, priority: int = 5) -> bool:
 	_order_target_node = node
 	_update_speed_cap() # Update Cache
 	_on_repath_timer_tick()
+	print("chase ", get_parent().name)
+
 	return true
 
 func command_start_interaction(priority: int = 5) -> bool:
@@ -310,7 +312,7 @@ func command_start_work(priority: int = 5) -> bool:
 	if animation: animation.play_work()
 	return true
 
-func command_start_attack(target: CharacterBody3D, priority: int = 5) -> bool:
+func command_start_attack(target: AgentBase, priority: int = 5) -> bool:
 	if not _accept_order(priority): return false
 	_order_type = OrderType.FROZEN
 	if animation: animation.play_attack(target)
@@ -337,8 +339,10 @@ func clear_movement_order(priority: int = 5) -> void:
 	if priority < _order_priority: return
 	_cancel_anim_actions()
 	_order_type = OrderType.NONE
+	_order_target_node = null
 	_order_priority = -1
 	_update_speed_cap()
+	print("clear ", get_parent().name)
 
 	if can_meander and loiter_duration > 0.0:
 		_loiter_timer.start(loiter_duration)
@@ -392,4 +396,4 @@ func is_frozen() -> bool: return _order_type == OrderType.FROZEN
 func no_order_check() -> bool: return _order_type == OrderType.NONE
 func _disable_meander() -> void: pass
 func force_repath() -> void: _on_repath_timer_tick()
-func set_my_agent(owner_agent: CharacterBody3D) -> void: agent = owner_agent
+func set_my_agent(owner_agent: AgentBase) -> void: agent = owner_agent

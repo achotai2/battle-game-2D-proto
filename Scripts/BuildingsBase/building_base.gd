@@ -71,7 +71,7 @@ func return_position() -> Vector3:
 	return global_position
 
 
-func _on_interacted(interactor: CharacterBody3D) -> void:
+func _on_interacted(interactor: AgentBase) -> void:
 	if state == BuildingDefs.BuildingState.DESTROYED:
 		# If DESTROYED then Player gives building gold (to give to Workers) and sets state to CONSTRUCTING.
 		set_state(BuildingDefs.BuildingState.CONSTRUCTING)

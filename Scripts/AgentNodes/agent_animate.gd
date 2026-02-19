@@ -13,7 +13,7 @@ var attacking: bool = false
 var working: bool = false
 
 var _move_anim: StringName = &""
-var _my_agent: CharacterBody3D = null
+var _my_agent: AgentBase = null
 
 
 # Called when the node enters the scene tree for the first time.
@@ -69,7 +69,7 @@ func _update_idle_walk_anim() -> void:
 	agent_moved(vel)
 
 
-func set_my_agent(ag: CharacterBody3D) -> void:
+func set_my_agent(ag: AgentBase) -> void:
 	_my_agent = ag
 
 
@@ -110,7 +110,7 @@ func _show_heal() -> void:
 	pass
 
 
-func play_attack(target: CharacterBody3D) -> bool:
+func play_attack(target: AgentBase) -> bool:
 	if not is_instance_valid(sprite) or sprite.sprite_frames == null:
 		return false
 

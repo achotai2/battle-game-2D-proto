@@ -63,7 +63,7 @@ func _set_percent(percent_left: float) -> void:
 		circle.scale = circleEmpty.scale * p
 
 
-func follow_target(target: CharacterBody3D, percent_left: float, world_offset: Vector3 = Vector3(0, 0, 0)) -> void:
+func follow_target(target: AgentBase, percent_left: float, world_offset: Vector3 = Vector3(0, 0, 0)) -> void:
 	if not is_instance_valid(target):
 		return
 	set_world_target(target.global_position, percent_left, world_offset)

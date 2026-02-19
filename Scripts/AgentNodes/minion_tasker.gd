@@ -2,10 +2,10 @@ extends Node
 class_name MinionTasker
 
 # --- CONFIGURATION ---
-@export var agent: CharacterBody3D = null # Strict type
+@export var agent: AgentBase = null # Strict type
 @export var movement: AgentMovement = null
 @export var castle: Castle = null
-@export var work_range: float = 50.0
+@export var work_range: float = 1.0
 @export var work_interval: float = 1.0
 @export var work_amount: float = 1.0
 @export_range(0.05, 1.0, 0.05) var think_interval: float = 0.5 # Increased default
@@ -227,16 +227,16 @@ func _is_in_work_range(site: WorkSite) -> bool:
 		
 	return agent.global_position.distance_squared_to(target_pos) <= _work_range_sq
 
-func _on_movement_finished(_agent_node: CharacterBody3D) -> void:
+func _on_movement_finished(_agent_node: AgentBase) -> void:
 	if _state == State.MOVING and _site:
 		_enter_work_state()
 
 # --- COMPATIBILITY / SETTERS ---
-func set_agent(a: CharacterBody3D) -> void: agent = a
+func set_agent(a: AgentBase) -> void: agent = a
 func set_movement(m: AgentMovement) -> void: movement = m
 func clear_task() -> void: _release_job(true); _set_idle_state()
 func has_task() -> bool: return _site != null
-func get_agent() -> CharacterBody3D: return agent
+func get_agent() -> AgentBase: return agent
 
 func return_position() -> Vector3:
 	if agent:

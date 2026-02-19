@@ -1,7 +1,7 @@
 extends Node
 class_name TacticalPeasant
 
-signal chase_target(target: CharacterBody3D)
+signal chase_target(target: AgentBase)
 signal move_to_position(pos: Vector3)
 
 @export var flee_distance: float = 220.0
@@ -9,13 +9,13 @@ signal move_to_position(pos: Vector3)
 @export_range(0.05, 2.0, 0.05) var flee_update: float = 0.25
 @export var movement: AgentMovement = null
 
-var _target: CharacterBody3D = null
-var _agent: CharacterBody3D = null
+var _target: AgentBase = null
+var _agent: AgentBase = null
 var _timer: Timer
 
 
 func _ready() -> void:
-	_agent = get_parent() as CharacterBody3D
+	_agent = get_parent() as AgentBase
 
 	_timer = Timer.new()
 	_timer.one_shot = false
@@ -24,7 +24,7 @@ func _ready() -> void:
 	add_child(_timer)
 
 
-func set_agent(agent: CharacterBody3D) -> void:
+func set_agent(agent: AgentBase) -> void:
 	_agent = agent
 
 	# If we gain a castle at any time, immediately run home.
@@ -38,7 +38,7 @@ func set_movement(m: AgentMovement) -> void:
 	movement = m
 
 
-func set_target(t: CharacterBody3D) -> void:
+func set_target(t: AgentBase) -> void:
 	# Called by detection node. Found a target.
 	_target = t if is_instance_valid(t) else null
 
@@ -62,7 +62,7 @@ func clear_target() -> void:
 		_chase_target(_agent.return_castle())
 
 
-func detection_refreshed(t: CharacterBody3D) -> void:
+func detection_refreshed(t: AgentBase) -> void:
 	# Called by detection node.
 	pass
 
@@ -102,7 +102,7 @@ func _on_flee_tick() -> void:
 	_move_to_position(flee_point)
 
 
-func _chase_target(target: CharacterBody3D) -> void:
+func _chase_target(target: AgentBase) -> void:
 	if is_instance_valid(movement):
 		movement.command_chase_target(target, 5)
 	chase_target.emit(target)

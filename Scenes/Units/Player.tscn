@@ -10,13 +10,13 @@
 [ext_resource type="PackedScene" uid="uid://c4n5elrxg64hp" path="res://Scenes/AgentNodes/GoldHolder.tscn" id="9_jokor"]
 [ext_resource type="PackedScene" uid="uid://by5ppm4d4bxev" path="res://Scenes/AgentNodes/player_interactor.tscn" id="9_yoq75"]
 
-[sub_resource type="CapsuleShape3D" id="CapsuleShape2D_kyqiw"]
-radius = 0.4
-height = 1.8
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_jokor"]
+radius = 0.42871094
+height = 0.88845444
 
 [node name="Player" type="CharacterBody3D" node_paths=PackedStringArray("health", "interactor", "movement", "controls", "animation", "attack", "gold") groups=["Attackable", "Player"]]
 collision_layer = 4
-collision_mask = 3
+collision_mask = 2
 script = ExtResource("1_rpqav")
 player = 1
 health = NodePath("Health")
@@ -27,13 +27,13 @@ animation = NodePath("AgentAnimate")
 attack = NodePath("WeaponSword")
 gold = NodePath("GoldHolder")
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
-shape = SubResource("CapsuleShape2D_kyqiw")
+[node name="CollisionShape2D" type="CollisionShape3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.086587906, 0)
+shape = SubResource("CapsuleShape3D_jokor")
 
-[node name="AgentAnimate" type="Node" parent="." node_paths=PackedStringArray("sprite", "shadow_sprite")]
+[node name="AgentAnimate" type="Node" parent="." node_paths=PackedStringArray("sprite")]
 script = ExtResource("2_gntrk")
 sprite = NodePath("../Sprites/AnimatedSprite3D")
-shadow_sprite = NodePath("")
 metadata/_custom_type_script = "uid://cjjdaf7vlfs4k"
 
 [node name="AgentMovement" type="Node" parent="." node_paths=PackedStringArray("agent", "animation")]
@@ -70,8 +70,12 @@ avoidance_layers = 4
 gold = 100
 
 [node name="Sprites" type="Node3D" parent="."]
-transform = Transform3D(2.81, 0, 0, 0, 1, 0, 0, 0, 2.81, 0.499996, 0, -0.499995)
 
 [node name="AnimatedSprite3D" type="AnimatedSprite3D" parent="Sprites"]
+transform = Transform3D(3, 0, 0, 0, 3, 0, 0, 0, 3, 0, 0, 0)
+offset = Vector2(0, 10)
+billboard = 2
+shaded = true
+alpha_cut = 1
 sprite_frames = ExtResource("3_bhhdu")
 animation = &"walk"

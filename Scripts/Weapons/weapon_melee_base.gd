@@ -17,7 +17,7 @@ class_name WeaponMelee
 @onready var attack_delay: Timer = $AttackDelay
 
 var _owner_agent: Node
-var _current_target: CharacterBody3D = null
+var _current_target: AgentBase = null
 var _attack_paused: bool = false
 var _attacking: bool = false
 
@@ -36,7 +36,7 @@ func _ready() -> void:
 	attack_delay.timeout.connect(_on_attack_delay_timeout)
 
 
-func set_player(owner_agent: CharacterBody3D) -> void:
+func set_player(owner_agent: AgentBase) -> void:
 	_owner_agent = owner_agent
 	tracking.setup_player(owner_agent.player)
 
@@ -65,7 +65,7 @@ func _cancel_attack() -> void:
 	_attacking = false
 
 
-func _on_target_changed(t: CharacterBody3D) -> void:
+func _on_target_changed(t: AgentBase) -> void:
 	_current_target = t
 	_try_attack()
 

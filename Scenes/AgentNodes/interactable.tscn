@@ -3,7 +3,8 @@
 [ext_resource type="Script" uid="uid://ccjoime5gxir4" path="res://Scripts/AgentNodes/Interactable.gd" id="1_8s6bd"]
 
 [sub_resource type="CylinderShape3D" id="CircleShape2D_pmsje"]
-radius = 98.02041
+height = 0.9147949
+radius = 1.2148438
 
 [node name="Interactable" type="Area3D" node_paths=PackedStringArray("prompt_anchor")]
 collision_layer = 32
@@ -12,8 +13,9 @@ script = ExtResource("1_8s6bd")
 prompt_anchor = NodePath("PromptAnchor")
 
 [node name="CollisionShape2D" type="CollisionShape3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.11218262, 0)
 shape = SubResource("CircleShape2D_pmsje")
 debug_color = Color(0.099311404, 0.6314879, 0.42991528, 0.41960785)
 
 [node name="PromptAnchor" type="Marker3D" parent="."]
-position = Vector3(0, 2.5, 0)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.5, 0)

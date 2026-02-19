@@ -2,10 +2,10 @@ extends Node
 class_name TacticalWorker
 
 
-var _agent: CharacterBody3D = null
+var _agent: AgentBase = null
 
 
-func set_agent(my_agent: CharacterBody3D) -> void:
+func set_agent(my_agent: AgentBase) -> void:
 	_agent = my_agent
 
 
@@ -14,7 +14,7 @@ func set_movement(m: AgentMovement) -> void:
 #	movement = m
 
 
-func set_target(t: CharacterBody3D) -> void:
+func set_target(t: AgentBase) -> void:
 	# Called by detection node. Found a target.
 	pass
 

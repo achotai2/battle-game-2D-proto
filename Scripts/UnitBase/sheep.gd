@@ -1,4 +1,4 @@
-extends CharacterBody3D
+extends AgentBase
 
 @export var castle: Castle
 @export var movement: AgentMovement
@@ -102,7 +102,7 @@ func _food_handed() -> void:
 
 func _food_harvested(f: WorkSite, _attacker: MinionTasker) -> void:
 	# Spawn food and hand it over to attacker.
-	var attackerNode: CharacterBody3D = _attacker.get_parent()
+	var attackerNode: AgentBase = _attacker.get_parent()
 	if is_instance_valid(attackerNode.hunger) and attackerNode.hunger.has_method("receive_food"):
 		food.give_food(attackerNode, food.food)
 

@@ -68,7 +68,7 @@ func return_position() -> Vector3:
 	return global_position
 
 
-func _on_interacted(interactor: CharacterBody3D) -> void:
+func _on_interacted(interactor: AgentBase) -> void:
 	if state == TreeState.NORMAL and is_instance_valid(interactor.gold) and interactor.gold.gold >= worksite.total_work:
 		interactor.gold.give_gold(self, worksite.total_work)
 		set_state(TreeState.MARKED)

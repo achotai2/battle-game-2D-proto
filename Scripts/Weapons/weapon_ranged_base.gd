@@ -27,8 +27,8 @@ class_name WeaponRanged
 @onready var attack_delay: Timer = $AttackDelay
 
 # --- INTERNAL STATE ---
-var _owner_agent: CharacterBody3D = null
-var _current_target: CharacterBody3D = null
+var _owner_agent: AgentBase = null
+var _current_target: AgentBase = null
 var _projectile_parent: Node = null
 var _attack_paused: bool = false
 var _attacking: bool = false
@@ -53,7 +53,7 @@ func _ready() -> void:
 	_projectile_parent = _resolve_projectile_parent()
 
 
-func set_player(owner_agent: CharacterBody3D) -> void:
+func set_player(owner_agent: AgentBase) -> void:
 	_owner_agent = owner_agent
 	tracking.setup_player(owner_agent.player)
 
@@ -82,7 +82,7 @@ func _cancel_attack() -> void:
 
 # --- TARGETING CALLBACKS ---
 
-func _on_target_changed(t: CharacterBody3D) -> void:
+func _on_target_changed(t: AgentBase) -> void:
 	_current_target = t
 	_try_attack()
 

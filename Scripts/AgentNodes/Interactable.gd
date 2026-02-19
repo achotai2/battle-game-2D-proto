@@ -1,9 +1,9 @@
 extends Area3D
 class_name Interactable
 
-signal interaction_started(interactor: CharacterBody3D)
-signal interaction_finished(interactor: CharacterBody3D)
-signal interaction_suspended(interactor: CharacterBody3D)
+signal interaction_started(interactor: AgentBase)
+signal interaction_finished(interactor: AgentBase)
+signal interaction_suspended(interactor: AgentBase)
 
 @export var interaction_time: float = 1.0
 @export var one_shot: bool = false
@@ -14,7 +14,7 @@ signal interaction_suspended(interactor: CharacterBody3D)
 @export var prompt_anchor: Node3D
 
 var _disabled: bool = false
-var _active_interactor: CharacterBody3D = null
+var _active_interactor: AgentBase = null
 var _interaction_cost: int = 0
 
 
@@ -23,7 +23,7 @@ func _ready() -> void:
 #	_setup_icon_dict()
 
 
-func can_interact(interactor: CharacterBody3D) -> bool:
+func can_interact(interactor: AgentBase) -> bool:
 	if _disabled:
 		return false
 	if _active_interactor != null and _active_interactor != interactor:
@@ -41,7 +41,7 @@ func can_interact(interactor: CharacterBody3D) -> bool:
 	return true
 
 
-func begin_interact(interactor: CharacterBody3D) -> void:
+func begin_interact(interactor: AgentBase) -> void:
 	if _active_interactor != null:
 		return
 	if not can_interact(interactor):
@@ -51,7 +51,7 @@ func begin_interact(interactor: CharacterBody3D) -> void:
 	interaction_started.emit(interactor)
 
 
-func finish_interact(interactor: CharacterBody3D) -> void:
+func finish_interact(interactor: AgentBase) -> void:
 	if _active_interactor != interactor:
 		return
 
@@ -66,7 +66,7 @@ func finish_interact(interactor: CharacterBody3D) -> void:
 		interaction_finished.emit(interactor)
 
 
-func suspend_interact(interactor: CharacterBody3D) -> void:
+func suspend_interact(interactor: AgentBase) -> void:
 	if _active_interactor != interactor:
 		return
 
@@ -84,8 +84,8 @@ func get_prompt_position() -> Vector3:
 		anchor = get_node_or_null("PromptAnchor") as Node3D
 	if is_instance_valid(anchor):
 		return anchor.global_position
-	if get_parent() is CharacterBody3D:
-		return (get_parent() as CharacterBody3D).global_position
+	if get_parent() is AgentBase:
+		return (get_parent() as AgentBase).global_position
 	return global_position
 
 

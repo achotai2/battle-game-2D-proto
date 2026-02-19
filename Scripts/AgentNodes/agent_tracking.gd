@@ -6,7 +6,7 @@ signal target_lost()
 
 enum TargetKind { ATTACKABLE, INTERACTABLE }
 
-@export var my_agent: CharacterBody3D
+@export var my_agent: AgentBase
 @export var target_kind: TargetKind = TargetKind.ATTACKABLE
 
 # --- Team Logic ---

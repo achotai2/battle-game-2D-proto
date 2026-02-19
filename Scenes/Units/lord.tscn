@@ -1,25 +1,20 @@
-[gd_scene load_steps=14 format=3 uid="uid://cwsleixsa262m"]
+[gd_scene load_steps=11 format=3 uid="uid://cwsleixsa262m"]
 
 [ext_resource type="Script" uid="uid://b3iqpgjb0vtvl" path="res://Scripts/UnitBase/agent_base.gd" id="1_pu4ol"]
 [ext_resource type="Script" uid="uid://cjjdaf7vlfs4k" path="res://Scripts/AgentNodes/agent_animate.gd" id="3_ygrm2"]
 [ext_resource type="Script" uid="uid://58qm17emnwvd" path="res://Scripts/AgentNodes/agent_move.gd" id="4_24sip"]
 [ext_resource type="Script" uid="uid://c2guvnr3dtafe" path="res://Scripts/AgentNodes/health.gd" id="5_4tqx4"]
 [ext_resource type="Script" uid="uid://bi15gddmxujcs" path="res://Scripts/AgentNodes/agent_tracking.gd" id="8_7kbwn"]
-[ext_resource type="Shader" uid="uid://cmsuxok158t72" path="res://Scripts/Shaders/shadow.gdshader" id="9_ahyq5"]
-[ext_resource type="Script" uid="uid://bts71s2mlomuh" path="res://Scripts/AgentNodes/shadow_sprite.gd" id="10_rho4c"]
 [ext_resource type="PackedScene" uid="uid://c4n5elrxg64hp" path="res://Scenes/AgentNodes/GoldHolder.tscn" id="11_ljm1k"]
 [ext_resource type="SpriteFrames" uid="uid://cmw8o5r0psvj8" path="res://Art/SpriteFrames/Soldier_Yellow.tres" id="11_pu4ol"]
 [ext_resource type="Script" uid="uid://ckav3fy85cq6v" path="res://Scripts/AgentNodes/tactical_lord.gd" id="12_pu4ol"]
 
-[sub_resource type="CapsuleShape3D" id="CapsuleShape2D_ta2g1"]
-radius = 38.0
-height = 104.0
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_ex4gv"]
+radius = 0.42871094
+height = 0.88845444
 
 [sub_resource type="CylinderShape3D" id="CircleShape2D_65o65"]
 radius = 500.0
-
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_pu4ol"]
-shader = ExtResource("9_ahyq5")
 
 [node name="Lord" type="CharacterBody3D" node_paths=PackedStringArray("health", "movement", "animation", "detection", "tactical", "gold") groups=["Interactable", "Minions"]]
 collision_layer = 4
@@ -34,7 +29,8 @@ gold = NodePath("GoldHolder")
 current_role = 5
 
 [node name="CollisionShape2D" type="CollisionShape3D" parent="."]
-shape = SubResource("CapsuleShape2D_ta2g1")
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.086587906, 0)
+shape = SubResource("CapsuleShape3D_ex4gv")
 
 [node name="NavigationAgent2D" type="NavigationAgent3D" parent="."]
 avoidance_enabled = true
@@ -46,7 +42,7 @@ debug_enabled = true
 [node name="AgentAnimate" type="Node" parent="." node_paths=PackedStringArray("sprite", "shadow_sprite")]
 script = ExtResource("3_ygrm2")
 sprite = NodePath("../Sprites/AnimatedSprite2D")
-shadow_sprite = NodePath("../Sprites/ShadowSprite")
+shadow_sprite = NodePath("")
 metadata/_custom_type_script = "uid://cjjdaf7vlfs4k"
 
 [node name="AgentMovement" type="Node" parent="." node_paths=PackedStringArray("agent", "animation", "nav_agent")]
@@ -80,18 +76,9 @@ movement = NodePath("../AgentMovement")
 
 [node name="Sprites" type="Node3D" parent="."]
 
-[node name="ShadowSprite" type="AnimatedSprite3D" parent="Sprites"]
-y_sort_enabled = true
-material = SubResource("ShaderMaterial_pu4ol")
-scale = Vector3(1.1770834, 1, 1.1770834)
-sprite_frames = ExtResource("11_pu4ol")
-animation = &"walk"
-offset = Vector2(0, -20)
-script = ExtResource("10_rho4c")
-
 [node name="AnimatedSprite2D" type="AnimatedSprite3D" parent="Sprites"]
-y_sort_enabled = true
-scale = Vector3(1.1770834, 1, 1.1770834)
+billboard = 2
+shaded = true
+alpha_cut = 1
 sprite_frames = ExtResource("11_pu4ol")
 animation = &"walk"
-offset = Vector2(0, -20)

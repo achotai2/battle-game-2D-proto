@@ -117,7 +117,7 @@ func has_free_slot() -> bool:
 	return _agent_for_slot.size() < _slot_markers.size()
 
 
-func can_reserve(agent: CharacterBody3D) -> bool:
+func can_reserve(agent: AgentBase) -> bool:
 	## Optional hook: JobBoard can ask if this site can be reserved by a given agent.
 	if not needs_work():
 		return false
@@ -128,7 +128,7 @@ func can_reserve(agent: CharacterBody3D) -> bool:
 	return has_free_slot()
 
 
-func reserve(agent: CharacterBody3D) -> bool:
+func reserve(agent: AgentBase) -> bool:
 	## Optional hook: JobBoard calls this when it assigns/reserves the job for an agent.
 	if agent == null or not is_instance_valid(agent):
 		return false
@@ -147,7 +147,7 @@ func reserve(agent: CharacterBody3D) -> bool:
 	return true
 
 
-func unreserve(agent: CharacterBody3D) -> void:
+func unreserve(agent: AgentBase) -> void:
 	## Optional hook: JobBoard calls this when releasing the reservation (worker changed jobs, etc.)
 	if agent == null:
 		return
@@ -159,7 +159,7 @@ func unreserve(agent: CharacterBody3D) -> void:
 	_agent_for_slot.erase(slot_index)
 
 
-func get_work_position_for(agent: CharacterBody3D) -> Vector3:
+func get_work_position_for(agent: AgentBase) -> Vector3:
 	## Returns the per-agent work position (slot) if reserved.
 	_cleanup_invalid_agents()
 	if agent != null and _slot_for_agent.has(agent):
@@ -276,7 +276,7 @@ func _find_free_slot_index() -> int:
 	return -1
 
 
-func _assign_slot(agent: CharacterBody3D, slot_index: int) -> void:
+func _assign_slot(agent: AgentBase, slot_index: int) -> void:
 	_slot_for_agent[agent] = slot_index
 	_agent_for_slot[slot_index] = agent
 	if agent is Node:
@@ -308,7 +308,7 @@ func _clear_all_reservations() -> void:
 		unreserve(agent)
 
 
-func _on_agent_exited(agent: CharacterBody3D) -> void:
+func _on_agent_exited(agent: AgentBase) -> void:
 	unreserve(agent)
 
 

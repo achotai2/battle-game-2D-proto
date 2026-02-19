@@ -7,7 +7,7 @@ func _ready():
 	print("Starting Worker Animation Logic Test...")
 
 	# 1. Setup Mock Environment
-	var agent = CharacterBody3D.new()
+	var agent = AgentBase.new()
 	add_child(agent)
 
 	# Mock Sprite with Animations
@@ -117,7 +117,7 @@ func get_work_position_for(agent): return global_position
 	# animate.play_attack(...)
 	# check working == false
 
-	var dummy_target = CharacterBody3D.new()
+	var dummy_target = AgentBase.new()
 	add_child(dummy_target)
 	dummy_target.global_position = Vector3(200, 0, 200)
 
