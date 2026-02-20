@@ -59,7 +59,7 @@ func set_castle(new_castle: Castle) -> void:
 	castle = new_castle
 	
 	# [OPTIMIZATION] Get board immediately
-	if castle and castle.has_method("return_job_board"):
+	if castle:
 		_job_board = castle.return_job_board(kind)
 		if _job_board and _job_board.has_method("register_minion"):
 			_job_board.register_minion(self)
@@ -84,9 +84,8 @@ func _on_think() -> void:
 		_request_job_if_idle()
 		return
 
-	# [OPTIMIZATION] Direct boolean check instead of call("needs_work")
-	# Assuming 'site' has a boolean or efficient method
-	if _site.has_method("needs_work") and not _site.needs_work():
+	# [OPTIMIZATION] Direct boolean check
+	if not _site.needs_work():
 		_release_job(true)
 		_request_job_if_idle()
 		return
@@ -123,7 +122,7 @@ func _on_work_tick() -> void:
 		return
 
 	# Re-validate
-	if _site.has_method("needs_work") and not _site.needs_work():
+	if not _site.needs_work():
 		_release_job(true)
 		return
 
@@ -197,7 +196,7 @@ func _release_job(release_to_board: bool) -> void:
 	if release_to_board and _job_board and _site:
 		if _job_board.has_method("release_job"):
 			_job_board.release_job(_site, self)
-	elif _site and _site.has_method("unreserve"):
+	elif _site:
 		_site.unreserve(agent)
 
 	_set_idle_state()
@@ -208,22 +207,14 @@ func _release_job(release_to_board: bool) -> void:
 func _command_move_to_site() -> void:
 	if not movement or not _site: return
 	
-	var target_pos = Vector3.ZERO
-	if _site.has_method("get_work_position_for"):
-		target_pos = _site.get_work_position_for(agent)
-	else:
-		target_pos = _site.global_position
+	var target_pos = _site.get_work_position_for(agent)
 		
 	movement.command_move_to_position(target_pos, job_priority)
 
 func _is_in_work_range(site: WorkSite) -> bool:
 	if not agent: return false
 	
-	var target_pos = Vector3.ZERO
-	if site.has_method("get_work_position_for"):
-		target_pos = site.get_work_position_for(agent)
-	else:
-		target_pos = site.global_position
+	var target_pos = site.get_work_position_for(agent)
 		
 	return agent.global_position.distance_squared_to(target_pos) <= _work_range_sq
 
