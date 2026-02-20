@@ -92,18 +92,6 @@ func get_weapon(role: UnitType) -> PackedScene:
 	return weapons.get(role)
 
 
-var tacticals := {
-	UnitType.PEASANT: TacticalPeasant,
-	UnitType.SOLDIER: TacticalSoldier,
-	UnitType.ARCHER: TacticalArcher,
-	UnitType.WORKER: TacticalWorker,
-	UnitType.LORD: TacticalLord,
-}
-
-func get_tactical(role: UnitType) -> GDScript:
-	return tacticals.get(role)
-
-
 var taskers := {
 	UnitType.PEASANT: MinionTasker,
 	UnitType.WORKER: MinionTasker,

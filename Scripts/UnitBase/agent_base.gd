@@ -11,7 +11,7 @@ class_name AgentBase
 @export var attack: Node = null
 @export var interactable: Node = null
 @export var detection: AgentTracking = null
-@export var tactical: Node = null
+@export var brain: AgentBrain = null
 @export var tasker: MinionTasker = null
 @export var gold: GoldHolder = null
 @export var hunger: HungerHolder = null
@@ -48,9 +48,6 @@ func _connect_all_refs() -> void:
 	# Connect signals for DETECTION node.
 	_assign_detection_refs()
 
-	# Connect signals for TACTICAL node.	
-	_assign_tactical_refs()
-
 	# Connect signals for TASKER node.	
 	_assign_tasker_refs()
 
@@ -82,21 +79,11 @@ func _assign_weapon_refs() -> void:
 
 	if movement and attack and attack.has_method("set_movement"):
 		attack.call("set_movement", movement)
-	else:
-		print_debug("attack node does not contain function set_movement")
 
 
 func _disconnect_weapon_signals() -> void:
 	if not attack:
 		return
-
-
-func _disconnect_detection_signals_to_tactical() -> void:
-	if tactical:
-		if tactical.has_method("set_target") and detection.target_changed.is_connected(tactical.set_target):
-			detection.target_changed.disconnect(tactical.set_target)
-		if tactical.has_method("clear_target") and detection.target_lost.is_connected(tactical.clear_target):
-			detection.target_lost.disconnect(tactical.clear_target)
 
 
 func _assign_animation_refs() -> void:
@@ -132,27 +119,6 @@ func _assign_detection_refs() -> void:
 
 	detection.setup_player(player)
 
-	if tactical:
-		if tactical.has_method("set_target") and not detection.target_changed.is_connected(tactical.set_target):
-			detection.target_changed.connect(tactical.set_target)
-		if tactical.has_method("clear_target") and not detection.target_lost.is_connected(tactical.clear_target):
-			detection.target_lost.connect(tactical.clear_target)
-
-
-func _assign_tactical_refs() -> void:
-	if not tactical:
-		return
-
-	if tactical.has_method("set_agent"):
-		tactical.call("set_agent", self)
-	else:
-		print_debug("No function set_agent in tactical.")
-
-	if tactical.has_method("set_movement"):
-		tactical.call("set_movement", movement)
-	else:
-		print_debug("No function set_movement in tactical.")
-
 
 func _assign_tasker_refs() -> void:
 	if not tasker:
@@ -160,9 +126,7 @@ func _assign_tasker_refs() -> void:
 
 	tasker.set_agent(self)
 	tasker.set_movement(movement)
-
-	if movement and not movement.move_to_pos_finished.is_connected(tasker._on_movement_finished):
-		movement.move_to_pos_finished.connect(tasker._on_movement_finished)
+	# Signals disconnected, Tasker is passive.
 
 
 func _assign_food_tasker_refs() -> void:
@@ -180,7 +144,8 @@ func _assign_gold_refs() -> void:
 	if gold.has_method("set_movement") and not is_in_group("Player"):
 		gold.call("set_movement", movement)
 	else:
-		print_debug("No function set_movement in gold.")
+		pass
+		# print_debug("No function set_movement in gold.")
 
 
 func _assign_health_refs() -> void:
@@ -241,22 +206,14 @@ func apply_role(role: UnitRoles.UnitType, p: int) -> void:
 		attack.queue_free()
 		attack = null
 
-	if tactical:
-		tactical.queue_free()
-		tactical = null
-
-	if detection:
-		_disconnect_detection_signals_to_tactical()
+	if brain:
+		brain.queue_free()
+		brain = null
 
 	if tasker:
 		if tasker.has_task():
 			tasker.clear_task()
 			tasker.unregister_from_board()
-
-		# [FIX] Disconnect signals managed by AgentBase
-		if movement and movement.move_to_pos_finished.is_connected(tasker._on_movement_finished):
-			movement.move_to_pos_finished.disconnect(tasker._on_movement_finished)
-
 		tasker.queue_free()
 		tasker = null
 
@@ -266,12 +223,6 @@ func apply_role(role: UnitRoles.UnitType, p: int) -> void:
 		attack = weapon_scene.instantiate()
 		add_child(attack)
 
-	# --- add new tactical (Script) ---
-	var tactical_script: Script = UnitRoles.get_tactical(role)
-	if tactical_script != null:
-		tactical = tactical_script.new()
-		add_child(tactical)
-
 	# --- add new tasker (Script) ---
 	var tasker_script: Script = UnitRoles.get_tasker(role)
 	if tasker_script != null:
@@ -280,6 +231,36 @@ func apply_role(role: UnitRoles.UnitType, p: int) -> void:
 		if kind != null and "kind" in tasker:
 			tasker.kind = kind
 		add_child(tasker)
+
+	# --- add new Brain and Advisors ---
+	brain = AgentBrain.new()
+	brain.name = "Brain"
+	brain.agent = self
+	add_child(brain)
+
+	if role == UnitRoles.UnitType.PLAYER:
+		var adv = AdvisorPlayer.new()
+		brain.add_child(adv)
+
+		# Player can also auto-attack if weapon exists
+		if attack:
+			var att = AdvisorAttack.new()
+			brain.add_child(att)
+	else:
+		var wander = AdvisorWander.new()
+		brain.add_child(wander)
+
+		if attack:
+			var att = AdvisorAttack.new()
+			brain.add_child(att)
+
+		if tasker:
+			var wrk = AdvisorWork.new()
+			brain.add_child(wrk)
+
+		if role == UnitRoles.UnitType.PEASANT or role == UnitRoles.UnitType.WORKER:
+			var flee = AdvisorFlee.new()
+			brain.add_child(flee)
 
 	# --- visuals ---
 	var frames: SpriteFrames = UnitRoles.get_frames(role, player)

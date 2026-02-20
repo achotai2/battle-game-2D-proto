@@ -17,8 +17,6 @@ class_name WeaponMelee
 @onready var attack_delay: Timer = $AttackDelay
 
 var _owner_agent: Node
-var _current_target: AgentBase = null
-var _attack_paused: bool = false
 var _attacking: bool = false
 
 
@@ -29,10 +27,11 @@ func _ready() -> void:
 	tracking.target_opposing = affects_opposing
 	tracking.target_neutral = affects_neutral
 
-	tracking.target_changed.connect(_on_target_changed)
-	tracking.target_lost.connect(_on_target_lost)
+	# tracking signals are no longer needed for autonomous logic
+	# tracking.target_changed.connect(_on_target_changed)
+	# tracking.target_lost.connect(_on_target_lost)
 
-	cooldown.timeout.connect(_try_attack)
+	# cooldown.timeout.connect(_try_attack)
 	attack_delay.timeout.connect(_on_attack_delay_timeout)
 
 
@@ -42,72 +41,58 @@ func set_player(owner_agent: AgentBase) -> void:
 
 
 func pause_attack(priority: int = 5) -> void:
-	# Called by player controls node
-	_attack_paused = true
+	# Legacy: Player controls might call this
+	pass
 
 
 func restart_attack(priority: int = 5) -> void:
-	# Called by player controls node
-	_attack_paused = false
-	_current_target = tracking.current_target
-	_try_attack()
+	# Legacy
+	pass
 
 
 func _cancel_attack() -> void:
-	# Called whenever attack is finished or target lost.
-	_current_target = null
-	
-	if movement and _attacking:
-		movement.clear_movement_order(attack_priority)
-
 	cooldown.stop()
-	attack_delay.stop() # prevent firing while player is moving
+	attack_delay.stop()
 	_attacking = false
 
+# --- API FOR ADVISOR ---
 
-func _on_target_changed(t: AgentBase) -> void:
-	_current_target = t
-	_try_attack()
+func is_target_in_range(target: Node3D) -> bool:
+	if not is_instance_valid(target): return false
+	# Check if target is in our tracking candidates (implies range/validity)
+	var candidates = tracking.get_candidates()
+	return target in candidates
 
-
-func _on_target_lost() -> void:
-	_cancel_attack()
-
-
-func am_i_attacking() -> bool:
-	return _attacking
-
-
-func _try_attack() -> void:
-	if _current_target == null:
+func perform_attack_tick(target: AgentBase) -> bool:
+	if not is_instance_valid(target):
 		_cancel_attack()
-		return
-	if not is_instance_valid(_current_target):
-		_cancel_attack()
-		return
+		return false
 
 	if not cooldown.is_stopped() or not attack_delay.is_stopped():
-		return
+		return false
 
-	if not _attack_paused and movement and movement.command_start_attack(_current_target, attack_priority):
-		_attacking = true
-		cooldown.start()
-		attack_delay.start()
-	else:
-		_cancel_attack()
+	# We assume movement is already handled by Brain
+	_attacking = true
+	cooldown.start()
+	attack_delay.start()
 
+	# We need to store the target for the delay callback
+	# But careful about storing it if we want to be stateless.
+	# However, for delay callback we need it.
+	_temp_target = target
+	return true
+
+var _temp_target: AgentBase = null
 
 func _on_attack_delay_timeout() -> void:
-	# Single-target strike: apply to the chosen target if still valid and still in range.
-	var t := _current_target
+	var t := _temp_target
 	if t == null or not is_instance_valid(t):
 		return
 
-	# Ensure the target is still within tracking range (still a candidate)
-	if not tracking.current_target == t:
+	# Ensure target is still in range?
+	if not is_target_in_range(t):
 		return
 
-	# Capability reference stored on the target's main script
 	var h: Health = t.get("health")
 	if not is_instance_valid(h):
 		return
@@ -123,12 +108,9 @@ func _on_attack_delay_timeout() -> void:
 	h.apply_hit(atk)
 
 
-func attack_animation_finished() -> void:
-	pass
-#	if is_instance_valid(movement) and _attacking:
-#		movement.clear_movement_order(attack_priority)
-#	_attacking = false
+func am_i_attacking() -> bool:
+	return _attacking or not cooldown.is_stopped()
 
-
+# --- COMPATIBILITY ---
 func set_movement(m: AgentMovement) -> void:
 	movement = m
