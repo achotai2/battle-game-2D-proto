@@ -110,13 +110,13 @@ func _show_heal() -> void:
 	pass
 
 
-func play_attack(target: AgentBase) -> bool:
+func play_attack(target: Node3D) -> bool:
 	if not is_instance_valid(sprite) or sprite.sprite_frames == null:
 		return false
 
 	attacking = true
 	working = false
-	var dir: Vector3 = _my_agent.return_position().direction_to(target.return_position())
+	var dir: Vector3 = _my_agent.global_position.direction_to(target.global_position)
 	var frames := sprite.sprite_frames
 
 	var variant := "attack1"

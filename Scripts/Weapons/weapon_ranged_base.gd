@@ -28,10 +28,9 @@ class_name WeaponRanged
 
 # --- INTERNAL STATE ---
 var _owner_agent: AgentBase = null
-var _current_target: AgentBase = null
 var _projectile_parent: Node = null
-var _attack_paused: bool = false
 var _attacking: bool = false
+var _temp_target: AgentBase = null
 
 # --- ACCURACY / BUFF STATE ---
 var accuracy_modifiers: Array = [] # Stores temporary buffs (floats)
@@ -44,10 +43,11 @@ func _ready() -> void:
 	tracking.target_opposing = affects_opposing
 	tracking.target_neutral = affects_neutral
 
-	tracking.target_changed.connect(_on_target_changed)
-	tracking.target_lost.connect(_on_target_lost)
+	# tracking signals removed for passive behavior
+	# tracking.target_changed.connect(_on_target_changed)
+	# tracking.target_lost.connect(_on_target_lost)
 
-	cooldown.timeout.connect(_try_attack)
+	# cooldown.timeout.connect(_try_attack)
 	attack_delay.timeout.connect(_on_attack_delay_timeout)
 
 	_projectile_parent = _resolve_projectile_parent()
@@ -61,66 +61,54 @@ func set_player(owner_agent: AgentBase) -> void:
 # --- CONTROL API ---
 
 func pause_attack(priority: int = 5) -> void:
-	_attack_paused = true
-
+	# Legacy
+	pass
 
 func restart_attack(priority: int = 5) -> void:
-	_attack_paused = false
-	_current_target = tracking.current_target
-	_try_attack()
+	# Legacy
+	pass
 
 func _cancel_attack() -> void:
-	_current_target = null
-	
-	if movement and _attacking:
-		movement.clear_movement_order(attack_priority)
-
 	cooldown.stop()
 	attack_delay.stop()
 	_attacking = false
+	_temp_target = null
 
 
-# --- TARGETING CALLBACKS ---
+# --- API FOR ADVISOR ---
 
-func _on_target_changed(t: AgentBase) -> void:
-	_current_target = t
-	_try_attack()
+func is_target_in_range(target: Node3D) -> bool:
+	if not is_instance_valid(target): return false
+	var candidates = tracking.get_candidates()
+	return target in candidates
 
-func _on_target_lost() -> void:
-	_cancel_attack()
-
-
-# --- ATTACK LOGIC ---
-
-func _try_attack() -> void:
-	if _current_target == null or not is_instance_valid(_current_target):
+func perform_attack_tick(target: AgentBase) -> bool:
+	if not is_instance_valid(target):
 		_cancel_attack()
-		return
+		return false
 
 	if not cooldown.is_stopped() or not attack_delay.is_stopped():
-		return
+		return false
 
 	if projectile_scene == null:
-		return
+		return false
 
-	if not _attack_paused and movement and movement.command_start_attack(_current_target, attack_priority):
-		_attacking = true
-		cooldown.start()
-		attack_delay.start()
-	else:
-		_cancel_attack()
+	# Assume Brain handles facing/animation via command_start_attack
+	_attacking = true
+	cooldown.start()
+	attack_delay.start()
+	_temp_target = target
+	return true
 
 
 func _on_attack_delay_timeout() -> void:
 	# 1. Validate Target
-	var t := _current_target
+	var t := _temp_target
 	if t == null or not is_instance_valid(t):
 		return
 
 	# Ensure target is still a valid candidate (range check, etc)
-	# Note: get_candidates() might be expensive to check every shot, 
-	# usually relying on tracking signals is enough, but this is safe.
-	if not tracking.current_target:
+	if not is_target_in_range(t):
 		return
 
 	if projectile_scene == null:
@@ -158,6 +146,8 @@ func _on_attack_delay_timeout() -> void:
 	else:
 		push_warning("Projectile does not have function init.")
 
+	_temp_target = null
+
 
 # --- ACCURACY & WIND MATH ---
 
@@ -170,26 +160,18 @@ func get_current_accuracy() -> float:
 
 func add_accuracy_buff(amount: float, duration: float) -> void:
 	accuracy_modifiers.append(amount)
-	# Auto-remove buff after duration
 	get_tree().create_timer(duration).timeout.connect(func(): accuracy_modifiers.erase(amount))
 
 
 func get_shot_point(origin: Vector3, target_pos: Vector3) -> Vector3:
 	var dist = origin.distance_to(target_pos)
 	
-	# 1. Calculate Inaccuracy (Standard Gaussian)
 	var acc_score = get_current_accuracy()
 	var inaccuracy = (100.0 - acc_score) / 100.0 
 	var spread_factor = 0.05 
 	var deviation = dist * inaccuracy * spread_factor
 	var error_offset = Vector3(randfn(0.0, deviation), randfn(0.0, deviation), 0)
 
-	# 2. Calculate Wind Drift (UPDATED)
-	# OLD: Weather.wind_direction * Weather.wind_speed
-	# NEW: Weather.current_wind_dir * (Weather.current_wind_speed * FORCE_MULTIPLIER)
-	
-	# We multiply by 10.0 because the new scale is 0-10, 
-	# but we want the wind to push arrows by ~100 pixels in a storm.
 	var physics_wind_speed = Weather.current_wind_speed * 10.0 
 	
 	var wind_push = Weather.current_wind_dir * physics_wind_speed * (dist / 1000.0) * wind_resistance
@@ -221,7 +203,7 @@ func _resolve_projectile_parent() -> Node:
 
 
 func am_i_attacking() -> bool:
-	return _attacking
+	return _attacking or not cooldown.is_stopped()
 
 func attack_animation_finished() -> void:
 	pass
