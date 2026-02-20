@@ -75,7 +75,6 @@ gold = 100
 transform = Transform3D(3, 0, 0, 0, 3, 0, 0, 0, 3, 0, 0, 0)
 offset = Vector2(0, 10)
 billboard = 2
-shaded = true
 alpha_cut = 1
 sprite_frames = ExtResource("3_bhhdu")
 animation = &"walk"

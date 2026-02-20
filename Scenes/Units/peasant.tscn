@@ -37,10 +37,9 @@ current_role = 1
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.086587906, 0)
 shape = SubResource("CapsuleShape3D_bomk7")
 
-[node name="AgentAnimate" type="Node" parent="." node_paths=PackedStringArray("sprite", "shadow_sprite")]
+[node name="AgentAnimate" type="Node" parent="." node_paths=PackedStringArray("sprite")]
 script = ExtResource("3_t6mam")
 sprite = NodePath("../Sprites/AnimatedSprite2D")
-shadow_sprite = NodePath("")
 metadata/_custom_type_script = "uid://cjjdaf7vlfs4k"
 
 [node name="AgentMovement" type="Node" parent="." node_paths=PackedStringArray("agent", "animation", "nav_agent")]
@@ -97,7 +96,6 @@ metadata/_custom_type_script = "uid://d1ucmtjtmh4hm"
 
 [node name="AnimatedSprite2D" type="AnimatedSprite3D" parent="Sprites"]
 billboard = 2
-shaded = true
 alpha_cut = 1
 sprite_frames = ExtResource("2_7mdye")
 animation = &"idle"

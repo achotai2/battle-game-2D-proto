@@ -39,8 +39,11 @@ uniform vec4 u_tile_reduction = vec4(0.0, 0.0, 0.0, 0.0);
 uniform float u_specular = 0.5;
 
 // Shanshui uniforms
-uniform sampler2D u_washi_texture : source_color, repeat_enable;
-uniform float u_washi_scale = 10.0;
+// The "Optimization Distance" - adjust this so it matches your Mist Wall distance
+uniform float max_detail_distance = 30.0; 
+
+//uniform sampler2D u_washi_texture : source_color, repeat_enable;
+//uniform float u_washi_scale = 10.0;
 uniform vec4 u_shadow_color : source_color = vec4(0.12, 0.12, 0.25, 1.0); // Deep Indigo
 uniform sampler2D u_shadow_noise;
 uniform float u_shadow_edge_size = 0.1;
@@ -51,6 +54,14 @@ uniform vec3 u_cutout_camera_position;
 uniform float u_cutout_radius = 0.0;
 uniform float u_cutout_softness = 1.0;
 uniform vec2 u_cutout_slope_cos_range = vec2(-1.0, 1.0);
+
+// Shanshui Rock Grain (Cunfa) Strokes
+uniform float u_stroke_scale = 10.0; // How densely packed the lines are
+uniform float u_stroke_length = 0.05; // Stretches the noise. Lower = longer lines!
+uniform float u_stroke_thickness = 0.6; // Adjusts how heavy the ink is
+uniform vec3 u_stroke_color : source_color = vec3(0.12, 0.12, 0.15); // Ink color
+uniform float u_stroke_wobble_strength = 0.1; // How far the line bends left/right
+uniform float u_stroke_wobble_scale = 2.0;    // How "fast" or frequent the wobbles are
 
 // Calculates distance from a point (p) to the line segment (a to b)
 float dist_segment(vec3 p, vec3 a, vec3 b) {
@@ -71,7 +82,7 @@ varying vec4 v_tint;
 varying vec4 v_splat;
 #endif
 varying vec3 v_ground_uv;
-
+varying float v_view_distance; // Stores distance to pass to light()
 
 vec3 unpack_normal(vec4 rgba) {
 	vec3 n = rgba.xzy * 2.0 - vec3(1.0);
@@ -161,6 +172,9 @@ void vertex() {
 	float h = sample_heightmap(u_terrain_heightmap, UV);
 	VERTEX.y = h;
 
+	// Calculate the distance from the camera in the vertex step
+	v_view_distance = length((MODELVIEW_MATRIX * vec4(VERTEX, 1.0)).xyz);
+
 	v_ground_uv = vec3(cell_coords.x, h * MODEL_MATRIX[1][1], cell_coords.y) / u_ground_uv_scale;
 
 #ifdef COLORMAP_PER_VERTEX
@@ -179,150 +193,182 @@ void vertex() {
 }
 
 void fragment() {
+	// Calculate how far this pixel is from the camera
+	// In the fragment shader, VERTEX is the view-space coordinate
+	float view_distance = length(VERTEX);
+
+	if (v_view_distance > max_detail_distance) {
+		// --- DISTANT PIXELS: CHEAP MATH ---
+		// If it's far away, skip ALL the splatmaps, anti-tiling, and strokes!
+		// Just paint it the base paper color and move on.
+		ALBEDO = vec3(0.55, 0.92, 0.88); // Your paper color
+		ROUGHNESS = 1.0;
+		SPECULAR = u_specular;
+	} else {
 #ifndef COLORMAP_PER_VERTEX
 	vec4 v_tint = texture(u_terrain_colormap, UV);
 #endif
 
-	if (v_tint.a < 0.5) {
-		// TODO Add option to use vertex discarding instead, using NaNs
-		discard;
-	}
+		if (v_tint.a < 0.5) {
+			// TODO Add option to use vertex discarding instead, using NaNs
+			discard;
+		}
 
 #ifndef SPLATMAP_PER_VERTEX
 	vec4 v_splat = texture(u_terrain_splatmap, UV);
 #endif
 
-	vec3 terrain_normal_world =
-		u_terrain_normal_basis * unpack_normal(texture(u_terrain_normalmap, UV));
-	terrain_normal_world = normalize(terrain_normal_world);
+		vec3 terrain_normal_world =
+			u_terrain_normal_basis * unpack_normal(texture(u_terrain_normalmap, UV));
+		terrain_normal_world = normalize(terrain_normal_world);
 
-	if (u_cutout_radius > 0.0) {
-		vec3 wpos = (INV_VIEW_MATRIX * vec4(VERTEX, 1.0)).xyz;
-		float dist = dist_segment(wpos, u_cutout_camera_position, u_cutout_player_position);
-		float softness = max(u_cutout_softness, 0.001);
-		float opacity = smoothstep(u_cutout_radius, u_cutout_radius + softness, dist);
+		if (u_cutout_radius > 0.0) {
+			vec3 wpos = (INV_VIEW_MATRIX * vec4(VERTEX, 1.0)).xyz;
+			float dist = dist_segment(wpos, u_cutout_camera_position, u_cutout_player_position);
+			float softness = max(u_cutout_softness, 0.001);
+			float opacity = smoothstep(u_cutout_radius, u_cutout_radius + softness, dist);
 
-		if (terrain_normal_world.y < u_cutout_slope_cos_range.x || terrain_normal_world.y > u_cutout_slope_cos_range.y) {
-			opacity = 1.0;
+			if (terrain_normal_world.y < u_cutout_slope_cos_range.x || terrain_normal_world.y > u_cutout_slope_cos_range.y) {
+				opacity = 1.0;
+			}
+
+			//ALPHA = opacity;
+			if (opacity < 0.01) {
+				discard;
+			}
 		}
 
-		//ALPHA = opacity;
-		if (opacity < 0.01) {
-			discard;
-		}
-	}
+		// TODO Detail should only be rasterized on nearby chunks (needs proximity management to switch shaders)
 
-	// TODO Detail should only be rasterized on nearby chunks (needs proximity management to switch shaders)
+		vec2 ground_uv = v_ground_uv.xz;
 
-	vec2 ground_uv = v_ground_uv.xz;
+		vec4 ab0, ab1, ab2, ab3;
+		if (u_triplanar) {
+			// Only do triplanar on one texture slot,
+			// because otherwise it would be very expensive and cost many more ifs.
+			// I chose the last slot because first slot is the default on new splatmaps,
+			// and that's a feature used for cliffs, which are usually designed later.
 
-	vec4 ab0, ab1, ab2, ab3;
-	if (u_triplanar) {
-		// Only do triplanar on one texture slot,
-		// because otherwise it would be very expensive and cost many more ifs.
-		// I chose the last slot because first slot is the default on new splatmaps,
-		// and that's a feature used for cliffs, which are usually designed later.
+			vec3 blending = get_triplanar_blend(terrain_normal_world);
 
-		vec3 blending = get_triplanar_blend(terrain_normal_world);
+			ab3 = texture_triplanar(u_ground_albedo_bump_3, v_ground_uv, blending);
 
-		ab3 = texture_triplanar(u_ground_albedo_bump_3, v_ground_uv, blending);
-
-	} else {
-		if (u_tile_reduction[3] > 0.0) {
-			ab3 = texture(u_ground_albedo_bump_3, ground_uv);
 		} else {
-			ab3 = texture_antitile(u_ground_albedo_bump_3, ground_uv);
+			if (u_tile_reduction[3] > 0.0) {
+				ab3 = texture(u_ground_albedo_bump_3, ground_uv);
+			} else {
+				ab3 = texture_antitile(u_ground_albedo_bump_3, ground_uv);
+			}
 		}
+
+		if (u_tile_reduction[0] > 0.0) {
+			ab0 = texture_antitile(u_ground_albedo_bump_0, ground_uv);
+		} else {
+			ab0 = texture(u_ground_albedo_bump_0, ground_uv);
+		}
+		if (u_tile_reduction[1] > 0.0) {
+			ab1 = texture_antitile(u_ground_albedo_bump_1, ground_uv);
+		} else {
+			ab1 = texture(u_ground_albedo_bump_1, ground_uv);
+		}
+		if (u_tile_reduction[2] > 0.0) {
+			ab2 = texture_antitile(u_ground_albedo_bump_2, ground_uv);
+		} else {
+			ab2 = texture(u_ground_albedo_bump_2, ground_uv);
+		}
+
+		vec3 col0 = ab0.rgb;
+		vec3 col1 = ab1.rgb;
+		vec3 col2 = ab2.rgb;
+		vec3 col3 = ab3.rgb;
+
+		vec4 w;
+		// TODO An #ifdef macro would be nice! Or copy/paste everything in a different shader...
+		if (u_depth_blending) {
+			w = get_depth_blended_weights(v_splat, vec4(ab0.a, ab1.a, ab2.a, ab3.a));
+		} else {
+			w = v_splat.rgba;
+		}
+
+		float w_sum = (w.r + w.g + w.b + w.a);
+
+		ALBEDO = v_tint.rgb * (
+			w.r * col0.rgb +
+			w.g * col1.rgb +
+			w.b * col2.rgb +
+			w.a * col3.rgb) / w_sum;
+
+		// Shanshui Modification: Apply Washi Paper Texture
+	//	vec3 paper_tex = texture(u_washi_texture, v_ground_uv.xz * u_washi_scale).rgb;
+	//	ALBEDO *= paper_tex;
+
+		// 1. Single-Axis Projection (Facing the Camera)
+		// If the camera looks along the X-axis, the face we see is Z and Y.
+		// We use Z for the horizontal width, and Y for the vertical height/stretch.
+		vec2 base_stroke_uv = vec2(v_ground_uv.z, v_ground_uv.y * u_stroke_length) * u_stroke_scale;
+	// 1.5. The Hand-Drawn Wobble
+		// Sample the noise texture using the flat ground UVs to create a random bending pattern
+		float wobble = texture(u_shadow_noise, v_ground_uv.xz * u_stroke_wobble_scale).r - 0.5;
+		
+		// Apply the wobble to the horizontal axis (Z) so the vertical lines snake left and right
+		vec2 distorted_stroke_uv = base_stroke_uv + vec2(wobble * u_stroke_wobble_strength, 0.0);
+
+		// 2. Sample the noise texture using the DISTORTED uv
+		float raw_stroke = texture(u_shadow_noise, distorted_stroke_uv).r;
+		
+		// 3. Crush the noise into sharp, defined brush strokes
+		float stroke_mask = smoothstep(u_stroke_thickness, u_stroke_thickness + 0.05, raw_stroke);
+		
+		// 4. Slope Mask: Erase the strokes from the flat ground
+		float steepness = 1.0 - terrain_normal_world.y;
+		float slope_mask = smoothstep(0.02, 0.15, steepness); 
+		
+		// 5. Apply the final ink strokes to the terrain
+		float final_strokes = stroke_mask * slope_mask;
+		ALBEDO = mix(ALBEDO, u_stroke_color, final_strokes);
+		
+		// --- END ROCK GRAIN ---
+
+		ROUGHNESS = 1.0;
+
+		NORMAL = (VIEW_MATRIX * (vec4(terrain_normal_world, 0.0))).xyz;
+		SPECULAR = u_specular;
+
+		//ALBEDO = w.rgb;
+		//ALBEDO = v_ground_uv.xyz;
 	}
-
-	if (u_tile_reduction[0] > 0.0) {
-		ab0 = texture_antitile(u_ground_albedo_bump_0, ground_uv);
-	} else {
-		ab0 = texture(u_ground_albedo_bump_0, ground_uv);
-	}
-	if (u_tile_reduction[1] > 0.0) {
-		ab1 = texture_antitile(u_ground_albedo_bump_1, ground_uv);
-	} else {
-		ab1 = texture(u_ground_albedo_bump_1, ground_uv);
-	}
-	if (u_tile_reduction[2] > 0.0) {
-		ab2 = texture_antitile(u_ground_albedo_bump_2, ground_uv);
-	} else {
-		ab2 = texture(u_ground_albedo_bump_2, ground_uv);
-	}
-
-	vec3 col0 = ab0.rgb;
-	vec3 col1 = ab1.rgb;
-	vec3 col2 = ab2.rgb;
-	vec3 col3 = ab3.rgb;
-
-	vec4 w;
-	// TODO An #ifdef macro would be nice! Or copy/paste everything in a different shader...
-	if (u_depth_blending) {
-		w = get_depth_blended_weights(v_splat, vec4(ab0.a, ab1.a, ab2.a, ab3.a));
-	} else {
-		w = v_splat.rgba;
-	}
-
-	float w_sum = (w.r + w.g + w.b + w.a);
-
-	ALBEDO = v_tint.rgb * (
-		w.r * col0.rgb +
-		w.g * col1.rgb +
-		w.b * col2.rgb +
-		w.a * col3.rgb) / w_sum;
-
-	// Shanshui Modification: Apply Washi Paper Texture
-	vec3 paper_tex = texture(u_washi_texture, v_ground_uv.xz * u_washi_scale).rgb;
-	ALBEDO *= paper_tex;
-
-	ROUGHNESS = 1.0;
-
-	NORMAL = (VIEW_MATRIX * (vec4(terrain_normal_world, 0.0))).xyz;
-	SPECULAR = u_specular;
-
-	//ALBEDO = w.rgb;
-	//ALBEDO = v_ground_uv.xyz;
 }
 
 void light() {
-	float NdotL = dot(NORMAL, LIGHT);
-	// Attenuation is 0.0 in cast shadows, 1.0 in fully lit areas
-	float attenuation = ATTENUATION;
+	if (v_view_distance > max_detail_distance) {
+		// --- DISTANT PIXELS: CHEAP LIGHTING ---
+		// Extremely simple Lambert lighting for the distant mist.
+		// No texture lookups, no smoothstep, incredibly fast.
+		float NdotL = max(0.0, dot(NORMAL, LIGHT));
+		vec3 normalized_light_color = LIGHT_COLOR / 3.14159;
+		DIFFUSE_LIGHT += normalized_light_color * ALBEDO * NdotL * ATTENUATION;
+		
+	} else {
+		// --- FOREGROUND PIXELS: HEAVY INK SHADOWS ---
+		float NdotL = dot(NORMAL, LIGHT);
+		float attenuation = ATTENUATION;
 
-	// --- 1. The "Bleed" Edge ---
-	// Sample noise for the wobbly edge.
-	float edge_noise = texture(u_shadow_noise, v_ground_uv.xz * u_shadow_noise_scale).r;
-	
-	// Calculate the threshold. We perturb it around 0.0.
-	float threshold = (edge_noise - 0.5) * u_shadow_edge_size;
-	
-	// Use a much sharper smoothstep (0.01 range) for a more defined, "painted" edge.
-	float self_shadow_intensity = smoothstep(threshold, threshold + 0.01, NdotL);
+		// 1. The "Bleed" Edge
+		float edge_noise = texture(u_shadow_noise, v_ground_uv.xz * u_shadow_noise_scale).r;
+		float threshold = (edge_noise - 0.5) * u_shadow_edge_size;
+		float self_shadow_intensity = smoothstep(threshold, threshold + 0.01, NdotL);
+		float is_lit = self_shadow_intensity * attenuation;
 
-	// Combine self-shadows with shadows cast by other objects.
-	// This value is 1.0 for fully lit areas, and 0.0 for any type of shadow.
-	float is_lit = self_shadow_intensity * attenuation;
+		// 2. The Ink Wash Texture
+		float ink_grain = texture(u_shadow_noise, v_ground_uv.xz * u_shadow_noise_scale * 4.0).r;
+		ink_grain = smoothstep(0.3, 0.7, ink_grain);
 
-	// --- 2. The Ink Wash Texture ---
-	// We sample the SAME noise texture, but at a higher scale (e.g., 4x).
-	// This creates a fine grain *inside* the shadow areas.
-	float ink_grain = texture(u_shadow_noise, v_ground_uv.xz * u_shadow_noise_scale * 4.0).r;
-	
-	// Optional: Crunch the contrast of the grain to make it look more like pooled ink.
-	ink_grain = smoothstep(0.3, 0.7, ink_grain);
+		vec3 inky_shadow_color = u_shadow_color.rgb * ink_grain;
 
-	// The "inky" shadow color is your indigo color multiplied by this grain.
-	// This makes the shadow look like it has texture and depth.
-	vec3 inky_shadow_color = u_shadow_color.rgb * ink_grain;
+		// 3. Final Mix
+		vec3 normalized_light_color = LIGHT_COLOR / 3.14159;
+		vec3 final_light_col = mix(inky_shadow_color, normalized_light_color, is_lit);
 
-	// --- 3. Final Mix ---
-	// Normalize incoming light (compensating for Godot's Pi division).
-	vec3 normalized_light_color = LIGHT_COLOR / 3.14159;
-
-	// Mix between the textured ink shadow and the bright light based on lit status.
-	vec3 final_light_col = mix(inky_shadow_color, normalized_light_color, is_lit);
-
-	// Apply the result to the paper's ALBEDO.
-	DIFFUSE_LIGHT += final_light_col * ALBEDO;
+		DIFFUSE_LIGHT += final_light_col * ALBEDO;
+	}
 }

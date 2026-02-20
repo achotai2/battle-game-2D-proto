@@ -39,10 +39,9 @@ avoidance_layers = 4
 avoidance_mask = 7
 debug_enabled = true
 
-[node name="AgentAnimate" type="Node" parent="." node_paths=PackedStringArray("sprite", "shadow_sprite")]
+[node name="AgentAnimate" type="Node" parent="." node_paths=PackedStringArray("sprite")]
 script = ExtResource("3_ygrm2")
 sprite = NodePath("../Sprites/AnimatedSprite2D")
-shadow_sprite = NodePath("")
 metadata/_custom_type_script = "uid://cjjdaf7vlfs4k"
 
 [node name="AgentMovement" type="Node" parent="." node_paths=PackedStringArray("agent", "animation", "nav_agent")]
@@ -78,7 +77,6 @@ movement = NodePath("../AgentMovement")
 
 [node name="AnimatedSprite2D" type="AnimatedSprite3D" parent="Sprites"]
 billboard = 2
-shaded = true
 alpha_cut = 1
 sprite_frames = ExtResource("11_pu4ol")
 animation = &"walk"

@@ -1,4 +1,4 @@
-[gd_scene load_steps=26 format=3 uid="uid://denj1nj2jkqg1"]
+[gd_scene load_steps=25 format=3 uid="uid://denj1nj2jkqg1"]
 
 [ext_resource type="PackedScene" uid="uid://ex22mf26lsid" path="res://Scenes/Units/Player.tscn" id="1_jjgbg"]
 [ext_resource type="PackedScene" uid="uid://cwsleixsa262m" path="res://Scenes/Units/lord.tscn" id="2_bo1nx"]
@@ -6,7 +6,6 @@
 [ext_resource type="Shader" uid="uid://bfepqm6v3y86q" path="res://addons/zylann.hterrain/shaders/shanshui.gdshader" id="3_d1ilt"]
 [ext_resource type="Script" uid="uid://bc80wnl2w5xyh" path="res://addons/zylann.hterrain/hterrain.gd" id="4_21xkr"]
 [ext_resource type="Resource" uid="uid://ouesmtjrytxl" path="res://TerrainData/data.hterrain" id="5_6bp64"]
-[ext_resource type="Texture2D" uid="uid://cr7pr5l01vn3s" path="res://Art/010c9b0168eb47b12bf847a136c9a6f0_t.jpeg" id="5_6iyac"]
 [ext_resource type="Script" uid="uid://clrmkdo1xfbjf" path="res://addons/zylann.hterrain/util/terrain_cutout.gd" id="5_kry3j"]
 [ext_resource type="Script" uid="uid://dgursdu3vnv6j" path="res://addons/zylann.hterrain/hterrain_texture_set.gd" id="6_344ge"]
 [ext_resource type="Shader" uid="uid://cdutbk1kfxg4f" path="res://Scripts/Shaders/ink_lines.gdshader" id="6_hptm8"]
@@ -56,6 +55,7 @@ noise = SubResource("FastNoiseLite_6iyac")
 
 [sub_resource type="NoiseTexture2D" id="NoiseTexture2D_d1ilt"]
 noise = SubResource("FastNoiseLite_hptm8")
+seamless = true
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_d1ilt"]
 render_priority = 0
@@ -64,9 +64,15 @@ shader_parameter/ink_color = Color(0.1, 0.1, 0.15, 1)
 shader_parameter/outline_threshold = 2.0
 shader_parameter/line_thickness = 1.0
 shader_parameter/max_ink_distance = 300.0
+shader_parameter/distance_fade_strength = 0.6000000285
 shader_parameter/noise_texture = SubResource("NoiseTexture2D_d1ilt")
 shader_parameter/distortion_strength = 0.006000000285
 shader_parameter/noise_scale = 3.0
+shader_parameter/wash_distance_start = 0.0
+shader_parameter/wash_steps = 20
+shader_parameter/wash_stride = 2.0
+shader_parameter/wash_falloff_curve = 2.79700012959762
+shader_parameter/wash_multiplier = 2.5
 
 [sub_resource type="QuadMesh" id="QuadMesh_hptm8"]
 flip_faces = true
@@ -78,19 +84,21 @@ density = -8.0
 [node name="World" type="Node3D"]
 
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 0.64284104, 0.76599973, 0, -0.76599973, 0.64284104, 0.72905016, 7.3423448, -3.512267)
+transform = Transform3D(0.9500072, 0.24500251, 0.19354628, 0.12941144, -0.87311155, 0.47003052, 0.28414613, -0.42148525, -0.8611684, 0.72905016, 7.3423448, -3.512267)
 light_color = Color(0.99425465, 0.91304135, 0.7449677, 1)
-light_volumetric_fog_energy = 7.597
-light_angular_distance = 18.56
+light_angular_distance = 19.49
 shadow_enabled = true
-shadow_blur = 0.0
+shadow_bias = 3.502
+shadow_normal_bias = 10.0
+shadow_opacity = 0.44
+shadow_blur = 4.917
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="."]
 environment = SubResource("Environment_bo1nx")
 
 [node name="FogVolume" type="FogVolume" parent="."]
-transform = Transform3D(6, 0, 0, 0, 6, 0, 0, 0, 6, 0, -0.77586365, 0)
-size = Vector3(94.23927, 1.7413788, 94.50598)
+transform = Transform3D(6, 0, 0, 0, 6, 0, 0, 0, 6, 0, -0.49990654, 0)
+size = Vector3(94.23927, 1.8333645, 94.50598)
 material = SubResource("FogMaterial_6iyac")
 
 [node name="NavigationRegion3D" type="NavigationRegion3D" parent="."]
@@ -117,17 +125,22 @@ shader_params/u_depth_blending = true
 shader_params/u_triplanar = false
 shader_params/u_tile_reduction = Vector4(0, 0, 0, 0)
 shader_params/u_specular = 0.1
-shader_params/u_washi_texture = ExtResource("5_6iyac")
-shader_params/u_washi_scale = 1.0
+shader_params/max_detail_distance = 50.0
 shader_params/u_shadow_color = Color(0.049996994, 0.049980476, 0.12726104, 1)
 shader_params/u_shadow_noise = SubResource("NoiseTexture2D_fdnlq")
-shader_params/u_shadow_edge_size = 3.0
-shader_params/u_shadow_noise_scale = 5.0
+shader_params/u_shadow_edge_size = 0.5
+shader_params/u_shadow_noise_scale = 1.0
 shader_params/u_cutout_player_position = Vector3(0, 0, 0)
 shader_params/u_cutout_camera_position = Vector3(0, 0, 0)
 shader_params/u_cutout_radius = 0.0
 shader_params/u_cutout_softness = 1.0
 shader_params/u_cutout_slope_cos_range = Vector2(-1, 1)
+shader_params/u_stroke_scale = 8.0
+shader_params/u_stroke_length = 0.03
+shader_params/u_stroke_thickness = 0.6
+shader_params/u_stroke_color = Color(0.12, 0.12, 0.15, 1)
+shader_params/u_stroke_wobble_strength = 0.08
+shader_params/u_stroke_wobble_scale = 10.0
 metadata/_custom_type_script = "uid://bc80wnl2w5xyh"
 
 [node name="CameraTerrainWindow" type="Node" parent="NavigationRegion3D/HTerrain" node_paths=PackedStringArray("terrain", "player", "camera")]
@@ -157,7 +170,7 @@ mesh = SubResource("QuadMesh_hptm8")
 
 [node name="FogVolume" type="FogVolume" parent="Environment/Units/Player"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.05493164, -0.51586914)
-size = Vector3(40, 40, 40)
+size = Vector3(35, 35, 35)
 shape = 0
 material = SubResource("FogMaterial_fdnlq")
 

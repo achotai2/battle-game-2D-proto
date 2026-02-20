@@ -100,7 +100,6 @@ metadata/_custom_type_script = "uid://d1ucmtjtmh4hm"
 
 [node name="AnimatedSprite2D" type="AnimatedSprite3D" parent="Sprites"]
 billboard = 2
-shaded = true
 alpha_cut = 1
 sprite_frames = ExtResource("2_r0ip0")
 animation = &"work"
