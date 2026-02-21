@@ -9,7 +9,10 @@
 [ext_resource type="Script" uid="uid://cfiw0qaxe8jxd" path="res://Scripts/SensorNodes/player_controls.gd" id="6_nn08x"]
 [ext_resource type="Script" uid="uid://c2guvnr3dtafe" path="res://Scripts/MemoryNodes/health.gd" id="7_52ee3"]
 [ext_resource type="PackedScene" uid="uid://6it7l8b8yxs" path="res://Scenes/Weapons/weapon_sword.tscn" id="7_bhhdu"]
-[ext_resource type="PackedScene" uid="uid://c4n5elrxg64hp" path="res://Scenes/AgentNodes/GoldHolder.tscn" id="9_jokor"]
+[ext_resource type="Script" path="res://Scripts/MemoryNodes/GoldWallet.gd" id="9_gw"]
+[ext_resource type="Script" path="res://Scripts/MemoryNodes/TaxLedger.gd" id="10_tl"]
+[ext_resource type="Script" path="res://Scripts/SensorNodes/GoldTracker.gd" id="11_gt"]
+[ext_resource type="Script" path="res://Scripts/AgentNodes/GoldGiver.gd" id="12_gg"]
 [ext_resource type="PackedScene" uid="uid://by5ppm4d4bxev" path="res://Scenes/AgentNodes/player_interactor.tscn" id="9_yoq75"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_jokor"]
@@ -27,7 +30,7 @@ movement = NodePath("Motor/AgentMovement")
 controls = NodePath("Sensors/PlayerControls")
 animation = NodePath("Motor/AgentAnimate")
 attack = NodePath("Weapons/WeaponSword")
-gold = NodePath("Memory/GoldHolder")
+gold = NodePath("Memory/GoldWallet")
 
 [node name="CollisionShape2D" type="CollisionShape3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.086587906, 0)
@@ -56,8 +59,12 @@ script = ExtResource("4_ehya8")
 
 [node name="Memory" type="Node" parent="."]
 
-[node name="GoldHolder" parent="Memory" instance=ExtResource("9_jokor")]
+[node name="GoldWallet" type="Node" parent="Memory"]
+script = ExtResource("9_gw")
 gold = 100
+
+[node name="TaxLedger" type="Node" parent="Memory"]
+script = ExtResource("10_tl")
 
 [node name="Health" type="Node" parent="Memory"]
 script = ExtResource("7_52ee3")
@@ -66,6 +73,10 @@ defense = 100
 metadata/_custom_type_script = "uid://c2guvnr3dtafe"
 
 [node name="Sensors" type="Node" parent="."]
+
+[node name="GoldTracker" type="Node" parent="Sensors" node_paths=PackedStringArray("agent")]
+script = ExtResource("11_gt")
+agent = NodePath("../..")
 
 [node name="PlayerInteractor" parent="Sensors" node_paths=PackedStringArray("movement") instance=ExtResource("9_yoq75")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -1)
@@ -90,6 +101,10 @@ script = ExtResource("5_5ixxa")
 agent = NodePath("../..")
 animation = NodePath("../AgentAnimate")
 metadata/_custom_type_script = "uid://58qm17emnwvd"
+
+[node name="GoldGiver" type="Node" parent="Motor" node_paths=PackedStringArray("agent")]
+script = ExtResource("12_gg")
+agent = NodePath("../..")
 
 [node name="Weapons" type="Node" parent="."]
 

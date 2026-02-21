@@ -5,7 +5,7 @@
 [ext_resource type="Script" uid="uid://dqu3s3kqb7wj6" path="res://Scripts/BuildingNodes/spawnsite.gd" id="4_ua3nw"]
 [ext_resource type="PackedScene" uid="uid://d1275k0u0fsn" path="res://Scenes/AgentNodes/interactable.tscn" id="5_krvd1"]
 [ext_resource type="Texture2D" uid="uid://d4hqu3k4e8pts" path="res://Art/Tiny Swords (Update 010)/Factions/Knights/Buildings/Castle/Castle_Blue.png" id="6_0ywlv"]
-[ext_resource type="PackedScene" uid="uid://c4n5elrxg64hp" path="res://Scenes/AgentNodes/GoldHolder.tscn" id="6_2u44n"]
+[ext_resource type="Script" path="res://Scripts/MemoryNodes/GoldWallet.gd" id="6_gw"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape2D_coeoc"]
 radius = 47.999996
@@ -18,7 +18,7 @@ shadowVisual = NodePath("")
 interactable = NodePath("Interactable")
 worksite = NodePath("WorkSite")
 spawnsite = NodePath("SpawnSite")
-gold = NodePath("GoldHolder")
+gold = NodePath("GoldWallet")
 state = 2
 
 [node name="CollisionShape2D" type="CollisionShape3D" parent="."]
@@ -69,7 +69,8 @@ vertices = PackedVector3Array(-51, -15, 0, -16, -53, 0, 21, -53, 0, 53, -20, 0, 
 affect_navigation_mesh = true
 carve_navigation_mesh = true
 
-[node name="GoldHolder" parent="." instance=ExtResource("6_2u44n")]
+[node name="GoldWallet" type="Node" parent="."]
+script = ExtResource("6_gw")
 
 [node name="LightOccluder2D" type="Node3D" parent="."]
 visible = false

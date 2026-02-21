@@ -191,8 +191,18 @@ func apply_work(amount: float, worker: MinionTasker) -> void:
 	_work_done = minf(total_work, _work_done + safe_amount)
 
 	if is_instance_valid(get_parent().gold):
-		var amount_to_give: int = min(ceil(safe_amount), get_parent().gold.gold)
-		get_parent().gold.give_gold(worker.get_parent(), amount_to_give)
+		var my_wallet = get_parent().gold
+		var worker_agent = worker.get_agent()
+		var worker_wallet = worker_agent.gold if worker_agent and "gold" in worker_agent else null
+
+		if my_wallet and worker_wallet and my_wallet.has_method("get_gold"):
+			var amount_to_give: int = min(ceil(safe_amount), my_wallet.get_gold())
+
+			if amount_to_give > 0:
+				if my_wallet.has_method("subtract_gold"):
+					my_wallet.subtract_gold(amount_to_give)
+				if worker_wallet.has_method("add_gold"):
+					worker_wallet.add_gold(amount_to_give)
 
 	work_applied.emit(self)
 

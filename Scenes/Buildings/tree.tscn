@@ -5,7 +5,7 @@
 [ext_resource type="Script" uid="uid://qumqy1omy72i" path="res://Scripts/BuildingNodes/worksite.gd" id="2_rsuno"]
 [ext_resource type="PackedScene" uid="uid://d1275k0u0fsn" path="res://Scenes/AgentNodes/interactable.tscn" id="3_l7sa7"]
 [ext_resource type="Script" uid="uid://bk5we0bsn6qwl" path="res://Scripts/Resources/resource_site.gd" id="5_m36md"]
-[ext_resource type="PackedScene" uid="uid://c4n5elrxg64hp" path="res://Scenes/AgentNodes/GoldHolder.tscn" id="6_0s2l4"]
+[ext_resource type="Script" path="res://Scripts/MemoryNodes/GoldWallet.gd" id="6_gw"]
 
 [sub_resource type="CylinderShape3D" id="CircleShape2D_0vwjc"]
 radius = 16.0
@@ -119,7 +119,7 @@ visual = NodePath("Sprites/AnimatedSprite2D")
 shadowVisual = NodePath("")
 interactable = NodePath("Interactable")
 worksite = NodePath("WorkSite")
-gold = NodePath("GoldHolder")
+gold = NodePath("GoldWallet")
 resourcesite = NodePath("ResourceSite")
 regrow_timer = NodePath("RegrowTimer")
 spawn_timer = NodePath("SpawnTimer")
@@ -160,7 +160,8 @@ autostart = true
 script = ExtResource("5_m36md")
 metadata/_custom_type_script = "uid://bk5we0bsn6qwl"
 
-[node name="GoldHolder" parent="." instance=ExtResource("6_0s2l4")]
+[node name="GoldWallet" type="Node" parent="."]
+script = ExtResource("6_gw")
 
 [node name="Sprites" type="Node3D" parent="."]
 

@@ -7,8 +7,8 @@ func _ready() -> void:
 	var player = get_tree().get_first_node_in_group("Player")
 
 	if is_instance_valid(player) and is_instance_valid(player.gold):
-		if not player.gold.goldChanged.is_connected(_update_gold_display):
-			player.gold.goldChanged.connect(_update_gold_display)
+		if not player.gold.gold_changed.is_connected(_update_gold_display):
+			player.gold.gold_changed.connect(_update_gold_display)
 
 
 func _update_gold_display(gold: int) -> void:
