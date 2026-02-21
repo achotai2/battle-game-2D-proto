@@ -23,3 +23,9 @@ func get_intent() -> Intent:
 
 func _on_input_changed() -> void:
 	intent_changed.emit()
+
+func enact_intent(intent: Intent) -> void:
+	if not agent or not agent.movement: return
+
+	if intent.type == Intent.Type.PLAYER_MOVE:
+		agent.movement.command_player_direction(intent.direction, 100)

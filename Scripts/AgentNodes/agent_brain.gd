@@ -5,6 +5,7 @@ class_name AgentBrain
 @export_range(0.1, 2.0, 0.1) var think_interval: float = 0.25
 
 var _think_timer: Timer
+var current_advisor: Advisor = null
 
 func _ready() -> void:
 	_think_timer = Timer.new()
@@ -40,42 +41,18 @@ func _tick() -> void:
 				best_intent = intent
 
 	if best_intent:
-		_execute_intent(best_intent)
-		if best_intent.advisor:
-			best_intent.advisor.enact_intent(best_intent)
+		var winner = best_intent.advisor
 
-func _execute_intent(intent: Intent) -> void:
-	var movement = agent.movement
-	if not movement: return
+		# Hand over the wheel if advisor changed
+		if winner != current_advisor:
+			if current_advisor:
+				current_advisor.on_lose_control()
 
-	# We use a high priority to override any lingering internal states,
-	# but rely on the Brain to keep issuing commands.
-	var cmd_priority = 10
+			current_advisor = winner
 
-	match intent.type:
-		Intent.Type.IDLE:
-			movement.clear_movement_order(cmd_priority)
+			if current_advisor:
+				current_advisor.on_gain_control()
 
-		Intent.Type.MOVE:
-			movement.command_move_to_position(intent.target_position, cmd_priority)
-
-		Intent.Type.CHASE:
-			if is_instance_valid(intent.target_node):
-				movement.command_chase_target(intent.target_node, cmd_priority)
-			else:
-				movement.clear_movement_order(cmd_priority)
-
-		Intent.Type.ATTACK:
-			if is_instance_valid(intent.target_node):
-				movement.command_start_attack(intent.target_node, cmd_priority)
-			else:
-				movement.clear_movement_order(cmd_priority)
-
-		Intent.Type.WORK:
-			movement.command_start_work(cmd_priority)
-
-		Intent.Type.FLEE:
-			movement.command_move_to_position(intent.target_position, cmd_priority)
-
-		Intent.Type.PLAYER_MOVE:
-			movement.command_player_direction(intent.direction, cmd_priority)
+		# Execute the intent via the advisor who has the wheel
+		if current_advisor:
+			current_advisor.enact_intent(best_intent)
