@@ -1,6 +1,6 @@
 [gd_scene load_steps=4 format=3 uid="uid://by5ppm4d4bxev"]
 
-[ext_resource type="Script" uid="uid://bami2sbmdhbvw" path="res://Scripts/AgentNodes/PlayerInteractor.gd" id="1_5exm1"]
+[ext_resource type="Script" uid="uid://bami2sbmdhbvw" path="res://Scripts/SensorNodes/PlayerInteractor.gd" id="1_5exm1"]
 [ext_resource type="PackedScene" uid="uid://c6guwdbgls2v4" path="res://Scenes/AgentNodes/interact_prompt.tscn" id="2_noa6p"]
 
 [sub_resource type="CylinderShape3D" id="CircleShape2D_5exm1"]

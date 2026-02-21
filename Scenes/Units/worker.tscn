@@ -1,11 +1,11 @@
 [gd_scene load_steps=13 format=3 uid="uid://mvfvmj8qom4v"]
 
 [ext_resource type="Script" uid="uid://b3iqpgjb0vtvl" path="res://Scripts/UnitBase/agent_base.gd" id="1_r0ip0"]
+[ext_resource type="Script" uid="uid://db8bramlpehyu" path="res://Scripts/AgentNodes/agent_brain.gd" id="2_n8oia"]
 [ext_resource type="SpriteFrames" uid="uid://iwhusndso2py" path="res://Art/SpriteFrames/Worker_Blue.tres" id="2_r0ip0"]
 [ext_resource type="Script" uid="uid://cjjdaf7vlfs4k" path="res://Scripts/AgentNodes/agent_animate.gd" id="3_r0j7o"]
 [ext_resource type="Script" uid="uid://58qm17emnwvd" path="res://Scripts/AgentNodes/agent_move.gd" id="4_8gahr"]
 [ext_resource type="Script" uid="uid://c2guvnr3dtafe" path="res://Scripts/MemoryNodes/health.gd" id="5_ddptx"]
-[ext_resource type="Script" path="res://Scripts/AgentNodes/tactical_worker.gd" id="8_ca3ot"]
 [ext_resource type="Script" uid="uid://bi15gddmxujcs" path="res://Scripts/SensorNodes/agent_tracking.gd" id="8_kdem7"]
 [ext_resource type="Script" uid="uid://d1ucmtjtmh4hm" path="res://Scripts/MemoryNodes/minion_tasker.gd" id="9_r0ip0"]
 [ext_resource type="PackedScene" uid="uid://c4n5elrxg64hp" path="res://Scenes/AgentNodes/GoldHolder.tscn" id="10_cwsst"]
@@ -18,60 +18,23 @@ height = 0.88845444
 [sub_resource type="CylinderShape3D" id="CircleShape2D_65o65"]
 radius = 500.0
 
-[node name="Worker" type="CharacterBody3D" node_paths=PackedStringArray("health", "movement", "animation", "detection", "tactical", "tasker", "gold", "hunger", "foodTasker") groups=["Attackable", "Interactable", "Minions", "Workers"]]
+[node name="Worker" type="CharacterBody3D" node_paths=PackedStringArray("health", "movement", "animation", "detection", "tasker", "gold", "hunger", "foodTasker") groups=["Attackable", "Interactable", "Minions", "Workers"]]
 collision_layer = 4
 collision_mask = 3
 script = ExtResource("1_r0ip0")
-health = NodePath("Health")
-movement = NodePath("AgentMovement")
-animation = NodePath("AgentAnimate")
-detection = NodePath("AgentDetection")
-tactical = NodePath("TacticalWorker")
-tasker = NodePath("WorkerTasker")
-gold = NodePath("GoldHolder")
-hunger = NodePath("HungerHolder")
-foodTasker = NodePath("FoodTasker")
+health = NodePath("Memory/Health")
+movement = NodePath("Motor/AgentMovement")
+animation = NodePath("Motor/AgentAnimate")
+detection = NodePath("Sensors/AgentDetection")
+tasker = NodePath("Memory/WorkerTasker")
+gold = NodePath("Memory/GoldHolder")
+hunger = NodePath("Memory/HungerHolder")
+foodTasker = NodePath("Memory/FoodTasker")
 current_role = 4
 
 [node name="CollisionShape2D" type="CollisionShape3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.086587906, 0)
 shape = SubResource("CapsuleShape3D_n8oia")
-
-[node name="AgentAnimate" type="Node" parent="." node_paths=PackedStringArray("sprite")]
-script = ExtResource("3_r0j7o")
-sprite = NodePath("../Sprites/AnimatedSprite2D")
-metadata/_custom_type_script = "uid://cjjdaf7vlfs4k"
-
-[node name="AgentMovement" type="Node" parent="." node_paths=PackedStringArray("agent", "animation", "nav_agent")]
-script = ExtResource("4_8gahr")
-agent = NodePath("..")
-animation = NodePath("../AgentAnimate")
-nav_agent = NodePath("../NavigationAgent2D2")
-metadata/_custom_type_script = "uid://58qm17emnwvd"
-
-[node name="Health" type="Node" parent="."]
-script = ExtResource("5_ddptx")
-metadata/_custom_type_script = "uid://c2guvnr3dtafe"
-
-[node name="AgentDetection" type="Area3D" parent="." node_paths=PackedStringArray("my_agent")]
-collision_layer = 256
-collision_mask = 28
-script = ExtResource("8_kdem7")
-my_agent = NodePath("..")
-
-[node name="CollisionShape2D" type="CollisionShape3D" parent="AgentDetection"]
-shape = SubResource("CircleShape2D_65o65")
-debug_color = Color(0.498544, 0.546397, 0.554583, 0.42)
-
-[node name="TacticalWorker" type="Node" parent="."]
-script = ExtResource("8_ca3ot")
-metadata/_custom_type_script = "uid://cjkde0ltdx5i0"
-
-[node name="WorkerTasker" type="Node" parent="." node_paths=PackedStringArray("agent", "movement")]
-script = ExtResource("9_r0ip0")
-agent = NodePath("..")
-movement = NodePath("../AgentMovement")
-metadata/_custom_type_script = "uid://d1ucmtjtmh4hm"
 
 [node name="NavigationAgent2D2" type="NavigationAgent3D" parent="."]
 avoidance_enabled = true
@@ -80,21 +43,8 @@ avoidance_layers = 8
 avoidance_mask = 15
 debug_enabled = true
 
-[node name="HungerHolder" parent="." node_paths=PackedStringArray("movement", "food_tasker") instance=ExtResource("10_r0j7o")]
-movement = NodePath("../AgentMovement")
-food_tasker = NodePath("../FoodTasker")
-
-[node name="GoldHolder" parent="." instance=ExtResource("10_cwsst")]
-gold = 2
-
-[node name="FoodTasker" type="Node" parent="." node_paths=PackedStringArray("agent", "movement")]
-script = ExtResource("9_r0ip0")
-agent = NodePath("..")
-movement = NodePath("../AgentMovement")
-work_range = 100.0
-kind = 2
-auto_get_work_when_idle = false
-metadata/_custom_type_script = "uid://d1ucmtjtmh4hm"
+[node name="Brain" type="Node" parent="."]
+script = ExtResource("2_n8oia")
 
 [node name="Sprites" type="Node3D" parent="."]
 
@@ -103,3 +53,57 @@ billboard = 2
 alpha_cut = 1
 sprite_frames = ExtResource("2_r0ip0")
 animation = &"work"
+
+[node name="Memory" type="Node" parent="."]
+
+[node name="HungerHolder" parent="Memory" node_paths=PackedStringArray("movement", "food_tasker") instance=ExtResource("10_r0j7o")]
+movement = NodePath("../../Motor/AgentMovement")
+food_tasker = NodePath("../FoodTasker")
+
+[node name="GoldHolder" parent="Memory" instance=ExtResource("10_cwsst")]
+gold = 2
+
+[node name="Health" type="Node" parent="Memory"]
+script = ExtResource("5_ddptx")
+metadata/_custom_type_script = "uid://c2guvnr3dtafe"
+
+[node name="WorkerTasker" type="Node" parent="Memory" node_paths=PackedStringArray("agent", "movement")]
+script = ExtResource("9_r0ip0")
+agent = NodePath("../..")
+movement = NodePath("../../Motor/AgentMovement")
+metadata/_custom_type_script = "uid://d1ucmtjtmh4hm"
+
+[node name="FoodTasker" type="Node" parent="Memory" node_paths=PackedStringArray("agent", "movement")]
+script = ExtResource("9_r0ip0")
+agent = NodePath("../..")
+movement = NodePath("../../Motor/AgentMovement")
+work_range = 100.0
+kind = 2
+auto_get_work_when_idle = false
+metadata/_custom_type_script = "uid://d1ucmtjtmh4hm"
+
+[node name="Motor" type="Node" parent="."]
+
+[node name="AgentAnimate" type="Node" parent="Motor" node_paths=PackedStringArray("sprite")]
+script = ExtResource("3_r0j7o")
+sprite = NodePath("../../Sprites/AnimatedSprite2D")
+metadata/_custom_type_script = "uid://cjjdaf7vlfs4k"
+
+[node name="AgentMovement" type="Node" parent="Motor" node_paths=PackedStringArray("agent", "animation", "nav_agent")]
+script = ExtResource("4_8gahr")
+agent = NodePath("../..")
+animation = NodePath("../AgentAnimate")
+nav_agent = NodePath("../../NavigationAgent2D2")
+metadata/_custom_type_script = "uid://58qm17emnwvd"
+
+[node name="Sensors" type="Node" parent="."]
+
+[node name="AgentDetection" type="Area3D" parent="Sensors" node_paths=PackedStringArray("my_agent")]
+collision_layer = 256
+collision_mask = 28
+script = ExtResource("8_kdem7")
+my_agent = NodePath("../..")
+
+[node name="CollisionShape2D" type="CollisionShape3D" parent="Sensors/AgentDetection"]
+shape = SubResource("CircleShape2D_65o65")
+debug_color = Color(0.498544, 0.546397, 0.554583, 0.42)
