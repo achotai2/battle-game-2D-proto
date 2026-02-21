@@ -4,13 +4,13 @@
 [ext_resource type="SpriteFrames" uid="uid://rc30dymytbcd" path="res://Art/SpriteFrames/Soldier_Red.tres" id="2_gqo0k"]
 [ext_resource type="Script" uid="uid://cjjdaf7vlfs4k" path="res://Scripts/AgentNodes/agent_animate.gd" id="3_x32bv"]
 [ext_resource type="Script" uid="uid://58qm17emnwvd" path="res://Scripts/AgentNodes/agent_move.gd" id="4_80g1m"]
-[ext_resource type="Script" uid="uid://c2guvnr3dtafe" path="res://Scripts/AgentNodes/health.gd" id="5_14jue"]
+[ext_resource type="Script" uid="uid://c2guvnr3dtafe" path="res://Scripts/MemoryNodes/health.gd" id="5_14jue"]
 [ext_resource type="PackedScene" uid="uid://6it7l8b8yxs" path="res://Scenes/Weapons/weapon_sword.tscn" id="6_k4v4y"]
-[ext_resource type="Script" uid="uid://bi15gddmxujcs" path="res://Scripts/AgentNodes/agent_tracking.gd" id="8_gdgxh"]
-[ext_resource type="Script" uid="uid://sxvily52588c" path="res://Scripts/AgentNodes/tactical_soldier.gd" id="9_3s4fr"]
+[ext_resource type="Script" uid="uid://bi15gddmxujcs" path="res://Scripts/SensorNodes/agent_tracking.gd" id="8_gdgxh"]
+[ext_resource type="Script" path="res://Scripts/AgentNodes/tactical_soldier.gd" id="9_3s4fr"]
 [ext_resource type="PackedScene" uid="uid://c8o4373okv5fq" path="res://Scenes/AgentNodes/HungerHolder.tscn" id="10_jghxd"]
 [ext_resource type="PackedScene" uid="uid://c4n5elrxg64hp" path="res://Scenes/AgentNodes/GoldHolder.tscn" id="11_iaeu3"]
-[ext_resource type="Script" uid="uid://d1ucmtjtmh4hm" path="res://Scripts/AgentNodes/minion_tasker.gd" id="12_g0yrv"]
+[ext_resource type="Script" uid="uid://d1ucmtjtmh4hm" path="res://Scripts/MemoryNodes/minion_tasker.gd" id="12_g0yrv"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape2D_ta2g1"]
 radius = 0.42871094

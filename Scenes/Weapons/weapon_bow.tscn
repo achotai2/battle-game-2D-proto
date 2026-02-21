@@ -1,7 +1,7 @@
 [gd_scene load_steps=5 format=3 uid="uid://o3i1hye0kspv"]
 
 [ext_resource type="Script" uid="uid://c06uw4lac84hb" path="res://Scripts/Weapons/weapon_ranged_base.gd" id="1_fl1el"]
-[ext_resource type="Script" uid="uid://bi15gddmxujcs" path="res://Scripts/AgentNodes/agent_tracking.gd" id="2_6nb2j"]
+[ext_resource type="Script" uid="uid://bi15gddmxujcs" path="res://Scripts/SensorNodes/agent_tracking.gd" id="2_6nb2j"]
 [ext_resource type="PackedScene" uid="uid://ddlh76nm5b4gr" path="res://Scenes/Weapons/arrow_projectile.tscn" id="2_hace3"]
 
 [sub_resource type="CylinderShape3D" id="CircleShape2D_72ito"]

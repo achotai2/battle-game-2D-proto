@@ -1,7 +1,7 @@
 [gd_scene load_steps=4 format=3 uid="uid://6it7l8b8yxs"]
 
 [ext_resource type="Script" uid="uid://eeh2yvsqyogh" path="res://Scripts/Weapons/weapon_melee_base.gd" id="1_7iax5"]
-[ext_resource type="Script" uid="uid://bi15gddmxujcs" path="res://Scripts/AgentNodes/agent_tracking.gd" id="2_72ito"]
+[ext_resource type="Script" uid="uid://bi15gddmxujcs" path="res://Scripts/SensorNodes/agent_tracking.gd" id="2_72ito"]
 
 [sub_resource type="CylinderShape3D" id="CircleShape2D_72ito"]
 radius = 78.0

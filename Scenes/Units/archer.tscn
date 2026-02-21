@@ -4,13 +4,13 @@
 [ext_resource type="SpriteFrames" uid="uid://bgouc0jxjgtus" path="res://Art/SpriteFrames/Archer_Red.tres" id="2_xbs6w"]
 [ext_resource type="Script" uid="uid://cjjdaf7vlfs4k" path="res://Scripts/AgentNodes/agent_animate.gd" id="3_22n53"]
 [ext_resource type="Script" uid="uid://58qm17emnwvd" path="res://Scripts/AgentNodes/agent_move.gd" id="4_6oxgn"]
-[ext_resource type="Script" uid="uid://c2guvnr3dtafe" path="res://Scripts/AgentNodes/health.gd" id="5_gunah"]
-[ext_resource type="Script" uid="uid://bi15gddmxujcs" path="res://Scripts/AgentNodes/agent_tracking.gd" id="7_seka2"]
+[ext_resource type="Script" uid="uid://c2guvnr3dtafe" path="res://Scripts/MemoryNodes/health.gd" id="5_gunah"]
+[ext_resource type="Script" uid="uid://bi15gddmxujcs" path="res://Scripts/SensorNodes/agent_tracking.gd" id="7_seka2"]
 [ext_resource type="PackedScene" uid="uid://o3i1hye0kspv" path="res://Scenes/Weapons/weapon_bow.tscn" id="8_therj"]
-[ext_resource type="Script" uid="uid://drugelqbde4x8" path="res://Scripts/AgentNodes/tactical_archer.gd" id="9_fujmp"]
+[ext_resource type="Script" path="res://Scripts/AgentNodes/tactical_archer.gd" id="9_fujmp"]
 [ext_resource type="PackedScene" uid="uid://c8o4373okv5fq" path="res://Scenes/AgentNodes/HungerHolder.tscn" id="10_rrgl8"]
 [ext_resource type="PackedScene" uid="uid://c4n5elrxg64hp" path="res://Scenes/AgentNodes/GoldHolder.tscn" id="11_yp0bp"]
-[ext_resource type="Script" uid="uid://d1ucmtjtmh4hm" path="res://Scripts/AgentNodes/minion_tasker.gd" id="12_1wuid"]
+[ext_resource type="Script" uid="uid://d1ucmtjtmh4hm" path="res://Scripts/MemoryNodes/minion_tasker.gd" id="12_1wuid"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_t6ard"]
 radius = 0.42871094

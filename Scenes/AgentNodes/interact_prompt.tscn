@@ -1,6 +1,6 @@
 [gd_scene load_steps=5 format=3 uid="uid://c6guwdbgls2v4"]
 
-[ext_resource type="Script" uid="uid://xro2cfkbmf3b" path="res://Scripts/AgentNodes/InteractPrompt.gd" id="1_ps6gp"]
+[ext_resource type="Script" uid="uid://xro2cfkbmf3b" path="res://Scripts/SensorNodes/InteractPrompt.gd" id="1_ps6gp"]
 [ext_resource type="Texture2D" uid="uid://dqb4b3gcn0k3i" path="res://Art/Icons/circle.png" id="2_stv28"]
 [ext_resource type="Texture2D" uid="uid://dm6x3sreah3wi" path="res://Art/Icons/circleEmpty.png" id="3_0lluy"]
 [ext_resource type="Texture2D" uid="uid://dkyh46mh70hjj" path="res://Art/Icons/TaxIcon.png" id="4_stv28"]

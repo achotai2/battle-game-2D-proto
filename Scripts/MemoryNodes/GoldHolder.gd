@@ -11,12 +11,6 @@ signal goldChanged(amount_of_gold: int)
 ## The scene used to represent gold on the ground when dropped.
 @export var gold_display: AnimatedSprite3D
 
-## Connects to the agents move node to call commands to it.
-@export var movement: AgentMovement
-
-## Priority for the movement command.
-@export var movement_priority: int = 5
-
 ## How long will agent try to deliver gold before giving up.
 @export var _patience_timer: Timer = null  
 

@@ -1,6 +1,6 @@
 [gd_scene load_steps=14 format=3 uid="uid://c4n5elrxg64hp"]
 
-[ext_resource type="Script" uid="uid://cuh7wlntlvlvr" path="res://Scripts/AgentNodes/GoldHolder.gd" id="1_88xe4"]
+[ext_resource type="Script" uid="uid://cuh7wlntlvlvr" path="res://Scripts/MemoryNodes/GoldHolder.gd" id="1_88xe4"]
 [ext_resource type="Texture2D" uid="uid://cfp8x3y8ne2cq" path="res://Art/Tiny Swords (Update 010)/Resources/Resources/G_Idle.png" id="3_6xde6"]
 [ext_resource type="Texture2D" uid="uid://bvqb50k78co5p" path="res://Art/Tiny Swords (Update 010)/Resources/Resources/G_Spawn.png" id="4_6vdx1"]
 
