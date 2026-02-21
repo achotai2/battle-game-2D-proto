@@ -9,7 +9,7 @@ enum TreeState { NORMAL, MARKED, CUT }
 @export var shadowVisual: Node
 @export var interactable: Interactable
 @export var worksite: WorkSite
-@export var gold: GoldHolder
+@export var gold: GoldWallet
 @export var resourcesite: ResourceSite
 @export var regrow_timer: Timer
 @export var spawn_timer: Timer
@@ -69,8 +69,11 @@ func return_position() -> Vector3:
 
 
 func _on_interacted(interactor: AgentBase) -> void:
-	if state == TreeState.NORMAL and is_instance_valid(interactor.gold) and interactor.gold.gold >= worksite.total_work:
-		interactor.gold.give_gold(self, worksite.total_work)
+	var cost = int(worksite.total_work)
+	if state == TreeState.NORMAL and is_instance_valid(interactor.gold) and interactor.gold.get_gold() >= cost:
+		interactor.gold.subtract_gold(cost)
+		if gold:
+			gold.add_gold(cost)
 		set_state(TreeState.MARKED)
 
 

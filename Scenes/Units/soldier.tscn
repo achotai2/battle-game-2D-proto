@@ -9,7 +9,11 @@
 [ext_resource type="PackedScene" uid="uid://6it7l8b8yxs" path="res://Scenes/Weapons/weapon_sword.tscn" id="6_k4v4y"]
 [ext_resource type="Script" uid="uid://bi15gddmxujcs" path="res://Scripts/SensorNodes/agent_tracking.gd" id="8_gdgxh"]
 [ext_resource type="PackedScene" uid="uid://c8o4373okv5fq" path="res://Scenes/AgentNodes/HungerHolder.tscn" id="10_jghxd"]
-[ext_resource type="PackedScene" uid="uid://c4n5elrxg64hp" path="res://Scenes/AgentNodes/GoldHolder.tscn" id="11_iaeu3"]
+[ext_resource type="Script" path="res://Scripts/MemoryNodes/GoldWallet.gd" id="11_gw"]
+[ext_resource type="Script" path="res://Scripts/MemoryNodes/TaxLedger.gd" id="12_tl"]
+[ext_resource type="Script" path="res://Scripts/SensorNodes/GoldTracker.gd" id="13_gt"]
+[ext_resource type="Script" path="res://Scripts/AgentNodes/GoldGiver.gd" id="14_gg"]
+[ext_resource type="Script" path="res://Scripts/AgentNodes/Advisors/advisor_taxed.gd" id="15_at"]
 [ext_resource type="Script" uid="uid://d1ucmtjtmh4hm" path="res://Scripts/MemoryNodes/minion_tasker.gd" id="12_g0yrv"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape2D_ta2g1"]
@@ -29,7 +33,7 @@ movement = NodePath("Motor/AgentMovement")
 animation = NodePath("Motor/AgentAnimate")
 attack = NodePath("Weapons/WeaponSword")
 detection = NodePath("AgentDetection")
-gold = NodePath("Memory/GoldHolder")
+gold = NodePath("Memory/GoldWallet")
 hunger = NodePath("Memory/HungerHolder")
 foodTasker = NodePath("Memory/FoodTasker")
 current_role = 2
@@ -46,6 +50,15 @@ avoidance_mask = 15
 
 [node name="Brain" type="Node" parent="."]
 script = ExtResource("2_g3dt3")
+
+[node name="AdvisorTaxed" type="Node" parent="Brain"]
+script = ExtResource("15_at")
+
+[node name="Sensors" type="Node" parent="."]
+
+[node name="GoldTracker" type="Node" parent="Sensors" node_paths=PackedStringArray("agent")]
+script = ExtResource("13_gt")
+agent = NodePath("../..")
 
 [node name="AgentDetection" type="Area3D" parent="." node_paths=PackedStringArray("my_agent")]
 collision_layer = 256
@@ -80,13 +93,21 @@ animation = NodePath("../AgentAnimate")
 nav_agent = NodePath("../../NavigationAgent2D")
 metadata/_custom_type_script = "uid://58qm17emnwvd"
 
+[node name="GoldGiver" type="Node" parent="Motor" node_paths=PackedStringArray("agent")]
+script = ExtResource("14_gg")
+agent = NodePath("../..")
+
 [node name="Memory" type="Node" parent="."]
 
 [node name="HungerHolder" parent="Memory" node_paths=PackedStringArray("movement", "food_tasker") instance=ExtResource("10_jghxd")]
 movement = NodePath("../../Motor/AgentMovement")
 food_tasker = NodePath("../FoodTasker")
 
-[node name="GoldHolder" parent="Memory" instance=ExtResource("11_iaeu3")]
+[node name="GoldWallet" type="Node" parent="Memory"]
+script = ExtResource("11_gw")
+
+[node name="TaxLedger" type="Node" parent="Memory"]
+script = ExtResource("12_tl")
 
 [node name="Health" type="Node" parent="Memory"]
 script = ExtResource("5_14jue")

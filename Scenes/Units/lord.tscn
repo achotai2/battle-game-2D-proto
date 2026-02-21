@@ -6,7 +6,11 @@
 [ext_resource type="Script" uid="uid://58qm17emnwvd" path="res://Scripts/AgentNodes/agent_move.gd" id="4_24sip"]
 [ext_resource type="Script" uid="uid://c2guvnr3dtafe" path="res://Scripts/MemoryNodes/health.gd" id="5_4tqx4"]
 [ext_resource type="Script" uid="uid://bi15gddmxujcs" path="res://Scripts/SensorNodes/agent_tracking.gd" id="8_7kbwn"]
-[ext_resource type="PackedScene" uid="uid://c4n5elrxg64hp" path="res://Scenes/AgentNodes/GoldHolder.tscn" id="11_ljm1k"]
+[ext_resource type="Script" path="res://Scripts/MemoryNodes/GoldWallet.gd" id="11_gw"]
+[ext_resource type="Script" path="res://Scripts/MemoryNodes/TaxLedger.gd" id="12_tl"]
+[ext_resource type="Script" path="res://Scripts/SensorNodes/GoldTracker.gd" id="13_gt"]
+[ext_resource type="Script" path="res://Scripts/AgentNodes/GoldGiver.gd" id="14_gg"]
+[ext_resource type="Script" path="res://Scripts/AgentNodes/Advisors/advisor_taxed.gd" id="15_at"]
 [ext_resource type="SpriteFrames" uid="uid://cmw8o5r0psvj8" path="res://Art/SpriteFrames/Soldier_Yellow.tres" id="11_pu4ol"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_ex4gv"]
@@ -24,7 +28,7 @@ health = NodePath("Memory/Health")
 movement = NodePath("Motor/AgentMovement")
 animation = NodePath("Motor/AgentAnimate")
 detection = NodePath("Sensors/AgentDetection")
-gold = NodePath("Memory/GoldHolder")
+gold = NodePath("Memory/GoldWallet")
 current_role = 5
 
 [node name="CollisionShape2D" type="CollisionShape3D" parent="."]
@@ -49,15 +53,26 @@ animation = &"walk"
 [node name="Brain" type="Node" parent="."]
 script = ExtResource("3_ex4gv")
 
+[node name="AdvisorTaxed" type="Node" parent="Brain"]
+script = ExtResource("15_at")
+
 [node name="Memory" type="Node" parent="."]
 
-[node name="GoldHolder" parent="Memory" instance=ExtResource("11_ljm1k")]
+[node name="GoldWallet" type="Node" parent="Memory"]
+script = ExtResource("11_gw")
+
+[node name="TaxLedger" type="Node" parent="Memory"]
+script = ExtResource("12_tl")
 
 [node name="Health" type="Node" parent="Memory"]
 script = ExtResource("5_4tqx4")
 metadata/_custom_type_script = "uid://c2guvnr3dtafe"
 
 [node name="Sensors" type="Node" parent="."]
+
+[node name="GoldTracker" type="Node" parent="Sensors" node_paths=PackedStringArray("agent")]
+script = ExtResource("13_gt")
+agent = NodePath("../..")
 
 [node name="AgentDetection" type="Area3D" parent="Sensors" node_paths=PackedStringArray("my_agent")]
 collision_layer = 256
@@ -83,3 +98,7 @@ agent = NodePath("../..")
 animation = NodePath("../AgentAnimate")
 nav_agent = NodePath("../../NavigationAgent2D")
 metadata/_custom_type_script = "uid://58qm17emnwvd"
+
+[node name="GoldGiver" type="Node" parent="Motor" node_paths=PackedStringArray("agent")]
+script = ExtResource("14_gg")
+agent = NodePath("../..")

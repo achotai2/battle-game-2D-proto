@@ -9,7 +9,7 @@ class_name BuildingBase
 @export var interactable: Interactable
 @export var worksite: WorkSite
 @export var spawnsite: WorkSite
-@export var gold: GoldHolder
+@export var gold: GoldWallet
 #@export var health: Health
 @export var state: BuildingDefs.BuildingState = BuildingDefs.BuildingState.CONSTRUCTING
 

@@ -13,7 +13,7 @@ class_name AgentBase
 @export var detection: AgentTracking = null
 @export var brain: AgentBrain = null
 @export var tasker: MinionTasker = null
-@export var gold: GoldHolder = null
+@export var gold: GoldWallet = null
 @export var hunger: HungerHolder = null
 @export var foodTasker: MinionTasker = null
 @export var castle: Castle = null
@@ -140,12 +140,7 @@ func _assign_food_tasker_refs() -> void:
 func _assign_gold_refs() -> void:
 	if not gold:
 		return
-	
-	if gold.has_method("set_movement") and not is_in_group("Player"):
-		gold.call("set_movement", movement)
-	else:
-		pass
-		# print_debug("No function set_movement in gold.")
+	# GoldWallet is passive.
 
 
 func _assign_health_refs() -> void:
@@ -206,9 +201,18 @@ func apply_role(role: UnitRoles.UnitType, p: int) -> void:
 		attack.queue_free()
 		attack = null
 
-	if brain:
-		brain.queue_free()
-		brain = null
+	# --- Manage Brain (Preserve AdvisorTaxed) ---
+	if not brain:
+		brain = AgentBrain.new()
+		brain.name = "Brain"
+		brain.agent = self
+		add_child(brain)
+
+	# Clear old advisors except persistent ones (like AdvisorTaxed from scene)
+	for child in brain.get_children():
+		if child is AdvisorTaxed and role != UnitRoles.UnitType.PLAYER:
+			continue
+		child.queue_free()
 
 	if tasker:
 		if tasker.has_task():
@@ -232,12 +236,7 @@ func apply_role(role: UnitRoles.UnitType, p: int) -> void:
 			tasker.kind = kind
 		add_child(tasker)
 
-	# --- add new Brain and Advisors ---
-	brain = AgentBrain.new()
-	brain.name = "Brain"
-	brain.agent = self
-	add_child(brain)
-
+	# --- Add Advisors ---
 	if role == UnitRoles.UnitType.PLAYER:
 		var adv = AdvisorPlayer.new()
 		brain.add_child(adv)

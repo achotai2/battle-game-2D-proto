@@ -5,7 +5,7 @@
 [ext_resource type="Script" uid="uid://qumqy1omy72i" path="res://Scripts/BuildingNodes/worksite.gd" id="3_auqgr"]
 [ext_resource type="Script" uid="uid://dqu3s3kqb7wj6" path="res://Scripts/BuildingNodes/spawnsite.gd" id="4_5cnks"]
 [ext_resource type="PackedScene" uid="uid://d1275k0u0fsn" path="res://Scenes/AgentNodes/interactable.tscn" id="5_q2yk0"]
-[ext_resource type="PackedScene" uid="uid://c4n5elrxg64hp" path="res://Scenes/AgentNodes/GoldHolder.tscn" id="6_2yu6c"]
+[ext_resource type="Script" path="res://Scripts/MemoryNodes/GoldWallet.gd" id="6_gw"]
 
 [sub_resource type="CylinderShape3D" id="CylinderShape3D_2yu6c"]
 height = 1.1655273
@@ -18,7 +18,7 @@ visual = NodePath("Sprites/Sprite2D")
 interactable = NodePath("Interactable")
 worksite = NodePath("WorkSite")
 spawnsite = NodePath("SpawnSite")
-gold = NodePath("GoldHolder")
+gold = NodePath("GoldWallet")
 state = 2
 
 [node name="CollisionShape2D" type="CollisionShape3D" parent="."]
@@ -69,7 +69,8 @@ radius = 1.0
 affect_navigation_mesh = true
 carve_navigation_mesh = true
 
-[node name="GoldHolder" parent="." instance=ExtResource("6_2yu6c")]
+[node name="GoldWallet" type="Node" parent="."]
+script = ExtResource("6_gw")
 
 [node name="Sprites" type="Node3D" parent="."]
 
