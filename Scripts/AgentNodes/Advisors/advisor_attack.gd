@@ -47,8 +47,13 @@ func get_intent() -> Intent:
 		return intent
 
 func enact_intent(intent: Intent) -> void:
-	if not agent or not agent.attack: return
+	if not agent or not agent.movement: return
 
-	if intent.type == Intent.Type.ATTACK:
-		if agent.attack.has_method("perform_attack_tick"):
+	if intent.type == Intent.Type.CHASE:
+		agent.movement.command_chase_target(intent.target_node, 10)
+	elif intent.type == Intent.Type.ATTACK:
+		agent.movement.command_start_attack(intent.target_node, 10)
+
+		# Perform attack tick on weapon (usually deals damage)
+		if agent.attack and agent.attack.has_method("perform_attack_tick"):
 			agent.attack.perform_attack_tick(intent.target_node)

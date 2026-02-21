@@ -41,7 +41,14 @@ func enact_intent(intent: Intent) -> void:
 	if intent.type == Intent.Type.IDLE:
 		agent.tasker.request_job()
 
+	elif intent.type == Intent.Type.MOVE:
+		if agent.movement:
+			agent.movement.command_move_to_position(intent.target_position, 5)
+
 	elif intent.type == Intent.Type.WORK:
+		if agent.movement:
+			agent.movement.command_start_work(5)
+
 		var now = Time.get_ticks_msec()
 		var interval_ms = int(agent.tasker.work_interval * 1000)
 		if now - _last_work_time >= interval_ms:

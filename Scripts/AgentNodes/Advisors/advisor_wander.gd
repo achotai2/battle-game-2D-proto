@@ -40,3 +40,9 @@ func _pick_new_target() -> void:
 
 	_current_target = center + Vector3(cos(angle), 0, sin(angle)) * r
 	_has_target = true
+
+func enact_intent(intent: Intent) -> void:
+	if not agent or not agent.movement: return
+
+	if intent.type == Intent.Type.MOVE:
+		agent.movement.command_move_to_position(intent.target_position, 10)

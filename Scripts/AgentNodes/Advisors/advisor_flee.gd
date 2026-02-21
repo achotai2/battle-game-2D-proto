@@ -28,3 +28,9 @@ func get_intent() -> Intent:
 		return intent
 
 	return null
+
+func enact_intent(intent: Intent) -> void:
+	if not agent or not agent.movement: return
+
+	if intent.type == Intent.Type.FLEE:
+		agent.movement.command_move_to_position(intent.target_position, 20)
