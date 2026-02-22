@@ -9,8 +9,8 @@ signal move_to_pos_finished(agent: AgentBase)
 # --- ASSIGNMENTS (STRICT TYPED) ---
 # [OPTIMIZATION] strict typing for direct memory access
 @export var agent: AgentBase = null
-@export var animation: AgentAnimate = null
-@export var nav_agent: NavigationAgent3D
+@onready var animation = %AgentAnimate
+@onready var nav_agent = %NavigationAgent3D
 
 # --- TUNING ---
 @export_range(0.05, 20.0, 0.05) var repath_interval: float = 1.0
@@ -18,15 +18,6 @@ signal move_to_pos_finished(agent: AgentBase)
 @export_range(0.0, 200.0, 1.0) var min_progress_per_sec: float = 0.5
 @export_range(0.0, 200.0, 1.0) var slow_radius: float = 0.0
 @export_range(0.0, 200.0, 0.5) var accel: float = 0.0
-@export var assigned_castle: Castle # Still used for reference if needed, but not for patrol logic
-
-enum OrderType { NONE, MOVE_TO_POS, CHASE_NODE, RAW_VELOCITY, PLAYER_DIRECTION, FROZEN }
-
-# --- STATE ---
-var _order_type: OrderType = OrderType.NONE
-var _order_priority: int = -1
-var _target_pos: Vector3 = Vector3.ZERO
-var _last_target_pos: Vector3 = Vector3.ZERO
 
 # [OPTIMIZATION] Cache the current speed cap to avoid function calls in the loop
 var _current_speed_cap: float = 0.0
@@ -44,12 +35,9 @@ const ANIM_JITTER_THRESHOLD_SQ: float = 4.0
 var _frame_offset: int = 0
 const PATH_UPDATE_INTERVAL: int = 4 
 
-# Temporary command storage
-var _order_target_node: Node3D = null
-var _order_direction: Vector3 = Vector3.ZERO
-
 # Timers
 var _repath_timer: Timer
+
 
 func _ready() -> void:
 	if not nav_agent:

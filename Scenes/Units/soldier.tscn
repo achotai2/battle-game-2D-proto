@@ -1,4 +1,4 @@
-[gd_scene load_steps=14 format=3 uid="uid://sy3ke7fhk1uv"]
+[gd_scene load_steps=18 format=3 uid="uid://sy3ke7fhk1uv"]
 
 [ext_resource type="Script" uid="uid://b3iqpgjb0vtvl" path="res://Scripts/UnitBase/agent_base.gd" id="1_jq3hr"]
 [ext_resource type="Script" uid="uid://db8bramlpehyu" path="res://Scripts/AgentNodes/agent_brain.gd" id="2_g3dt3"]
@@ -9,12 +9,12 @@
 [ext_resource type="PackedScene" uid="uid://6it7l8b8yxs" path="res://Scenes/Weapons/weapon_sword.tscn" id="6_k4v4y"]
 [ext_resource type="Script" uid="uid://bi15gddmxujcs" path="res://Scripts/SensorNodes/agent_tracking.gd" id="8_gdgxh"]
 [ext_resource type="PackedScene" uid="uid://c8o4373okv5fq" path="res://Scenes/AgentNodes/HungerHolder.tscn" id="10_jghxd"]
-[ext_resource type="Script" path="res://Scripts/MemoryNodes/GoldWallet.gd" id="11_gw"]
-[ext_resource type="Script" path="res://Scripts/MemoryNodes/TaxLedger.gd" id="12_tl"]
-[ext_resource type="Script" path="res://Scripts/SensorNodes/GoldTracker.gd" id="13_gt"]
-[ext_resource type="Script" path="res://Scripts/AgentNodes/GoldGiver.gd" id="14_gg"]
-[ext_resource type="Script" path="res://Scripts/AgentNodes/Advisors/advisor_taxed.gd" id="15_at"]
+[ext_resource type="Script" uid="uid://2ssmusd0k3fn" path="res://Scripts/MemoryNodes/GoldWallet.gd" id="11_gw"]
 [ext_resource type="Script" uid="uid://d1ucmtjtmh4hm" path="res://Scripts/MemoryNodes/minion_tasker.gd" id="12_g0yrv"]
+[ext_resource type="Script" uid="uid://dbf3h02qxxxao" path="res://Scripts/MemoryNodes/TaxLedger.gd" id="12_tl"]
+[ext_resource type="Script" uid="uid://c5ixb1wens7mc" path="res://Scripts/SensorNodes/GoldTracker.gd" id="13_gt"]
+[ext_resource type="Script" uid="uid://cf8nbntvvy3iv" path="res://Scripts/AgentNodes/GoldGiver.gd" id="14_gg"]
+[ext_resource type="Script" uid="uid://dgco637g5esju" path="res://Scripts/AgentNodes/Advisors/advisor_taxed.gd" id="15_at"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape2D_ta2g1"]
 radius = 0.42871094
@@ -32,7 +32,7 @@ health = NodePath("Memory/Health")
 movement = NodePath("Motor/AgentMovement")
 animation = NodePath("Motor/AgentAnimate")
 attack = NodePath("Weapons/WeaponSword")
-detection = NodePath("AgentDetection")
+detection = NodePath("Sensors/AgentDetection")
 gold = NodePath("Memory/GoldWallet")
 hunger = NodePath("Memory/HungerHolder")
 foodTasker = NodePath("Memory/FoodTasker")
@@ -60,13 +60,13 @@ script = ExtResource("15_at")
 script = ExtResource("13_gt")
 agent = NodePath("../..")
 
-[node name="AgentDetection" type="Area3D" parent="." node_paths=PackedStringArray("my_agent")]
+[node name="AgentDetection" type="Area3D" parent="Sensors" node_paths=PackedStringArray("my_agent")]
 collision_layer = 256
 collision_mask = 28
 script = ExtResource("8_gdgxh")
-my_agent = NodePath("..")
+my_agent = NodePath("../..")
 
-[node name="CollisionShape2D" type="CollisionShape3D" parent="AgentDetection"]
+[node name="CollisionShape2D" type="CollisionShape3D" parent="Sensors/AgentDetection"]
 shape = SubResource("CircleShape2D_65o65")
 debug_color = Color(0.498544, 0.546397, 0.554583, 0.42)
 

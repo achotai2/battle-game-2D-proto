@@ -1,4 +1,4 @@
-[gd_scene load_steps=13 format=3 uid="uid://ex22mf26lsid"]
+[gd_scene load_steps=16 format=3 uid="uid://ex22mf26lsid"]
 
 [ext_resource type="Script" uid="uid://b3iqpgjb0vtvl" path="res://Scripts/UnitBase/agent_base.gd" id="1_rpqav"]
 [ext_resource type="Script" uid="uid://cjjdaf7vlfs4k" path="res://Scripts/AgentNodes/agent_animate.gd" id="2_gntrk"]
@@ -9,11 +9,11 @@
 [ext_resource type="Script" uid="uid://cfiw0qaxe8jxd" path="res://Scripts/SensorNodes/player_controls.gd" id="6_nn08x"]
 [ext_resource type="Script" uid="uid://c2guvnr3dtafe" path="res://Scripts/MemoryNodes/health.gd" id="7_52ee3"]
 [ext_resource type="PackedScene" uid="uid://6it7l8b8yxs" path="res://Scenes/Weapons/weapon_sword.tscn" id="7_bhhdu"]
-[ext_resource type="Script" path="res://Scripts/MemoryNodes/GoldWallet.gd" id="9_gw"]
-[ext_resource type="Script" path="res://Scripts/MemoryNodes/TaxLedger.gd" id="10_tl"]
-[ext_resource type="Script" path="res://Scripts/SensorNodes/GoldTracker.gd" id="11_gt"]
-[ext_resource type="Script" path="res://Scripts/AgentNodes/GoldGiver.gd" id="12_gg"]
+[ext_resource type="Script" uid="uid://2ssmusd0k3fn" path="res://Scripts/MemoryNodes/GoldWallet.gd" id="9_gw"]
 [ext_resource type="PackedScene" uid="uid://by5ppm4d4bxev" path="res://Scenes/AgentNodes/player_interactor.tscn" id="9_yoq75"]
+[ext_resource type="Script" uid="uid://dbf3h02qxxxao" path="res://Scripts/MemoryNodes/TaxLedger.gd" id="10_tl"]
+[ext_resource type="Script" uid="uid://c5ixb1wens7mc" path="res://Scripts/SensorNodes/GoldTracker.gd" id="11_gt"]
+[ext_resource type="Script" uid="uid://cf8nbntvvy3iv" path="res://Scripts/AgentNodes/GoldGiver.gd" id="12_gg"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_jokor"]
 radius = 0.42871094
@@ -83,6 +83,7 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -1)
 movement = NodePath("../../Motor/AgentMovement")
 
 [node name="PlayerControls" type="Node3D" parent="Sensors" node_paths=PackedStringArray("interactor", "attackNode", "movement")]
+unique_name_in_owner = true
 script = ExtResource("6_nn08x")
 interactor = NodePath("../PlayerInteractor")
 attackNode = NodePath("../../Weapons/WeaponSword")
@@ -97,7 +98,14 @@ sprite = NodePath("../../Sprites/AnimatedSprite3D")
 metadata/_custom_type_script = "uid://cjjdaf7vlfs4k"
 
 [node name="AgentMovement" type="Node" parent="Motor" node_paths=PackedStringArray("agent", "animation")]
+unique_name_in_owner = true
 script = ExtResource("5_5ixxa")
+max_speed = null
+repath_interval = null
+target_repath_distance = null
+min_progress_per_sec = null
+slow_radius = null
+accel = null
 agent = NodePath("../..")
 animation = NodePath("../AgentAnimate")
 metadata/_custom_type_script = "uid://58qm17emnwvd"

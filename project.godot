@@ -119,8 +119,6 @@ avoidance/layer_4="Small Minions"
 
 renderer/rendering_method.mobile="gl_compatibility"
 scaling_3d/mode=1
-scaling_3d/scale=0.5
-environment/volumetric_fog/volume_size=32
 environment/volumetric_fog/use_filter=0
 
 [shader_globals]
