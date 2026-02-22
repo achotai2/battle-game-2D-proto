@@ -67,11 +67,6 @@ func _ready() -> void:
 # --- MAIN LOOP ---
 
 func tick(delta: float) -> void:
-	# [OPTIMIZATION] Sleep Check
-	if (_order_type == OrderType.NONE or _order_type == OrderType.FROZEN) and _current_velocity.is_zero_approx():
-		if animation: _update_visuals()
-		return
-	
 	if _order_type == OrderType.FROZEN:
 		move_with_velocity(Vector3.ZERO, delta)
 		return
