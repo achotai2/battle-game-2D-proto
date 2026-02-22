@@ -9,14 +9,11 @@ class_name WeaponMelee
 @export var affects_opposing: bool = true
 @export var affects_neutral: bool = false
 @export var attack_power: int = 10
-@export var movement: AgentMovement = null
-@export var attack_priority: int = 7
 
 @onready var tracking: AgentTracking = $AgentTracking
 @onready var cooldown: Timer = $cooldown
 @onready var attack_delay: Timer = $AttackDelay
 
-var _owner_agent: Node
 var _attacking: bool = false
 
 
@@ -33,6 +30,8 @@ func _ready() -> void:
 
 	# cooldown.timeout.connect(_try_attack)
 	attack_delay.timeout.connect(_on_attack_delay_timeout)
+	
+	
 
 
 func set_player(owner_agent: AgentBase) -> void:
@@ -83,6 +82,7 @@ func perform_attack_tick(target: AgentBase) -> bool:
 	return true
 
 var _temp_target: AgentBase = null
+
 
 func _on_attack_delay_timeout() -> void:
 	var t := _temp_target

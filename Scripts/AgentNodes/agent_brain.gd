@@ -29,12 +29,9 @@ func _tick() -> void:
 
 	for child in get_children():
 		if child is Advisor:
-			# Ensure advisor has agent reference
-			if child.agent == null:
-				child.agent = agent
-				child.initialize()
-				if not child.intent_changed.is_connected(_tick):
-					child.intent_changed.connect(_tick)
+			child.initialize()
+			if not child.intent_changed.is_connected(_tick):
+				child.intent_changed.connect(_tick)
 
 			var intent = child.get_intent()
 			if intent and (best_intent == null or intent.priority > best_intent.priority):

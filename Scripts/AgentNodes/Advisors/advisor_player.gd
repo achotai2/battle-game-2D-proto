@@ -1,23 +1,26 @@
 extends Advisor
 class_name AdvisorPlayer
 
-@onready var controls = %PlayerControls
-@onready var movement = %AgentMovement
+var controls = null
+var movement = null
 
 
 func _ready() -> void:
-	if not controls.input_changed.is_connected(_on_input_changed):
+	initialize()
+
+
+func initialize() -> void:
+	if not controls:
+		controls = ComponentFinder.get_component(self, "PlayerControls")
+	if not movement:
+		movement = ComponentFinder.get_component(self, "AgentMovement")
+	
+	if controls and not controls.input_changed.is_connected(_on_input_changed):
 		controls.input_changed.connect(_on_input_changed)
 
 
 func get_intent() -> Intent:
-	if not agent.controls: return null
-
-	# Check interaction first!
-	if controls.has_method("is_interaction_active") and controls.is_interaction_active():
-		var intent = Intent.new(100.0, self, Intent.Type.IDLE)
-		intent.description = "Interacting"
-		return intent
+	if not controls: return null
 
 	var dir = controls.get_input_vector()
 
