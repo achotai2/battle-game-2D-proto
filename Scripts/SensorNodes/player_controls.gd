@@ -125,6 +125,9 @@ func _on_interaction_finished(_target: Interactable) -> void:
 
 # --- API FOR ADVISOR ---
 
+func is_interaction_active() -> bool:
+	return _interaction_active
+
 func get_input_vector() -> Vector3:
 	return _last_dir
 

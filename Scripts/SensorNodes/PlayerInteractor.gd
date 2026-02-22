@@ -167,7 +167,9 @@ func _try_start_interaction() -> void:
 
 	_is_interacting = true
 	if freeze_movement and is_instance_valid(movement):
-		movement.command_start_interaction(interact_priority)
+		movement.stop()
+		if owner_node and owner_node.animation:
+			owner_node.animation.play_work()
 
 	_current_target.begin_interact(owner_node)
 	interaction_started.emit(_current_target)
@@ -194,9 +196,6 @@ func _finish_interaction() -> void:
 			_current_target.suspend_interact(owner_node)
 			_interaction_timer.stop()
 			interaction_suspended.emit(_current_target)
-
-	if is_instance_valid(movement):
-		movement.clear_movement_order(interact_priority)
 
 	_refresh_target()
 

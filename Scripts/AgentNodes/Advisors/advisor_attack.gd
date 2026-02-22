@@ -50,9 +50,19 @@ func enact_intent(intent: Intent) -> void:
 	if not agent or not agent.movement: return
 
 	if intent.type == Intent.Type.CHASE:
-		agent.movement.command_chase_target(intent.target_node, 10)
+		if is_instance_valid(intent.target_node):
+			agent.movement.move_to_position(intent.target_node.global_position)
 	elif intent.type == Intent.Type.ATTACK:
-		agent.movement.command_start_attack(intent.target_node, 10)
+		agent.movement.stop()
+
+		if is_instance_valid(intent.target_node):
+			var dir = agent.global_position.direction_to(intent.target_node.global_position)
+			dir.y = 0
+			if not dir.is_zero_approx():
+				agent.look_at(agent.global_position + dir, Vector3.UP)
+
+			if agent.animation:
+				agent.animation.play_attack(intent.target_node)
 
 		# Perform attack tick on weapon (usually deals damage)
 		if agent.attack and agent.attack.has_method("perform_attack_tick"):

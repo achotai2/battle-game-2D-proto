@@ -100,9 +100,6 @@ func _assign_movement_refs() -> void:
 	movement.agent = self
 	movement.animation = animation
 
-	if is_instance_valid(castle):
-		movement.assigned_castle = castle
-
 
 func _assign_controls_refs() -> void:
 	if not controls:
@@ -278,7 +275,7 @@ func apply_role(role: UnitRoles.UnitType, p: int) -> void:
 	# --- movement and animation refresh ---
 	# Cancel transient action states when swapping role
 	if movement:
-		movement.clear_movement_order(9999)
+		movement.stop()
 
 	# If you have flags on animation like `attacking`, clear them too
 	if animation:
@@ -310,9 +307,6 @@ func set_castle(new_castle: Node) -> void:
 	_unregister_myself_with_castle()
 	castle = new_castle
 	_register_myself_with_castle()
-	
-	if movement:
-		movement.assigned_castle = castle
 
 	if tasker:
 		tasker.switch_job_board(castle)

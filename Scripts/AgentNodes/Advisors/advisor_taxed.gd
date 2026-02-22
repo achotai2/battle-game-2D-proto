@@ -57,7 +57,7 @@ func enact_intent(intent: Intent) -> void:
 
 	# Move
 	if agent.movement:
-		agent.movement.command_chase_target(_current_requester, 15)
+		agent.movement.move_to_position(_current_requester.global_position)
 
 	# Check range
 	# Assuming range is close enough for interaction, e.g., 2-3 meters.
