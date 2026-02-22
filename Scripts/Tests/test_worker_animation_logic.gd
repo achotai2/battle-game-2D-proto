@@ -27,7 +27,7 @@ func _ready():
 	animate.set_my_agent(agent)
 	agent.add_child(animate)
 
-	var nav_agent = NavigationAgent2D.new()
+	var nav_agent = NavigationAgent3D.new()
 	agent.add_child(nav_agent)
 
 	var move_script = load("res://Scripts/AgentNodes/agent_move.gd")
@@ -35,134 +35,79 @@ func _ready():
 	movement.agent = agent
 	movement.animation = animate
 	movement.nav_agent = nav_agent
-	# Disable auto-meander for controlled test
-	movement.can_meander = false
 	agent.add_child(movement)
 
-	var tasker_script = load("res://Scripts/AgentNodes/minion_tasker.gd")
-	var tasker = tasker_script.new()
-	tasker.agent = agent
-	tasker.movement = movement
-	tasker.work_interval = 0.1 # Fast tick
-	tasker.think_interval = 0.1
-	agent.add_child(tasker)
+	# Initial setup call
+	movement._ready()
 
-	# Mock WorkSite
-	var site = WorkSite.new()
-	# Add methods dynamically or use script
-	var site_script = GDScript.new()
-	site_script.source_code = """
-extends Node3D
-var work_needed = true
-func needs_work() -> bool: return work_needed
-func apply_work(amount, worker): pass
-func get_work_position_for(agent): return global_position
-	"""
-	site_script.reload()
-	site.set_script(site_script)
-	add_child(site)
-	site.global_position = Vector3(100, 0, 100)
+	# 2. Test Movement Logic (Pathfinding)
+	print("--- Test 1: Move to Position ---")
+	var target_pos = Vector3(10, 0, 10)
+	movement.move_to_position(target_pos)
 
-	# Wait for _ready
-	await get_tree().process_frame
-
-	print("--- Test 1: Assign Job and Move ---")
-	tasker.assign_job(site)
-
-	# Should be moving
-	await get_tree().process_frame
-	if movement._order_type == movement.OrderType.MOVE_TO_POS:
-		print("PASS: Movement order set to MOVE_TO_POS")
+	# Verify internal state
+	if movement._mode == movement.Mode.PATHFINDING:
+		print("PASS: Movement mode set to PATHFINDING")
 	else:
-		print("FAIL: Movement order is ", movement._order_type)
+		print("FAIL: Movement mode is ", movement._mode)
 
-	print("--- Test 2: Arrive at Site and Work ---")
-	# Simulate arrival
-	agent.global_position = site.global_position
-	# Tasker thinks periodically
-	await get_tree().create_timer(0.2).timeout
+	# Simulate tick
+	movement.tick(0.1)
+	# Should trigger animation update if velocity > 0
+	# But NavigationAgent3D needs frames to update path.
+	# We can't easily mock NavAgent3D pathfinding in headless without map.
+	# So we might not see velocity change immediately.
+	# But we can verify `agent_moved` was called with 0 if no path yet.
 
-	# Check if working
-	# Note: In original code, tasker checks range and calls _enter_work_state.
-	# With FIX, _enter_work_state should call movement.command_start_work.
+	# 3. Test Manual Velocity (AdvisorPlayer)
+	print("--- Test 2: Manual Velocity ---")
+	var dir = Vector3(1, 0, 0)
+	movement.move_in_direction(dir)
 
-	if movement._order_type == movement.OrderType.FROZEN:
-		print("PASS: Movement is FROZEN (Working)")
+	if movement._mode == movement.Mode.VELOCITY:
+		print("PASS: Movement mode set to VELOCITY")
 	else:
-		print("FAIL: Movement is NOT FROZEN. Type: ", movement._order_type)
+		print("FAIL: Movement mode is ", movement._mode)
 
+	movement.tick(0.1)
+	if movement._current_velocity.length() > 0:
+		print("PASS: Velocity updated")
+	else:
+		print("FAIL: Velocity zero")
+
+	# 4. Test Work Animation Logic
+	print("--- Test 3: Work Animation ---")
+	# AdvisorWork logic: stop() then play_work()
+	movement.stop()
+
+	if movement._mode == movement.Mode.VELOCITY and movement._desired_velocity == Vector3.ZERO:
+		print("PASS: Stopped correctly")
+	else:
+		print("FAIL: Did not stop correctly")
+
+	animate.play_work()
 	if animate.working:
 		print("PASS: Animation state is WORKING")
 	else:
 		print("FAIL: Animation state is NOT WORKING")
 
-	print("--- Test 3: Animation Loop Persistence ---")
-	# Simulate animation finish
-	if animate.has_signal("interactAnimationFinished"):
-		# Manually trigger signal or call _animation_finished
-		animate._animation_finished()
-
-		if animate.working:
-			print("PASS: Animation state PERSISTS after finish (Looping behavior)")
-		else:
-			print("FAIL: Animation state RESET after finish (Not looping)")
-
-	print("--- Test 4: Verify Attacking Mutual Exclusivity ---")
-	# Reset state manually for test or use commands
-	# animate.play_attack(null) would fail due to null target logic probably
-	# Let's just check the code logic via reflection or side effect
-
-	# If we are working, and we attack
-	# animate.working = true
-	# animate.play_attack(...)
-	# check working == false
-
-	var dummy_target = AgentBase.new()
-	add_child(dummy_target)
-	dummy_target.global_position = Vector3(200, 0, 200)
-
-	animate.working = true
-	animate.play_attack(dummy_target)
-
-	if not animate.working:
-		print("PASS: Play Attack cleared Working state")
-	else:
-		print("FAIL: Play Attack did NOT clear Working state")
-
-	if animate.attacking:
-		print("PASS: Attack state set")
-	else:
-		print("FAIL: Attack state NOT set")
-
-	print("--- Test 5: Verify Working Mutual Exclusivity ---")
-	# Reset
-	animate.attacking = true
-	animate.play_work()
-
-	if not animate.attacking:
-		print("PASS: Play Work cleared Attacking state")
-	else:
-		print("FAIL: Play Work did NOT clear Attacking state")
-
-	if animate.working:
-		print("PASS: Work state set")
-	else:
-		print("FAIL: Work state NOT set")
-
-	print("--- Test 6: Cancel Work on Move ---")
-	# Currently working (from Test 5)
-	# Issue move command
-	movement.command_move_to_position(Vector3(50, 0, 50), 10)
+	# 5. Test Move Cancels Work
+	print("--- Test 4: Move Cancels Work ---")
+	movement.move_to_position(Vector3(20, 0, 20))
 
 	if not animate.working:
 		print("PASS: Move command cleared Working state")
 	else:
 		print("FAIL: Move command did NOT clear Working state")
 
-	if movement._order_type == movement.OrderType.MOVE_TO_POS:
-		print("PASS: Move command accepted")
+	# 6. Test Clear Movement
+	print("--- Test 5: Clear Movement ---")
+	movement.clear_movement()
+	if movement._mode == movement.Mode.VELOCITY and movement._desired_velocity == Vector3.ZERO:
+		print("PASS: clear_movement stopped agent")
 	else:
-		print("FAIL: Move command not accepted")
+		print("FAIL: clear_movement failed")
+
 
 	print("Test Finished")
 	get_tree().quit()

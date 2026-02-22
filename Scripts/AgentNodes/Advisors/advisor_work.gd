@@ -43,11 +43,14 @@ func enact_intent(intent: Intent) -> void:
 
 	elif intent.type == Intent.Type.MOVE:
 		if agent.movement:
-			agent.movement.command_move_to_position(intent.target_position, 5)
+			agent.movement.move_to_position(intent.target_position)
 
 	elif intent.type == Intent.Type.WORK:
 		if agent.movement:
-			agent.movement.command_start_work(5)
+			agent.movement.stop()
+
+		if agent.animation:
+			agent.animation.play_work()
 
 		var now = Time.get_ticks_msec()
 		var interval_ms = int(agent.tasker.work_interval * 1000)

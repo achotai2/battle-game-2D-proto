@@ -114,9 +114,9 @@ func _issue_movement_command(target_node: AgentBase) -> bool:
 		return false
 		
 	# Try to find movement component
-	if is_instance_valid(movement) and movement.has_method("command_chase_target"):
-		if movement.command_chase_target(target_node, _hunger_move_priority):
-			return true
+	if is_instance_valid(movement):
+		movement.move_to_position(target_node.global_position)
+		return true
 	
 	return false
 
@@ -128,7 +128,7 @@ func _finish_action() -> void:
 	_despawn_food()
 	_amount_to_give = 0
 	if is_instance_valid(movement):
-		movement.clear_movement_order(_hunger_move_priority)
+		movement.stop()
 
 
 # Food spawns in givers hand and giver runs towards target.

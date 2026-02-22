@@ -36,5 +36,5 @@ func on_gain_control() -> void:
 func on_lose_control() -> void:
 	# print("Advisor ", name, " lost control.")
 	if agent and agent.movement:
-		# Clear movement orders with high priority to ensure clean slate
-		agent.movement.clear_movement_order(999)
+		# Stop movement when losing control
+		agent.movement.stop()

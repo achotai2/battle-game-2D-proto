@@ -24,11 +24,7 @@ func _ready() -> void:
 	add_child(patrol_anchor)
 
 	# Configure movement speeds
-	if movement:
-		movement.can_meander = true
-		movement.patrol_radius = hop_radius
-		movement.patrol_pause_seconds = wander_interval
-		movement.assigned_castle = patrol_anchor
+	# movement.can_meander no longer supported in simplified AgentMovement
 
 	if despawn_timer:
 		if not despawn_timer.timeout.is_connected(_on_despawn_timer_timeout):
@@ -90,7 +86,7 @@ func _on_despawn_timer_timeout() -> void:
 	is_returning = true
 	if movement:
 		# Stop meandering and move to spawn
-		movement.command_move_to_position(_spawn_position)
+		movement.move_to_position(_spawn_position)
 		
 	_unregister_self()
 

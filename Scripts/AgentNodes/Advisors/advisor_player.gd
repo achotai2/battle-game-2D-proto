@@ -13,6 +13,12 @@ func _ready() -> void:
 func get_intent() -> Intent:
 	if not agent.controls: return null
 
+	# Check interaction first!
+	if controls.has_method("is_interaction_active") and controls.is_interaction_active():
+		var intent = Intent.new(100.0, self, Intent.Type.IDLE)
+		intent.description = "Interacting"
+		return intent
+
 	var dir = controls.get_input_vector()
 
 	# Deadzone control feature, for joysticks.
@@ -34,7 +40,7 @@ func enact_intent(intent: Intent) -> void:
 	if not movement: return
 
 	if intent.type == Intent.Type.PLAYER_MOVE:
-		movement.command_player_direction(intent.direction)
+		movement.move_in_direction(intent.direction)
 		
 	elif intent.type == Intent.Type.IDLE:
-		movement.clear_movement_order()
+		movement.stop()
