@@ -1,8 +1,8 @@
 extends Advisor
 class_name AdvisorPlayer
 
-var controls = null
-var movement = null
+var controls: PlayerControls = null
+var movement: AgentMovement = null
 
 
 func _ready() -> void:
@@ -47,3 +47,9 @@ func enact_intent(intent: Intent) -> void:
 		
 	elif intent.type == Intent.Type.IDLE:
 		movement.stop()
+
+
+func on_lose_control() -> void:
+	if not movement: return
+	
+	movement.stop()

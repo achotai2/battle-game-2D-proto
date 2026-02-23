@@ -75,8 +75,6 @@ func _assign_weapon_refs() -> void:
 	if not attack:
 		return
 
-	attack.set_player(self)
-
 	if movement and attack and attack.has_method("set_movement"):
 		attack.call("set_movement", movement)
 
@@ -104,11 +102,7 @@ func _assign_movement_refs() -> void:
 func _assign_controls_refs() -> void:
 	if not controls:
 		return
-	
-	controls.set_interactor(interactor)
-	controls.set_attackNode(attack)
-	controls.set_movement(movement)
-
+		
 
 func _assign_detection_refs() -> void:
 	if not detection:
@@ -239,16 +233,16 @@ func apply_role(role: UnitRoles.UnitType, p: int) -> void:
 		brain.add_child(adv)
 
 		# Player can also auto-attack if weapon exists
-		if attack:
-			var att = AdvisorAttack.new()
-			brain.add_child(att)
+#		if attack:
+#			var att = AdvisorAttack.new()
+#			brain.add_child(att)
 	else:
 		var wander = AdvisorWander.new()
 		brain.add_child(wander)
 
-		if attack:
-			var att = AdvisorAttack.new()
-			brain.add_child(att)
+#		if attack:
+#			var att = AdvisorAttack.new()
+#			brain.add_child(att)
 
 		if tasker:
 			var wrk = AdvisorWork.new()

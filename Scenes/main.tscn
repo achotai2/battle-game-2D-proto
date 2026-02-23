@@ -1,7 +1,6 @@
-[gd_scene load_steps=25 format=3 uid="uid://denj1nj2jkqg1"]
+[gd_scene load_steps=23 format=3 uid="uid://denj1nj2jkqg1"]
 
 [ext_resource type="PackedScene" uid="uid://ex22mf26lsid" path="res://Scenes/Units/Player.tscn" id="1_jjgbg"]
-[ext_resource type="PackedScene" uid="uid://cwsleixsa262m" path="res://Scenes/Units/lord.tscn" id="2_bo1nx"]
 [ext_resource type="PackedScene" uid="uid://boksm60la2s5a" path="res://Scenes/Buildings/archery_range.tscn" id="3_8gbba"]
 [ext_resource type="Shader" uid="uid://bfepqm6v3y86q" path="res://addons/zylann.hterrain/shaders/shanshui.gdshader" id="3_d1ilt"]
 [ext_resource type="Script" uid="uid://bc80wnl2w5xyh" path="res://addons/zylann.hterrain/hterrain.gd" id="4_21xkr"]
@@ -9,7 +8,6 @@
 [ext_resource type="Script" uid="uid://clrmkdo1xfbjf" path="res://addons/zylann.hterrain/util/terrain_cutout.gd" id="5_kry3j"]
 [ext_resource type="Script" uid="uid://dgursdu3vnv6j" path="res://addons/zylann.hterrain/hterrain_texture_set.gd" id="6_344ge"]
 [ext_resource type="Shader" uid="uid://cdutbk1kfxg4f" path="res://Scripts/Shaders/ink_lines.gdshader" id="6_hptm8"]
-[ext_resource type="PackedScene" uid="uid://mvfvmj8qom4v" path="res://Scenes/Units/worker.tscn" id="7_ynf5e"]
 [ext_resource type="PackedScene" uid="uid://56ng42k13bnj" path="res://Scenes/Buildings/castle.tscn" id="8_344ge"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_7u77a"]
@@ -173,14 +171,6 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.05493164, -0.51586914)
 size = Vector3(35, 35, 35)
 shape = 0
 material = SubResource("FogMaterial_fdnlq")
-
-[node name="Lord" parent="Environment/Units" node_paths=PackedStringArray("castle") instance=ExtResource("2_bo1nx")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.1799, 0.6251384, 1.2508836)
-castle = NodePath("../../Buildings/Castle")
-
-[node name="Worker" parent="Environment/Units" node_paths=PackedStringArray("castle") instance=ExtResource("7_ynf5e")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.7028184, 0.42204976, -2.0324295)
-castle = NodePath("../../Buildings/Castle")
 
 [node name="Buildings" type="Node3D" parent="Environment"]
 

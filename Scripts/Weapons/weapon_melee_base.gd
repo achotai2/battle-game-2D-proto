@@ -15,7 +15,7 @@ class_name WeaponMelee
 @onready var attack_delay: Timer = $AttackDelay
 
 var _attacking: bool = false
-
+var team: TeamMemory = null
 
 func _ready() -> void:
 	# Configure tracking for attackable targets (capability: health)
@@ -31,28 +31,21 @@ func _ready() -> void:
 	# cooldown.timeout.connect(_try_attack)
 	attack_delay.timeout.connect(_on_attack_delay_timeout)
 	
-	
+	# Establish connection to TeamMemory.
+	team = ComponentFinder.get_component(self, "TeamMemory")
+	if team and not team.team_changed.is_connected(_team_changed):
+		team.team_changed.connect(_team_changed)
 
 
-func set_player(owner_agent: AgentBase) -> void:
-	_owner_agent = owner_agent
-	tracking.setup_player(owner_agent.player)
-
-
-func pause_attack(priority: int = 5) -> void:
-	# Legacy: Player controls might call this
-	pass
-
-
-func restart_attack(priority: int = 5) -> void:
-	# Legacy
-	pass
+func _team_changed(new_team: int) -> void:
+	tracking.setup_player(new_team)
 
 
 func _cancel_attack() -> void:
 	cooldown.stop()
 	attack_delay.stop()
 	_attacking = false
+
 
 # --- API FOR ADVISOR ---
 
@@ -61,6 +54,7 @@ func is_target_in_range(target: Node3D) -> bool:
 	# Check if target is in our tracking candidates (implies range/validity)
 	var candidates = tracking.get_candidates()
 	return target in candidates
+
 
 func perform_attack_tick(target: AgentBase) -> bool:
 	if not is_instance_valid(target):
@@ -81,6 +75,7 @@ func perform_attack_tick(target: AgentBase) -> bool:
 	_temp_target = target
 	return true
 
+
 var _temp_target: AgentBase = null
 
 
@@ -96,13 +91,11 @@ func _on_attack_delay_timeout() -> void:
 	var h: Health = t.get("health")
 	if not is_instance_valid(h):
 		return
-	if not _owner_agent or not _owner_agent.has_method("return_player"):
-		return
 
 	var atk := AttackData.new()
 	atk.attack_power = attack_power
-	atk.attacker_player = _owner_agent.return_player()
-	atk.attacker = _owner_agent
+	atk.attacker_player = team.return_team()
+	atk.attacker = ComponentFinder.get_base(self)
 	atk.source = self
 
 	h.apply_hit(atk)
@@ -110,7 +103,3 @@ func _on_attack_delay_timeout() -> void:
 
 func am_i_attacking() -> bool:
 	return _attacking or not cooldown.is_stopped()
-
-# --- COMPATIBILITY ---
-func set_movement(m: AgentMovement) -> void:
-	movement = m

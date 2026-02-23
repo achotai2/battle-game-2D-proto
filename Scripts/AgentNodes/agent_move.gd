@@ -8,8 +8,8 @@ signal move_to_pos_finished(agent: AgentBase)
 
 # --- ASSIGNMENTS (STRICT TYPED) ---
 @export var agent: AgentBase = null
-@onready var animation = %AgentAnimate
-@onready var nav_agent = %NavigationAgent3D
+@export var animation: AgentAnimate = null
+@export var nav_agent: NavigationAgent3D = null
 
 # --- TUNING ---
 @export_range(0.05, 20.0, 0.05) var repath_interval: float = 1.0

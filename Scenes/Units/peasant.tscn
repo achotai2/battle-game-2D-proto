@@ -26,7 +26,6 @@ radius = 500.0
 collision_layer = 2048
 collision_mask = 3
 script = ExtResource("1_wen5c")
-player = null
 health = NodePath("Memory/Health")
 movement = NodePath("Motor/AgentMovement")
 animation = NodePath("Motor/AgentAnimate")
@@ -55,9 +54,8 @@ script = ExtResource("14_at")
 
 [node name="Sensors" type="Node" parent="."]
 
-[node name="GoldTracker" type="Node" parent="Sensors" node_paths=PackedStringArray("agent")]
+[node name="GoldTracker" type="Node" parent="Sensors"]
 script = ExtResource("12_gt")
-agent = NodePath("../..")
 
 [node name="AgentDetection" type="Area3D" parent="Sensors" node_paths=PackedStringArray("my_agent")]
 collision_layer = 256
@@ -84,12 +82,10 @@ script = ExtResource("3_t6mam")
 sprite = NodePath("../../Sprites/AnimatedSprite2D")
 metadata/_custom_type_script = "uid://cjjdaf7vlfs4k"
 
-[node name="AgentMovement" type="Node" parent="Motor" node_paths=PackedStringArray("agent", "animation", "nav_agent")]
+[node name="AgentMovement" type="Node" parent="Motor" node_paths=PackedStringArray("agent")]
 script = ExtResource("4_kqf48")
 max_speed = 200.0
 agent = NodePath("../..")
-animation = NodePath("../AgentAnimate")
-nav_agent = NodePath("../../NavigationAgent2D2")
 metadata/_custom_type_script = "uid://58qm17emnwvd"
 
 [node name="GoldGiver" type="Node" parent="Motor" node_paths=PackedStringArray("agent")]

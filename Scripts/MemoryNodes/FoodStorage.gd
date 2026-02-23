@@ -9,7 +9,7 @@ signal food_changed(current_food: int)
 		food_changed.emit(food)
 
 func add_food(amount: int) -> void:
-	food += amount
+	food += amount 
 
 func consume_food(amount: int) -> void:
 	food -= amount

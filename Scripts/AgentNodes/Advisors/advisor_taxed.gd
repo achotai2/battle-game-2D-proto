@@ -16,18 +16,20 @@ func _ready() -> void:
 	pass
 
 func _find_components() -> bool:
-	if not agent: return false
+#	if not agent: return false
 
-	if not _gold_wallet:
-		_gold_wallet = agent.find_child("GoldWallet", true, false)
-	if not _tax_ledger:
-		_tax_ledger = agent.find_child("TaxLedger", true, false)
-	if not _gold_tracker:
-		_gold_tracker = agent.find_child("GoldTracker", true, false)
-	if not _gold_giver:
-		_gold_giver = agent.find_child("GoldGiver", true, false)
+#	if not _gold_wallet:
+#		_gold_wallet = agent.find_child("GoldWallet", true, false)
+#	if not _tax_ledger:
+#		_tax_ledger = agent.find_child("TaxLedger", true, false)
+#	if not _gold_tracker:
+#		_gold_tracker = agent.find_child("GoldTracker", true, false)
+#	if not _gold_giver:
+#		_gold_giver = agent.find_child("GoldGiver", true, false)
 
-	return _gold_wallet and _tax_ledger and _gold_tracker and _gold_giver
+#	return _gold_wallet and _tax_ledger and _gold_tracker and _gold_giver
+	return true
+
 
 func get_intent() -> Intent:
 	if not _find_components():
@@ -56,8 +58,8 @@ func enact_intent(intent: Intent) -> void:
 		return
 
 	# Move
-	if agent.movement:
-		agent.movement.move_to_position(_current_requester.global_position)
+#	if agent.movement:
+#		agent.movement.move_to_position(_current_requester.global_position)
 
 	# Check range
 	# Assuming range is close enough for interaction, e.g., 2-3 meters.

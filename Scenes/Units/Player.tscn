@@ -75,9 +75,8 @@ metadata/_custom_type_script = "uid://ggpe07y6471c"
 
 [node name="Sensors" type="Node" parent="."]
 
-[node name="GoldTracker" type="Node" parent="Sensors" node_paths=PackedStringArray("agent")]
+[node name="GoldTracker" type="Node" parent="Sensors"]
 script = ExtResource("11_gt")
-agent = NodePath("../..")
 
 [node name="PlayerInteractor" parent="Sensors" node_paths=PackedStringArray("movement") instance=ExtResource("9_yoq75")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -1)
@@ -97,15 +96,10 @@ script = ExtResource("2_gntrk")
 sprite = NodePath("../../Sprites/AnimatedSprite3D")
 metadata/_custom_type_script = "uid://cjjdaf7vlfs4k"
 
-[node name="AgentMovement" type="Node" parent="Motor" node_paths=PackedStringArray("agent")]
+[node name="AgentMovement" type="Node" parent="Motor" node_paths=PackedStringArray("agent", "animation")]
 script = ExtResource("5_5ixxa")
-max_speed = null
 agent = NodePath("../..")
-repath_interval = null
-target_repath_distance = null
-min_progress_per_sec = null
-slow_radius = null
-accel = null
+animation = NodePath("../AgentAnimate")
 metadata/_custom_type_script = "uid://58qm17emnwvd"
 
 [node name="GoldGiver" type="Node" parent="Motor" node_paths=PackedStringArray("agent")]
@@ -115,10 +109,3 @@ agent = NodePath("../..")
 [node name="Weapons" type="Node" parent="."]
 
 [node name="WeaponSword" parent="Weapons" instance=ExtResource("7_bhhdu")]
-damage = null
-heal = null
-affects_own = null
-affects_opposing = null
-affects_neutral = null
-attack_power = null
-attack_priority = null
