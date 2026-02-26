@@ -1,13 +1,14 @@
-[gd_scene load_steps=23 format=3 uid="uid://denj1nj2jkqg1"]
+[gd_scene load_steps=21 format=3 uid="uid://denj1nj2jkqg1"]
 
+[ext_resource type="Script" uid="uid://cnam6bddvgr7k" path="res://Scripts/Weather/EnvironmentController.gd" id="1_hptm8"]
 [ext_resource type="PackedScene" uid="uid://ex22mf26lsid" path="res://Scenes/Units/Player.tscn" id="1_jjgbg"]
+[ext_resource type="Material" uid="uid://weo11c4w8i4k" path="res://Scripts/Shaders/outline_material.tres" id="2_hptm8"]
 [ext_resource type="PackedScene" uid="uid://boksm60la2s5a" path="res://Scenes/Buildings/archery_range.tscn" id="3_8gbba"]
 [ext_resource type="Shader" uid="uid://bfepqm6v3y86q" path="res://addons/zylann.hterrain/shaders/shanshui.gdshader" id="3_d1ilt"]
 [ext_resource type="Script" uid="uid://bc80wnl2w5xyh" path="res://addons/zylann.hterrain/hterrain.gd" id="4_21xkr"]
 [ext_resource type="Resource" uid="uid://ouesmtjrytxl" path="res://TerrainData/data.hterrain" id="5_6bp64"]
 [ext_resource type="Script" uid="uid://clrmkdo1xfbjf" path="res://addons/zylann.hterrain/util/terrain_cutout.gd" id="5_kry3j"]
 [ext_resource type="Script" uid="uid://dgursdu3vnv6j" path="res://addons/zylann.hterrain/hterrain_texture_set.gd" id="6_344ge"]
-[ext_resource type="Shader" uid="uid://cdutbk1kfxg4f" path="res://Scripts/Shaders/ink_lines.gdshader" id="6_hptm8"]
 [ext_resource type="PackedScene" uid="uid://56ng42k13bnj" path="res://Scenes/Buildings/castle.tscn" id="8_344ge"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_7u77a"]
@@ -20,8 +21,7 @@ background_mode = 2
 sky = SubResource("Sky_jjgbg")
 glow_enabled = true
 glow_normalized = true
-glow_intensity = 2.18
-glow_bloom = 0.19
+glow_bloom = 0.3
 volumetric_fog_enabled = true
 volumetric_fog_density = 0.0
 volumetric_fog_anisotropy = 0.63
@@ -49,29 +49,6 @@ frequency = 0.0473
 [sub_resource type="NoiseTexture2D" id="NoiseTexture2D_fdnlq"]
 noise = SubResource("FastNoiseLite_6iyac")
 
-[sub_resource type="FastNoiseLite" id="FastNoiseLite_hptm8"]
-
-[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_d1ilt"]
-noise = SubResource("FastNoiseLite_hptm8")
-seamless = true
-
-[sub_resource type="ShaderMaterial" id="ShaderMaterial_d1ilt"]
-render_priority = 0
-shader = ExtResource("6_hptm8")
-shader_parameter/ink_color = Color(0.1, 0.1, 0.15, 1)
-shader_parameter/outline_threshold = 2.0
-shader_parameter/line_thickness = 1.0
-shader_parameter/max_ink_distance = 300.0
-shader_parameter/distance_fade_strength = 0.6000000285
-shader_parameter/noise_texture = SubResource("NoiseTexture2D_d1ilt")
-shader_parameter/distortion_strength = 0.006000000285
-shader_parameter/noise_scale = 3.0
-shader_parameter/wash_distance_start = 0.0
-shader_parameter/wash_steps = 20
-shader_parameter/wash_stride = 2.0
-shader_parameter/wash_falloff_curve = 2.79700012959762
-shader_parameter/wash_multiplier = 2.5
-
 [sub_resource type="QuadMesh" id="QuadMesh_hptm8"]
 flip_faces = true
 size = Vector2(2, 2)
@@ -81,8 +58,15 @@ density = -8.0
 
 [node name="World" type="Node3D"]
 
-[node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
-transform = Transform3D(0.9500072, 0.24500251, 0.19354628, 0.12941144, -0.87311155, 0.47003052, 0.28414613, -0.42148525, -0.8611684, 0.72905016, 7.3423448, -3.512267)
+[node name="EnvironmentController" type="Node" parent="." node_paths=PackedStringArray("directional_light", "world_environment", "mist_wall")]
+script = ExtResource("1_hptm8")
+directional_light = NodePath("../Sunlight")
+world_environment = NodePath("../WorldEnvironment")
+mist_wall = NodePath("../FogVolume")
+outline_material = ExtResource("2_hptm8")
+
+[node name="Sunlight" type="DirectionalLight3D" parent="."]
+transform = Transform3D(-0.97553456, 0.04908066, 0.21429741, 0, 0.97476107, -0.22325008, -0.2198461, -0.21778816, -0.95091313, 0.72905016, 7.3423448, -3.512267)
 light_color = Color(0.99425465, 0.91304135, 0.7449677, 1)
 light_angular_distance = 19.49
 shadow_enabled = true
@@ -161,7 +145,7 @@ transform = Transform3D(1, 0, 0, 0, 0.93105584, 0.3648768, 0, -0.3648768, 0.9310
 fov = 64.6
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="Environment/Units/Player/Camera3D"]
-material_override = SubResource("ShaderMaterial_d1ilt")
+material_override = ExtResource("2_hptm8")
 extra_cull_margin = 16384.0
 custom_aabb = AABB(10000, 10000, 10000, 0, 0, 0)
 mesh = SubResource("QuadMesh_hptm8")

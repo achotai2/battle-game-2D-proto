@@ -1,0 +1,26 @@
+[gd_resource type="ShaderMaterial" load_steps=4 format=3 uid="uid://weo11c4w8i4k"]
+
+[ext_resource type="Shader" uid="uid://cdutbk1kfxg4f" path="res://Scripts/Shaders/ink_lines.gdshader" id="1_14ubu"]
+
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_hptm8"]
+
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_d1ilt"]
+noise = SubResource("FastNoiseLite_hptm8")
+seamless = true
+
+[resource]
+render_priority = 0
+shader = ExtResource("1_14ubu")
+shader_parameter/ink_color = Color(0.1, 0.1, 0.15, 1)
+shader_parameter/outline_threshold = 2.0
+shader_parameter/line_thickness = 1.0
+shader_parameter/max_ink_distance = 300.0
+shader_parameter/distance_fade_strength = 0.6000000285
+shader_parameter/noise_texture = SubResource("NoiseTexture2D_d1ilt")
+shader_parameter/distortion_strength = 0.006000000285
+shader_parameter/noise_scale = 3.0
+shader_parameter/wash_distance_start = 0.0
+shader_parameter/wash_steps = 20
+shader_parameter/wash_stride = 2.0
+shader_parameter/wash_falloff_curve = 2.79700012959762
+shader_parameter/wash_multiplier = 2.5

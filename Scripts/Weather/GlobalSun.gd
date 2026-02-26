@@ -1,14 +1,13 @@
 extends Node
 
-# Signals for listeners (like the Sunlight node or UI)
-signal sun_updated(ambient_color: Color, shadow_color: Color)
+# Signal now includes sun_energy!
+signal environment_updated(sun_color: Color, fog_color: Color, ink_color: Color, sun_rot_x: float, sun_energy: float)
 signal sunrise
 signal sunset
 
-# --- CONFIGURATION ---
 @export_group("Time Settings")
-@export var day_duration: float = 10.0 # Seconds per day
-@export_range(0.0, 1.0) var time_of_day: float = 0.3 # 0.0=Midnight, 0.5=Noon
+@export var day_duration: float = 30.0 
+@export_range(0.0, 1.0) var time_of_day: float = 0.3 
 @export var pause_time: bool = false
 
 @export_group("Sun Cycle")
@@ -16,33 +15,32 @@ signal sunset
 @export_range(0.0, 1.0) var sunset_time: float = 0.75 
 @export var transition_duration: float = 0.1 
 
-# ANGLE: -90 = Left, 90 = Right
-@export var sunrise_angle: float = -70.0 
-@export var sunset_angle: float = 70.0
+# Sunrise is -180, Noon is -90, Sunset is 0. 
+@export_group("Sun Angles (X Rotation)")
+@export var sun_angle_sunrise: float = -180.0 
+@export var sun_angle_noon: float = -90.0
+@export var sun_angle_sunset: float = 0.0
 
-@export_group("Ambient Colors")
-@export var color_night: Color = Color("#0d1229")
-@export var color_sunrise: Color = Color("#ff9955")
-@export var color_day: Color = Color("#ffffff")
-@export var color_sunset: Color = Color("#ff7755")
+@export_group("Sun Colors")
+@export var sun_night: Color = Color("#0d1229")
+@export var sun_sunrise: Color = Color("#ff9955")
+@export var sun_day: Color = Color("#ffffff")
+@export var sun_sunset: Color = Color("#ff7755")
 
-@export_group("Shadow Colors")
-@export var shadow_color_night: Color = Color("#ffffff")   # Invisible
-@export var shadow_color_sunrise: Color = Color("#6e5885") 
-@export var shadow_color_day: Color = Color("#9c9c9c")     
-@export var shadow_color_sunset: Color = Color("#6e4c4c")  
+@export_group("Fog Colors")
+@export var fog_night: Color = Color("#050814")
+@export var fog_sunrise: Color = Color("#8c5e58")
+@export var fog_day: Color = Color("#d6e3f2")
+@export var fog_sunset: Color = Color("#8c4f4f")
 
-@export_group("Sun Position")
-@export var max_shadow_length: float = 3.0
-@export var min_shadow_length: float = 0.8
-@export var shadow_width: float = 1.0 # <--- ADDED BACK
+@export_group("Ink Colors")
+@export var ink_night: Color = Color("#0a0a0f")
+@export var ink_sunrise: Color = Color("#d4a373") 
+@export var ink_day: Color = Color("#1a1a24")
+@export var ink_sunset: Color = Color("#d4a373") 
 
-# --- PUBLIC VARIABLES (Read these in your Shadow Sprite) ---
-var current_sun_angle: float = 0.0
-var current_shadow_length: float = 1.0
-var current_shadow_color: Color = Color.WHITE
-
-# --- INTERNAL ---
+var current_sun_rot_x: float = 0.0
+var current_sun_energy: float = 1.0
 var _last_phase: int = -1 
 
 
@@ -50,75 +48,73 @@ func _process(delta: float) -> void:
 	if not pause_time:
 		_advance_time(delta)
 		_update_sun_position()
-		_calculate_colors()
+		_calculate_environment()
 
 
 func _advance_time(delta: float) -> void:
 	if day_duration <= 0.0: return
-	var time_speed = 1.0 / day_duration
-	time_of_day += delta * time_speed
-	if time_of_day >= 1.0:
-		time_of_day = 0.0
+	time_of_day += delta * (1.0 / day_duration)
+	if time_of_day >= 1.0: time_of_day = 0.0
 
 
 func _update_sun_position() -> void:
-	if time_of_day < sunrise_time or time_of_day > sunset_time:
-		# NIGHT
-		current_shadow_length = max_shadow_length
-		current_sun_angle = sunrise_angle if time_of_day < sunrise_time else sunset_angle
-	else:
-		# DAY
-		var day_len = sunset_time - sunrise_time
-		var day_progress = (time_of_day - sunrise_time) / day_len
-		
-		# Angle
-		current_sun_angle = lerp(sunrise_angle, sunset_angle, day_progress)
-		
-		# Length (Shortest at noon)
-		var sun_height = sin(day_progress * PI) 
-		current_shadow_length = lerp(max_shadow_length, min_shadow_length, sun_height)
-
-	# Update Global Shaders
-	RenderingServer.global_shader_parameter_set("global_shadow_direction", deg_to_rad(current_sun_angle))
-	RenderingServer.global_shader_parameter_set("global_shadow_length", current_shadow_length)
-	# Also set color here if you use it in shaders
-	RenderingServer.global_shader_parameter_set("global_shadow_color", current_shadow_color)
-
-
-func _calculate_colors() -> void:
-	var target_modulate = color_night
-	var target_shadow = shadow_color_night
+	var day_len = sunset_time - sunrise_time
 	
-	# Determine Phase for Signals
-	var is_day = (time_of_day >= sunrise_time and time_of_day <= sunset_time)
-	if is_day and _last_phase != 1:
-		_last_phase = 1
-		sunrise.emit()
-	elif not is_day and _last_phase != 0:
-		_last_phase = 0
-		sunset.emit()
-
-	# Interpolation Logic
-	if abs(time_of_day - sunrise_time) < transition_duration:
-		var t = inverse_lerp(sunrise_time - transition_duration, sunrise_time + transition_duration, time_of_day)
-		target_modulate = color_night.lerp(color_day, t)
-		target_shadow = shadow_color_night.lerp(shadow_color_day, t)
-	elif abs(time_of_day - sunset_time) < transition_duration:
-		var t = inverse_lerp(sunset_time - transition_duration, sunset_time + transition_duration, time_of_day)
-		target_modulate = color_day.lerp(color_night, t)
-		target_shadow = shadow_color_day.lerp(shadow_color_night, t)
-	elif is_day:
-		target_modulate = color_day
-		target_shadow = shadow_color_day
+	if time_of_day >= sunrise_time and time_of_day <= sunset_time:
+		# --- DAYTIME ARC --- (-180 to 0)
+		var day_progress = (time_of_day - sunrise_time) / day_len
+		if day_progress < 0.5:
+			current_sun_rot_x = lerp(sun_angle_sunrise, sun_angle_noon, day_progress * 2.0)
+		else:
+			current_sun_rot_x = lerp(sun_angle_noon, sun_angle_sunset, (day_progress - 0.5) * 2.0)
 	else:
-		target_modulate = color_night
-		target_shadow = shadow_color_night
+		# --- NIGHTTIME ARC --- (0 to 180) smoothly rotating under the world
+		var night_len = 1.0 - day_len
+		var time_into_night = time_of_day - sunset_time if time_of_day > sunset_time else (1.0 - sunset_time) + time_of_day
+		var night_progress = time_into_night / night_len
+		
+		current_sun_rot_x = lerp(sun_angle_sunset, 180.0, night_progress)
+		if current_sun_rot_x > 180.0: current_sun_rot_x -= 360.0 # Keep angles clean
 
-	current_shadow_color = target_shadow
-	sun_updated.emit(target_modulate, target_shadow)
+
+func _calculate_environment() -> void:
+	var target_energy := 1.0
+	
+	# 1. Sunrise Transition
+	if abs(time_of_day - sunrise_time) <= transition_duration:
+		var t = inverse_lerp(sunrise_time - transition_duration, sunrise_time + transition_duration, time_of_day)
+		target_energy = lerp(0.0, 1.0, t)
+			
+	# 2. Sunset Transition
+	elif abs(time_of_day - sunset_time) <= transition_duration:
+		var t = inverse_lerp(sunset_time - transition_duration, sunset_time + transition_duration, time_of_day)
+		target_energy = lerp(1.0, 0.0, t)
+			
+	# 3. Broad Day vs Broad Night
+	elif time_of_day > sunrise_time + transition_duration and time_of_day < sunset_time - transition_duration:
+		target_energy = 1.0
+	else:
+		target_energy = 0.0
+
+	current_sun_energy = target_energy
+
+	# Get Colors
+	var current_sun_color = _get_blended_color(sun_night, sun_sunrise, sun_day, sun_sunset)
+	var current_fog_color = _get_blended_color(fog_night, fog_sunrise, fog_day, fog_sunset)
+	var current_ink_color = _get_blended_color(ink_night, ink_sunrise, ink_day, ink_sunset)
+
+	# Broadcast everything!
+	environment_updated.emit(current_sun_color, current_fog_color, current_ink_color, current_sun_rot_x, current_sun_energy)
 
 
-func set_time(t: float) -> void:
-	time_of_day = clamp(t, 0.0, 1.0)
-	_update_sun_position()
-	_calculate_colors()
+func _get_blended_color(night_col: Color, sunrise_col: Color, day_col: Color, sunset_col: Color) -> Color:
+	if abs(time_of_day - sunrise_time) <= transition_duration:
+		var t = inverse_lerp(sunrise_time - transition_duration, sunrise_time + transition_duration, time_of_day)
+		return night_col.lerp(sunrise_col, t * 2.0) if t < 0.5 else sunrise_col.lerp(day_col, (t - 0.5) * 2.0)
+	elif abs(time_of_day - sunset_time) <= transition_duration:
+		var t = inverse_lerp(sunset_time - transition_duration, sunset_time + transition_duration, time_of_day)
+		return day_col.lerp(sunset_col, t * 2.0) if t < 0.5 else sunset_col.lerp(night_col, (t - 0.5) * 2.0)
+	elif time_of_day > sunrise_time + transition_duration and time_of_day < sunset_time - transition_duration:
+		return day_col
+	else:
+		return night_col
