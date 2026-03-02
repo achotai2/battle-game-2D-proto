@@ -39,9 +39,9 @@ func _process(_delta: float) -> void:
 
 
 func _update_damage_visual() -> void:
-	if is_instance_valid(sprite) and is_instance_valid(sprite.material):
+	if is_instance_valid(sprite):
 		var percent: float = float(damageTimer.wait_time - damageTimer.time_left) / damageTimer.wait_time
-		sprite.material.set_shader_parameter("progress", percent)
+		sprite.set_instance_shader_parameter("progress", percent)
 #		animation.position = Vector3(randi_range(-1, 1), randi_range(-1, 1))
 
 
@@ -59,8 +59,8 @@ func _animation_finished() -> void:
 	
 
 func _on_timer_timeout() -> void:
-	if is_instance_valid(sprite) and is_instance_valid(sprite.material):
-		sprite.material.set_shader_parameter("progress", 0)
+	if is_instance_valid(sprite):
+		sprite.set_instance_shader_parameter("progress", 0.0)
 #		animation.position = Vector3(0, 0, 0)
 
 
