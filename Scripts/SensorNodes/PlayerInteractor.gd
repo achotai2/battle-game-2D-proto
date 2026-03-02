@@ -5,7 +5,7 @@ signal interaction_started(target: Interactable)
 signal interaction_finished(target: Interactable)
 signal interaction_suspended(target: Interactable)
 
-@export var sensor: AgentTracking
+@export var sensor: InteractTracking
 @export var prompt_scene: PackedScene
 @export var prompt_parent: Node
 @export var interact_action: StringName = &"interact"

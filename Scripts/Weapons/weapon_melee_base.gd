@@ -19,7 +19,6 @@ var team: TeamMemory = null
 
 func _ready() -> void:
 	# Configure tracking for attackable targets (capability: health)
-	tracking.target_kind = AgentTracking.TargetKind.ATTACKABLE
 	tracking.target_same_team = affects_own
 	tracking.target_opposing = affects_opposing
 	tracking.target_neutral = affects_neutral
