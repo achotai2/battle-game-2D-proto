@@ -39,9 +39,9 @@ func _process(_delta: float) -> void:
 
 
 func _update_damage_visual() -> void:
-	if is_instance_valid(sprite):
+	if sprite:
 		var percent: float = float(damageTimer.wait_time - damageTimer.time_left) / damageTimer.wait_time
-		sprite.set_instance_shader_parameter("progress", percent)
+		sprite.set_instance_shader_parameter(&"progress", percent)
 #		animation.position = Vector3(randi_range(-1, 1), randi_range(-1, 1))
 
 
@@ -52,15 +52,15 @@ func _animation_finished() -> void:
 	if working:
 		interactAnimationFinished.emit()
 
-	if is_instance_valid(sprite):
+	if sprite:
 		attacking = false
 		# working = false # Removed to allow looping work animation
 		_update_idle_walk_anim()
 	
 
 func _on_timer_timeout() -> void:
-	if is_instance_valid(sprite):
-		sprite.set_instance_shader_parameter("progress", 0.0)
+	if sprite:
+		sprite.set_instance_shader_parameter(&"progress", 0.0)
 #		animation.position = Vector3(0, 0, 0)
 
 
@@ -83,7 +83,7 @@ func set_my_agent(ag: AgentBase) -> void:
 
 func agent_moved(velocity: Vector3) -> void:
 # Called by Agent when movement occurs, to run animation.
-	if not is_instance_valid(sprite):
+	if not sprite:
 		return 
 
 	if not attacking and not working:
@@ -109,7 +109,7 @@ func _show_heal() -> void:
 
 
 func play_attack(target: Node3D) -> bool:
-	if not is_instance_valid(sprite) or sprite.sprite_frames == null:
+	if not sprite or sprite.sprite_frames == null:
 		return false
 
 	attacking = true
@@ -141,7 +141,7 @@ func play_attack(target: Node3D) -> bool:
 
 
 func set_sprite_frames(frames: SpriteFrames) -> void:
-	if not is_instance_valid(sprite):
+	if not sprite:
 		push_warning("AgentAnimate.set_sprite_frames(): sprite not bound")
 		return
 
@@ -167,7 +167,7 @@ func set_sprite_frames(frames: SpriteFrames) -> void:
 
 func _update_move_anim_cache() -> void:
 	_move_anim = &""
-	if not is_instance_valid(sprite) or sprite.sprite_frames == null:
+	if not sprite or sprite.sprite_frames == null:
 		return
 
 	if sprite.sprite_frames.has_animation("walk"):
@@ -181,13 +181,13 @@ func cancel_action_state() -> void:
 	attacking = false
 	working = false
 	# optionally stop attack anim
-	if is_instance_valid(sprite):
+	if sprite:
 			sprite.stop()
 
 
 func play_work() -> bool:
 	# Called by tactical worker / interaction when work is performed.
-	if not is_instance_valid(sprite) or sprite.sprite_frames == null:
+	if not sprite or sprite.sprite_frames == null:
 		return false
 
 	var frames := sprite.sprite_frames
