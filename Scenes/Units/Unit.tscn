@@ -36,7 +36,7 @@ shape = SubResource("CapsuleShape3D_jokor")
 radius = 1.0
 avoidance_layers = 4
 
-[node name="NavigationAgent2D" type="NavigationAgent3D" parent="."]
+[node name="NavigationAgent3D" type="NavigationAgent3D" parent="."]
 avoidance_enabled = true
 radius = 50.0
 avoidance_layers = 8
@@ -101,11 +101,10 @@ script = ExtResource("12_tb705")
 sprite = NodePath("../../Sprites/AnimatedSprite3D")
 metadata/_custom_type_script = "uid://cjjdaf7vlfs4k"
 
-[node name="AgentMovement" type="Node" parent="Motor" node_paths=PackedStringArray("agent", "animation", "nav_agent")]
+[node name="AgentMovement" type="Node" parent="Motor" node_paths=PackedStringArray("agent", "animation")]
 script = ExtResource("13_4enfk")
 agent = NodePath("../..")
 animation = NodePath("../AgentAnimate")
-nav_agent = NodePath("../../NavigationAgent2D")
 metadata/_custom_type_script = "uid://58qm17emnwvd"
 
 [node name="GoldGiver" type="Node" parent="Motor" node_paths=PackedStringArray("agent")]

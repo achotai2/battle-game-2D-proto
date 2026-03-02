@@ -12,6 +12,7 @@ class_name AgentBase
 @onready var motor: Node = $Motor
 @onready var memory: Node = $Memory
 @onready var weapons: Node = $Weapons
+@onready var nav_agent: NavigationAgent3D = $NavigationAgent3D
 
 
 # Called when the node enters the scene tree for the first time.
@@ -77,6 +78,7 @@ func apply_role(role: UnitRoles.UnitType, new_team: int) -> void:
 	# Tell the brain to introduce itself to the new advisors!
 	if brain and brain.has_method("refresh_advisors"):
 		brain.refresh_advisors()
+
 
 	# --- 2. TEAM & PHYSICS ---
 	# Set the new player number (assuming 'team' is an @onready or fetched component)

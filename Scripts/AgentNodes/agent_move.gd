@@ -35,18 +35,32 @@ var _frame_offset: int = 0
 const PATH_UPDATE_INTERVAL: int = 4 
 
 func _ready() -> void:
-	if not nav_agent:
-		set_physics_process(false)
-		return
+	# 1. Automatically find the AgentBase (The Factory doesn't set Inspector variables!)
+	if not agent:
+		var current = get_parent()
+		while current != null and not current is AgentBase:
+			current = current.get_parent()
+		agent = current as AgentBase
+		
+	# 2. Automatically find the Animation component
+	if not animation and agent:
+		animation = agent.find_child("AgentAnimate", true, false)
 
-	_frame_offset = randi() % PATH_UPDATE_INTERVAL
+	# 3. Handle Navigation Setup safely (Without aborting if it's missing)
+	if nav_agent:
+		_frame_offset = randi() % PATH_UPDATE_INTERVAL
+		nav_agent.avoidance_enabled = false
+		nav_agent.target_desired_distance = 1.0
+		nav_agent.velocity_computed.connect(_on_velocity_computed)
+		nav_agent.navigation_finished.connect(_on_nav_finished)
+	else:
+		# If we don't have a nav agent, just disable physics process, 
+		# but DON'T return, so the rest of the setup finishes!
+		set_physics_process(false)
 	
-	nav_agent.avoidance_enabled = false
-	nav_agent.target_desired_distance = 1.0
-	nav_agent.velocity_computed.connect(_on_velocity_computed)
-	nav_agent.navigation_finished.connect(_on_nav_finished)
-	
-	if agent: _last_stuck_pos = agent.global_position
+	if agent: 
+		_last_stuck_pos = agent.global_position
+
 
 func tick(delta: float) -> void:
 	if _mode == Mode.VELOCITY:
@@ -155,4 +169,8 @@ func clear_movement() -> void:
 # --- COMPATIBILITY ---
 func set_animation(anim: AgentAnimate) -> void: animation = anim
 func set_my_agent(owner_agent: AgentBase) -> void: agent = owner_agent
-func is_navigation_finished() -> bool: return nav_agent.is_navigation_finished()
+
+func is_navigation_finished() -> bool: 
+	if nav_agent:
+		return nav_agent.is_navigation_finished()
+	return true # If we have no nav agent, we are always "finished"
