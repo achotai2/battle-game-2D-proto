@@ -1,7 +1,7 @@
 [gd_scene load_steps=18 format=3 uid="uid://dunt5nfaabbqv"]
 
 [ext_resource type="Script" uid="uid://b3iqpgjb0vtvl" path="res://Scripts/UnitBase/agent_base.gd" id="1_w7084"]
-[ext_resource type="PackedScene" uid="uid://tj48hg7yffl8" path="res://Scenes/AgentNodes/navigation_agent_3d.tscn" id="2_baijc"]
+[ext_resource type="PackedScene" uid="uid://tj48hg7yffl8" path="res://Scenes/AgentNodes/MinionNavAgent.tscn" id="2_baijc"]
 [ext_resource type="SpriteFrames" uid="uid://cvmbb1xtbmxsv" path="res://Art/SpriteFrames/Player.tres" id="2_emoxc"]
 [ext_resource type="Script" uid="uid://db8bramlpehyu" path="res://Scripts/AgentNodes/agent_brain.gd" id="3_baijc"]
 [ext_resource type="Script" uid="uid://3hsle2qb2hgj" path="res://Scripts/AgentNodes/Advisors/a_player_movement.gd" id="4_u301h"]
@@ -37,8 +37,6 @@ shape = SubResource("CapsuleShape3D_jokor")
 radius = 1.0
 avoidance_layers = 4
 
-[node name="NavigationAgent3D" parent="." instance=ExtResource("2_baijc")]
-
 [node name="Sprites" type="Node3D" parent="."]
 
 [node name="AnimatedSprite3D" type="AnimatedSprite3D" parent="Sprites" groups=["sprites"]]
@@ -49,7 +47,7 @@ alpha_cut = 1
 sprite_frames = ExtResource("2_emoxc")
 animation = &"walk"
 
-[node name="Brain" type="Node" parent="." node_paths=PackedStringArray("agent")]
+[node name="Brain" type="Node3D" parent="." node_paths=PackedStringArray("agent")]
 script = ExtResource("3_baijc")
 agent = NodePath("..")
 
@@ -60,7 +58,7 @@ script = ExtResource("4_u301h")
 script = ExtResource("5_c2nhe")
 metadata/_custom_type_script = "uid://bumqf57fkupi2"
 
-[node name="Memory" type="Node" parent="."]
+[node name="Memory" type="Node3D" parent="."]
 
 [node name="GoldWallet" type="Node" parent="Memory"]
 script = ExtResource("6_jb8h3")
@@ -76,7 +74,7 @@ metadata/_custom_type_script = "uid://c2guvnr3dtafe"
 script = ExtResource("8_lx4m0")
 metadata/_custom_type_script = "uid://ggpe07y6471c"
 
-[node name="Sensors" type="Node" parent="."]
+[node name="Sensors" type="Node3D" parent="."]
 
 [node name="GoldTracker" type="Node" parent="Sensors"]
 script = ExtResource("9_gq1ut")
@@ -91,7 +89,7 @@ attackNode = NodePath("../../Weapons/WeaponSword")
 movement = NodePath("../../Motor/AgentMovement")
 metadata/_custom_type_script = "uid://cfiw0qaxe8jxd"
 
-[node name="Motor" type="Node" parent="."]
+[node name="Motor" type="Node3D" parent="."]
 
 [node name="AgentAnimate" type="Node" parent="Motor" node_paths=PackedStringArray("sprite")]
 script = ExtResource("12_tb705")
@@ -108,6 +106,8 @@ metadata/_custom_type_script = "uid://58qm17emnwvd"
 script = ExtResource("14_f3n8y")
 agent = NodePath("../..")
 
-[node name="Weapons" type="Node" parent="."]
+[node name="NavigationAgent3D" parent="Motor" instance=ExtResource("2_baijc")]
+
+[node name="Weapons" type="Node3D" parent="."]
 
 [node name="WeaponSword" parent="Weapons" instance=ExtResource("15_spwf0")]

@@ -92,6 +92,11 @@ var role_blueprints: Dictionary = {
 		"weapons": [preload("res://Scenes/Weapons/weapon_sword.tscn")],
 	},
 	UnitType.SOLDIER: {
+		"advisors": [],
+		"memory": [preload("res://Scripts/MemoryNodes/GoldWallet.gd"), preload("res://Scripts/MemoryNodes/health.gd"), preload("res://Scripts/MemoryNodes/TeamMemory.gd")],
+		"sensors": [preload("res://Scripts/SensorNodes/GoldTracker.gd")],
+		"motor": [preload("res://Scripts/AgentNodes/agent_animate.gd"), preload("res://Scripts/AgentNodes/agent_move.gd"), preload("res://Scripts/AgentNodes/GoldGiver.gd"), preload("res://Scenes/AgentNodes/MinionNavAgent.tscn")],
+		"weapons": [preload("res://Scenes/Weapons/weapon_sword.tscn")],
 	}
 }
 

@@ -40,8 +40,12 @@ func _ready() -> void:
 		agent = ComponentFinder.get_base(self)
 		
 	# 2. Automatically find the Animation component
-	if not animation and agent:
+	if not animation:
 		animation = ComponentFinder.get_component(self, "AgentAnimate")
+
+	# 3. Look for the dynamically generated Nav Agent!
+	if not nav_agent:
+		nav_agent = ComponentFinder.get_component(self, "NavigationAgent3D")
 
 	# 3. Handle Navigation Setup safely (Without aborting if it's missing)
 	if nav_agent:
