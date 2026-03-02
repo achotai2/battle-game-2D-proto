@@ -69,7 +69,7 @@ debug_color = Color(0.498544, 0.546397, 0.554583, 0.42)
 
 [node name="Sprites" type="Node3D" parent="."]
 
-[node name="AnimatedSprite2D" type="AnimatedSprite3D" parent="Sprites"]
+[node name="AnimatedSprite2D" type="AnimatedSprite3D" parent="Sprites" groups=["sprites"]]
 billboard = 2
 alpha_cut = 1
 sprite_frames = ExtResource("2_7mdye")

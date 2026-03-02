@@ -41,6 +41,7 @@ Attackable=""
 Interactable=""
 Peasants=""
 Lord=""
+sprites=""
 
 [input]
 
@@ -118,6 +119,8 @@ avoidance/layer_4="Small Minions"
 [rendering]
 
 renderer/rendering_method.mobile="gl_compatibility"
+lights_and_shadows/directional_shadow/soft_shadow_filter_quality=4
+lights_and_shadows/positional_shadow/soft_shadow_filter_quality=4
 scaling_3d/mode=1
 environment/volumetric_fog/use_filter=0
 

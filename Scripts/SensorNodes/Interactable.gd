@@ -9,7 +9,6 @@ signal interaction_suspended(interactor: AgentBase)
 @export var one_shot: bool = false
 @export var requires_same_team: bool = false
 @export var allows_neutral: bool = true
-@export var my_priority: int = 0
 @export var icon_type: BuildingDefs.IconType = BuildingDefs.IconType.CONSTRUCT
 @export var prompt_anchor: Node3D
 
@@ -20,7 +19,6 @@ var _interaction_cost: int = 0
 
 func _ready() -> void:
 	pass
-#	_setup_icon_dict()
 
 
 func can_interact(interactor: AgentBase) -> bool:
@@ -28,15 +26,6 @@ func can_interact(interactor: AgentBase) -> bool:
 		return false
 	if _active_interactor != null and _active_interactor != interactor:
 		return false
-
-	var interactor_team := _get_team_id(interactor)
-	if not allows_neutral and interactor_team == 0:
-		return false
-
-	if requires_same_team:
-		var owner_team := _get_team_id(get_parent())
-		if interactor_team != owner_team:
-			return false
 
 	return true
 

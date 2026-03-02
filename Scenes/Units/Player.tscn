@@ -1,11 +1,12 @@
-[gd_scene load_steps=16 format=3 uid="uid://ex22mf26lsid"]
+[gd_scene load_steps=17 format=3 uid="uid://ex22mf26lsid"]
 
 [ext_resource type="Script" uid="uid://b3iqpgjb0vtvl" path="res://Scripts/UnitBase/agent_base.gd" id="1_rpqav"]
 [ext_resource type="Script" uid="uid://cjjdaf7vlfs4k" path="res://Scripts/AgentNodes/agent_animate.gd" id="2_gntrk"]
 [ext_resource type="SpriteFrames" uid="uid://cvmbb1xtbmxsv" path="res://Art/SpriteFrames/Player.tres" id="3_bhhdu"]
 [ext_resource type="Script" uid="uid://db8bramlpehyu" path="res://Scripts/AgentNodes/agent_brain.gd" id="3_u2egk"]
-[ext_resource type="Script" uid="uid://3hsle2qb2hgj" path="res://Scripts/AgentNodes/Advisors/advisor_player.gd" id="4_ehya8"]
+[ext_resource type="Script" uid="uid://3hsle2qb2hgj" path="res://Scripts/AgentNodes/Advisors/advisor_player_movement.gd" id="4_ehya8"]
 [ext_resource type="Script" uid="uid://58qm17emnwvd" path="res://Scripts/AgentNodes/agent_move.gd" id="5_5ixxa"]
+[ext_resource type="Script" uid="uid://bumqf57fkupi2" path="res://Scripts/AgentNodes/Advisors/advisor_player_interact.gd" id="5_ideyk"]
 [ext_resource type="Script" uid="uid://cfiw0qaxe8jxd" path="res://Scripts/SensorNodes/player_controls.gd" id="6_nn08x"]
 [ext_resource type="Script" uid="uid://c2guvnr3dtafe" path="res://Scripts/MemoryNodes/health.gd" id="7_52ee3"]
 [ext_resource type="PackedScene" uid="uid://6it7l8b8yxs" path="res://Scenes/Weapons/weapon_sword.tscn" id="7_bhhdu"]
@@ -42,7 +43,7 @@ avoidance_layers = 4
 
 [node name="Sprites" type="Node3D" parent="."]
 
-[node name="AnimatedSprite3D" type="AnimatedSprite3D" parent="Sprites"]
+[node name="AnimatedSprite3D" type="AnimatedSprite3D" parent="Sprites" groups=["sprites"]]
 transform = Transform3D(3, 0, 0, 0, 3, 0, 0, 0, 3, 0, 0, 0)
 offset = Vector2(0, 10)
 billboard = 2
@@ -54,8 +55,12 @@ animation = &"walk"
 script = ExtResource("3_u2egk")
 agent = NodePath("..")
 
-[node name="AdvisorPlayer" type="Node" parent="Brain"]
+[node name="AdvisorPlayerMovement" type="Node" parent="Brain"]
 script = ExtResource("4_ehya8")
+
+[node name="AdvisorPlayerInteract" type="Node" parent="Brain"]
+script = ExtResource("5_ideyk")
+metadata/_custom_type_script = "uid://bumqf57fkupi2"
 
 [node name="Memory" type="Node" parent="."]
 
@@ -78,9 +83,8 @@ metadata/_custom_type_script = "uid://ggpe07y6471c"
 [node name="GoldTracker" type="Node" parent="Sensors"]
 script = ExtResource("11_gt")
 
-[node name="PlayerInteractor" parent="Sensors" node_paths=PackedStringArray("movement") instance=ExtResource("9_yoq75")]
+[node name="PlayerInteractor" parent="Sensors" instance=ExtResource("9_yoq75")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -1)
-movement = NodePath("../../Motor/AgentMovement")
 
 [node name="PlayerControls" type="Node3D" parent="Sensors" node_paths=PackedStringArray("interactor", "attackNode", "movement")]
 script = ExtResource("6_nn08x")

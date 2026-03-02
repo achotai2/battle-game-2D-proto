@@ -1,4 +1,4 @@
-[gd_scene load_steps=13 format=3 uid="uid://mvfvmj8qom4v"]
+[gd_scene load_steps=17 format=3 uid="uid://mvfvmj8qom4v"]
 
 [ext_resource type="Script" uid="uid://b3iqpgjb0vtvl" path="res://Scripts/UnitBase/agent_base.gd" id="1_r0ip0"]
 [ext_resource type="Script" uid="uid://db8bramlpehyu" path="res://Scripts/AgentNodes/agent_brain.gd" id="2_n8oia"]
@@ -8,12 +8,12 @@
 [ext_resource type="Script" uid="uid://c2guvnr3dtafe" path="res://Scripts/MemoryNodes/health.gd" id="5_ddptx"]
 [ext_resource type="Script" uid="uid://bi15gddmxujcs" path="res://Scripts/SensorNodes/agent_tracking.gd" id="8_kdem7"]
 [ext_resource type="Script" uid="uid://d1ucmtjtmh4hm" path="res://Scripts/MemoryNodes/minion_tasker.gd" id="9_r0ip0"]
-[ext_resource type="Script" path="res://Scripts/MemoryNodes/GoldWallet.gd" id="10_gw"]
-[ext_resource type="Script" path="res://Scripts/MemoryNodes/TaxLedger.gd" id="11_tl"]
-[ext_resource type="Script" path="res://Scripts/SensorNodes/GoldTracker.gd" id="12_gt"]
-[ext_resource type="Script" path="res://Scripts/AgentNodes/GoldGiver.gd" id="13_gg"]
-[ext_resource type="Script" path="res://Scripts/AgentNodes/Advisors/advisor_taxed.gd" id="14_at"]
+[ext_resource type="Script" uid="uid://2ssmusd0k3fn" path="res://Scripts/MemoryNodes/GoldWallet.gd" id="10_gw"]
 [ext_resource type="PackedScene" uid="uid://c8o4373okv5fq" path="res://Scenes/AgentNodes/HungerHolder.tscn" id="10_r0j7o"]
+[ext_resource type="Script" uid="uid://dbf3h02qxxxao" path="res://Scripts/MemoryNodes/TaxLedger.gd" id="11_tl"]
+[ext_resource type="Script" uid="uid://c5ixb1wens7mc" path="res://Scripts/SensorNodes/GoldTracker.gd" id="12_gt"]
+[ext_resource type="Script" uid="uid://cf8nbntvvy3iv" path="res://Scripts/AgentNodes/GoldGiver.gd" id="13_gg"]
+[ext_resource type="Script" uid="uid://dgco637g5esju" path="res://Scripts/AgentNodes/Advisors/advisor_taxed.gd" id="14_at"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_n8oia"]
 radius = 0.42871094
@@ -55,7 +55,7 @@ script = ExtResource("14_at")
 
 [node name="Sprites" type="Node3D" parent="."]
 
-[node name="AnimatedSprite2D" type="AnimatedSprite3D" parent="Sprites"]
+[node name="AnimatedSprite2D" type="AnimatedSprite3D" parent="Sprites" groups=["sprites"]]
 billboard = 2
 alpha_cut = 1
 sprite_frames = ExtResource("2_r0ip0")
@@ -113,9 +113,8 @@ agent = NodePath("../..")
 
 [node name="Sensors" type="Node" parent="."]
 
-[node name="GoldTracker" type="Node" parent="Sensors" node_paths=PackedStringArray("agent")]
+[node name="GoldTracker" type="Node" parent="Sensors"]
 script = ExtResource("12_gt")
-agent = NodePath("../..")
 
 [node name="AgentDetection" type="Area3D" parent="Sensors" node_paths=PackedStringArray("my_agent")]
 collision_layer = 256

@@ -24,10 +24,6 @@ func _ready() -> void:
 	tracking.target_opposing = affects_opposing
 	tracking.target_neutral = affects_neutral
 
-	# tracking signals are no longer needed for autonomous logic
-	# tracking.target_changed.connect(_on_target_changed)
-	# tracking.target_lost.connect(_on_target_lost)
-
 	# cooldown.timeout.connect(_try_attack)
 	attack_delay.timeout.connect(_on_attack_delay_timeout)
 	

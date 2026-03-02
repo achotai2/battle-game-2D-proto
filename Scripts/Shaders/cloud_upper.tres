@@ -1,0 +1,22 @@
+[gd_resource type="ShaderMaterial" load_steps=4 format=3 uid="uid://dm5on8elqd7ro"]
+
+[ext_resource type="Shader" uid="uid://dedicg332xemd" path="res://Scripts/Shaders/cloud_shader.gdshader" id="1_60bjn"]
+
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_d1ilt"]
+noise_type = 3
+frequency = 0.0226
+
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_6iyac"]
+noise = SubResource("FastNoiseLite_d1ilt")
+seamless = true
+
+[resource]
+render_priority = 0
+shader = ExtResource("1_60bjn")
+shader_parameter/cloud_noise = SubResource("NoiseTexture2D_6iyac")
+shader_parameter/scroll_speed = Vector2(0.01, 0.005)
+shader_parameter/edge_color = Color(0.67745364, 0.7071447, 0.8384738, 1)
+shader_parameter/core_color = Color(0.20606017, 0.1981427, 0.30186966, 1)
+shader_parameter/cloud_coverage = 0.56800002698
+shader_parameter/edge_thickness = 0.25800001155648
+shader_parameter/proximity_fade_distance = 15.0

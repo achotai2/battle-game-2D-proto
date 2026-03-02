@@ -1,7 +1,7 @@
 extends Advisor
 class_name AdvisorTaxed
 
-var _gold_tracker: GoldTracker = null
+var _gold_tracker: Tracker = null
 var _gold_wallet: GoldWallet = null
 var _tax_ledger: TaxLedger = null
 var _gold_giver: GoldGiver = null
@@ -9,11 +9,13 @@ var _gold_giver: GoldGiver = null
 # Cached request we are currently fulfilling
 var _current_requester: Node = null
 
+
 func _ready() -> void:
 	# Components should be children of agent, but might be under Memory/Sensors/Brain/Motors
 	# We can't guarantee they are ready here if they are siblings.
 	# Better to find them on demand or in first get_intent.
 	pass
+
 
 func _find_components() -> bool:
 #	if not agent: return false

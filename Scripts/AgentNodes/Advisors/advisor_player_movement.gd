@@ -1,5 +1,5 @@
 extends Advisor
-class_name AdvisorPlayer
+class_name AdvisorPlayerMovement
 
 var controls: PlayerControls = null
 var movement: AgentMovement = null
@@ -26,7 +26,7 @@ func get_intent() -> Intent:
 
 	# Deadzone control feature, for joysticks.
 	if dir.length_squared() > 0.01:
-		var intent = Intent.new(100.0, self, Intent.Type.PLAYER_MOVE)
+		var intent = Intent.new(99.0, self, Intent.Type.PLAYER_MOVE)
 		intent.direction = dir
 		intent.description = "Player Input Move"
 		return intent

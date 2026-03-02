@@ -1,5 +1,5 @@
 extends Node
-class_name GoldTracker
+class_name Tracker
 
 
 func get_distance_squared_to(target: Node3D) -> float:

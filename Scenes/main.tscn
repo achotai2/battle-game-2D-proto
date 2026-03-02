@@ -1,15 +1,51 @@
-[gd_scene load_steps=21 format=3 uid="uid://denj1nj2jkqg1"]
+[gd_scene load_steps=32 format=3 uid="uid://denj1nj2jkqg1"]
 
 [ext_resource type="Script" uid="uid://cnam6bddvgr7k" path="res://Scripts/Weather/EnvironmentController.gd" id="1_hptm8"]
 [ext_resource type="PackedScene" uid="uid://ex22mf26lsid" path="res://Scenes/Units/Player.tscn" id="1_jjgbg"]
 [ext_resource type="Material" uid="uid://weo11c4w8i4k" path="res://Scripts/Shaders/outline_material.tres" id="2_hptm8"]
+[ext_resource type="Material" uid="uid://b8pgp4dj7u4sf" path="res://Scripts/Shaders/cloud.tres" id="3_6iyac"]
 [ext_resource type="PackedScene" uid="uid://boksm60la2s5a" path="res://Scenes/Buildings/archery_range.tscn" id="3_8gbba"]
 [ext_resource type="Shader" uid="uid://bfepqm6v3y86q" path="res://addons/zylann.hterrain/shaders/shanshui.gdshader" id="3_d1ilt"]
+[ext_resource type="Material" uid="uid://dm5on8elqd7ro" path="res://Scripts/Shaders/cloud_upper.tres" id="3_fdnlq"]
 [ext_resource type="Script" uid="uid://bc80wnl2w5xyh" path="res://addons/zylann.hterrain/hterrain.gd" id="4_21xkr"]
 [ext_resource type="Resource" uid="uid://ouesmtjrytxl" path="res://TerrainData/data.hterrain" id="5_6bp64"]
+[ext_resource type="Texture2D" uid="uid://d3woj2g0r8ie" path="res://Art/painted_sun.png" id="5_fdnlq"]
+[ext_resource type="Shader" uid="uid://dkf31xrxfhelr" path="res://Scripts/Shaders/cloud_shadow.gdshader" id="5_jkdf5"]
 [ext_resource type="Script" uid="uid://clrmkdo1xfbjf" path="res://addons/zylann.hterrain/util/terrain_cutout.gd" id="5_kry3j"]
 [ext_resource type="Script" uid="uid://dgursdu3vnv6j" path="res://addons/zylann.hterrain/hterrain_texture_set.gd" id="6_344ge"]
 [ext_resource type="PackedScene" uid="uid://56ng42k13bnj" path="res://Scenes/Buildings/castle.tscn" id="8_344ge"]
+
+[sub_resource type="QuadMesh" id="QuadMesh_d1ilt"]
+
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_d1ilt"]
+noise_type = 0
+frequency = 0.0285
+
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_6iyac"]
+noise = SubResource("FastNoiseLite_d1ilt")
+seamless = true
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_k12tt"]
+render_priority = 0
+shader = ExtResource("5_jkdf5")
+shader_parameter/cloud_noise = SubResource("NoiseTexture2D_6iyac")
+shader_parameter/scroll_speed = Vector2(0.01, 0.005)
+shader_parameter/cloud_coverage = 0.442000020995
+
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_h1bgf"]
+noise_type = 3
+frequency = 0.0226
+
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_b3802"]
+noise = SubResource("FastNoiseLite_h1bgf")
+seamless = true
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_wsu2k"]
+render_priority = 0
+shader = ExtResource("5_jkdf5")
+shader_parameter/cloud_noise = SubResource("NoiseTexture2D_b3802")
+shader_parameter/scroll_speed = Vector2(0.01, 0.005)
+shader_parameter/cloud_coverage = 0.56800002698
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_7u77a"]
 
@@ -21,7 +57,8 @@ background_mode = 2
 sky = SubResource("Sky_jjgbg")
 glow_enabled = true
 glow_normalized = true
-glow_bloom = 0.3
+glow_blend_mode = 0
+glow_hdr_threshold = 1.5
 volumetric_fog_enabled = true
 volumetric_fog_density = 0.0
 volumetric_fog_anisotropy = 0.63
@@ -58,30 +95,68 @@ density = -8.0
 
 [node name="World" type="Node3D"]
 
-[node name="EnvironmentController" type="Node" parent="." node_paths=PackedStringArray("directional_light", "world_environment", "mist_wall")]
+[node name="EnvironmentController" type="Node" parent="." node_paths=PackedStringArray("directional_light", "world_environment", "mist_wall", "sun_pivot", "sun_visual")]
 script = ExtResource("1_hptm8")
-directional_light = NodePath("../Sunlight")
-world_environment = NodePath("../WorldEnvironment")
-mist_wall = NodePath("../FogVolume")
+directional_light = NodePath("Sunlight")
+world_environment = NodePath("WorldEnvironment")
+mist_wall = NodePath("FogVolume")
 outline_material = ExtResource("2_hptm8")
+cloud_materials = Array[ShaderMaterial]([ExtResource("3_6iyac"), ExtResource("3_fdnlq")])
+minimum_night_visibility = Color(0, 0, 0, 1)
+sun_pivot = NodePath("SunPivot")
+sun_visual = NodePath("SunPivot/SunVisual")
+sun_glow_intensity = 10.0
+layer_tints = Array[Color]([Color(0.99999994, 0.8755944, 0.8083037, 1), Color(0.792714, 0.889494, 0.99999994, 1)])
 
-[node name="Sunlight" type="DirectionalLight3D" parent="."]
-transform = Transform3D(-0.97553456, 0.04908066, 0.21429741, 0, 0.97476107, -0.22325008, -0.2198461, -0.21778816, -0.95091313, 0.72905016, 7.3423448, -3.512267)
+[node name="Clouds" type="MeshInstance3D" parent="EnvironmentController"]
+transform = Transform3D(500, 0, 0, 0, -2.1855694e-05, -10, 0, 500, -4.371139e-07, 0, 10, 0)
+material_override = ExtResource("3_6iyac")
+mesh = SubResource("QuadMesh_d1ilt")
+skeleton = NodePath("../..")
+
+[node name="Clouds_Shadow" type="MeshInstance3D" parent="EnvironmentController"]
+transform = Transform3D(500, 0, 0, 0, -2.1855694e-05, -10, 0, 500, -4.371139e-07, 0, 10, 0)
+material_override = SubResource("ShaderMaterial_k12tt")
+cast_shadow = 3
+mesh = SubResource("QuadMesh_d1ilt")
+skeleton = NodePath("../..")
+
+[node name="CloudsUpper" type="MeshInstance3D" parent="EnvironmentController"]
+transform = Transform3D(500, 0, 0, 0, -2.1855694e-05, -10, 0, 500, -4.371139e-07, 0, 31.785133, 0)
+material_override = ExtResource("3_fdnlq")
+mesh = SubResource("QuadMesh_d1ilt")
+skeleton = NodePath("../..")
+
+[node name="CloudsUpper_Shadow" type="MeshInstance3D" parent="EnvironmentController"]
+transform = Transform3D(500, 0, 0, 0, -2.1855694e-05, -10, 0, 500, -4.371139e-07, 0, 31.785133, 0)
+material_override = SubResource("ShaderMaterial_wsu2k")
+cast_shadow = 3
+mesh = SubResource("QuadMesh_d1ilt")
+skeleton = NodePath("../..")
+
+[node name="Sunlight" type="DirectionalLight3D" parent="EnvironmentController"]
+transform = Transform3D(-0.9659258, -0.11183206, 0.2334115, 0, 0.9018325, 0.43208575, -0.25881913, 0.41736278, -0.8711033, 0.72905016, 7.3423448, -3.512267)
 light_color = Color(0.99425465, 0.91304135, 0.7449677, 1)
-light_angular_distance = 19.49
+light_angular_distance = 2.78
 shadow_enabled = true
-shadow_bias = 3.502
-shadow_normal_bias = 10.0
-shadow_opacity = 0.44
-shadow_blur = 4.917
+shadow_bias = 5.77
+directional_shadow_max_distance = 500.0
 
-[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+[node name="WorldEnvironment" type="WorldEnvironment" parent="EnvironmentController"]
 environment = SubResource("Environment_bo1nx")
 
-[node name="FogVolume" type="FogVolume" parent="."]
+[node name="FogVolume" type="FogVolume" parent="EnvironmentController"]
 transform = Transform3D(6, 0, 0, 0, 6, 0, 0, 0, 6, 0, -0.49990654, 0)
 size = Vector3(94.23927, 1.8333645, 94.50598)
 material = SubResource("FogMaterial_6iyac")
+
+[node name="SunPivot" type="Node3D" parent="EnvironmentController"]
+transform = Transform3D(0.9659258, 0.121508166, 0.22852366, 0, -0.8829476, 0.4694715, 0.25881904, -0.45347464, -0.8528619, 0, 0, 0)
+
+[node name="SunVisual" type="Sprite3D" parent="EnvironmentController/SunPivot"]
+transform = Transform3D(30, 0, 0, 0, 30, 0, 0, 0, 30, 0, 0, 500)
+billboard = 1
+texture = ExtResource("5_fdnlq")
 
 [node name="NavigationRegion3D" type="NavigationRegion3D" parent="."]
 navigation_mesh = SubResource("NavigationMesh_7u77a")

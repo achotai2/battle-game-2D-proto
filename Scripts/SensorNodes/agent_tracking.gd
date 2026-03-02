@@ -62,6 +62,8 @@ func _update_collision_mask() -> void:
 	var mask = 0
 	if target_kind == TargetKind.ATTACKABLE:
 		mask = GamePhysics.get_tracking_mask(my_team_id, target_neutral, target_opposing, target_same_team)
+	elif target_kind == TargetKind.INTERACTABLE:
+		mask = GamePhysics.get_tracking_mask(my_team_id, target_neutral, target_opposing, target_same_team)
 	
 	# [OPTIMIZATION] Store it in a variable, don't set the Area3D's mask
 	_active_collision_mask = mask
@@ -94,6 +96,8 @@ func _scan_for_targets() -> void:
 		
 		# Sanity check
 		if body == my_agent or not is_instance_valid(body):
+			continue
+		if target_kind == TargetKind.INTERACTABLE and body is not Interactable:
 			continue
 			
 		var score = 0.0

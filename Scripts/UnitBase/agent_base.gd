@@ -229,13 +229,7 @@ func apply_role(role: UnitRoles.UnitType, p: int) -> void:
 
 	# --- Add Advisors ---
 	if role == UnitRoles.UnitType.PLAYER:
-		var adv = AdvisorPlayer.new()
-		brain.add_child(adv)
-
-		# Player can also auto-attack if weapon exists
-#		if attack:
-#			var att = AdvisorAttack.new()
-#			brain.add_child(att)
+		pass
 	else:
 		var wander = AdvisorWander.new()
 		brain.add_child(wander)

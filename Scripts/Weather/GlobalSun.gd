@@ -6,7 +6,7 @@ signal sunrise
 signal sunset
 
 @export_group("Time Settings")
-@export var day_duration: float = 30.0 
+@export var day_duration: float = 240.0 
 @export_range(0.0, 1.0) var time_of_day: float = 0.3 
 @export var pause_time: bool = false
 
@@ -22,10 +22,10 @@ signal sunset
 @export var sun_angle_sunset: float = 0.0
 
 @export_group("Sun Colors")
-@export var sun_night: Color = Color("#0d1229")
-@export var sun_sunrise: Color = Color("#ff9955")
+@export var sun_night: Color = Color("000000ff")
+@export var sun_sunrise: Color = Color("b65a00ff")
 @export var sun_day: Color = Color("#ffffff")
-@export var sun_sunset: Color = Color("#ff7755")
+@export var sun_sunset: Color = Color("dc3100ff")
 
 @export_group("Fog Colors")
 @export var fog_night: Color = Color("#050814")
@@ -34,7 +34,8 @@ signal sunset
 @export var fog_sunset: Color = Color("#8c4f4f")
 
 @export_group("Ink Colors")
-@export var ink_night: Color = Color("#0a0a0f")
+#@export var ink_night: Color = Color("#0a0a0f")
+@export var ink_night: Color = Color("1b2c69ff")
 @export var ink_sunrise: Color = Color("#d4a373") 
 @export var ink_day: Color = Color("#1a1a24")
 @export var ink_sunset: Color = Color("#d4a373") 

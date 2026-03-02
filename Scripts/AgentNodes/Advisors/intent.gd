@@ -1,7 +1,7 @@
 extends RefCounted
 class_name Intent
 
-enum Type { IDLE, MOVE, CHASE, ATTACK, WORK, FLEE, PLAYER_MOVE }
+enum Type { IDLE, MOVE, CHASE, ATTACK, WORK, FLEE, PLAYER_MOVE, PLAYER_INTERACT }
 
 var priority: float = 0.0
 var advisor: Node = null

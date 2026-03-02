@@ -2,7 +2,7 @@ extends Node
 class_name AgentBrain
 
 @export var agent: AgentBase = null
-@export_range(0.1, 2.0, 0.1) var think_interval: float = 0.25
+@export_range(0.1, 2.0, 0.05) var think_interval: float = 0.25
 
 var _think_timer: Timer
 var current_advisor: Advisor = null

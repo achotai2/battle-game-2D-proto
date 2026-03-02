@@ -66,6 +66,36 @@ static func get_tracking_mask(my_player_id: int, target_neutral: bool, target_op
 	return mask
 
 
+static func get_interacting_mask(my_player_id: int, target_neutral: bool, target_opposing: bool, target_own: bool) -> int:
+	var mask = 0
+
+	var p0 = get_mask_bit(LAYER_INTERACTABLE_NEUTRAL)
+	var p1 = get_mask_bit(LAYER_INTERACTABLE_PLAYER_1)
+	var p2 = get_mask_bit(LAYER_INTERACTABLE_PLAYER_2)
+
+	# Target Own
+	if target_own:
+		match my_player_id:
+			0: mask |= p0
+			1: mask |= p1
+			2: mask |= p2
+
+	# Target Neutral (Faction 0)
+	if target_neutral:
+		# Only target neutral if I am NOT neutral, or if I explicitly want to target own (neutral)
+		if my_player_id != 0 or target_own:
+			mask |= p0
+
+	# Target Opposing
+	if target_opposing:
+		match my_player_id:
+			0: mask |= p1 | p2
+			1: mask |= p2
+			2: mask |= p1
+
+	return mask
+	
+	
 static func get_projectile_mask() -> int:
 	return get_mask_bit(LAYER_ATTACKABLE_NEUTRAL) | \
 		   get_mask_bit(LAYER_ATTACKABLE_PLAYER_1) | \
