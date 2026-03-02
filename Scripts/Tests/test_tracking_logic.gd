@@ -30,7 +30,7 @@ func _ready():
 	print("Starting AgentTracking Logic Test...")
 
 	# Instantiate AgentTracking
-	var tracking_script = load("res://Scripts/AgentNodes/agent_tracking.gd")
+	var tracking_script = load("res://Scripts/SensorNodes/agent_tracking.gd")
 	var tracking = tracking_script.new()
 	add_child(tracking)
 

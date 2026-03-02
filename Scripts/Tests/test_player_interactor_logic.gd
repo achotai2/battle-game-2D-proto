@@ -1,7 +1,7 @@
 extends MainLoop
 
-const PlayerInteractor = preload("res://Scripts/AgentNodes/PlayerInteractor.gd")
-const Interactable = preload("res://Scripts/AgentNodes/Interactable.gd")
+const PlayerInteractor = preload("res://Scripts/SensorNodes/PlayerInteractor.gd")
+const Interactable = preload("res://Scripts/SensorNodes/Interactable.gd")
 
 class MockSensor extends Area3D:
 	var _overlaps: Array[Area3D] = []

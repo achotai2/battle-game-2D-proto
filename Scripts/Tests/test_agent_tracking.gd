@@ -1,6 +1,6 @@
 extends MainLoop
 
-const AgentTracking = preload("res://Scripts/AgentNodes/agent_tracking.gd")
+const AgentTracking = preload("res://Scripts/SensorNodes/agent_tracking.gd")
 # const Health = preload("res://Scripts/AgentNodes/health.gd") # If needed
 
 class MockAgentTracking extends AgentTracking:
