@@ -200,9 +200,10 @@ shader_params/u_stroke_wobble_strength = 0.08
 shader_params/u_stroke_wobble_scale = 10.0
 metadata/_custom_type_script = "uid://bc80wnl2w5xyh"
 
-[node name="CameraTerrainWindow" type="Node" parent="NavigationRegion3D/HTerrain" node_paths=PackedStringArray("terrain", "camera")]
+[node name="CameraTerrainWindow" type="Node" parent="NavigationRegion3D/HTerrain" node_paths=PackedStringArray("terrain", "player", "camera")]
 script = ExtResource("5_kry3j")
 terrain = NodePath("..")
+player = NodePath("../../../Environment/Units/Player")
 camera = NodePath("../../../Environment/Units/Player/Camera3D")
 cutout_radius = 1.0
 cutout_slope_min = 15.0
@@ -238,3 +239,8 @@ castle = NodePath("../Castle")
 
 [node name="Castle" parent="Environment/Buildings" instance=ExtResource("8_344ge")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.8895254, 0.124688745, -2.3954196)
+
+[node name="Unit" parent="." node_paths=PackedStringArray("castle") instance=ExtResource("12_jkdf5")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2, 0, 2)
+castle = NodePath("../Environment/Buildings/Castle")
+current_role = 2

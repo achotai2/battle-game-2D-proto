@@ -17,6 +17,9 @@ var _my_agent: AgentBase = null
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
+	if not sprite:
+		sprite = ComponentFinder.get_component(self, "AnimatedSprite3D") as AnimatedSprite3D
+		
 	# The damage flash timer.
 	damageTimer.wait_time = damageVisualTime
 	damageTimer.one_shot = true
@@ -178,7 +181,8 @@ func cancel_action_state() -> void:
 	attacking = false
 	working = false
 	# optionally stop attack anim
-	sprite.stop()
+	if is_instance_valid(sprite):
+			sprite.stop()
 
 
 func play_work() -> bool:

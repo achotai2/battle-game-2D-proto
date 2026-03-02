@@ -1,6 +1,8 @@
 extends CharacterBody3D
 class_name AgentBase
 
+signal new_castle_set(new_castle: Castle)
+
 @export var movement: AgentMovement = null
 @export var team: TeamMemory = null
 @export var animate: AgentAnimate = null
@@ -12,7 +14,6 @@ class_name AgentBase
 @onready var motor: Node = $Motor
 @onready var memory: Node = $Memory
 @onready var weapons: Node = $Weapons
-@onready var nav_agent: NavigationAgent3D = $NavigationAgent3D
 
 
 # Called when the node enters the scene tree for the first time.
@@ -75,10 +76,14 @@ func apply_role(role: UnitRoles.UnitType, new_team: int) -> void:
 	_sync_folder(motor, components["motor"])
 	_sync_folder(brain, components["advisors"])
 
-	# Tell the brain to introduce itself to the new advisors!
+	# Tell the brain to introduce itself to the new advisors.
 	if brain and brain.has_method("refresh_advisors"):
 		brain.refresh_advisors()
 
+	# Set the new variables.
+	movement = ComponentFinder.get_component(self, "AgentMovement") as AgentMovement
+	team = ComponentFinder.get_component(self, "TeamMemory") as TeamMemory
+	animate = ComponentFinder.get_component(self, "AgentAnimate") as AgentAnimate
 
 	# --- 2. TEAM & PHYSICS ---
 	# Set the new player number (assuming 'team' is an @onready or fetched component)
@@ -189,6 +194,7 @@ func set_castle(new_castle: Node) -> void:
 	_unregister_myself_with_castle()
 	castle = new_castle
 	_register_myself_with_castle()
+	new_castle_set.emit(new_castle)
 
 
 func _register_myself_with_castle() -> void:

@@ -11,7 +11,7 @@
 [ext_resource type="Script" uid="uid://2ssmusd0k3fn" path="res://Scripts/MemoryNodes/GoldWallet.gd" id="10_gw"]
 [ext_resource type="PackedScene" uid="uid://c8o4373okv5fq" path="res://Scenes/AgentNodes/HungerHolder.tscn" id="10_t6mam"]
 [ext_resource type="Script" uid="uid://dbf3h02qxxxao" path="res://Scripts/MemoryNodes/TaxLedger.gd" id="11_tl"]
-[ext_resource type="Script" uid="uid://c5ixb1wens7mc" path="res://Scripts/SensorNodes/GoldTracker.gd" id="12_gt"]
+[ext_resource type="Script" uid="uid://c5ixb1wens7mc" path="res://Scripts/SensorNodes/Tracker.gd" id="12_gt"]
 [ext_resource type="Script" uid="uid://cf8nbntvvy3iv" path="res://Scripts/AgentNodes/GoldGiver.gd" id="13_gg"]
 [ext_resource type="Script" uid="uid://dgco637g5esju" path="res://Scripts/AgentNodes/Advisors/a_taxed.gd" id="14_at"]
 
@@ -22,18 +22,11 @@ height = 0.88845444
 [sub_resource type="CylinderShape3D" id="CircleShape2D_65o65"]
 radius = 500.0
 
-[node name="Peasant" type="CharacterBody3D" node_paths=PackedStringArray("health", "movement", "animation", "detection", "gold", "hunger", "foodTasker") groups=["Interactable", "Minions"]]
+[node name="Peasant" type="CharacterBody3D" node_paths=PackedStringArray("movement") groups=["Interactable", "Minions"]]
 collision_layer = 2048
 collision_mask = 3
 script = ExtResource("1_wen5c")
-player = null
-health = NodePath("Memory/Health")
 movement = NodePath("Motor/AgentMovement")
-animation = NodePath("Motor/AgentAnimate")
-detection = NodePath("Sensors/AgentDetection")
-gold = NodePath("Memory/GoldWallet")
-hunger = NodePath("Memory/HungerHolder")
-foodTasker = NodePath("Memory/FoodTasker")
 current_role = 1
 
 [node name="CollisionShape2D" type="CollisionShape3D" parent="."]

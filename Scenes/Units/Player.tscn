@@ -13,26 +13,18 @@
 [ext_resource type="Script" uid="uid://ggpe07y6471c" path="res://Scripts/MemoryNodes/TeamMemory.gd" id="7_udi2h"]
 [ext_resource type="Script" uid="uid://2ssmusd0k3fn" path="res://Scripts/MemoryNodes/GoldWallet.gd" id="9_gw"]
 [ext_resource type="PackedScene" uid="uid://by5ppm4d4bxev" path="res://Scenes/AgentNodes/player_interactor.tscn" id="9_yoq75"]
-[ext_resource type="Script" uid="uid://c5ixb1wens7mc" path="res://Scripts/SensorNodes/GoldTracker.gd" id="11_gt"]
+[ext_resource type="Script" uid="uid://c5ixb1wens7mc" path="res://Scripts/SensorNodes/Tracker.gd" id="11_gt"]
 [ext_resource type="Script" uid="uid://cf8nbntvvy3iv" path="res://Scripts/AgentNodes/GoldGiver.gd" id="12_gg"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_jokor"]
 radius = 0.42871094
 height = 0.88845444
 
-[node name="Player" type="CharacterBody3D" node_paths=PackedStringArray("health", "interactor", "movement", "controls", "animation", "attack", "gold") groups=["Attackable", "Player"]]
+[node name="Player" type="CharacterBody3D" node_paths=PackedStringArray("movement") groups=["Attackable", "Player"]]
 collision_layer = 4
 collision_mask = 2
 script = ExtResource("1_rpqav")
-player = 1
-current_role = null
-health = NodePath("Memory/Health")
-interactor = NodePath("Sensors/PlayerInteractor")
 movement = NodePath("Motor/AgentMovement")
-controls = NodePath("Sensors/PlayerControls")
-animation = NodePath("Motor/AgentAnimate")
-attack = NodePath("Weapons/WeaponSword")
-gold = NodePath("Memory/GoldWallet")
 
 [node name="CollisionShape2D" type="CollisionShape3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.086587906, 0)
@@ -45,7 +37,6 @@ avoidance_layers = 4
 [node name="Sprites" type="Node3D" parent="."]
 
 [node name="AnimatedSprite3D" type="AnimatedSprite3D" parent="Sprites" groups=["sprites"]]
-transform = Transform3D(3, 0, 0, 0, 3, 0, 0, 0, 3, 0, 0, 0)
 offset = Vector2(0, 10)
 billboard = 2
 alpha_cut = 1
