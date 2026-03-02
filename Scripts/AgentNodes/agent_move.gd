@@ -49,9 +49,7 @@ func refresh_components() -> void:
 		animation = ComponentFinder.get_component(self, "AgentAnimate")
 
 	# 3. Look for the dynamically generated Nav Agent.
-	nav_agent = ComponentFinder.get_component(self, "MinionNavAgent")
-	if not nav_agent:
-		nav_agent = ComponentFinder.get_component(self, "NavigationAgent3D")
+	nav_agent = ComponentFinder.get_component_by_name(self, "MinionNavAgent")
 	if not nav_agent:
 		print("Ak")
 
