@@ -1,5 +1,24 @@
 class_name ComponentFinder extends RefCounted
 
+
+static func get_component_by_name(starter_node: Node, target_name: String) -> Node:
+	var root := get_base(starter_node)
+	if root == null: 
+		return null
+		
+	# Search by EXACT NODE NAME, ignoring the class type.
+	# Parameter 1: target_name (The name we want)
+	# Parameter 2: "" (We don't care what class it is)
+	var matching_nodes = root.find_children(target_name, "", true, false)
+	
+	# Loop through all matches and return the first one that is NOT in the trash
+	for node in matching_nodes:
+		if not node.is_queued_for_deletion():
+			return node
+			
+	return null
+	
+
 static func get_component(starter_node: Node, target_class: String) -> Node:
 	var root := get_base(starter_node)
 	if root == null: 

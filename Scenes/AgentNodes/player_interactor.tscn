@@ -2,32 +2,27 @@
 
 [ext_resource type="Script" uid="uid://bami2sbmdhbvw" path="res://Scripts/SensorNodes/PlayerInteractor.gd" id="1_5exm1"]
 [ext_resource type="PackedScene" uid="uid://c6guwdbgls2v4" path="res://Scenes/AgentNodes/interact_prompt.tscn" id="2_noa6p"]
-[ext_resource type="Script" uid="uid://bi15gddmxujcs" path="res://Scripts/SensorNodes/interact_tracking.gd" id="3_mbap8"]
+[ext_resource type="Script" uid="uid://dfpsdlk7u3m6h" path="res://Scripts/SensorNodes/interact_tracking.gd" id="3_mbap8"]
 
 [sub_resource type="CylinderShape3D" id="CircleShape2D_5exm1"]
 height = 1.0100098
 radius = 1.5302734
 
-[node name="PlayerInteractor" type="Node3D" node_paths=PackedStringArray("sensor")]
+[node name="PlayerInteractor" type="Node3D" node_paths=PackedStringArray("sensor", "interaction_timer")]
 script = ExtResource("1_5exm1")
-sensor = NodePath("AgentTracking")
+sensor = NodePath("InteractTracking")
 prompt_scene = ExtResource("2_noa6p")
-
-[node name="AgentTracking" type="Area3D" parent="."]
-collision_layer = 256
-script = ExtResource("3_mbap8")
-target_kind = 1
-target_same_team = true
-target_opposing = false
-target_neutral = true
-metadata/_custom_type_script = "uid://bi15gddmxujcs"
-
-[node name="CollisionShape2D" type="CollisionShape3D" parent="AgentTracking"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.021850586, 0)
-shape = SubResource("CircleShape2D_5exm1")
-debug_color = Color(0.13306156, 0.5783279, 0.78512675, 0.41960785)
+interaction_timer = NodePath("InteractionTimer")
 
 [node name="InteractionTimer" type="Timer" parent="."]
 one_shot = true
+
+[node name="InteractTracking" type="Area3D" parent="."]
+script = ExtResource("3_mbap8")
+
+[node name="CollisionShape2D" type="CollisionShape3D" parent="InteractTracking"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.021850586, 0)
+shape = SubResource("CircleShape2D_5exm1")
+debug_color = Color(0.13306156, 0.5783279, 0.78512675, 0.41960785)
 
 [connection signal="timeout" from="InteractionTimer" to="." method="_on_interaction_timer_timeout"]
