@@ -9,9 +9,38 @@ class MockAgentTracking extends AgentTracking:
 	func set_mock_bodies(bodies: Array[Node3D]):
 		_mock_bodies = bodies
 
-	# Override get_overlapping_bodies to return our mock list
-	func get_overlapping_bodies() -> Array[Node3D]:
-		return _mock_bodies
+	# Override _scan_for_targets to use mock bodies instead of space state
+	func _scan_for_targets() -> void:
+		if _mock_bodies.is_empty():
+			if current_target != null:
+				current_target = null
+				target_lost.emit()
+			return
+
+		var best_target = null
+		var best_score = INF
+		var my_pos = global_position
+
+		for body in _mock_bodies:
+			if body == my_agent or not is_instance_valid(body):
+				continue
+
+			var score = 0.0
+			if target_bias == "Nearest":
+				score = my_pos.distance_squared_to(body.global_position)
+			elif target_bias == "Lowest Health":
+				if body.has_method("get_health_percent"):
+					score = body.get_health_percent()
+				else:
+					score = 100.0
+
+			if score < best_score:
+				best_score = score
+				best_target = body
+
+		if best_target != current_target:
+			current_target = best_target
+			target_changed.emit(current_target)
 
 class MockBody extends Node3D:
 	var _groups = []
@@ -68,9 +97,8 @@ func test_nearest():
 	var t = MockAgentTracking.new()
 	var me = MockBody.new(1)
 	me.position = Vector3(0, 0, 0)
-	t.set_myself(me)
+	t.my_agent = me
 	t.target_bias = "Nearest"
-	t.target_kind = AgentTracking.TargetKind.ATTACKABLE
 
 	var b1 = MockBody.new(2, ["Attackable"])
 	b1.position = Vector3(100, 0, 0)
@@ -78,10 +106,10 @@ func test_nearest():
 	b2.position = Vector3(50, 0, 0)
 
 	t.set_mock_bodies([b1, b2])
-	t._reselect_target()
+	t._scan_for_targets()
 
-	if t.get_target() != b2:
-		printerr("FAILED: Nearest should be b2, got ", t.get_target())
+	if t.current_target != b2:
+		printerr("FAILED: Nearest should be b2, got ", t.current_target)
 	else:
 		print("PASSED: Nearest")
 
@@ -94,18 +122,20 @@ func test_team_filter():
 	print("Testing Team Filter...")
 	var t = MockAgentTracking.new()
 	var me = MockBody.new(1)
-	t.set_myself(me)
-	t.set_team_filters(false, true, false) # Only opposing
+	t.my_agent = me
+	t.target_opposing = true
+	t.target_same_team = false
+	t.target_neutral = false
 
 	var ally = MockBody.new(1, ["Attackable"])
 	var enemy = MockBody.new(2, ["Attackable"])
 	var neutral = MockBody.new(0, ["Attackable"])
 
 	t.set_mock_bodies([ally, enemy, neutral])
-	t._reselect_target()
+	t._scan_for_targets()
 
-	if t.get_target() != enemy:
-		printerr("FAILED: Should target enemy, got ", t.get_target())
+	if t.current_target != enemy:
+		printerr("FAILED: Should target enemy, got ", t.current_target)
 	else:
 		print("PASSED: Team Filter")
 
@@ -119,7 +149,7 @@ func test_lowest_health():
 	print("Testing Lowest Health...")
 	var t = MockAgentTracking.new()
 	var me = MockBody.new(1)
-	t.set_myself(me)
+	t.my_agent = me
 	t.target_bias = "Lowest Health"
 
 	var b1 = MockBody.new(2, ["Attackable"])
@@ -133,10 +163,10 @@ func test_lowest_health():
 	b2.health_comp.hp = 50 # Lower health
 
 	t.set_mock_bodies([b1, b2])
-	t._reselect_target()
+	t._scan_for_targets()
 
-	if t.get_target() != b2:
-		printerr("FAILED: Lowest Health should be b2, got ", t.get_target())
+	if t.current_target != b2:
+		printerr("FAILED: Lowest Health should be b2, got ", t.current_target)
 	else:
 		print("PASSED: Lowest Health")
 

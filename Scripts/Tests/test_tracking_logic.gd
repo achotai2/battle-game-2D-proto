@@ -37,8 +37,7 @@ func _ready():
 	# Configure Tracking
 	var me = MockAgent.new(Vector3.ZERO, 1) # Player 1
 	add_child(me)
-	tracking.set_myself(me)
-	tracking.target_kind = tracking.TargetKind.ATTACKABLE
+	tracking.my_agent = me # updated property
 	tracking.target_bias = "Nearest"
 	tracking.target_opposing = true
 	tracking.target_same_team = false
