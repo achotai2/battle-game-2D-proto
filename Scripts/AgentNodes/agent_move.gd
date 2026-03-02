@@ -34,32 +34,43 @@ var _stuck_timer: float = 0.0
 var _frame_offset: int = 0
 const PATH_UPDATE_INTERVAL: int = 4 
 
+
 func _ready() -> void:
-	# 1. Automatically find the AgentBase (The Factory doesn't set Inspector variables!)
-	if not agent:
+	refresh_components()
+
+
+func refresh_components() -> void:
+	# 1. Automatically find the AgentBase
+	if not is_instance_valid(agent):
 		agent = ComponentFinder.get_base(self)
 		
 	# 2. Automatically find the Animation component
-	if not animation:
+	if not is_instance_valid(animation):
 		animation = ComponentFinder.get_component(self, "AgentAnimate")
 
-	# 3. Look for the dynamically generated Nav Agent!
+	# 3. Look for the dynamically generated Nav Agent.
+	nav_agent = ComponentFinder.get_component(self, "MinionNavAgent")
 	if not nav_agent:
 		nav_agent = ComponentFinder.get_component(self, "NavigationAgent3D")
+	if not nav_agent:
+		print("Ak")
 
-	# 3. Handle Navigation Setup safely (Without aborting if it's missing)
-	if nav_agent:
+	# 4. Handle Navigation Setup safely
+	if is_instance_valid(nav_agent):
 		_frame_offset = randi() % PATH_UPDATE_INTERVAL
 		nav_agent.avoidance_enabled = false
 		nav_agent.target_desired_distance = 1.0
-		nav_agent.velocity_computed.connect(_on_velocity_computed)
-		nav_agent.navigation_finished.connect(_on_nav_finished)
+		
+		# Wire up the signals safely so we don't double-connect!
+		if not nav_agent.velocity_computed.is_connected(_on_velocity_computed):
+			nav_agent.velocity_computed.connect(_on_velocity_computed)
+		if not nav_agent.navigation_finished.is_connected(_on_nav_finished):
+			nav_agent.navigation_finished.connect(_on_nav_finished)
 	else:
-		# If we don't have a nav agent, just disable physics process, 
-		# but DON'T return, so the rest of the setup finishes!
+		# If we don't have a nav agent, just disable the internal physics process.
 		set_physics_process(false)
 	
-	if agent: 
+	if is_instance_valid(agent): 
 		_last_stuck_pos = agent.global_position
 
 
@@ -142,7 +153,7 @@ func _on_nav_finished() -> void:
 	if _mode == Mode.PATHFINDING:
 		move_to_pos_finished.emit(agent)
 
-# --- COMMANDS ---
+# --- COMMANDS --- 
 
 func move_to_position(pos: Vector3) -> void:
 	# Only update if significant change or if not already pathfinding
