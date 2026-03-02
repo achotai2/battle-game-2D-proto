@@ -25,6 +25,16 @@ func _ready() -> void:
 
 	_setup_prompt()
 
+	# Establish connection to TeamMemory.
+	var team := ComponentFinder.get_component(self, "TeamMemory")
+	if team and not team.team_changed.is_connected(_team_changed):
+		team.team_changed.connect(_team_changed)
+	_team_changed(team.return_team())
+
+
+func _team_changed(new_team: int) -> void:
+	sensor.setup_player(new_team)
+
 
 func _unhandled_input(event: InputEvent) -> void:
 	if event.is_action_pressed(interact_action):

@@ -4,9 +4,9 @@
 [ext_resource type="Script" uid="uid://cjjdaf7vlfs4k" path="res://Scripts/AgentNodes/agent_animate.gd" id="2_gntrk"]
 [ext_resource type="SpriteFrames" uid="uid://cvmbb1xtbmxsv" path="res://Art/SpriteFrames/Player.tres" id="3_bhhdu"]
 [ext_resource type="Script" uid="uid://db8bramlpehyu" path="res://Scripts/AgentNodes/agent_brain.gd" id="3_u2egk"]
-[ext_resource type="Script" uid="uid://3hsle2qb2hgj" path="res://Scripts/AgentNodes/Advisors/advisor_player_movement.gd" id="4_ehya8"]
+[ext_resource type="Script" uid="uid://3hsle2qb2hgj" path="res://Scripts/AgentNodes/Advisors/a_player_movement.gd" id="4_ehya8"]
 [ext_resource type="Script" uid="uid://58qm17emnwvd" path="res://Scripts/AgentNodes/agent_move.gd" id="5_5ixxa"]
-[ext_resource type="Script" uid="uid://bumqf57fkupi2" path="res://Scripts/AgentNodes/Advisors/advisor_player_interact.gd" id="5_ideyk"]
+[ext_resource type="Script" uid="uid://bumqf57fkupi2" path="res://Scripts/AgentNodes/Advisors/a_player_interact.gd" id="5_ideyk"]
 [ext_resource type="Script" uid="uid://cfiw0qaxe8jxd" path="res://Scripts/SensorNodes/player_controls.gd" id="6_nn08x"]
 [ext_resource type="Script" uid="uid://c2guvnr3dtafe" path="res://Scripts/MemoryNodes/health.gd" id="7_52ee3"]
 [ext_resource type="PackedScene" uid="uid://6it7l8b8yxs" path="res://Scenes/Weapons/weapon_sword.tscn" id="7_bhhdu"]
@@ -25,6 +25,7 @@ collision_layer = 4
 collision_mask = 2
 script = ExtResource("1_rpqav")
 player = 1
+current_role = null
 health = NodePath("Memory/Health")
 interactor = NodePath("Sensors/PlayerInteractor")
 movement = NodePath("Motor/AgentMovement")

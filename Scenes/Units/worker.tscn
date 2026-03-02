@@ -13,7 +13,7 @@
 [ext_resource type="Script" uid="uid://dbf3h02qxxxao" path="res://Scripts/MemoryNodes/TaxLedger.gd" id="11_tl"]
 [ext_resource type="Script" uid="uid://c5ixb1wens7mc" path="res://Scripts/SensorNodes/GoldTracker.gd" id="12_gt"]
 [ext_resource type="Script" uid="uid://cf8nbntvvy3iv" path="res://Scripts/AgentNodes/GoldGiver.gd" id="13_gg"]
-[ext_resource type="Script" uid="uid://dgco637g5esju" path="res://Scripts/AgentNodes/Advisors/advisor_taxed.gd" id="14_at"]
+[ext_resource type="Script" uid="uid://dgco637g5esju" path="res://Scripts/AgentNodes/Advisors/a_taxed.gd" id="14_at"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_n8oia"]
 radius = 0.42871094
@@ -26,6 +26,7 @@ radius = 500.0
 collision_layer = 4
 collision_mask = 3
 script = ExtResource("1_r0ip0")
+player = null
 health = NodePath("Memory/Health")
 movement = NodePath("Motor/AgentMovement")
 animation = NodePath("Motor/AgentAnimate")

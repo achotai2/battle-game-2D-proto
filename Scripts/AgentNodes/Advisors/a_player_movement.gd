@@ -44,7 +44,7 @@ func enact_intent(intent: Intent) -> void:
 
 	if intent.type == Intent.Type.PLAYER_MOVE:
 		movement.move_in_direction(intent.direction)
-		
+	
 	elif intent.type == Intent.Type.IDLE:
 		movement.stop()
 

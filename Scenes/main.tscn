@@ -1,7 +1,6 @@
 [gd_scene load_steps=32 format=3 uid="uid://denj1nj2jkqg1"]
 
 [ext_resource type="Script" uid="uid://cnam6bddvgr7k" path="res://Scripts/Weather/EnvironmentController.gd" id="1_hptm8"]
-[ext_resource type="PackedScene" uid="uid://ex22mf26lsid" path="res://Scenes/Units/Player.tscn" id="1_jjgbg"]
 [ext_resource type="Material" uid="uid://weo11c4w8i4k" path="res://Scripts/Shaders/outline_material.tres" id="2_hptm8"]
 [ext_resource type="Material" uid="uid://b8pgp4dj7u4sf" path="res://Scripts/Shaders/cloud.tres" id="3_6iyac"]
 [ext_resource type="PackedScene" uid="uid://boksm60la2s5a" path="res://Scenes/Buildings/archery_range.tscn" id="3_8gbba"]
@@ -14,6 +13,7 @@
 [ext_resource type="Script" uid="uid://clrmkdo1xfbjf" path="res://addons/zylann.hterrain/util/terrain_cutout.gd" id="5_kry3j"]
 [ext_resource type="Script" uid="uid://dgursdu3vnv6j" path="res://addons/zylann.hterrain/hterrain_texture_set.gd" id="6_344ge"]
 [ext_resource type="PackedScene" uid="uid://56ng42k13bnj" path="res://Scenes/Buildings/castle.tscn" id="8_344ge"]
+[ext_resource type="PackedScene" uid="uid://dunt5nfaabbqv" path="res://Scenes/Units/Unit.tscn" id="12_jkdf5"]
 
 [sub_resource type="QuadMesh" id="QuadMesh_d1ilt"]
 
@@ -200,10 +200,9 @@ shader_params/u_stroke_wobble_strength = 0.08
 shader_params/u_stroke_wobble_scale = 10.0
 metadata/_custom_type_script = "uid://bc80wnl2w5xyh"
 
-[node name="CameraTerrainWindow" type="Node" parent="NavigationRegion3D/HTerrain" node_paths=PackedStringArray("terrain", "player", "camera")]
+[node name="CameraTerrainWindow" type="Node" parent="NavigationRegion3D/HTerrain" node_paths=PackedStringArray("terrain", "camera")]
 script = ExtResource("5_kry3j")
 terrain = NodePath("..")
-player = NodePath("../../../Environment/Units/Player")
 camera = NodePath("../../../Environment/Units/Player/Camera3D")
 cutout_radius = 1.0
 cutout_slope_min = 15.0
@@ -212,11 +211,11 @@ cutout_slope_min = 15.0
 
 [node name="Units" type="Node3D" parent="Environment"]
 
-[node name="Player" parent="Environment/Units" instance=ExtResource("1_jjgbg")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.5315927, 0.123880744, -0.1605848)
+[node name="Player" parent="Environment/Units" instance=ExtResource("12_jkdf5")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.228601, 0.2157805, 0)
 
 [node name="Camera3D" type="Camera3D" parent="Environment/Units/Player"]
-transform = Transform3D(1, 0, 0, 0, 0.93105584, 0.3648768, 0, -0.3648768, 0.93105584, 0, 6.524804, 8.750609)
+transform = Transform3D(1, 0, 0, 0, 0.93105584, 0.3648768, 0, -0.3648768, 0.93105584, -1.5315927, 6.648685, 8.590025)
 fov = 64.6
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="Environment/Units/Player/Camera3D"]
@@ -226,7 +225,7 @@ custom_aabb = AABB(10000, 10000, 10000, 0, 0, 0)
 mesh = SubResource("QuadMesh_hptm8")
 
 [node name="FogVolume" type="FogVolume" parent="Environment/Units/Player"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.05493164, -0.51586914)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.5315927, 0.0689491, -0.67645395)
 size = Vector3(35, 35, 35)
 shape = 0
 material = SubResource("FogMaterial_fdnlq")

@@ -1,67 +1,37 @@
 extends CharacterBody3D
 class_name AgentBase
 
-## Player number (0 = neutral).
-@export var player: int = 0
-@export var health: Health = null
-@export var interactor: PlayerInteractor = null
 @export var movement: AgentMovement = null
-@export var controls: PlayerControls = null
-@export var animation: AgentAnimate = null
-@export var attack: Node = null
-@export var interactable: Node = null
-@export var detection: AgentTracking = null
-@export var brain: AgentBrain = null
-@export var tasker: MinionTasker = null
-@export var gold: GoldWallet = null
-@export var hunger: HungerHolder = null
-@export var foodTasker: MinionTasker = null
+@export var team: TeamMemory = null
+@export var animate: AgentAnimate = null
 @export var castle: Castle = null
 @export var current_role: UnitRoles.UnitType
+
+@onready var brain: AgentBrain = $Brain
+@onready var sensors: Node = $Sensors
+@onready var motor: Node = $Motor
+@onready var memory: Node = $Memory
+@onready var weapons: Node = $Weapons
 
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
-	_connect_all_refs()
-	apply_role(current_role, player)
+	if not movement:
+		movement = find_child("AgentMovement")
+
+	if not animate:
+		animate = find_child("AgentAnimate")
+
+	if not team:
+		team = find_child("TeamMemory")
+	
+	apply_role(current_role, team.return_team())
 	
 	_register_myself_with_castle()
 
 
 func _exit_tree() -> void:
 	_unregister_myself_with_castle()
-
-
-func _connect_all_refs() -> void:
-	# Connect signals for ANIMATION node.
-	_assign_animation_refs()
-
-	# Connect signals for MOVEMENT node.
-	_assign_movement_refs()
-
-	# Connect signals for player CONTROLS node.
-	_assign_controls_refs()
-
-	# Configure ATTACK node.	
-	_assign_weapon_refs()
-
-	# Connect signals for DETECTION node.
-	_assign_detection_refs()
-
-	# Connect signals for TASKER node.	
-	_assign_tasker_refs()
-
-	# Connect signals for FOOD TASKER node.	
-	_assign_food_tasker_refs()
-
-	# Connect signals for GOLD node.	
-	_assign_gold_refs()
-
-	# Connect signals for HEALTH node.	
-	_assign_health_refs()
-
-	# Connect signals for HUNGER node.	
-	_assign_hunger_refs()
 
 
 func _physics_process(_delta: float) -> void:
@@ -71,87 +41,6 @@ func _physics_process(_delta: float) -> void:
 	move_and_slide()
 
 
-func _assign_weapon_refs() -> void:
-	if not attack:
-		return
-
-	if movement and attack and attack.has_method("set_movement"):
-		attack.call("set_movement", movement)
-
-
-func _disconnect_weapon_signals() -> void:
-	if not attack:
-		return
-
-
-func _assign_animation_refs() -> void:
-	if not animation:
-		return
-
-	animation.set_my_agent(self)
-
-
-func _assign_movement_refs() -> void:
-	if not movement:
-		return
-
-	movement.agent = self
-	movement.animation = animation
-
-
-func _assign_controls_refs() -> void:
-	if not controls:
-		return
-		
-
-func _assign_detection_refs() -> void:
-	if not detection:
-		return
-
-	detection.setup_player(player)
-
-
-func _assign_tasker_refs() -> void:
-	if not tasker:
-		return
-
-	tasker.set_agent(self)
-	tasker.set_movement(movement)
-	# Signals disconnected, Tasker is passive.
-
-
-func _assign_food_tasker_refs() -> void:
-	if not foodTasker:
-		return
-
-	foodTasker.set_agent(self)
-	foodTasker.set_movement(movement)
-
-
-func _assign_gold_refs() -> void:
-	if not gold:
-		return
-	# GoldWallet is passive.
-
-
-func _assign_health_refs() -> void:
-	if not health:
-		return
-
-	if not health.damaged.is_connected(_im_damaged):
-		health.damaged.connect(_im_damaged)
-	if not health.died.is_connected(_im_dead):
-		health.died.connect(_im_dead)
-
-
-func _assign_hunger_refs() -> void:
-	if not hunger:
-		return
-		
-	if movement and hunger.has_method("set_movement"):
-		hunger.call("set_movement", movement)
-
-
 func _im_damaged() -> void:
 #	if animation:
 #		animation.show_damage()
@@ -159,10 +48,10 @@ func _im_damaged() -> void:
 
 
 func _im_dead() -> void:
-	if current_role == UnitRoles.UnitType.PEASANT or UnitRoles.UnitType.PLAYER:
+	if current_role == UnitRoles.UnitType.PEASANT or current_role == UnitRoles.UnitType.PLAYER:
 		return
 	else:
-		apply_role(UnitRoles.UnitType.PEASANT, player)
+		apply_role(UnitRoles.UnitType.PEASANT, team.return_team())
 
 
 func _agent_moved(vel: Vector3) -> void:
@@ -173,105 +62,108 @@ func _agent_moved(vel: Vector3) -> void:
 ##################
 # External called.
 ##################
-func apply_role(role: UnitRoles.UnitType, p: int) -> void:
-	# Set the new player number.
-	player = p
+func apply_role(role: UnitRoles.UnitType, new_team: int) -> void:
+	# --- 1. COMPONENT SYNC (The Diff & Sync Architecture) ---
+	# Ask the factory for the packaged components for the new role
+	var components = UnitRoles.get_role_components(role)
+	
+	# Intelligently prune and plant nodes in their respective folders
+	_sync_folder(memory, components["memory"])
+	_sync_folder(sensors, components["sensors"])
+	_sync_folder(weapons, components["weapons"])
+	_sync_folder(motor, components["motor"])
+	_sync_folder(brain, components["advisors"])
 
-	collision_layer = GamePhysics.get_minion_layer(player, role == UnitRoles.UnitType.PEASANT)
+	# Tell the brain to introduce itself to the new advisors!
+	if brain and brain.has_method("refresh_advisors"):
+		brain.refresh_advisors()
+
+	# --- 2. TEAM & PHYSICS ---
+	# Set the new player number (assuming 'team' is an @onready or fetched component)
+	if team != null:
+		team.current_team = new_team
+
+	# Apply the new collision mask and layer
+	collision_layer = GamePhysics.get_minion_layer(new_team, role == UnitRoles.UnitType.PEASANT)
 	collision_mask = GamePhysics.get_minion_movement_mask()
 
-	# --- remove old role groups ---
+	# --- 3. GROUP MEMBERSHIP ---
+	# Remove old role groups before we update the current_role variable.
 	if current_role != null:
 		for g: StringName in UnitRoles.get_role_groups(current_role):
 			if is_in_group(g):
 				remove_from_group(g)
 
-	# --- remove old role-dependent nodes ---
-	if attack:
-		_disconnect_weapon_signals()
-		attack.queue_free()
-		attack = null
-
-	# --- Manage Brain (Preserve AdvisorTaxed) ---
-	if not brain:
-		brain = AgentBrain.new()
-		brain.name = "Brain"
-		brain.agent = self
-		add_child(brain)
-
-	# Clear old advisors except persistent ones (like AdvisorTaxed from scene)
-	for child in brain.get_children():
-		if child is AdvisorTaxed and role != UnitRoles.UnitType.PLAYER:
-			continue
-		child.queue_free()
-
-	if tasker:
-		if tasker.has_task():
-			tasker.clear_task()
-			tasker.unregister_from_board()
-		tasker.queue_free()
-		tasker = null
-
-	# --- add new weapon (PackedScene) ---
-	var weapon_scene: PackedScene = UnitRoles.get_weapon(role)
-	if weapon_scene != null:
-		attack = weapon_scene.instantiate()
-		add_child(attack)
-
-	# --- add new tasker (Script) ---
-	var tasker_script: Script = UnitRoles.get_tasker(role)
-	if tasker_script != null:
-		tasker = tasker_script.new()
-		var kind = UnitRoles.get_tasker_kind(role)
-		if kind != null and "kind" in tasker:
-			tasker.kind = kind
-		add_child(tasker)
-
-	# --- Add Advisors ---
-	if role == UnitRoles.UnitType.PLAYER:
-		pass
-	else:
-		var wander = AdvisorWander.new()
-		brain.add_child(wander)
-
-#		if attack:
-#			var att = AdvisorAttack.new()
-#			brain.add_child(att)
-
-		if tasker:
-			var wrk = AdvisorWork.new()
-			brain.add_child(wrk)
-
-		if role == UnitRoles.UnitType.PEASANT or role == UnitRoles.UnitType.WORKER:
-			var flee = AdvisorFlee.new()
-			brain.add_child(flee)
-
-	# --- visuals ---
-	var frames: SpriteFrames = UnitRoles.get_frames(role, player)
-	if frames != null and animation:
-		animation.set_sprite_frames(frames)
-
-	# --- add new role groups ---
-	for g: StringName in UnitRoles.get_role_groups(role):
-		add_to_group(g)
-
+	# Update the state
 	current_role = role
 
-	# Configure all refs.
-	_connect_all_refs()
+	# Add new role groups.
+	for g: StringName in UnitRoles.get_role_groups(current_role):
+		add_to_group(g)
 
-	# --- movement and animation refresh ---
-	# Cancel transient action states when swapping role
+	# --- 4. VISUALS ---
+	# This ensures your Chinese painting aesthetic sprite frames update 
+	# smoothly without flickering when the unit changes roles.
+	var frames: SpriteFrames = UnitRoles.get_frames(current_role, new_team)
+	if frames != null and animate:
+		animate.set_sprite_frames(frames)
+
+	# --- 5. STATE REFRESH ---
+	# Cancel transient action states when swapping role to prevent sliding or ghost attacks
 	if movement:
 		movement.stop()
 
-	# If you have flags on animation like `attacking`, clear them too
-	if animation:
-		animation.cancel_action_state()
+	if animate:
+		animate.cancel_action_state()
+		
+	if brain:
+		brain._ready()
+
+
+func _sync_folder(target_parent: Node, incoming_packages: Array) -> void:
+# --- APPLY_ROLE HELPER FUNCTION ---
+	if target_parent == null: return
+	
+	# Build a list of the names we EXPECT to have
+	var incoming_names: Array[String] = []
+	for package in incoming_packages:
+		incoming_names.append(package["name"])
+		
+	# PHASE 1: PRUNE THE OLD
+# PHASE 1: PRUNE THE OLD
+	for existing_child in target_parent.get_children():
+		# Ignore internal utility nodes like Timers!
+		if existing_child is Timer:
+			continue
+			
+		if not existing_child.name in incoming_names:
+			existing_child.queue_free()
+			
+	# Update list of what survived the pruning
+	var surviving_names: Array[String] = []
+	for child in target_parent.get_children():
+		if not child.is_queued_for_deletion(): 
+			surviving_names.append(child.name)
+			
+	# PHASE 2: PLANT THE NEW
+	for package in incoming_packages:
+		var clean_name = package["name"]
+		var generated_node = package["node"]
+		
+		if clean_name in surviving_names:
+			# We already have this component, trash the duplicate
+			generated_node.free() 
+		else:
+			# It's new, attach it cleanly
+			generated_node.name = clean_name
+			target_parent.add_child(generated_node)
 
 
 func return_player() -> int:
-	return player
+	if team:
+		return team.return_team()
+	else:
+		return -1
 
 
 func return_position() -> Vector3:
@@ -295,13 +187,6 @@ func set_castle(new_castle: Node) -> void:
 	_unregister_myself_with_castle()
 	castle = new_castle
 	_register_myself_with_castle()
-
-	if tasker:
-		tasker.switch_job_board(castle)
-
-	if foodTasker:
-		foodTasker.switch_job_board(castle)
-		
 
 
 func _register_myself_with_castle() -> void:

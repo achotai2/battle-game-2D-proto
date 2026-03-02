@@ -5,7 +5,7 @@
 [ext_resource type="Script" uid="uid://qumqy1omy72i" path="res://Scripts/BuildingNodes/worksite.gd" id="3_auqgr"]
 [ext_resource type="Script" uid="uid://dqu3s3kqb7wj6" path="res://Scripts/BuildingNodes/spawnsite.gd" id="4_5cnks"]
 [ext_resource type="PackedScene" uid="uid://d1275k0u0fsn" path="res://Scenes/AgentNodes/interactable.tscn" id="5_q2yk0"]
-[ext_resource type="Script" path="res://Scripts/MemoryNodes/GoldWallet.gd" id="6_gw"]
+[ext_resource type="Script" uid="uid://2ssmusd0k3fn" path="res://Scripts/MemoryNodes/GoldWallet.gd" id="6_gw"]
 
 [sub_resource type="CylinderShape3D" id="CylinderShape3D_2yu6c"]
 height = 1.1655273
@@ -62,7 +62,7 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1, 0, 0)
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -1)
 
 [node name="Interactable" parent="." instance=ExtResource("5_q2yk0")]
-icon_type = 1
+icon_type = 4
 
 [node name="NavigationObstacle2D" type="NavigationObstacle3D" parent="."]
 radius = 1.0
@@ -74,7 +74,7 @@ script = ExtResource("6_gw")
 
 [node name="Sprites" type="Node3D" parent="."]
 
-[node name="Sprite2D" type="Sprite3D" parent="Sprites"]
+[node name="Sprite2D" type="Sprite3D" parent="Sprites" groups=["sprites"]]
 offset = Vector2(0, 50)
 billboard = 2
 alpha_cut = 1

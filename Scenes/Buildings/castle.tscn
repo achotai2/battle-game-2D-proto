@@ -42,7 +42,7 @@ carve_navigation_mesh = true
 
 [node name="Sprites" type="Node3D" parent="."]
 
-[node name="Sprite2D" type="Sprite3D" parent="Sprites"]
+[node name="Sprite2D" type="Sprite3D" parent="Sprites" groups=["sprites"]]
 offset = Vector2(0, 100)
 billboard = 2
 alpha_cut = 1

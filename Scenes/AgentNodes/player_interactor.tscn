@@ -10,7 +10,7 @@ radius = 1.5302734
 
 [node name="PlayerInteractor" type="Node3D" node_paths=PackedStringArray("sensor")]
 script = ExtResource("1_5exm1")
-sensor = NodePath("")
+sensor = NodePath("AgentTracking")
 prompt_scene = ExtResource("2_noa6p")
 
 [node name="AgentTracking" type="Area3D" parent="."]

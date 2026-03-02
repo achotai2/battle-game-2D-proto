@@ -31,6 +31,7 @@ func _ready() -> void:
 	team = ComponentFinder.get_component(self, "TeamMemory")
 	if team and not team.team_changed.is_connected(_team_changed):
 		team.team_changed.connect(_team_changed)
+	_team_changed(team.return_team())
 
 
 func _team_changed(new_team: int) -> void:
