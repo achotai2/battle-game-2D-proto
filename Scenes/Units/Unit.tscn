@@ -1,6 +1,7 @@
-[gd_scene load_steps=17 format=3 uid="uid://dunt5nfaabbqv"]
+[gd_scene load_steps=18 format=3 uid="uid://dunt5nfaabbqv"]
 
 [ext_resource type="Script" uid="uid://b3iqpgjb0vtvl" path="res://Scripts/UnitBase/agent_base.gd" id="1_w7084"]
+[ext_resource type="PackedScene" uid="uid://tj48hg7yffl8" path="res://Scenes/AgentNodes/navigation_agent_3d.tscn" id="2_baijc"]
 [ext_resource type="SpriteFrames" uid="uid://cvmbb1xtbmxsv" path="res://Art/SpriteFrames/Player.tres" id="2_emoxc"]
 [ext_resource type="Script" uid="uid://db8bramlpehyu" path="res://Scripts/AgentNodes/agent_brain.gd" id="3_baijc"]
 [ext_resource type="Script" uid="uid://3hsle2qb2hgj" path="res://Scripts/AgentNodes/Advisors/a_player_movement.gd" id="4_u301h"]
@@ -36,11 +37,7 @@ shape = SubResource("CapsuleShape3D_jokor")
 radius = 1.0
 avoidance_layers = 4
 
-[node name="NavigationAgent3D" type="NavigationAgent3D" parent="."]
-avoidance_enabled = true
-radius = 50.0
-avoidance_layers = 8
-avoidance_mask = 15
+[node name="NavigationAgent3D" parent="." instance=ExtResource("2_baijc")]
 
 [node name="Sprites" type="Node3D" parent="."]
 

@@ -1,0 +1,7 @@
+[gd_scene format=3 uid="uid://tj48hg7yffl8"]
+
+[node name="NavigationAgent3D" type="NavigationAgent3D"]
+avoidance_enabled = true
+radius = 50.0
+avoidance_layers = 8
+avoidance_mask = 15

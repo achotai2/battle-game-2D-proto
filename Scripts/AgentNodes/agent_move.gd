@@ -37,14 +37,11 @@ const PATH_UPDATE_INTERVAL: int = 4
 func _ready() -> void:
 	# 1. Automatically find the AgentBase (The Factory doesn't set Inspector variables!)
 	if not agent:
-		var current = get_parent()
-		while current != null and not current is AgentBase:
-			current = current.get_parent()
-		agent = current as AgentBase
+		agent = ComponentFinder.get_base(self)
 		
 	# 2. Automatically find the Animation component
 	if not animation and agent:
-		animation = agent.find_child("AgentAnimate", true, false)
+		animation = ComponentFinder.get_component(self, "AgentAnimate")
 
 	# 3. Handle Navigation Setup safely (Without aborting if it's missing)
 	if nav_agent:
