@@ -12,6 +12,8 @@ height = 1.1655273
 radius = 0.6010742
 
 [node name="ArcheryRange" type="StaticBody3D" node_paths=PackedStringArray("visual", "interactable", "worksite", "spawnsite", "gold")]
+collision_layer = 2
+collision_mask = 3
 script = ExtResource("1_aww4k")
 building_type = 2
 visual = NodePath("Sprites/Sprite2D")

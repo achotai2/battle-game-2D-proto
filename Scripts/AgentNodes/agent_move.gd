@@ -50,8 +50,6 @@ func refresh_components() -> void:
 
 	# 3. Look for the dynamically generated Nav Agent.
 	nav_agent = ComponentFinder.get_component_by_name(self, "MinionNavAgent")
-	if not nav_agent:
-		print("Ak")
 
 	# 4. Handle Navigation Setup safely
 	if is_instance_valid(nav_agent):

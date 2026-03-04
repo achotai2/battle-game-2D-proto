@@ -1,7 +1,7 @@
 extends Advisor
 class_name AdvisorWander
 
-var wander_radius: float = 10.0
+var wander_radius: float = 5.0
 var min_wander_distance: float = 2.0
 
 var movement: AgentMovement = null

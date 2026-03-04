@@ -11,13 +11,15 @@ height = 2.0526266
 radius = 1.9042969
 
 [node name="Castle" type="StaticBody3D" node_paths=PackedStringArray("worker_job_board", "food_job_board") groups=["Attackable", "Buildings", "Interactable"]]
+collision_layer = 2
+collision_mask = 3
 physics_material_override = SubResource("PhysicsMaterial_r1mkv")
 script = ExtResource("1_p6e6l")
 worker_job_board = NodePath("WorkerJobBoard")
 food_job_board = NodePath("FoodJobBoard")
 
 [node name="CollisionShape2D" type="CollisionShape3D" parent="."]
-transform = Transform3D(-4.371139e-08, 0, -1, 0, 1, 0, 1, 0, -4.371139e-08, 0, 1.1240916, 0)
+transform = Transform3D(-4.371139e-08, 0, -1, 0, 1, 0, 1, 0, -4.371139e-08, 0, 1.5174832, 0)
 shape = SubResource("CylinderShape3D_hhb7p")
 
 [node name="WorkerJobBoard" type="Node" parent="." node_paths=PackedStringArray("castle")]
@@ -36,6 +38,7 @@ castle = NodePath("..")
 metadata/_custom_type_script = "uid://ba0yfy3sv1ht2"
 
 [node name="NavigationObstacle2D2" type="NavigationObstacle3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.8767499, 0)
 radius = 2.0
 affect_navigation_mesh = true
 carve_navigation_mesh = true

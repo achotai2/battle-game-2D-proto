@@ -80,8 +80,6 @@ func apply_role(role: UnitRoles.UnitType, new_team: int) -> void:
 	if brain and brain.has_method("refresh_advisors"):
 		brain.refresh_advisors()
 
-	print(current_role, " Motor folder contains: ", motor.get_children())
-
 	# Set the new variables.
 	movement = ComponentFinder.get_component(self, "AgentMovement") as AgentMovement
 	team = ComponentFinder.get_component(self, "TeamMemory") as TeamMemory
