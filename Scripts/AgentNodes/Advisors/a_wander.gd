@@ -23,6 +23,8 @@ func initialize() -> void:
 	# Wire up the movement signal so we know when we arrive
 	if movement and not movement.move_to_pos_finished.is_connected(_on_move_finished):
 		movement.move_to_pos_finished.connect(_on_move_finished)
+	if movement and not movement.stuck.is_connected(_meander_stuck):
+		movement.stuck.connect(_meander_stuck)
 	
 	if _base_agent:
 		if not _current_target:
@@ -75,6 +77,11 @@ func _generate_new_wander_point() -> void:
 
 func _on_move_finished(agent: AgentBase) -> void:
 	# Only flip the flag if THIS agent is the one that finished moving
+	if agent == _base_agent:
+		_needs_new_point = true
+
+
+func _meander_stuck(agent: AgentBase) -> void:
 	if agent == _base_agent:
 		_needs_new_point = true
 

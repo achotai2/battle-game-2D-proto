@@ -2,6 +2,7 @@ extends Node
 class_name AgentMovement
 
 signal move_to_pos_finished(agent: AgentBase)
+signal stuck(agent: AgentBase)
 
 # --- CONFIGURATION ---
 @export_range(0, 500, 0.0) var max_speed: float = 5.0
@@ -91,8 +92,11 @@ func _process_pathfinding(delta: float) -> void:
 		var dist_sq = agent.global_position.distance_squared_to(_last_stuck_pos)
 		var min_dist = min_progress_per_sec * repath_interval
 		if dist_sq < (min_dist * min_dist):
-			# Stuck - force repath
-			nav_agent.target_position = nav_agent.target_position
+			# Stuck - let advisor or whoever know.
+			move_with_velocity(Vector3.ZERO, delta)
+			stuck.emit(agent)
+			return # Bail out so we don't try to keep moving
+
 		_last_stuck_pos = agent.global_position
 
 	# Path Following
