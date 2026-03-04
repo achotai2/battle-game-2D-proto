@@ -91,6 +91,13 @@ var role_blueprints: Dictionary = {
 		"motor": [preload("res://Scripts/AgentNodes/agent_animate.gd"), preload("res://Scripts/AgentNodes/agent_move.gd"), preload("res://Scripts/AgentNodes/GoldGiver.gd")],
 		"weapons": [preload("res://Scenes/Weapons/weapon_sword.tscn")],
 	},
+	UnitType.WORKER: {
+		"advisors": [preload("res://Scripts/AgentNodes/Advisors/a_work.gd")],
+		"memory": [preload("res://Scripts/MemoryNodes/GoldWallet.gd"), preload("res://Scripts/MemoryNodes/health.gd"), preload("res://Scripts/MemoryNodes/TeamMemory.gd"), preload("res://Scripts/MemoryNodes/minion_tasker.gd")],
+		"sensors": [preload("res://Scripts/SensorNodes/Tracker.gd")],
+		"motor": [preload("res://Scripts/AgentNodes/agent_animate.gd"), preload("res://Scripts/AgentNodes/agent_move.gd"), preload("res://Scripts/AgentNodes/GoldGiver.gd"), preload("Scenes/AgentNodes/MinionNavAgent.tscn"), preload("res://Scripts/AgentNodes/work_action.gd")],
+		"weapons": [],
+	},
 	UnitType.SOLDIER: {
 		"advisors": [preload("res://Scripts/AgentNodes/Advisors/a_wander.gd")],
 		"memory": [preload("res://Scripts/MemoryNodes/GoldWallet.gd"), preload("res://Scripts/MemoryNodes/health.gd"), preload("res://Scripts/MemoryNodes/TeamMemory.gd")],

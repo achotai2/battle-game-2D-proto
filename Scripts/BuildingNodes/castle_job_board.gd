@@ -13,6 +13,9 @@ var _sites: Array[WorkSite] = []
 var _reserved_by: Dictionary = {} # site: Array[AgentBase] (agents)
 var _idle_minions: Array[MinionTasker] = []
 
+signal work_available(site: WorkSite)
+signal work_completed(site: WorkSite)
+
 func _ready() -> void:
 	if castle == null:
 		castle = get_parent() as Castle
@@ -35,7 +38,8 @@ func register_site(site: WorkSite) -> void:
 	if not site.tree_exited.is_connected(exit_callable):
 		site.tree_exited.connect(exit_callable, CONNECT_ONE_SHOT)
 
-	# New work appeared -> try assign immediately
+	# New work appeared -> broadcast it
+	work_available.emit(site)
 	_assign_if_possible()
 
 
@@ -51,6 +55,7 @@ func unregister_site(site: WorkSite) -> void:
 		if site.tree_exited.is_connected(exit_callable):
 			site.tree_exited.disconnect(exit_callable)
 
+	work_completed.emit(site)
 	_assign_if_possible()
 
 
