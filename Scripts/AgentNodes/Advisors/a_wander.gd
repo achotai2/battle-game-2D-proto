@@ -7,6 +7,7 @@ var min_wander_distance: float = 2.0
 var movement: AgentMovement = null
 var _current_target: Node3D = null
 var _base_agent: AgentBase = null
+var unit_speed: UnitSpeed = null
 
 # State tracking
 var _wander_target_pos: Vector3 = Vector3.ZERO
@@ -16,6 +17,9 @@ var _needs_new_point: bool = true
 func initialize() -> void:
 	if not movement:
 		movement = ComponentFinder.get_component(self, "AgentMovement")
+
+	if not unit_speed:
+		unit_speed = ComponentFinder.get_component(self, "UnitSpeed")
 
 	if not _base_agent:
 		_base_agent = ComponentFinder.get_base(self)
@@ -59,6 +63,8 @@ func enact_intent(intent: Intent) -> void:
 	if not movement: return
 
 	if intent.type == Intent.Type.MOVE:
+		if unit_speed:
+			movement.max_speed = unit_speed.walk_speed
 		movement.move_to_position(intent.target_vector)
 
 

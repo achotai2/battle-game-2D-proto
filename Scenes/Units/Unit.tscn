@@ -9,12 +9,14 @@
 [ext_resource type="Script" uid="uid://2ssmusd0k3fn" path="res://Scripts/MemoryNodes/GoldWallet.gd" id="6_jb8h3"]
 [ext_resource type="Script" uid="uid://c2guvnr3dtafe" path="res://Scripts/MemoryNodes/health.gd" id="7_ti75h"]
 [ext_resource type="Script" uid="uid://ggpe07y6471c" path="res://Scripts/MemoryNodes/TeamMemory.gd" id="8_lx4m0"]
+[ext_resource type="Script" path="res://Scripts/MemoryNodes/UnitSpeed.gd" id="8_speed"]
 [ext_resource type="Script" uid="uid://c5ixb1wens7mc" path="res://Scripts/SensorNodes/Tracker.gd" id="9_gq1ut"]
 [ext_resource type="PackedScene" uid="uid://by5ppm4d4bxev" path="res://Scenes/AgentNodes/player_interactor.tscn" id="10_j1x40"]
 [ext_resource type="Script" uid="uid://cfiw0qaxe8jxd" path="res://Scripts/SensorNodes/player_controls.gd" id="11_0owno"]
 [ext_resource type="Script" uid="uid://cjjdaf7vlfs4k" path="res://Scripts/AgentNodes/agent_animate.gd" id="12_tb705"]
 [ext_resource type="Script" uid="uid://58qm17emnwvd" path="res://Scripts/AgentNodes/agent_move.gd" id="13_4enfk"]
 [ext_resource type="Script" uid="uid://cf8nbntvvy3iv" path="res://Scripts/AgentNodes/GoldGiver.gd" id="14_f3n8y"]
+[ext_resource type="Script" path="res://Scripts/AgentNodes/work_action.gd" id="14_work"]
 [ext_resource type="PackedScene" uid="uid://6it7l8b8yxs" path="res://Scenes/Weapons/weapon_sword.tscn" id="15_spwf0"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_jokor"]
@@ -73,6 +75,9 @@ metadata/_custom_type_script = "uid://c2guvnr3dtafe"
 script = ExtResource("8_lx4m0")
 metadata/_custom_type_script = "uid://ggpe07y6471c"
 
+[node name="UnitSpeed" type="Node" parent="Memory"]
+script = ExtResource("8_speed")
+
 [node name="Sensors" type="Node3D" parent="."]
 
 [node name="Tracker" type="Node" parent="Sensors"]
@@ -104,6 +109,9 @@ metadata/_custom_type_script = "uid://58qm17emnwvd"
 [node name="GoldGiver" type="Node" parent="Motor" node_paths=PackedStringArray("agent")]
 script = ExtResource("14_f3n8y")
 agent = NodePath("../..")
+
+[node name="WorkAction" type="Node" parent="Motor"]
+script = ExtResource("14_work")
 
 [node name="NavigationAgent3D" parent="Motor" instance=ExtResource("2_baijc")]
 
