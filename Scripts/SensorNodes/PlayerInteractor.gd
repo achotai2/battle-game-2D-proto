@@ -84,7 +84,7 @@ func _set_target(target: Interactable) -> void:
 func _update_prompt() -> void:
 	if _prompt == null:
 		return
-	if _current_target == null or not is_instance_valid(_current_target):
+	if _current_target == null or not is_instance_valid(_current_target) or not _current_target.can_interact(prompt_parent):
 		_hide_prompt()
 		return
 
