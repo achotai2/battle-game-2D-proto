@@ -174,7 +174,7 @@ func get_work_position_for(agent: AgentBase) -> Vector3:
 	return _get_slot_position(0)
 
 
-func apply_work(amount: float, worker: MinionTasker) -> void:
+func apply_work(amount: float, worker: AgentBase) -> void:
 	## Called by a worker to contribute progress toward completion.
 	## - amount: how much work this "hit" contributes
 	## - worker: the worker doing the work (useful if you want to attribute credit)
@@ -384,7 +384,7 @@ func _unregister_from_job_board() -> void:
 # Internals: completion
 # -------------------------
 
-func _complete(worker: MinionTasker) -> void:
+func _complete(worker: AgentBase) -> void:
 	## Called once when work is finished.
 	## We unregister from the job board so new workers won't be assigned here,
 	## then emit a signal so the parent/building can react (upgrade, spawn loot, etc).

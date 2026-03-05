@@ -38,7 +38,7 @@ func enqueue_spawn(amount: int = 1) -> void:
 
 	total_work += work_per_spawn
 
-func apply_work(amount: float, worker: MinionTasker) -> void:
+func apply_work(amount: float, worker: AgentBase) -> void:
 # Extends the worksite.gd apply work function for spawnsite logic:
 	if not enabled or not needs_work():
 		return

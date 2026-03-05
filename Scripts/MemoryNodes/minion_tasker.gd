@@ -6,8 +6,6 @@ class_name MinionTasker
 @export var movement: AgentMovement = null
 @export var castle: Castle = null
 @export var work_range: float = 1.0
-@export var work_interval: float = 1.0
-@export var work_amount: float = 1.0
 @export var kind: int = 0 # JobBoardType (int is faster than Enum lookup)
 @export var auto_get_work_when_idle: bool = true
 
@@ -96,9 +94,6 @@ func assign_job(site: WorkSite) -> void:
 	_site = site
 	# We don't command movement here.
 
-func request_job() -> void:
-	# Deprecated, no longer used in new system, returning closest job instead
-	pass
 
 func _release_job(release_to_board: bool) -> void:
 	if release_to_board and is_instance_valid(_job_board) and is_instance_valid(_site):
@@ -110,26 +105,6 @@ func _release_job(release_to_board: bool) -> void:
 	_site = null
 
 # --- WORK LOGIC (Called by Advisor) ---
-
-func perform_work_tick() -> bool:
-	if not agent or not _site:
-		return false
-
-	if not _site.needs_work():
-		_release_job(true)
-		return false
-
-	# Advisor should have checked range, but we can double check
-	if not _is_in_work_range(_site):
-		return false
-
-	_site.apply_work(work_amount, self)
-
-	if _site and not _site.needs_work():
-		_release_job(true)
-		
-	return true
-
 func get_current_job() -> WorkSite:
 	return _site
 

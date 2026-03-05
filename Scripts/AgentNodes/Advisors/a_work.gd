@@ -1,27 +1,36 @@
 extends Advisor
 class_name AdvisorWork
 
-var work_action: Node = null
+var work_action: WorkAction = null
+var movement: AgentMovement = null
+var work_tasker: MinionTasker = null
+var animate: AgentAnimate = null
+var arrived: bool = false
 
 func initialize() -> void:
-	if not agent:
-		agent = ComponentFinder.get_base(self)
 	if not work_action:
 		work_action = ComponentFinder.get_component(self, "WorkAction")
 
-func get_intent() -> Intent:
-	if not agent or not agent.tasker: return null
+	if not movement:
+		movement = ComponentFinder.get_component(self, "AgentMovement")
 
-	var tasker = agent.tasker
-	var job = tasker.get_current_job()
+	if not work_tasker:
+		work_tasker = ComponentFinder.get_component(self, "MinionTasker")
+
+
+func get_intent() -> Intent:
+	if not work_tasker: return
+	
+	var job = work_tasker.get_current_job()
 
 	if not is_instance_valid(job) or not job.needs_work():
-		job = tasker.get_closest_known_job()
+		job = work_tasker.get_closest_known_job()
 		if job:
-			tasker.assign_job(job)
+			work_tasker.assign_job(job)
+			arrived = false
 
 	if not job:
-		var intent = Intent.new(1.0, self, Intent.Type.IDLE)
+		var intent = Intent.new(0.0, self, Intent.Type.IDLE)
 		intent.description = "Looking for work"
 		return intent
 
@@ -30,13 +39,33 @@ func get_intent() -> Intent:
 	intent.description = "Working or moving to job"
 	return intent
 
+
 func enact_intent(intent: Intent) -> void:
-	if not agent or not agent.tasker: return
+	if not work_action or not movement: return
 
-	if intent.type == Intent.Type.IDLE:
-		if agent.tasker.has_method("request_job"):
-			agent.tasker.request_job()
+	if not intent.type == Intent.Type.WORK: return
 
-	elif intent.type == Intent.Type.WORK:
-		if work_action and work_action.has_method("do_work"):
+	var job = work_tasker.get_current_job()
+	if not job or not job.needs_work():
+		return
+
+	if not arrived:
+		var agent = ComponentFinder.get_base(self)
+		var target_pos = job.get_work_position_for(agent)
+		var range_sq = work_tasker.work_range * work_tasker.work_range
+		var dist_sq = agent.global_position.distance_squared_to(target_pos)
+
+		if dist_sq <= range_sq:
+			arrived = true
+		else:
+			# Move to work
+			if movement:
+				movement.move_to_position(target_pos)
+
+	if arrived:
+		# In range, do work
+		if movement:
+			movement.stop()
+
+		if work_action:
 			work_action.do_work(intent.target_node)
