@@ -110,12 +110,14 @@ func get_current_job() -> WorkSite:
 
 # --- HELPERS ---
 
+# DEPRECIATED
 func _is_in_work_range(site: WorkSite) -> bool:
 	if not agent: return false
 	
 	var target_pos = site.get_work_position_for(agent)
 	return agent.global_position.distance_squared_to(target_pos) <= _work_range_sq
 
+# DEPRECIATED
 func _on_movement_finished(_agent_node: AgentBase) -> void:
 	# No longer needed, Advisor handles state
 	pass
