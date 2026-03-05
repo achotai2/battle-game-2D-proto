@@ -15,10 +15,30 @@ signal interaction_suspended(interactor: AgentBase)
 var _disabled: bool = false
 var _active_interactor: AgentBase = null
 var _interaction_cost: int = 0
-
+var _team_memory: TeamMemory = null
 
 func _ready() -> void:
-	pass
+	call_deferred("_late_ready")
+
+func _late_ready() -> void:
+	_team_memory = ComponentFinder.get_component(self, "TeamMemory")
+	if _team_memory and not _team_memory.team_changed.is_connected(_on_team_changed):
+		_team_memory.team_changed.connect(_on_team_changed)
+		_on_team_changed(_team_memory.return_team())
+	else:
+		_on_team_changed(0)
+
+
+func _on_team_changed(new_team: int) -> void:
+	match new_team:
+		0:
+			collision_layer = GamePhysics.get_mask_bit(GamePhysics.LAYER_INTERACTABLE_NEUTRAL)
+		1:
+			collision_layer = GamePhysics.get_mask_bit(GamePhysics.LAYER_INTERACTABLE_PLAYER_1)
+		2:
+			collision_layer = GamePhysics.get_mask_bit(GamePhysics.LAYER_INTERACTABLE_PLAYER_2)
+		_:
+			collision_layer = GamePhysics.get_mask_bit(GamePhysics.LAYER_INTERACTABLE_NEUTRAL)
 
 
 func can_interact(interactor: AgentBase) -> bool:

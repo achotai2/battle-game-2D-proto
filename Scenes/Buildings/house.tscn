@@ -6,6 +6,7 @@
 [ext_resource type="PackedScene" uid="uid://d1275k0u0fsn" path="res://Scenes/AgentNodes/interactable.tscn" id="4_87o8n"]
 [ext_resource type="Script" uid="uid://dqu3s3kqb7wj6" path="res://Scripts/BuildingNodes/spawnsite.gd" id="5_he61m"]
 [ext_resource type="Script" path="res://Scripts/MemoryNodes/GoldWallet.gd" id="6_gw"]
+[ext_resource type="Script" path="res://Scripts/MemoryNodes/TeamMemory.gd" id="99_team"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape2D_coeoc"]
 radius = 47.999996
@@ -77,3 +78,6 @@ script = ExtResource("6_gw")
 [node name="Sprite2D" type="Sprite3D" parent="Sprites"]
 offset = Vector2(0, -50)
 texture = ExtResource("1_7aoon")
+
+[node name="TeamMemory" type="Node" parent="."]
+script = ExtResource("99_team")

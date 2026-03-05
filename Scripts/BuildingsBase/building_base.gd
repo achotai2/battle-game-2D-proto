@@ -14,10 +14,15 @@ class_name BuildingBase
 @export var state: BuildingDefs.BuildingState = BuildingDefs.BuildingState.CONSTRUCTING
 
 var _is_ready: bool = false
+var _team_memory: TeamMemory = null
 
 
 func _ready() -> void:
 	_is_ready = true
+
+	_team_memory = ComponentFinder.get_component(self, "TeamMemory")
+	if _team_memory:
+		_team_memory.current_team = player
 
 	collision_layer = GamePhysics.get_building_layer()
 
@@ -36,6 +41,8 @@ func _ready() -> void:
 
 func set_player(p: int) -> void:
 	player = p
+	if _team_memory:
+		_team_memory.current_team = p
 	if _is_ready:
 		apply_state(state)
 

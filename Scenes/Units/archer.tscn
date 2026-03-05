@@ -15,6 +15,7 @@
 [ext_resource type="Script" uid="uid://c5ixb1wens7mc" path="res://Scripts/SensorNodes/Tracker.gd" id="13_gt"]
 [ext_resource type="Script" uid="uid://cf8nbntvvy3iv" path="res://Scripts/AgentNodes/GoldGiver.gd" id="14_gg"]
 [ext_resource type="Script" uid="uid://dgco637g5esju" path="res://Scripts/AgentNodes/Advisors/a_taxed.gd" id="15_at"]
+[ext_resource type="Script" path="res://Scripts/MemoryNodes/TeamMemory.gd" id="99_team"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_t6ard"]
 radius = 0.42871094
@@ -73,6 +74,9 @@ sprite_frames = ExtResource("2_xbs6w")
 animation = &"walk"
 
 [node name="Memory" type="Node" parent="."]
+
+[node name="TeamMemory" type="Node" parent="Memory"]
+script = ExtResource("99_team")
 
 [node name="GoldWallet" type="Node" parent="Memory"]
 script = ExtResource("11_gw")
