@@ -124,6 +124,7 @@ func has_free_slot() -> bool:
 	return _agent_for_slot.size() < _slot_markers.size()
 
 
+# DEPRECIATED
 func can_reserve(agent: AgentBase) -> bool:
 	## Optional hook: JobBoard can ask if this site can be reserved by a given agent.
 	if not needs_work():
@@ -135,6 +136,7 @@ func can_reserve(agent: AgentBase) -> bool:
 	return has_free_slot()
 
 
+# DEPRECIATED
 func reserve(agent: AgentBase) -> bool:
 	## Optional hook: JobBoard calls this when it assigns/reserves the job for an agent.
 	if agent == null or not is_instance_valid(agent):
@@ -154,6 +156,7 @@ func reserve(agent: AgentBase) -> bool:
 	return true
 
 
+# DEPRECIATED
 func unreserve(agent: AgentBase) -> void:
 	## Optional hook: JobBoard calls this when releasing the reservation (worker changed jobs, etc.)
 	if agent == null:

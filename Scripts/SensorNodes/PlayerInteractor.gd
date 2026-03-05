@@ -88,6 +88,7 @@ func _update_prompt() -> void:
 		_hide_prompt()
 		return
 
+	_update_prompt_icon()
 	var anchor_position := _current_target.get_prompt_position()
 	var percent_left: float = 1.0
 	if not interaction_timer.is_stopped():

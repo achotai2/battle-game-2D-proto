@@ -68,6 +68,7 @@ func _on_site_exited(site: WorkSite) -> void:
 # Minions
 # -------------------------
 
+# DEPRECIATED
 func register_minion(minion: MinionTasker) -> void:
 	if minion == null or not is_instance_valid(minion):
 		return
@@ -77,6 +78,7 @@ func register_minion(minion: MinionTasker) -> void:
 	if not minion.tree_exited.is_connected(exit_callable):
 		minion.tree_exited.connect(exit_callable, CONNECT_ONE_SHOT)
 
+# DEPRECIATED
 func unregister_minion(minion: MinionTasker) -> void:
 	# Remove from idle list if present
 	var idx := _idle_minions.find(minion)
@@ -96,10 +98,12 @@ func unregister_minion(minion: MinionTasker) -> void:
 	_assign_if_possible()
 
 
+# DEPRECIATED
 func _on_minion_exited(minion: Node) -> void:
 	unregister_minion(minion)
 
 
+# DEPRECIATED
 func minion_idle(minion: MinionTasker) -> void:
 	if minion == null or not is_instance_valid(minion):
 		return
@@ -108,15 +112,18 @@ func minion_idle(minion: MinionTasker) -> void:
 	_assign_if_possible()
 
 
+# DEPRECIATED
 func register_worker(minion: MinionTasker) -> void:
 	register_minion(minion)
 
 
+# DEPRECIATED
 func unregister_worker(minion: MinionTasker) -> void:
 	unregister_minion(minion)
 
 
 # minion calls this when abandoning/completing a job
+# DEPRECIATED
 func release_job(site: WorkSite, minion: MinionTasker) -> void:
 	if site == null:
 		return
@@ -126,6 +133,7 @@ func release_job(site: WorkSite, minion: MinionTasker) -> void:
 		_assign_if_possible()
 
 
+# DEPRECIATED
 func request_job(minion: MinionTasker) -> WorkSite:
 	if minion == null or not is_instance_valid(minion):
 		return null
@@ -151,6 +159,7 @@ func request_job(minion: MinionTasker) -> WorkSite:
 # Assignment
 # -------------------------
 
+# DEPRECIATED
 func _assign_if_possible() -> void:
 	_prune_invalid_sites()
 	_prune_invalid_minions()
@@ -173,6 +182,7 @@ func _assign_if_possible() -> void:
 			site = _pick_best_site_for_minion(w, agent, attempted)
 
 
+# DEPRECIATED
 func _pick_best_site_for_minion(minion: MinionTasker, agent: AgentBase, excluded_sites: Array[WorkSite] = []) -> WorkSite:
 	var best: WorkSite = null
 	var best_score: float = INF
@@ -204,6 +214,7 @@ func _pick_best_site_for_minion(minion: MinionTasker, agent: AgentBase, excluded
 # Internals
 # -------------------------
 
+# DEPRECIATED
 func _reserve(site: WorkSite, agent: AgentBase) -> bool:
 	if not is_instance_valid(site):
 		return false
@@ -218,6 +229,7 @@ func _reserve(site: WorkSite, agent: AgentBase) -> bool:
 	return true
 
 
+# DEPRECIATED
 func _release_site(site: WorkSite) -> void:
 	if _reserved_by.has(site):
 		var agents: Array = _reserved_by[site]
@@ -239,6 +251,7 @@ func _release_site(site: WorkSite) -> void:
 					agent.tasker.clear_task()
 
 
+# DEPRECIATED
 func _release_reservation(site: WorkSite, agent: AgentBase) -> void:
 	if not _reserved_by.has(site):
 		return
@@ -256,6 +269,7 @@ func _release_reservation(site: WorkSite, agent: AgentBase) -> void:
 		_reserved_by[site] = agents
 
 
+# DEPRECIATED
 func _release_reservations_for_agent(agent: AgentBase) -> void:
 	# Duplicate keys to avoid modification during iteration issues
 	var sites = _reserved_by.keys()
@@ -263,6 +277,7 @@ func _release_reservations_for_agent(agent: AgentBase) -> void:
 		_release_reservation(site, agent)
 
 
+# DEPRECIATED
 func _prune_invalid_sites() -> void:
 	for i in range(_sites.size() - 1, -1, -1):
 		var s := _sites[i]
@@ -271,22 +286,26 @@ func _prune_invalid_sites() -> void:
 			_reserved_by.erase(s)
 
 
+# DEPRECIATED
 func _prune_invalid_minions() -> void:
 	for i in range(_idle_minions.size() - 1, -1, -1):
 		if _idle_minions[i] == null or not is_instance_valid(_idle_minions[i]):
 			_idle_minions.remove_at(i)
 
 
+# DEPRECIATED
 func _site_needs_work(site: WorkSite) -> bool:
 	return site.needs_work()
 
 
+# DEPRECIATED
 func _get_site_pos(site: WorkSite, agent: AgentBase) -> Vector3:
 	if site.has_method("get_work_position_for"):
 		return site.get_work_position_for(agent)
 	return site.get_work_position()
 
 
+# DEPRECIATED
 func _resolve_agent(minion: MinionTasker) -> AgentBase:
 	if minion == null:
 		return null
