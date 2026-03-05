@@ -1,6 +1,7 @@
-[gd_scene load_steps=34 format=3 uid="uid://denj1nj2jkqg1"]
+[gd_scene load_steps=35 format=3 uid="uid://denj1nj2jkqg1"]
 
 [ext_resource type="Script" uid="uid://cnam6bddvgr7k" path="res://Scripts/Weather/EnvironmentController.gd" id="1_hptm8"]
+[ext_resource type="PackedScene" uid="uid://d4k6usdi8l0w0" path="res://Scenes/UI/GoldUI.tscn" id="1_k12tt"]
 [ext_resource type="Material" uid="uid://weo11c4w8i4k" path="res://Scripts/Shaders/outline_material.tres" id="2_hptm8"]
 [ext_resource type="Material" uid="uid://b8pgp4dj7u4sf" path="res://Scripts/Shaders/cloud.tres" id="3_6iyac"]
 [ext_resource type="PackedScene" uid="uid://boksm60la2s5a" path="res://Scenes/Buildings/archery_range.tscn" id="3_8gbba"]
@@ -99,6 +100,8 @@ geometry_source_group_name = &"nav_meshes"
 
 [node name="World" type="Node3D"]
 
+[node name="HUD" parent="." instance=ExtResource("1_k12tt")]
+
 [node name="EnvironmentController" type="Node" parent="." node_paths=PackedStringArray("directional_light", "world_environment", "mist_wall", "sun_pivot", "sun_visual")]
 script = ExtResource("1_hptm8")
 directional_light = NodePath("Sunlight")
@@ -169,6 +172,7 @@ transform = Transform3D(1, 1.6543616e-24, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
 
 [node name="Player" parent="Environment/Units" instance=ExtResource("12_jkdf5")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5.5134335, -1.6143088, 3.6903338)
+player = 1
 
 [node name="Camera3D" type="Camera3D" parent="Environment/Units/Player"]
 transform = Transform3D(1, 0, 0, 0, 0.93105584, 0.3648768, 0, -0.3648768, 0.93105584, -1.5315927, 6.648685, 8.590025)
@@ -188,17 +192,21 @@ material = SubResource("FogMaterial_fdnlq")
 
 [node name="Unit" parent="Environment/Units" node_paths=PackedStringArray("castle") instance=ExtResource("12_jkdf5")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2, -1.1836613, 2)
+player = 1
 castle = NodePath("../../Buildings/Castle")
-current_role = 2
+current_role = 4
 
 [node name="Buildings" type="Node3D" parent="Environment" groups=["nav_meshes"]]
 
 [node name="ArcheryRange" parent="Environment/Buildings" node_paths=PackedStringArray("castle") instance=ExtResource("3_8gbba")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.4899846e-24, -1.3471014, 0)
+player = 1
 castle = NodePath("../Castle")
+state = 0
 
 [node name="Castle" parent="Environment/Buildings" instance=ExtResource("8_344ge")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.8895254, -2.1549382, -2.3954196)
+player = 1
 
 [node name="HTerrain" type="Node3D" parent="Environment" groups=["nav_meshes"]]
 script = ExtResource("4_21xkr")

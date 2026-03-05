@@ -26,15 +26,6 @@ func _ready() -> void:
 
 	collision_layer = GamePhysics.get_building_layer()
 
-	if worksite and worksite.has_method("assign_boss"):
-		worksite.call("assign_boss", self)
-	else:
-		print_debug("worksite does not have function assign_boss")
-	if spawnsite and spawnsite.has_method("assign_boss"):
-		spawnsite.call("assign_boss", self)
-	else:
-		print_debug("spawnsite does not have function assign_boss")
-
 	_connect_signals()
 	apply_state(state)
 
@@ -87,7 +78,7 @@ func _on_interacted(interactor: AgentBase) -> void:
 		_activate_spawnsite()
 
 
-func _on_work_completed(_site: WorkSite, _worker: MinionTasker) -> void:
+func _on_work_completed(_site: WorkSite, _worker: AgentBase) -> void:
 	set_state(BuildingDefs.BuildingState.BUILT)
 
 

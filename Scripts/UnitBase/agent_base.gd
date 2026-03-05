@@ -3,6 +3,7 @@ class_name AgentBase
 
 signal new_castle_set(new_castle: Castle)
 
+@export var player: int = 0
 @export var movement: AgentMovement = null
 @export var team: TeamMemory = null
 @export var animate: AgentAnimate = null
@@ -26,6 +27,8 @@ func _ready() -> void:
 
 	if not team:
 		team = find_child("TeamMemory")
+	if team:
+		team.current_team = player
 	
 	apply_role(current_role, team.return_team())
 	

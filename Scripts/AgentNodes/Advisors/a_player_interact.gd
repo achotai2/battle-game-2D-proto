@@ -3,7 +3,9 @@ class_name AdvisorPlayerInteract
 
 var interactor: PlayerInteractor = null
 var movement: AgentMovement = null
-var _interaction_target: Node3D = null
+var goldWallet: GoldWallet = null
+var goldGiver: GoldGiver = null
+var _interaction_target: Interactable = null
 
 func _ready() -> void:
 	initialize()
@@ -14,21 +16,36 @@ func initialize() -> void:
 		interactor = ComponentFinder.get_component(self, "PlayerInteractor")
 	if not movement:
 		movement = ComponentFinder.get_component(self, "AgentMovement")
-	
+	if not goldWallet:
+		goldWallet = ComponentFinder.get_component(self, "GoldWallet")
+	if not goldGiver:
+		goldGiver = ComponentFinder.get_component(self, "GoldGiver")
+
 	if interactor and not interactor.interaction_started.is_connected(_on_interaction_started):
 		interactor.interaction_started.connect(_on_interaction_started)
-	if interactor and not interactor.interaction_finished.is_connected(_on_interaction_ended):
-		interactor.interaction_finished.connect(_on_interaction_ended)
-	if interactor and not interactor.interaction_suspended.is_connected(_on_interaction_ended):
-		interactor.interaction_suspended.connect(_on_interaction_ended)
+	if interactor and not interactor.interaction_finished.is_connected(_on_interaction_finished):
+		interactor.interaction_finished.connect(_on_interaction_finished)
+	if interactor and not interactor.interaction_suspended.is_connected(_on_interaction_suspended):
+		interactor.interaction_suspended.connect(_on_interaction_suspended)
 
 
-func _on_interaction_started(target: Node3D) -> void:
+func _on_interaction_started(target: Interactable) -> void:
 	_interaction_target = target
 	intent_changed.emit()
 
 
-func _on_interaction_ended(target: Node3D) -> void:
+func _on_interaction_finished(target: Interactable) -> void:
+	var interaction_cost = target.return_interaction_cost()
+	if goldWallet.get_gold() >= interaction_cost:
+		goldWallet.subtract_gold(interaction_cost)
+		goldGiver.give_gold(ComponentFinder.get_base(target), interaction_cost)
+		target.finish_interact(ComponentFinder.get_base(self))
+		
+	_interaction_target = null
+	intent_changed.emit()
+
+
+func _on_interaction_suspended(target: Interactable) -> void:
 	_interaction_target = null
 	intent_changed.emit()
 

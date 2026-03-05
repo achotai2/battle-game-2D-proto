@@ -5,10 +5,13 @@ extends Label
 func _ready() -> void:
 	# Find player GoldHolder node.
 	var player = get_tree().get_first_node_in_group("Player")
+	if not player: return
 
-	if is_instance_valid(player) and is_instance_valid(player.gold):
-		if not player.gold.gold_changed.is_connected(_update_gold_display):
-			player.gold.gold_changed.connect(_update_gold_display)
+	var goldWallet: GoldWallet = ComponentFinder.get_component(player, "GoldWallet")
+	if not goldWallet: return
+
+	if not goldWallet.gold_changed.is_connected(_update_gold_display):
+		goldWallet.gold_changed.connect(_update_gold_display)
 
 
 func _update_gold_display(gold: int) -> void:

@@ -12,19 +12,19 @@ func _ready() -> void:
 		animate = ComponentFinder.get_component(self, "AgentAnimate")
 
 
-func do_work(job: WorkSite) -> void:
-	if animate:
-		animate.play_work()
-
+func do_work(_site: WorkSite) -> void:
 	var now = Time.get_ticks_msec()
 	var interval_ms = int(work_interval * 1000)
 	if now - _last_work_time >= interval_ms:
-		_perform_work_tick(job)
+		_perform_work_tick(_site)
 		_last_work_time = now
 
 
 func _perform_work_tick(_site: WorkSite) -> void:
-	if _site or not _site.needs_work():
+	if animate:
+		animate.play_work()
+
+	if not _site or not _site.needs_work():
 		return
 
 	_site.apply_work(work_amount, ComponentFinder.get_base(self))

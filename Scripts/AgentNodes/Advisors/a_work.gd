@@ -5,17 +5,18 @@ var work_action: WorkAction = null
 var movement: AgentMovement = null
 var work_tasker: MinionTasker = null
 var animate: AgentAnimate = null
+var unit_speed: UnitSpeed = null
 var arrived: bool = false
 
 func initialize() -> void:
 	if not work_action:
 		work_action = ComponentFinder.get_component(self, "WorkAction")
-
 	if not movement:
 		movement = ComponentFinder.get_component(self, "AgentMovement")
-
 	if not work_tasker:
 		work_tasker = ComponentFinder.get_component(self, "MinionTasker")
+	if not unit_speed:
+		unit_speed = ComponentFinder.get_component(self, "UnitSpeed")
 
 
 func get_intent() -> Intent:
@@ -23,7 +24,7 @@ func get_intent() -> Intent:
 	
 	var job = work_tasker.get_current_job()
 
-	if not is_instance_valid(job) or not job.needs_work():
+	if not job or not job.needs_work():
 		job = work_tasker.get_closest_known_job()
 		if job:
 			work_tasker.assign_job(job)
@@ -59,7 +60,8 @@ func enact_intent(intent: Intent) -> void:
 			arrived = true
 		else:
 			# Move to work
-			if movement:
+			if unit_speed and movement:
+				movement.max_speed = unit_speed.run_speed
 				movement.move_to_position(target_pos)
 
 	if arrived:

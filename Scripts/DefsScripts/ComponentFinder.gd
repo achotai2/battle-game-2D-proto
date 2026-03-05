@@ -22,6 +22,7 @@ static func get_component_by_name(starter_node: Node, target_name: String) -> No
 static func get_component(starter_node: Node, target_class: String) -> Node:
 	var root := get_base(starter_node)
 	if root == null: 
+		print_debug("Could not find base node from ", starter_node)
 		return null
 		
 	# Search by CLASS TYPE, ignoring the node's actual name.
@@ -31,7 +32,8 @@ static func get_component(starter_node: Node, target_class: String) -> Node:
 	for node in matching_nodes:
 		if not node.is_queued_for_deletion():
 			return node
-			
+	
+	print_debug("Could not find node ", target_class, " from ", starter_node)
 	return null
 
 

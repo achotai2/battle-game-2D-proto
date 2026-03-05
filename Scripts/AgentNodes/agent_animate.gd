@@ -177,12 +177,15 @@ func _update_move_anim_cache() -> void:
 
 
 func cancel_action_state() -> void:
-	# Called by apply_role in agent.
+	# Called by apply_role in agent, or when movement overrides an action.
 	attacking = false
 	working = false
-	# optionally stop attack anim
-	if sprite:
-			sprite.stop()
+	
+	if is_instance_valid(sprite):
+		sprite.stop()
+		
+	# Instantly fall back to Idle or Walk based on current speed!
+	_update_idle_walk_anim()
 
 
 func play_work() -> bool:

@@ -33,7 +33,7 @@ func _ready() -> void:
 
 
 func _team_changed(new_team: int) -> void:
-	sensor.setup_player(new_team)
+	pass
 
 
 func _unhandled_input(event: InputEvent) -> void:
@@ -148,7 +148,6 @@ func _finish_interaction() -> void:
 
 	if _current_target != null and is_instance_valid(_current_target) and owner_node != null:
 		if interaction_timer.is_stopped():
-			_current_target.finish_interact(owner_node)
 			interaction_finished.emit(_current_target)
 		else:
 			_current_target.suspend_interact(owner_node)

@@ -4,10 +4,7 @@ class_name InteractTracking
 signal target_changed(new_target: Node3D)
 signal target_lost()
 
-@export var my_agent: AgentBase
-
 # --- Team Logic ---
-@export var my_team_id: int = 1
 @export var target_same_team: bool = false
 @export var target_opposing: bool = true
 @export var target_neutral: bool = true
@@ -17,6 +14,7 @@ signal target_lost()
 @export_range(0.1, 2.0) var scan_interval: float = 0.5
 
 var current_target: Node3D = null
+var _team_memory: TeamMemory = null
 var _timer: Timer
 var _scan_shape_query: PhysicsShapeQueryParameters3D
 var _active_collision_mask: int = 0
@@ -33,7 +31,7 @@ func _ready() -> void:
 	if shape_node and shape_node.shape:
 		_scan_shape_query.shape = shape_node.shape
 	else:
-		push_warning("InteractTracking: No CollisionShape3D found!")
+		print_debug("InteractTracking: No CollisionShape3D found!")
 		set_physics_process(false)
 		return
 
@@ -44,11 +42,24 @@ func _ready() -> void:
 	add_child(_timer)
 	_timer.start(scan_interval + randf() * 0.2)
 
-	_update_collision_mask()
+	_team_memory = ComponentFinder.get_component(self, "TeamMemory")
+	if _team_memory and not _team_memory.team_changed.is_connected(_on_team_changed):
+		_team_memory.team_changed.connect(_on_team_changed)
+		_on_team_changed(_team_memory.return_team())
+	else:
+		_on_team_changed(0)
 
-func _update_collision_mask() -> void:
-	_active_collision_mask = GamePhysics.get_interacting_mask(my_team_id, target_neutral, target_opposing, target_same_team)
+	_update_collision_mask(_team_memory.return_team())
+
+
+func _on_team_changed(new_team: int) -> void:
+	_update_collision_mask(new_team)
+
+
+func _update_collision_mask(_team_id: int) -> void:
+	_active_collision_mask = GamePhysics.get_interacting_mask(_team_id, target_neutral, target_opposing, target_same_team)
 	_scan_shape_query.collision_mask = _active_collision_mask
+
 
 func _scan_for_targets() -> void:
 	_scan_shape_query.transform = global_transform
@@ -69,7 +80,7 @@ func _scan_for_targets() -> void:
 	for result in results:
 		var body = result["collider"]
 
-		if body == my_agent or not is_instance_valid(body):
+		if not is_instance_valid(body):
 			continue
 		if body is not Interactable:
 			continue
@@ -92,6 +103,7 @@ func _scan_for_targets() -> void:
 		current_target = best_target
 		target_changed.emit(current_target)
 
+
 func get_candidates() -> Array[Node3D]:
 	_scan_shape_query.transform = global_transform
 	var space_state = get_world_3d().direct_space_state
@@ -99,13 +111,10 @@ func get_candidates() -> Array[Node3D]:
 	var candidates: Array[Node3D] = []
 	for result in results:
 		var body = result["collider"]
-		if body != my_agent and is_instance_valid(body) and body is Interactable:
+		if is_instance_valid(body) and body is Interactable:
 			candidates.append(body)
 	return candidates
 
+
 func force_scan() -> void:
 	_scan_for_targets()
-
-func setup_player(player: int) -> void:
-	my_team_id = player
-	_update_collision_mask()

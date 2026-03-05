@@ -60,19 +60,19 @@ func begin_interact(interactor: AgentBase) -> void:
 	interaction_started.emit(interactor)
 
 
+func return_interaction_cost() -> int:
+	return _interaction_cost
+
+
 func finish_interact(interactor: AgentBase) -> void:
 	if _active_interactor != interactor:
 		return
 
 	# Order interacting Player to give gold equal to interaction cost.
-	if is_instance_valid(interactor.gold) and interactor.gold.gold >= _interaction_cost:
-		interactor.gold.give_gold(get_parent(), _interaction_cost)
-
-		_active_interactor = null
-		if one_shot:
-			_disable_interaction()
-
-		interaction_finished.emit(interactor)
+	_active_interactor = null
+	if one_shot:
+		_disable_interaction()
+	interaction_finished.emit(interactor)
 
 
 func suspend_interact(interactor: AgentBase) -> void:
@@ -96,12 +96,6 @@ func get_prompt_position() -> Vector3:
 	if get_parent() is AgentBase:
 		return (get_parent() as AgentBase).global_position
 	return global_position
-
-
-func _get_team_id(entity: Node) -> int:
-	if entity is AgentBase:
-		return (entity as AgentBase).player
-	return 0
 
 
 func update_interaction_state(new_icon: BuildingDefs.IconType, new_cost: int) -> void:

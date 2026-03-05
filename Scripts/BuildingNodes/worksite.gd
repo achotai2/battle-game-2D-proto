@@ -62,6 +62,8 @@ var _slot_markers: Array[Marker3D] = []
 var _slot_for_agent: Dictionary = {} # agent: slot_index
 var _agent_for_slot: Dictionary = {} # slot_index: agent
 
+var goldGiver: GoldGiver = null
+var goldWallet: GoldWallet = null
 
 # -------------------------
 # Lifecycle
@@ -73,6 +75,11 @@ func _ready() -> void:
 	_collect_slots()
 	if auto_register and enabled:
 		_resolve_castle_and_register()
+
+	if not goldGiver:
+		goldGiver = ComponentFinder.get_component(self, "GoldGiver")
+	if not goldWallet:
+		goldWallet = ComponentFinder.get_component(self, "GoldWallet")
 
 
 func _exit_tree() -> void:
@@ -90,7 +97,7 @@ func needs_work() -> bool:
 	## The JobBoard uses this to decide if the job is still valid.
 	if not enabled:
 		return false
-		
+	
 	return _work_done < total_work
 
 
@@ -187,22 +194,14 @@ func apply_work(amount: float, worker: AgentBase) -> void:
 		_complete(worker)
 		return
 
+	# Apply work.
 	var safe_amount: float = maxf(amount, 0.0)
 	_work_done = minf(total_work, _work_done + safe_amount)
 
-	if is_instance_valid(get_parent().gold):
-		var my_wallet = get_parent().gold
-		var worker_agent = worker.get_agent()
-		var worker_wallet = worker_agent.gold if worker_agent and "gold" in worker_agent else null
-
-		if my_wallet and worker_wallet and my_wallet.has_method("get_gold"):
-			var amount_to_give: int = min(ceil(safe_amount), my_wallet.get_gold())
-
-			if amount_to_give > 0:
-				if my_wallet.has_method("subtract_gold"):
-					my_wallet.subtract_gold(amount_to_give)
-				if worker_wallet.has_method("add_gold"):
-					worker_wallet.add_gold(amount_to_give)
+	# Give gold to worker.
+	if goldGiver and goldWallet:
+		var amount_to_give: int = min(ceil(safe_amount), goldWallet.get_gold())
+		goldGiver.give_gold(worker, amount_to_give)
 
 	work_applied.emit(self)
 

@@ -2,25 +2,45 @@
 
 [ext_resource type="Script" uid="uid://b62xnbha3twkq" path="res://Scripts/UI/GoldUI.gd" id="1_m6gm5"]
 
-[node name="GoldUi" type="CanvasLayer"]
+[node name="HUD" type="CanvasLayer"]
 
-[node name="Control" type="Control" parent="."]
+[node name="ScreenAnchor" type="Control" parent="."]
 layout_mode = 3
-anchors_preset = 0
-offset_right = 62.815884
-offset_bottom = 27.436823
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
 scale = Vector2(1.75, 1.75)
 
-[node name="ColorRect" type="ColorRect" parent="Control"]
-layout_mode = 0
-offset_right = 121.14285
-offset_bottom = 25.142857
-color = Color(0, 0, 0, 0.54901963)
-
-[node name="GoldAmount" type="Label" parent="Control"]
-layout_mode = 0
-offset_left = 6.285721
-offset_right = 97.28572
+[node name="Padding" type="MarginContainer" parent="ScreenAnchor"]
+layout_mode = 1
+anchors_preset = 10
+anchor_right = 1.0
 offset_bottom = 23.0
+grow_horizontal = 2
+theme_override_constants/margin_left = 20
+theme_override_constants/margin_top = 20
+theme_override_constants/margin_right = 20
+theme_override_constants/margin_bottom = 20
+
+[node name="TopBar" type="HBoxContainer" parent="ScreenAnchor/Padding"]
+layout_mode = 2
+
+[node name="GoldAmount" type="Label" parent="ScreenAnchor/Padding/TopBar"]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
 text = "Gold: 10000"
 script = ExtResource("1_m6gm5")
+
+[node name="ColorRect" type="ColorRect" parent="ScreenAnchor/Padding/TopBar/GoldAmount"]
+z_index = -1
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_vertical = 0
+color = Color(0, 0, 0, 0.49019608)

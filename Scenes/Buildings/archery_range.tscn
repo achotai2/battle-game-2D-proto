@@ -1,4 +1,4 @@
-[gd_scene load_steps=8 format=3 uid="uid://boksm60la2s5a"]
+[gd_scene load_steps=10 format=3 uid="uid://boksm60la2s5a"]
 
 [ext_resource type="Script" uid="uid://cjbrsf0fmsehe" path="res://Scripts/BuildingsBase/building_base.gd" id="1_aww4k"]
 [ext_resource type="Texture2D" uid="uid://b14ppbcjet2cp" path="res://Art/Tiny Swords (Update 010)/Factions/Goblins/Buildings/Wood_House/Goblin_House_Destroyed.png" id="2_aww4k"]
@@ -6,7 +6,8 @@
 [ext_resource type="Script" uid="uid://dqu3s3kqb7wj6" path="res://Scripts/BuildingNodes/spawnsite.gd" id="4_5cnks"]
 [ext_resource type="PackedScene" uid="uid://d1275k0u0fsn" path="res://Scenes/AgentNodes/interactable.tscn" id="5_q2yk0"]
 [ext_resource type="Script" uid="uid://2ssmusd0k3fn" path="res://Scripts/MemoryNodes/GoldWallet.gd" id="6_gw"]
-[ext_resource type="Script" path="res://Scripts/MemoryNodes/TeamMemory.gd" id="99_team"]
+[ext_resource type="Script" uid="uid://cf8nbntvvy3iv" path="res://Scripts/AgentNodes/GoldGiver.gd" id="8_0214s"]
+[ext_resource type="Script" uid="uid://ggpe07y6471c" path="res://Scripts/MemoryNodes/TeamMemory.gd" id="99_team"]
 
 [sub_resource type="CylinderShape3D" id="CylinderShape3D_2yu6c"]
 height = 1.1655273
@@ -85,3 +86,7 @@ texture = ExtResource("2_aww4k")
 
 [node name="TeamMemory" type="Node" parent="."]
 script = ExtResource("99_team")
+
+[node name="GoldGiver" type="Node" parent="."]
+script = ExtResource("8_0214s")
+metadata/_custom_type_script = "uid://cf8nbntvvy3iv"

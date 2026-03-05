@@ -25,7 +25,7 @@ var _mode: Mode = Mode.VELOCITY
 var _desired_velocity: Vector3 = Vector3.ZERO
 var _current_velocity: Vector3 = Vector3.ZERO
 var _last_anim_velocity: Vector3 = Vector3(INF, 0, INF)
-const ANIM_JITTER_THRESHOLD_SQ: float = 4.0 
+const ANIM_JITTER_THRESHOLD_SQ: float = 0.1 
 
 # Pathfinding State
 var _last_stuck_pos: Vector3 = Vector3.ZERO
@@ -149,6 +149,7 @@ func _update_visuals() -> void:
 		animation.agent_moved(Vector3.ZERO)
 		_last_anim_velocity = Vector3.ZERO
 
+
 func _on_nav_finished() -> void:
 	if _mode == Mode.PATHFINDING:
 		move_to_pos_finished.emit(agent)
@@ -167,16 +168,28 @@ func move_to_position(pos: Vector3) -> void:
 
 	if animation: animation.cancel_action_state()
 
-func move_in_direction(dir: Vector3) -> void:
-	_mode = Mode.VELOCITY
-	_desired_velocity = dir * max_speed
-	if animation: animation.cancel_action_state()
 
+func move_in_direction(dir: Vector3) -> void:
+	var target_vel = dir * max_speed
+	
+	# If we are already doing exactly what is requested, ignore the command!
+	if _mode == Mode.VELOCITY and _desired_velocity.is_equal_approx(target_vel):
+		return
+		
+	_mode = Mode.VELOCITY
+	_desired_velocity = target_vel
+	
+	if animation: 
+		animation.cancel_action_state()
+		
+		
 func stop() -> void:
 	move_in_direction(Vector3.ZERO)
 
+
 func clear_movement() -> void:
 	stop()
+
 
 # --- COMPATIBILITY ---
 func set_animation(anim: AgentAnimate) -> void: animation = anim

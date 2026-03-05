@@ -2,7 +2,7 @@
 
 [ext_resource type="Script" uid="uid://b3iqpgjb0vtvl" path="res://Scripts/UnitBase/agent_base.gd" id="1_w7084"]
 [ext_resource type="PackedScene" uid="uid://tj48hg7yffl8" path="res://Scenes/AgentNodes/MinionNavAgent.tscn" id="2_baijc"]
-[ext_resource type="SpriteFrames" uid="uid://cvmbb1xtbmxsv" path="res://Art/SpriteFrames/Player.tres" id="2_emoxc"]
+[ext_resource type="SpriteFrames" uid="uid://cptr2ll6cx7y0" path="res://Art/SpriteFrames/Soldier_Blue.tres" id="2_u301h"]
 [ext_resource type="Script" uid="uid://db8bramlpehyu" path="res://Scripts/AgentNodes/agent_brain.gd" id="3_baijc"]
 [ext_resource type="Script" uid="uid://3hsle2qb2hgj" path="res://Scripts/AgentNodes/Advisors/a_player_movement.gd" id="4_u301h"]
 [ext_resource type="Script" uid="uid://bumqf57fkupi2" path="res://Scripts/AgentNodes/Advisors/a_player_interact.gd" id="5_c2nhe"]
@@ -45,7 +45,7 @@ avoidance_layers = 4
 offset = Vector2(0, 10)
 billboard = 2
 alpha_cut = 1
-sprite_frames = ExtResource("2_emoxc")
+sprite_frames = ExtResource("2_u301h")
 animation = &"walk"
 
 [node name="Brain" type="Node3D" parent="." node_paths=PackedStringArray("agent")]
@@ -63,7 +63,7 @@ metadata/_custom_type_script = "uid://bumqf57fkupi2"
 
 [node name="GoldWallet" type="Node" parent="Memory"]
 script = ExtResource("6_jb8h3")
-gold = 100
+gold = 10
 
 [node name="Health" type="Node" parent="Memory"]
 script = ExtResource("7_ti75h")
@@ -106,9 +106,8 @@ agent = NodePath("../..")
 animation = NodePath("../AgentAnimate")
 metadata/_custom_type_script = "uid://58qm17emnwvd"
 
-[node name="GoldGiver" type="Node" parent="Motor" node_paths=PackedStringArray("agent")]
+[node name="GoldGiver" type="Node" parent="Motor"]
 script = ExtResource("14_f3n8y")
-agent = NodePath("../..")
 
 [node name="WorkAction" type="Node" parent="Motor"]
 script = ExtResource("14_work")

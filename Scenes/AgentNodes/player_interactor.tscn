@@ -5,7 +5,7 @@
 [ext_resource type="Script" uid="uid://dfpsdlk7u3m6h" path="res://Scripts/SensorNodes/interact_tracking.gd" id="3_mbap8"]
 
 [sub_resource type="SphereShape3D" id="SphereShape3D_mbap8"]
-radius = 2.0
+radius = 3.0
 
 [node name="PlayerInteractor" type="Node3D" node_paths=PackedStringArray("sensor", "interaction_timer")]
 script = ExtResource("1_5exm1")
@@ -18,8 +18,11 @@ one_shot = true
 
 [node name="InteractTracking" type="Area3D" parent="."]
 script = ExtResource("3_mbap8")
+target_same_team = true
+target_opposing = false
+target_neutral = false
 
-[node name="CollisionShape2D" type="CollisionShape3D" parent="InteractTracking"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="InteractTracking"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.021850586, 0)
 shape = SubResource("SphereShape3D_mbap8")
 debug_color = Color(0.13306156, 0.5783279, 0.78512675, 0.41960785)
