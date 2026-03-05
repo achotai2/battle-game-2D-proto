@@ -3,6 +3,7 @@
 [ext_resource type="Texture2D" uid="uid://d4hqu3k4e8pts" path="res://Art/Tiny Swords (Update 010)/Factions/Knights/Buildings/Castle/Castle_Blue.png" id="1_ayoda"]
 [ext_resource type="Script" uid="uid://beretwk1vqwgm" path="res://Scripts/BuildingsBase/castle.gd" id="1_p6e6l"]
 [ext_resource type="Script" uid="uid://ba0yfy3sv1ht2" path="res://Scripts/BuildingNodes/castle_job_board.gd" id="2_r1mkv"]
+[ext_resource type="Script" path="res://Scripts/MemoryNodes/TeamMemory.gd" id="99_team"]
 
 [sub_resource type="PhysicsMaterial" id="PhysicsMaterial_r1mkv"]
 
@@ -50,3 +51,6 @@ offset = Vector2(0, 100)
 billboard = 2
 alpha_cut = 1
 texture = ExtResource("1_ayoda")
+
+[node name="TeamMemory" type="Node" parent="."]
+script = ExtResource("99_team")

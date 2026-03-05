@@ -26,7 +26,7 @@ func _ready() -> void:
 	monitorable = false
 
 	_scan_shape_query = PhysicsShapeQueryParameters3D.new()
-	_scan_shape_query.collide_with_bodies = true
+	_scan_shape_query.collide_with_bodies = false
 	_scan_shape_query.collide_with_areas = true
 
 	var shape_node = find_child("CollisionShape3D")

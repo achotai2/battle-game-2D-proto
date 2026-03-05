@@ -6,6 +6,7 @@
 [ext_resource type="PackedScene" uid="uid://d1275k0u0fsn" path="res://Scenes/AgentNodes/interactable.tscn" id="5_krvd1"]
 [ext_resource type="Texture2D" uid="uid://d4hqu3k4e8pts" path="res://Art/Tiny Swords (Update 010)/Factions/Knights/Buildings/Castle/Castle_Blue.png" id="6_0ywlv"]
 [ext_resource type="Script" path="res://Scripts/MemoryNodes/GoldWallet.gd" id="6_gw"]
+[ext_resource type="Script" path="res://Scripts/MemoryNodes/TeamMemory.gd" id="99_team"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape2D_coeoc"]
 radius = 47.999996
@@ -82,3 +83,6 @@ transform = Transform3D(0.359375, 0, 0, 0, 1, 0, 0, 0, 0.359375, 0, 0, 0)
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.4781952e-05, 0, 0)
 offset = Vector2(0, -50)
 texture = ExtResource("6_0ywlv")
+
+[node name="TeamMemory" type="Node" parent="."]
+script = ExtResource("99_team")

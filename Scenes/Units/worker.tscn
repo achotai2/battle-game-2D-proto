@@ -14,6 +14,7 @@
 [ext_resource type="Script" uid="uid://c5ixb1wens7mc" path="res://Scripts/SensorNodes/Tracker.gd" id="12_gt"]
 [ext_resource type="Script" uid="uid://cf8nbntvvy3iv" path="res://Scripts/AgentNodes/GoldGiver.gd" id="13_gg"]
 [ext_resource type="Script" uid="uid://dgco637g5esju" path="res://Scripts/AgentNodes/Advisors/a_taxed.gd" id="14_at"]
+[ext_resource type="Script" path="res://Scripts/MemoryNodes/TeamMemory.gd" id="99_team"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_n8oia"]
 radius = 0.42871094
@@ -55,6 +56,9 @@ sprite_frames = ExtResource("2_r0ip0")
 animation = &"work"
 
 [node name="Memory" type="Node" parent="."]
+
+[node name="TeamMemory" type="Node" parent="Memory"]
+script = ExtResource("99_team")
 
 [node name="HungerHolder" parent="Memory" node_paths=PackedStringArray("movement", "food_tasker") instance=ExtResource("10_r0j7o")]
 movement = NodePath("../../Motor/AgentMovement")

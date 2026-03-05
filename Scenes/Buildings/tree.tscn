@@ -6,6 +6,7 @@
 [ext_resource type="PackedScene" uid="uid://d1275k0u0fsn" path="res://Scenes/AgentNodes/interactable.tscn" id="3_l7sa7"]
 [ext_resource type="Script" uid="uid://bk5we0bsn6qwl" path="res://Scripts/Resources/resource_site.gd" id="5_m36md"]
 [ext_resource type="Script" path="res://Scripts/MemoryNodes/GoldWallet.gd" id="6_gw"]
+[ext_resource type="Script" path="res://Scripts/MemoryNodes/TeamMemory.gd" id="99_team"]
 
 [sub_resource type="CylinderShape3D" id="CircleShape2D_0vwjc"]
 radius = 16.0
@@ -172,3 +173,6 @@ animation = &"idle"
 
 [connection signal="timeout" from="RegrowTimer" to="." method="_on_regrow_timer_timeout"]
 [connection signal="timeout" from="SpawnTimer" to="." method="_on_spawn_timer_timeout"]
+
+[node name="TeamMemory" type="Node" parent="."]
+script = ExtResource("99_team")
