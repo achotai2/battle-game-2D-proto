@@ -10,6 +10,7 @@ signal spawn_completed(agent: AgentBase, role: StringName, player: int)
 @export var clear_queue_on_disable: bool = false
 @export var spawn_location: Marker2D
 
+var _spawn_work_queued: int = 0
 var _peasants_qeued: int = 0
 
 
@@ -37,13 +38,30 @@ func enqueue_spawn(amount: int = 1) -> void:
 	if amount <= 0:
 		return
 		
-	if not enabled:
-		set_enabled(true)
-		refresh_registration()
-	else:
-		refresh_registration()
+	_spawn_work_queued += amount
+	_try_start_spawn_work()
 
-	_peasants_qeued += amount
+
+func _try_start_spawn_work() -> void:
+	if _spawn_work_queued > 0:
+		var boss = get_parent()
+		if is_instance_valid(boss) and boss.has_method("_activate_worker_for_spawn"):
+			boss.call("_activate_worker_for_spawn", work_per_spawn)
+
+
+func on_spawn_work_completed() -> void:
+	if _spawn_work_queued > 0:
+		_spawn_work_queued -= 1
+		_peasants_qeued += 1
+
+		if not enabled:
+			set_enabled(true)
+			refresh_registration()
+		else:
+			refresh_registration()
+
+		if _spawn_work_queued > 0:
+			_try_start_spawn_work()
 
 
 func transform_worker(agent: AgentBase) -> void:
@@ -67,6 +85,7 @@ func set_enabled(new_enabled: bool) -> void:
 	super.set_enabled(new_enabled)
 	if not new_enabled and clear_queue_on_disable:
 		_peasants_qeued = 0
+		_spawn_work_queued = 0
 
 
 func _resolve_spawn_role() -> UnitRoles.UnitType:
