@@ -86,6 +86,26 @@ func get_closest_known_job() -> WorkSite:
 
 	return best_site
 
+func get_known_jobs_sorted_by_distance() -> Array[WorkSite]:
+	var valid_jobs: Array[WorkSite] = []
+	if not is_instance_valid(agent): return valid_jobs
+
+	for i in range(_known_jobs.size() - 1, -1, -1):
+		var site = _known_jobs[i]
+		if not is_instance_valid(site) or not site.needs_work():
+			_known_jobs.remove_at(i)
+			continue
+		valid_jobs.append(site)
+
+	# Sort the valid jobs by distance squared
+	valid_jobs.sort_custom(func(a: WorkSite, b: WorkSite):
+		var dist_a = agent.global_position.distance_squared_to(a.global_position)
+		var dist_b = agent.global_position.distance_squared_to(b.global_position)
+		return dist_a < dist_b
+	)
+
+	return valid_jobs
+
 func assign_job(site: WorkSite) -> void:
 	_release_job(true) # Clear old job
 	if not site:
@@ -96,11 +116,8 @@ func assign_job(site: WorkSite) -> void:
 
 
 func _release_job(release_to_board: bool) -> void:
-	if release_to_board and is_instance_valid(_job_board) and is_instance_valid(_site):
-		if _job_board.has_method("release_job"):
-			_job_board.release_job(_site, self)
-	elif is_instance_valid(_site):
-		_site.unreserve(agent)
+	if is_instance_valid(_site):
+		_site.release_worker(agent)
 
 	_site = null
 

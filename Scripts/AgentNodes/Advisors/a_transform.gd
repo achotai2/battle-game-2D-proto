@@ -1,16 +1,12 @@
 extends Advisor
-class_name AdvisorWork
+class_name AdvisorTransform
 
-var work_action: WorkAction = null
 var movement: AgentMovement = null
 var work_tasker: MinionTasker = null
-var animate: AgentAnimate = null
 var unit_speed: UnitSpeed = null
 var arrived: bool = false
 
 func initialize() -> void:
-	if not work_action:
-		work_action = ComponentFinder.get_component(self, "WorkAction")
 	if not movement:
 		movement = ComponentFinder.get_component(self, "AgentMovement")
 	if not work_tasker:
@@ -18,10 +14,9 @@ func initialize() -> void:
 	if not unit_speed:
 		unit_speed = ComponentFinder.get_component(self, "UnitSpeed")
 
-
 func get_intent() -> Intent:
-	if not work_tasker: return
-	
+	if not work_tasker: return null
+
 	var job = work_tasker.get_current_job()
 
 	if not job or not job.needs_work():
@@ -29,7 +24,7 @@ func get_intent() -> Intent:
 		var agent = ComponentFinder.get_base(self)
 		var jobs = work_tasker.get_known_jobs_sorted_by_distance()
 		for candidate in jobs:
-			if candidate.assign_worker(agent):
+			if candidate is SpawnSite and candidate.assign_worker(agent):
 				job = candidate
 				work_tasker.assign_job(job)
 				arrived = false
@@ -37,22 +32,21 @@ func get_intent() -> Intent:
 
 	if not job:
 		var intent = Intent.new(0.0, self, Intent.Type.IDLE)
-		intent.description = "Looking for work"
+		intent.description = "Looking for a spawnsite"
 		return intent
 
 	var intent = Intent.new(50.0, self, Intent.Type.WORK)
 	intent.target_node = job
-	intent.description = "Working or moving to job"
+	intent.description = "Moving to spawnsite"
 	return intent
 
-
 func enact_intent(intent: Intent) -> void:
-	if not work_action or not movement: return
+	if not movement: return
 
 	if not intent.type == Intent.Type.WORK: return
 
 	var job = work_tasker.get_current_job()
-	if not job or not job.needs_work():
+	if not job or not job.needs_work() or not job is SpawnSite:
 		return
 
 	if not arrived:
@@ -64,15 +58,13 @@ func enact_intent(intent: Intent) -> void:
 		if dist_sq <= range_sq:
 			arrived = true
 		else:
-			# Move to work
+			# Move to spawnsite
 			if unit_speed and movement:
 				movement.max_speed = unit_speed.run_speed
 				movement.move_to_position(target_pos)
 
 	if arrived:
-		# In range, do work
 		if movement:
 			movement.stop()
-
-		if work_action:
-			work_action.do_work(intent.target_node)
+		var agent = ComponentFinder.get_base(self)
+		job.transform_worker(agent)
