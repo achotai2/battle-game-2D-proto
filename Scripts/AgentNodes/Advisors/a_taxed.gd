@@ -18,19 +18,16 @@ func _ready() -> void:
 
 
 func _find_components() -> bool:
-#	if not agent: return false
+	if not _gold_wallet:
+		_gold_wallet = ComponentFinder.get_component(self, "GoldWallet")
+	if not _tax_ledger:
+		_tax_ledger = ComponentFinder.get_component(self, "TaxLedger")
+	if not _gold_tracker:
+		_gold_tracker = ComponentFinder.get_component(self, "Tracker")
+	if not _gold_giver:
+		_gold_giver = ComponentFinder.get_component(self, "GoldGiver")
 
-#	if not _gold_wallet:
-#		_gold_wallet = agent.find_child("GoldWallet", true, false)
-#	if not _tax_ledger:
-#		_tax_ledger = agent.find_child("TaxLedger", true, false)
-#	if not _gold_tracker:
-#		_gold_tracker = agent.find_child("GoldTracker", true, false)
-#	if not _gold_giver:
-#		_gold_giver = agent.find_child("GoldGiver", true, false)
-
-#	return _gold_wallet and _tax_ledger and _gold_tracker and _gold_giver
-	return true
+	return _gold_wallet and _tax_ledger and _gold_tracker and _gold_giver
 
 
 func get_intent() -> Intent:
@@ -49,19 +46,26 @@ func get_intent() -> Intent:
 
 	_current_requester = req.requester
 
-	var intent = Intent.new(15.0, self, Intent.Type.MOVE) # Higher than work (5.0)
+	var urgency = 15.0
+	if req.has("urgency"):
+		urgency = req.urgency
+
+	var intent = Intent.new(urgency, self, Intent.Type.MOVE) # Higher than work (5.0)
 	intent.description = "Paying Taxes"
 	intent.target_position = req.requester.global_position
-	intent.target_object = req.requester
+	intent.target_node = req.requester
 	return intent
 
 func enact_intent(intent: Intent) -> void:
 	if not is_instance_valid(_current_requester):
 		return
 
+	var agent = ComponentFinder.get_base(self)
+	var movement = ComponentFinder.get_component(self, "AgentMovement")
+
 	# Move
-#	if agent.movement:
-#		agent.movement.move_to_position(_current_requester.global_position)
+	if movement:
+		movement.move_to_position(_current_requester.global_position)
 
 	# Check range
 	# Assuming range is close enough for interaction, e.g., 2-3 meters.
@@ -80,7 +84,8 @@ func enact_intent(intent: Intent) -> void:
 		if amount_to_give > 0:
 			if _gold_giver.give_gold(_current_requester, amount_to_give):
 				# Success
-				pass
+				_gold_wallet.subtract_gold(amount_to_give)
+				_tax_ledger.record_tax_paid()
 
 		# Regardless of success (maybe we have 0 gold), we clear the request so we don't get stuck in loop
 		# Or maybe we only clear if we paid full?
@@ -89,3 +94,6 @@ func enact_intent(intent: Intent) -> void:
 		# If we remove it, we stop trying.
 		_tax_ledger.clear_request(_current_requester)
 		_current_requester = null
+
+		if movement:
+			movement.stop()
