@@ -47,6 +47,18 @@ func get_role_groups(role: UnitType) -> Array:
 	return role_groups.get(role, [])
 
 
+var min_tax_times := {
+	UnitType.PLAYER: null,
+	UnitType.LORD: 0.0,
+	UnitType.PEASANT: 60.0,
+	UnitType.WORKER: 60.0,
+	UnitType.SOLDIER: 60.0,
+	UnitType.ARCHER: 60.0,
+}
+
+func get_min_tax_time(role: UnitType) -> Variant:
+	return min_tax_times.get(role, null)
+
 # role -> player -> SpriteFrames
 var frames := {
 	UnitType.PLAYER: {
@@ -86,28 +98,42 @@ func get_frames(role: UnitType, player: int) -> SpriteFrames:
 var role_blueprints: Dictionary = {
 	UnitType.PLAYER: {
 		"advisors": [preload("res://Scripts/AgentNodes/Advisors/a_player_interact.gd"), preload("res://Scripts/AgentNodes/Advisors/a_player_movement.gd")],
-		"memory": [preload("res://Scripts/MemoryNodes/GoldWallet.gd"), preload("res://Scripts/MemoryNodes/health.gd"), preload("res://Scripts/MemoryNodes/TeamMemory.gd"), preload("res://Scripts/MemoryNodes/UnitSpeed.gd")],
+		"memory": [preload("res://Scripts/MemoryNodes/GoldWallet.gd"), preload("res://Scripts/MemoryNodes/health.gd"), preload("res://Scripts/MemoryNodes/TeamMemory.gd"), preload("res://Scripts/MemoryNodes/UnitSpeed.gd"), preload("res://Scripts/MemoryNodes/TaxLedger.gd")],
 		"sensors": [preload("res://Scripts/SensorNodes/Tracker.gd"), preload("res://Scenes/AgentNodes/player_interactor.tscn"), preload("res://Scripts/SensorNodes/player_controls.gd")],
 		"motor": [preload("res://Scripts/AgentNodes/agent_animate.gd"), preload("res://Scripts/AgentNodes/agent_move.gd"), preload("res://Scripts/AgentNodes/GoldGiver.gd")],
 		"weapons": [preload("res://Scenes/Weapons/weapon_sword.tscn")],
 	},
 	UnitType.PEASANT: {
-		"advisors": [preload("res://Scripts/AgentNodes/Advisors/a_transform.gd"), preload("res://Scripts/AgentNodes/Advisors/a_wander.gd")],
-		"memory": [preload("res://Scripts/MemoryNodes/GoldWallet.gd"), preload("res://Scripts/MemoryNodes/health.gd"), preload("res://Scripts/MemoryNodes/TeamMemory.gd"), preload("res://Scripts/MemoryNodes/minion_tasker.gd"), preload("res://Scripts/MemoryNodes/UnitSpeed.gd")],
+		"advisors": [preload("res://Scripts/AgentNodes/Advisors/a_transform.gd"), preload("res://Scripts/AgentNodes/Advisors/a_wander.gd"), preload("res://Scripts/AgentNodes/Advisors/a_taxed.gd")],
+		"memory": [preload("res://Scripts/MemoryNodes/GoldWallet.gd"), preload("res://Scripts/MemoryNodes/health.gd"), preload("res://Scripts/MemoryNodes/TeamMemory.gd"), preload("res://Scripts/MemoryNodes/minion_tasker.gd"), preload("res://Scripts/MemoryNodes/UnitSpeed.gd"), preload("res://Scripts/MemoryNodes/TaxLedger.gd")],
 		"sensors": [preload("res://Scripts/SensorNodes/Tracker.gd")],
 		"motor": [preload("res://Scripts/AgentNodes/agent_animate.gd"), preload("res://Scripts/AgentNodes/agent_move.gd"), preload("res://Scripts/AgentNodes/GoldGiver.gd"), preload("res://Scenes/AgentNodes/MinionNavAgent.tscn")],
 		"weapons": [],
 	},
 	UnitType.WORKER: {
-		"advisors": [preload("res://Scripts/AgentNodes/Advisors/a_work.gd"), preload("res://Scripts/AgentNodes/Advisors/a_wander.gd")],
-		"memory": [preload("res://Scripts/MemoryNodes/GoldWallet.gd"), preload("res://Scripts/MemoryNodes/health.gd"), preload("res://Scripts/MemoryNodes/TeamMemory.gd"), preload("res://Scripts/MemoryNodes/minion_tasker.gd"), preload("res://Scripts/MemoryNodes/UnitSpeed.gd")],
+		"advisors": [preload("res://Scripts/AgentNodes/Advisors/a_work.gd"), preload("res://Scripts/AgentNodes/Advisors/a_wander.gd"), preload("res://Scripts/AgentNodes/Advisors/a_taxed.gd")],
+		"memory": [preload("res://Scripts/MemoryNodes/GoldWallet.gd"), preload("res://Scripts/MemoryNodes/health.gd"), preload("res://Scripts/MemoryNodes/TeamMemory.gd"), preload("res://Scripts/MemoryNodes/minion_tasker.gd"), preload("res://Scripts/MemoryNodes/UnitSpeed.gd"), preload("res://Scripts/MemoryNodes/TaxLedger.gd")],
 		"sensors": [preload("res://Scripts/SensorNodes/Tracker.gd")],
 		"motor": [preload("res://Scripts/AgentNodes/agent_animate.gd"), preload("res://Scripts/AgentNodes/agent_move.gd"), preload("res://Scripts/AgentNodes/GoldGiver.gd"), preload("res://Scenes/AgentNodes/MinionNavAgent.tscn"), preload("res://Scripts/AgentNodes/work_action.gd")],
 		"weapons": [],
 	},
 	UnitType.SOLDIER: {
-		"advisors": [preload("res://Scripts/AgentNodes/Advisors/a_wander.gd")],
-		"memory": [preload("res://Scripts/MemoryNodes/GoldWallet.gd"), preload("res://Scripts/MemoryNodes/health.gd"), preload("res://Scripts/MemoryNodes/TeamMemory.gd"), preload("res://Scripts/MemoryNodes/UnitSpeed.gd")],
+		"advisors": [preload("res://Scripts/AgentNodes/Advisors/a_wander.gd"), preload("res://Scripts/AgentNodes/Advisors/a_taxed.gd")],
+		"memory": [preload("res://Scripts/MemoryNodes/GoldWallet.gd"), preload("res://Scripts/MemoryNodes/health.gd"), preload("res://Scripts/MemoryNodes/TeamMemory.gd"), preload("res://Scripts/MemoryNodes/UnitSpeed.gd"), preload("res://Scripts/MemoryNodes/TaxLedger.gd")],
+		"sensors": [preload("res://Scripts/SensorNodes/Tracker.gd")],
+		"motor": [preload("res://Scripts/AgentNodes/agent_animate.gd"), preload("res://Scripts/AgentNodes/agent_move.gd"), preload("res://Scripts/AgentNodes/GoldGiver.gd"), preload("res://Scenes/AgentNodes/MinionNavAgent.tscn")],
+		"weapons": [preload("res://Scenes/Weapons/weapon_sword.tscn")],
+	},
+	UnitType.ARCHER: {
+		"advisors": [preload("res://Scripts/AgentNodes/Advisors/a_wander.gd"), preload("res://Scripts/AgentNodes/Advisors/a_taxed.gd")],
+		"memory": [preload("res://Scripts/MemoryNodes/GoldWallet.gd"), preload("res://Scripts/MemoryNodes/health.gd"), preload("res://Scripts/MemoryNodes/TeamMemory.gd"), preload("res://Scripts/MemoryNodes/UnitSpeed.gd"), preload("res://Scripts/MemoryNodes/TaxLedger.gd")],
+		"sensors": [preload("res://Scripts/SensorNodes/Tracker.gd")],
+		"motor": [preload("res://Scripts/AgentNodes/agent_animate.gd"), preload("res://Scripts/AgentNodes/agent_move.gd"), preload("res://Scripts/AgentNodes/GoldGiver.gd"), preload("res://Scenes/AgentNodes/MinionNavAgent.tscn")],
+		"weapons": [preload("res://Scenes/Weapons/weapon_bow.tscn")],
+	},
+	UnitType.LORD: {
+		"advisors": [preload("res://Scripts/AgentNodes/Advisors/a_wander.gd"), preload("res://Scripts/AgentNodes/Advisors/a_taxed.gd"), preload("res://Scripts/AgentNodes/Advisors/a_lord_tax.gd")],
+		"memory": [preload("res://Scripts/MemoryNodes/GoldWallet.gd"), preload("res://Scripts/MemoryNodes/health.gd"), preload("res://Scripts/MemoryNodes/TeamMemory.gd"), preload("res://Scripts/MemoryNodes/UnitSpeed.gd"), preload("res://Scripts/MemoryNodes/TaxLedger.gd")],
 		"sensors": [preload("res://Scripts/SensorNodes/Tracker.gd")],
 		"motor": [preload("res://Scripts/AgentNodes/agent_animate.gd"), preload("res://Scripts/AgentNodes/agent_move.gd"), preload("res://Scripts/AgentNodes/GoldGiver.gd"), preload("res://Scenes/AgentNodes/MinionNavAgent.tscn")],
 		"weapons": [preload("res://Scenes/Weapons/weapon_sword.tscn")],
