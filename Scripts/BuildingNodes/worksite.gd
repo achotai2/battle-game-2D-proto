@@ -119,26 +119,10 @@ func get_slot_count() -> int:
 
 func has_free_slot() -> bool:
 	_cleanup_invalid_agents()
-	if _slot_markers.is_empty():
-		return not _agent_for_slot.has(0)
-	return _agent_for_slot.size() < _slot_markers.size()
+	return _agent_for_slot.size() < get_slot_count()
 
 
-# DEPRECIATED
-func can_reserve(agent: AgentBase) -> bool:
-	## Optional hook: JobBoard can ask if this site can be reserved by a given agent.
-	if not needs_work():
-		return false
-
-	_cleanup_invalid_agents()
-	if agent != null and _slot_for_agent.has(agent):
-		return true
-	return has_free_slot()
-
-
-# DEPRECIATED
-func reserve(agent: AgentBase) -> bool:
-	## Optional hook: JobBoard calls this when it assigns/reserves the job for an agent.
+func assign_worker(agent: AgentBase) -> bool:
 	if agent == null or not is_instance_valid(agent):
 		return false
 	if not needs_work():
@@ -156,9 +140,7 @@ func reserve(agent: AgentBase) -> bool:
 	return true
 
 
-# DEPRECIATED
-func unreserve(agent: AgentBase) -> void:
-	## Optional hook: JobBoard calls this when releasing the reservation (worker changed jobs, etc.)
+func release_worker(agent: AgentBase) -> void:
 	if agent == null:
 		return
 	if not _slot_for_agent.has(agent):
@@ -279,10 +261,8 @@ func _gather_marker_descendants(root: Node, out: Array[Marker3D]) -> void:
 
 
 func _find_free_slot_index() -> int:
-	if _slot_markers.is_empty():
-		return -1 if _agent_for_slot.has(0) else 0
-
-	for i in range(_slot_markers.size()):
+	var count = get_slot_count()
+	for i in range(count):
 		if not _agent_for_slot.has(i):
 			return i
 	return -1
@@ -312,16 +292,16 @@ func _get_slot_position(slot_index: int) -> Vector3:
 func _cleanup_invalid_agents() -> void:
 	for agent in _slot_for_agent.keys():
 		if agent == null or not is_instance_valid(agent):
-			unreserve(agent)
+			release_worker(agent)
 
 
 func _clear_all_reservations() -> void:
 	for agent in _slot_for_agent.keys():
-		unreserve(agent)
+		release_worker(agent)
 
 
 func _on_agent_exited(agent: AgentBase) -> void:
-	unreserve(agent)
+	release_worker(agent)
 
 
 # -------------------------
