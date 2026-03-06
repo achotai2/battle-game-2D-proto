@@ -15,7 +15,7 @@ class_name WorkSite
 
 
 # Emitted once, when total work has been completed.
-signal work_completed(site: WorkSite, worker: MinionTasker)
+signal work_completed(site: WorkSite, worker: AgentBase)
 
 # Emitted when work is applied to site.
 signal work_applied(site: WorkSite)

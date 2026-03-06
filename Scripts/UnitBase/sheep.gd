@@ -96,9 +96,9 @@ func _food_handed() -> void:
 	queue_free()
 
 
-func _food_harvested(f: WorkSite, _attacker: MinionTasker) -> void:
+func _food_harvested(f: WorkSite, _attacker: AgentBase) -> void:
 	# Spawn food and hand it over to attacker.
-	var attackerNode: AgentBase = _attacker.get_parent()
+	var attackerNode: AgentBase = _attacker
 	if is_instance_valid(attackerNode.hunger) and attackerNode.hunger.has_method("receive_food"):
 		food.give_food(attackerNode, food.food)
 
