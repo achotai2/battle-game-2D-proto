@@ -48,9 +48,18 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1, 0, 0)
 [node name="Marker2D6" type="Marker3D" parent="WorkSite"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -1)
 
-[node name="SpawnSite" type="Node3D" parent="." node_paths=PackedStringArray("spawn_location")]
+[node name="SpawnSite" type="Node3D" parent="." node_paths=PackedStringArray("spawn_location", "my_boss")]
 script = ExtResource("4_5cnks")
+spawn_role = null
+work_per_spawn = null
+default_player = null
+clear_queue_on_disable = null
 spawn_location = NodePath("Marker2D")
+my_boss = NodePath("..")
+total_work = null
+auto_register = null
+enabled = null
+kind = null
 metadata/_custom_type_script = "uid://dqu3s3kqb7wj6"
 
 [node name="Marker2D" type="Marker3D" parent="SpawnSite"]

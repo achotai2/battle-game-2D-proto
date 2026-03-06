@@ -80,6 +80,8 @@ func _ready() -> void:
 		goldGiver = ComponentFinder.get_component(self, "GoldGiver")
 	if not goldWallet:
 		goldWallet = ComponentFinder.get_component(self, "GoldWallet")
+	if not my_boss:
+		my_boss = ComponentFinder.get_base(self)
 
 
 func _exit_tree() -> void:
@@ -104,11 +106,11 @@ func needs_work() -> bool:
 func get_work_position() -> Vector3:
 	## Returns the world position a worker should move to in order to work on this site.
 	## Workers will typically stand near this position and repeatedly call apply_work().
-	if not is_instance_valid(my_boss) or not my_boss.has_method("return_position"):
+	if not my_boss:
 		return Vector3.ZERO
 
 	var base_pos: Vector3 = my_boss.global_position
-	if is_instance_valid(work_offset):
+	if work_offset:
 		return base_pos + work_offset.position
 	return base_pos
 
