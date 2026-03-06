@@ -15,6 +15,7 @@ class_name BuildingBase
 
 var _is_ready: bool = false
 var _team_memory: TeamMemory = null
+var _original_worksite_total_work: float = 0.0
 
 
 func _ready() -> void:
@@ -23,6 +24,9 @@ func _ready() -> void:
 	_team_memory = ComponentFinder.get_component(self, "TeamMemory")
 	if _team_memory:
 		_team_memory.current_team = player
+
+	if worksite:
+		_original_worksite_total_work = worksite.total_work
 
 	collision_layer = GamePhysics.get_building_layer()
 
@@ -75,11 +79,26 @@ func _on_interacted(interactor: AgentBase) -> void:
 		set_state(BuildingDefs.BuildingState.CONSTRUCTING)
 	elif state == BuildingDefs.BuildingState.BUILT:
 		# If BUILT then Player gives building gold (to give to Workers) and sets state to SPAWNING.
-		_activate_spawnsite()
+		if spawnsite:
+			spawnsite.enqueue_spawn(1)
+
+
+func _activate_worker_for_spawn(work_amount: float) -> void:
+	if worksite and not worksite.enabled:
+		worksite.total_work = work_amount
+		worksite.reset_progress()
+		worksite.set_enabled(true)
+		worksite.refresh_registration()
 
 
 func _on_work_completed(_site: WorkSite, _worker: AgentBase) -> void:
-	set_state(BuildingDefs.BuildingState.BUILT)
+	if state == BuildingDefs.BuildingState.CONSTRUCTING:
+		set_state(BuildingDefs.BuildingState.BUILT)
+	elif state == BuildingDefs.BuildingState.BUILT:
+		if worksite:
+			worksite.set_enabled(false)
+		if spawnsite and spawnsite.has_method("on_spawn_work_completed"):
+			spawnsite.on_spawn_work_completed()
 
 
 func _on_destroyed() -> void:
@@ -130,29 +149,18 @@ func _configure_worksite() -> void:
 		return
 	
 	if state == BuildingDefs.BuildingState.CONSTRUCTING:
+		if _original_worksite_total_work > 0:
+			worksite.total_work = _original_worksite_total_work
 		worksite.reset_progress()
 		worksite.set_enabled(true)
 		worksite.refresh_registration()
 	else:
-		worksite.set_enabled(false)
+		if spawnsite == null or not spawnsite.has_method("on_spawn_work_completed") or spawnsite.get("_spawn_work_queued") == 0:
+			worksite.set_enabled(false)
 
 
 func _configure_spawnsite() -> void:
 	spawnsite.set_enabled(false)
-
-
-func _activate_spawnsite() -> void:
-	if not spawnsite:
-		return
-	if spawnsite.has_method("enqueue_spawn"):
-		spawnsite.call("enqueue_spawn", 1)
-		return
-	else:
-		print_debug("spawnsite does not have function enqueue_spawn")
-	if not spawnsite.enabled:
-		spawnsite.reset_progress()
-		spawnsite.set_enabled(true)
-		spawnsite.refresh_registration()
 
 
 func _connect_signals() -> void:
