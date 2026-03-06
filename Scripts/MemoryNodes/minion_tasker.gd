@@ -90,19 +90,26 @@ func get_known_jobs_sorted_by_distance() -> Array[WorkSite]:
 	var valid_jobs: Array[WorkSite] = []
 	if not is_instance_valid(agent): return valid_jobs
 
+	var agent_pos := agent.global_position
+	var distance_pairs: Array[Dictionary] = []
+
 	for i in range(_known_jobs.size() - 1, -1, -1):
 		var site = _known_jobs[i]
 		if not is_instance_valid(site) or not site.needs_work():
 			_known_jobs.remove_at(i)
 			continue
-		valid_jobs.append(site)
 
-	# Sort the valid jobs by distance squared
-	valid_jobs.sort_custom(func(a: WorkSite, b: WorkSite):
-		var dist_a = agent.global_position.distance_squared_to(a.global_position)
-		var dist_b = agent.global_position.distance_squared_to(b.global_position)
-		return dist_a < dist_b
+		var dist_sq := agent_pos.distance_squared_to(site.global_position)
+		distance_pairs.append({"site": site, "dist": dist_sq})
+
+	# Sort the pairs by pre-computed distance
+	distance_pairs.sort_custom(func(a: Dictionary, b: Dictionary):
+		return a.dist < b.dist
 	)
+
+	# Extract sites
+	for pair in distance_pairs:
+		valid_jobs.append(pair.site)
 
 	return valid_jobs
 
