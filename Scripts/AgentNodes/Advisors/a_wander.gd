@@ -34,7 +34,6 @@ func initialize() -> void:
 		if not _current_target:
 			_current_target = _base_agent.return_castle()
 		
-		# FIX: Changed to "if not is_connected"
 		if not _base_agent.new_castle_set.is_connected(_castle_updated):
 			_base_agent.new_castle_set.connect(_castle_updated)
 
