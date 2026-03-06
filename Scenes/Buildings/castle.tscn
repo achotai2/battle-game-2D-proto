@@ -11,11 +11,12 @@
 height = 2.0526266
 radius = 1.9042969
 
-[node name="Castle" type="StaticBody3D" node_paths=PackedStringArray("worker_job_board", "food_job_board") groups=["Attackable", "Buildings", "Interactable"]]
+[node name="Castle" type="StaticBody3D" node_paths=PackedStringArray("peasant_job_board", "worker_job_board", "food_job_board") groups=["Attackable", "Buildings", "Interactable"]]
 collision_layer = 2
 collision_mask = 3
 physics_material_override = SubResource("PhysicsMaterial_r1mkv")
 script = ExtResource("1_p6e6l")
+peasant_job_board = NodePath("PeasantJobBoard")
 worker_job_board = NodePath("WorkerJobBoard")
 food_job_board = NodePath("FoodJobBoard")
 

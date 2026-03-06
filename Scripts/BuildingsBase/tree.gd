@@ -77,7 +77,7 @@ func _on_interacted(interactor: AgentBase) -> void:
 		set_state(TreeState.MARKED)
 
 
-func _on_work_completed(_site: WorkSite, _worker: MinionTasker) -> void:
+func _on_work_completed(_site: WorkSite, _worker: AgentBase) -> void:
 	set_state(TreeState.CUT)
 
 	spawn_timer.stop()
