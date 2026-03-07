@@ -35,12 +35,11 @@ radius = 1.0
 affect_navigation_mesh = true
 carve_navigation_mesh = true
 
-[node name="ProductionQueue" type="Node" parent="." node_paths=PackedStringArray("spawnInteractable", "spawn_worksite", "spawn_site", "gold_wallet")]
+[node name="ProductionQueue" type="Node" parent="." node_paths=PackedStringArray("spawnInteractable", "spawn_worksite", "spawn_site")]
 script = ExtResource("2_6hpmx")
 spawnInteractable = NodePath("../Interactables/SpawnInteractable")
 spawn_worksite = NodePath("../Worksites/SpawnWorkSite")
 spawn_site = NodePath("../SpawnSite")
-gold_wallet = NodePath("../Memory/GoldWallet")
 metadata/_custom_type_script = "uid://lkh36p7gdce2"
 
 [node name="Worksites" type="Node3D" parent="."]
@@ -85,18 +84,10 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1, 0, 0)
 [node name="Marker2D6" type="Marker3D" parent="Worksites/SpawnWorkSite"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -1)
 
-[node name="SpawnSite" type="Node3D" parent="." node_paths=PackedStringArray("spawn_location", "my_boss")]
+[node name="SpawnSite" type="Node3D" parent="." node_paths=PackedStringArray("my_boss", "spawn_location")]
 script = ExtResource("4_5cnks")
-spawn_role = 3
-work_per_spawn = null
-default_player = null
-clear_queue_on_disable = null
-spawn_location = NodePath("Marker2D")
 my_boss = NodePath("..")
-total_work = null
-auto_register = null
-enabled = null
-kind = null
+spawn_location = NodePath("Marker2D")
 metadata/_custom_type_script = "uid://dqu3s3kqb7wj6"
 
 [node name="Marker2D" type="Marker3D" parent="SpawnSite"]

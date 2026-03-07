@@ -5,7 +5,7 @@
 [ext_resource type="Script" uid="uid://dfpsdlk7u3m6h" path="res://Scripts/SensorNodes/interact_tracking.gd" id="3_mbap8"]
 
 [sub_resource type="SphereShape3D" id="SphereShape3D_mbap8"]
-radius = 3.0
+radius = 2.486975
 
 [node name="PlayerInteractor" type="Node3D" node_paths=PackedStringArray("sensor", "interaction_timer")]
 script = ExtResource("1_5exm1")

@@ -41,12 +41,19 @@ func set_enabled(new_enabled: bool) -> void:
 # -------------------------
 
 func needs_work() -> bool:
-	# We only need a peasant if we are enabled and haven't claimed one yet
-	return enabled and _incoming_peasant == null
+	# It needs work as long as it is turned on. It doesn't finish 
+	# until the peasant physically arrives and shuts it down!
+	return enabled
+
+
+func has_free_slot() -> bool:
+	# It only has a free slot if no one has claimed it yet
+	return _incoming_peasant == null
 
 
 func assign_worker(agent: AgentBase) -> bool:
-	if not needs_work() or agent == null:
+	# Check if it's open AND if it has a slot
+	if not enabled or not has_free_slot() or agent == null:
 		return false
 		
 	# Claim this peasant so the Job Board doesn't send 5 peasants for 1 job!

@@ -1,50 +1,86 @@
-[gd_scene load_steps=8 format=3 uid="uid://so0ngwg160ke"]
+[gd_scene load_steps=11 format=3 uid="uid://so0ngwg160ke"]
 
 [ext_resource type="Script" uid="uid://cjbrsf0fmsehe" path="res://Scripts/BuildingsBase/building_base.gd" id="1_3p7p4"]
 [ext_resource type="Texture2D" uid="uid://bo1itj23k76yd" path="res://Art/Tiny Swords (Update 010)/Factions/Knights/Buildings/House/House_Construction.png" id="1_7aoon"]
+[ext_resource type="Script" uid="uid://lkh36p7gdce2" path="res://Scripts/BuildingNodes/ProductionQueue.gd" id="2_2emxv"]
 [ext_resource type="Script" uid="uid://qumqy1omy72i" path="res://Scripts/BuildingNodes/worksite.gd" id="2_coeoc"]
 [ext_resource type="PackedScene" uid="uid://d1275k0u0fsn" path="res://Scenes/AgentNodes/interactable.tscn" id="4_87o8n"]
 [ext_resource type="Script" uid="uid://dqu3s3kqb7wj6" path="res://Scripts/BuildingNodes/spawnsite.gd" id="5_he61m"]
-[ext_resource type="Script" path="res://Scripts/MemoryNodes/GoldWallet.gd" id="6_gw"]
-[ext_resource type="Script" path="res://Scripts/MemoryNodes/TeamMemory.gd" id="99_team"]
+[ext_resource type="Script" uid="uid://2ssmusd0k3fn" path="res://Scripts/MemoryNodes/GoldWallet.gd" id="6_gw"]
+[ext_resource type="Script" uid="uid://cc22s0erkk06v" path="res://Scripts/BuildingNodes/BuildingVisuals.gd" id="9_7b5gy"]
+[ext_resource type="Script" uid="uid://ggpe07y6471c" path="res://Scripts/MemoryNodes/TeamMemory.gd" id="99_team"]
 
-[sub_resource type="CapsuleShape3D" id="CapsuleShape2D_coeoc"]
-radius = 47.999996
-height = 110.0
+[sub_resource type="CylinderShape3D" id="CylinderShape3D_7b5gy"]
+height = 1.3374023
+radius = 0.5644531
 
-[node name="House" type="StaticBody3D" node_paths=PackedStringArray("visual", "shadowVisual", "interactable", "worksite", "spawnsite", "gold")]
+[node name="House" type="StaticBody3D" node_paths=PackedStringArray("construct_interactable", "spawn_interactable", "construct_site", "production_queue", "visuals")]
 script = ExtResource("1_3p7p4")
 building_type = 1
-visual = NodePath("Sprites/Sprite2D")
-shadowVisual = NodePath("")
-interactable = NodePath("Interactable")
-worksite = NodePath("WorkSite")
-spawnsite = NodePath("SpawnSite")
-gold = NodePath("GoldWallet")
+construct_interactable = NodePath("ConstructInteractable")
+spawn_interactable = NodePath("SpawnInteractable")
+construct_site = NodePath("Worksites/ConstructWorkSite")
+production_queue = NodePath("ProductionQueue")
+visuals = NodePath("BuildingVisuals")
 state = 2
 
 [node name="CollisionShape2D" type="CollisionShape3D" parent="."]
-transform = Transform3D(-4.371139e-08, 0, -1, 0, 1, 0, 1, 0, -4.371139e-08, 0, 0, 0)
-shape = SubResource("CapsuleShape2D_coeoc")
+transform = Transform3D(-4.371139e-08, 0, -1, 0, 1, 0, 1, 0, -4.371139e-08, 0, -0.13256836, 0)
+shape = SubResource("CylinderShape3D_7b5gy")
 
-[node name="WorkSite" type="Node3D" parent="." node_paths=PackedStringArray("my_boss", "work_offset")]
+[node name="NavigationObstacle2D" type="NavigationObstacle3D" parent="."]
+radius = 1.0
+affect_navigation_mesh = true
+carve_navigation_mesh = true
+
+[node name="ProductionQueue" type="Node" parent="." node_paths=PackedStringArray("spawnInteractable", "spawn_worksite", "spawn_site")]
+script = ExtResource("2_2emxv")
+spawnInteractable = NodePath("../SpawnInteractable")
+spawn_worksite = NodePath("../Worksites/SpawnWorkSite")
+spawn_site = NodePath("../SpawnSite")
+metadata/_custom_type_script = "uid://lkh36p7gdce2"
+
+[node name="Worksites" type="Node3D" parent="."]
+
+[node name="ConstructWorkSite" type="Node3D" parent="Worksites" node_paths=PackedStringArray("my_boss", "my_interactable", "work_offset")]
 script = ExtResource("2_coeoc")
-my_boss = NodePath("..")
+my_boss = NodePath("../..")
+my_interactable = NodePath("../../ConstructInteractable")
 auto_register = false
-work_offset = NodePath("Marker2D")
+work_offset = NodePath("")
 metadata/_custom_type_script = "uid://qumqy1omy72i"
 
-[node name="Marker2D" type="Marker3D" parent="WorkSite"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 96)
+[node name="Marker2D4" type="Marker3D" parent="Worksites/ConstructWorkSite"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 1)
 
-[node name="Marker2D2" type="Marker3D" parent="WorkSite"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -96, 0, 0)
+[node name="Marker2D5" type="Marker3D" parent="Worksites/ConstructWorkSite"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1, 0, 0)
 
-[node name="Marker2D3" type="Marker3D" parent="WorkSite"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 96, 0, 0)
+[node name="Marker2D7" type="Marker3D" parent="Worksites/ConstructWorkSite"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1, 0, 0)
 
-[node name="Marker2D6" type="Marker3D" parent="WorkSite"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -96)
+[node name="Marker2D8" type="Marker3D" parent="Worksites/ConstructWorkSite"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -1)
+
+[node name="SpawnWorkSite" type="Node3D" parent="Worksites" node_paths=PackedStringArray("my_boss", "my_interactable", "work_offset")]
+script = ExtResource("2_coeoc")
+my_boss = NodePath("../..")
+my_interactable = NodePath("../../SpawnInteractable")
+auto_register = false
+work_offset = NodePath("")
+metadata/_custom_type_script = "uid://qumqy1omy72i"
+
+[node name="Marker2D4" type="Marker3D" parent="Worksites/SpawnWorkSite"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 1)
+
+[node name="Marker2D5" type="Marker3D" parent="Worksites/SpawnWorkSite"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1, 0, 0)
+
+[node name="Marker2D7" type="Marker3D" parent="Worksites/SpawnWorkSite"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1, 0, 0)
+
+[node name="Marker2D8" type="Marker3D" parent="Worksites/SpawnWorkSite"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -1)
 
 [node name="SpawnSite" type="Node3D" parent="." node_paths=PackedStringArray("spawn_location")]
 script = ExtResource("5_he61m")
@@ -52,32 +88,31 @@ spawn_location = NodePath("Marker2D2")
 metadata/_custom_type_script = "uid://dqu3s3kqb7wj6"
 
 [node name="Marker2D2" type="Marker3D" parent="SpawnSite"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 96)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 1.0189135)
 
-[node name="Marker2D3" type="Marker3D" parent="SpawnSite"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -96, 0, 0)
+[node name="ConstructInteractable" parent="." instance=ExtResource("4_87o8n")]
 
-[node name="Marker2D4" type="Marker3D" parent="SpawnSite"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 96, 0, 0)
-
-[node name="Marker2D6" type="Marker3D" parent="SpawnSite"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -96)
-
-[node name="Interactable" parent="." instance=ExtResource("4_87o8n")]
-
-[node name="NavigationObstacle2D" type="NavigationObstacle3D" parent="."]
-vertices = PackedVector3Array(-51, -15, 0, -16, -53, 0, 21, -53, 0, 53, -20, 0, 52, 13, 0, 24, 48, 0, -15, 51, 0, -51, 21, 0)
-affect_navigation_mesh = true
-carve_navigation_mesh = true
-
-[node name="GoldWallet" type="Node" parent="."]
-script = ExtResource("6_gw")
+[node name="SpawnInteractable" parent="." instance=ExtResource("4_87o8n")]
+icon_type = 1
 
 [node name="Sprites" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.82225204, 0)
 
-[node name="Sprite2D" type="Sprite3D" parent="Sprites"]
+[node name="Sprite2D" type="Sprite3D" parent="Sprites" groups=["sprites"]]
 offset = Vector2(0, -50)
+billboard = 2
+alpha_cut = 1
 texture = ExtResource("1_7aoon")
 
-[node name="TeamMemory" type="Node" parent="."]
+[node name="Memory" type="Node3D" parent="."]
+
+[node name="TeamMemory" type="Node" parent="Memory"]
 script = ExtResource("99_team")
+
+[node name="GoldWallet" type="Node" parent="Memory"]
+script = ExtResource("6_gw")
+
+[node name="BuildingVisuals" type="Node" parent="." node_paths=PackedStringArray("visual")]
+script = ExtResource("9_7b5gy")
+visual = NodePath("../Sprites/Sprite2D")
+metadata/_custom_type_script = "uid://cc22s0erkk06v"

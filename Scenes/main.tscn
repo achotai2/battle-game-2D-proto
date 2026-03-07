@@ -1,4 +1,4 @@
-[gd_scene load_steps=35 format=3 uid="uid://denj1nj2jkqg1"]
+[gd_scene load_steps=37 format=3 uid="uid://denj1nj2jkqg1"]
 
 [ext_resource type="Script" uid="uid://cnam6bddvgr7k" path="res://Scripts/Weather/EnvironmentController.gd" id="1_hptm8"]
 [ext_resource type="PackedScene" uid="uid://d4k6usdi8l0w0" path="res://Scenes/UI/GoldUI.tscn" id="1_k12tt"]
@@ -15,6 +15,8 @@
 [ext_resource type="Script" uid="uid://dgursdu3vnv6j" path="res://addons/zylann.hterrain/hterrain_texture_set.gd" id="6_344ge"]
 [ext_resource type="Script" uid="uid://ug74v5rgn7m5" path="res://Scripts/Resources/NavRegionManager.gd" id="7_wsu2k"]
 [ext_resource type="PackedScene" uid="uid://56ng42k13bnj" path="res://Scenes/Buildings/castle.tscn" id="8_344ge"]
+[ext_resource type="PackedScene" uid="uid://so0ngwg160ke" path="res://Scenes/Buildings/house.tscn" id="8_h1bgf"]
+[ext_resource type="PackedScene" uid="uid://ra0fj2eqns6d" path="res://Scenes/Buildings/barracks.tscn" id="12_b3802"]
 [ext_resource type="PackedScene" uid="uid://dunt5nfaabbqv" path="res://Scenes/Units/Unit.tscn" id="12_jkdf5"]
 
 [sub_resource type="QuadMesh" id="QuadMesh_d1ilt"]
@@ -116,13 +118,13 @@ sun_glow_intensity = 10.0
 layer_tints = Array[Color]([Color(0.99999994, 0.8755944, 0.8083037, 1), Color(0.792714, 0.889494, 0.99999994, 1)])
 
 [node name="Clouds" type="MeshInstance3D" parent="EnvironmentController"]
-transform = Transform3D(500, 0, 0, 0, -2.1855694e-05, -10, 0, 500, -4.371139e-07, 0, 10, 0)
+transform = Transform3D(500, 0, 0, 0, -2.1855694e-05, -10, 0, 500, -4.371139e-07, 0, 11.903437, 0)
 material_override = ExtResource("3_6iyac")
 mesh = SubResource("QuadMesh_d1ilt")
 skeleton = NodePath("../..")
 
 [node name="Clouds_Shadow" type="MeshInstance3D" parent="EnvironmentController"]
-transform = Transform3D(500, 0, 0, 0, -2.1855694e-05, -10, 0, 500, -4.371139e-07, 0, 10, 0)
+transform = Transform3D(500, 0, 0, 0, -2.1855694e-05, -10, 0, 500, -4.371139e-07, 0, 11.903437, 0)
 material_override = SubResource("ShaderMaterial_k12tt")
 cast_shadow = 3
 mesh = SubResource("QuadMesh_d1ilt")
@@ -147,14 +149,16 @@ light_color = Color(0.99425465, 0.91304135, 0.7449677, 1)
 light_angular_distance = 2.78
 shadow_enabled = true
 shadow_bias = 5.77
-directional_shadow_max_distance = 500.0
+directional_shadow_blend_splits = true
+directional_shadow_fade_start = 0.0
+directional_shadow_max_distance = 400.0
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="EnvironmentController"]
 environment = SubResource("Environment_bo1nx")
 
 [node name="FogVolume" type="FogVolume" parent="EnvironmentController"]
-transform = Transform3D(6, 0, 0, 0, 6, 0, 0, 0, 6, 0, -0.49990654, 0)
-size = Vector3(94.24, 3, 94.51)
+transform = Transform3D(6, 0, 0, 0, 6, 0, 0, 0, 6, 0, -2.9461956, 0)
+size = Vector3(94.24, 2.1845703, 94.51)
 material = SubResource("FogMaterial_6iyac")
 
 [node name="SunPivot" type="Node3D" parent="EnvironmentController"]
@@ -176,7 +180,7 @@ player = 1
 
 [node name="Camera3D" type="Camera3D" parent="Environment/Units/Player"]
 transform = Transform3D(1, 0, 0, 0, 0.93105584, 0.3648768, 0, -0.3648768, 0.93105584, -1.5315927, 6.648685, 8.590025)
-fov = 64.6
+near = 0.002
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="Environment/Units/Player/Camera3D"]
 material_override = ExtResource("2_hptm8")
@@ -220,10 +224,21 @@ current_role = 1
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2, -3.0919619, 5)
 player = 1
 castle = NodePath("../Castle")
+state = 2
 
 [node name="Castle" parent="Environment/Buildings" instance=ExtResource("8_344ge")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.8895254, -3.2403622, -2.3954196)
 player = 1
+
+[node name="House" parent="Environment/Buildings" node_paths=PackedStringArray("castle") instance=ExtResource("8_h1bgf")]
+transform = Transform3D(1, -1.6543616e-24, 0, 0, 1, 0, 0, 0, 1, -3.395352, -2.6125078, 5.380628)
+player = 1
+castle = NodePath("../Castle")
+
+[node name="Barracks" parent="Environment/Buildings" node_paths=PackedStringArray("castle") instance=ExtResource("12_b3802")]
+transform = Transform3D(1, -1.6543616e-24, 0, 0, 1, 0, 0, 0, 1, -9, -2.716116, 4)
+player = 1
+castle = NodePath("../Castle")
 
 [node name="HTerrain" type="Node3D" parent="Environment" groups=["nav_meshes"]]
 script = ExtResource("4_21xkr")

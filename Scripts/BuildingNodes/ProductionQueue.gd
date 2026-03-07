@@ -4,7 +4,6 @@ class_name ProductionQueue
 @export var spawnInteractable: Interactable
 @export var spawn_worksite: WorkSite
 @export var spawn_site: SpawnSite
-@export var gold_wallet: GoldWallet
 
 # We split the queue in two! One for workers, one for peasants.
 var _work_queue: Array[UnitRoles.UnitType] = []
@@ -101,8 +100,10 @@ func _on_peasant_transformed(new_unit: AgentBase) -> void:
 	
 	# Pop the unit out of the Spawn Queue and apply the role
 	var unit_to_apply = _spawn_queue.pop_front()
-	var boss = ComponentFinder.get_base(self)
-	new_unit.apply_role(unit_to_apply, boss.team.current_team)
+	var team_memory = ComponentFinder.get_component(self, "TeamMemory")
+	var my_team = team_memory.return_team() if team_memory else 0
+
+	new_unit.apply_role(unit_to_apply, my_team)
 	
 	# IMMEDIATELY call the next Peasant if there are more waiting in line!
 	_process_spawn_queue()

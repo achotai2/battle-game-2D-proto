@@ -4,6 +4,7 @@ class_name AdvisorTransform
 var movement: AgentMovement = null
 var work_tasker: MinionTasker = null
 var unit_speed: UnitSpeed = null
+var agent: AgentBase = null
 var arrived: bool = false
 
 func initialize() -> void:
@@ -13,6 +14,9 @@ func initialize() -> void:
 		work_tasker = ComponentFinder.get_component(self, "MinionTasker")
 	if not unit_speed:
 		unit_speed = ComponentFinder.get_component(self, "UnitSpeed")
+	if not agent:
+		agent = ComponentFinder.get_base(self)
+
 
 func get_intent() -> Intent:
 	if not work_tasker: return null
@@ -50,7 +54,6 @@ func enact_intent(intent: Intent) -> void:
 		return
 
 	if not arrived:
-		var agent = ComponentFinder.get_base(self)
 		var target_pos = job.get_work_position_for(agent)
 		var range_sq = work_tasker.work_range * work_tasker.work_range
 		var dist_sq = agent.global_position.distance_squared_to(target_pos)
@@ -66,5 +69,6 @@ func enact_intent(intent: Intent) -> void:
 	if arrived:
 		if movement:
 			movement.stop()
-		var agent = ComponentFinder.get_base(self)
-		job.transform_worker(agent)
+		# The SpawnSite's apply_work function will catch this and emit the transform signal!
+		if job.has_method("apply_work"):
+			job.apply_work(1.0, agent)
