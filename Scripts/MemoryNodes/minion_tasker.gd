@@ -10,8 +10,8 @@ class_name MinionTasker
 @export var auto_get_work_when_idle: bool = true
 
 var _job_board: Node = null # Generic Node to avoid circular dependency issues
-var _site: WorkSite = null
-var _known_jobs: Array[WorkSite] = []
+var _site: Node3D = null
+var _known_jobs: Array[Node3D] = []
 
 # Optimization: Cache work range squared to avoid math in loop
 var _work_range_sq: float = 0.0
@@ -57,18 +57,18 @@ func set_castle(new_castle: Castle) -> void:
 
 # --- STATE MANAGEMENT ---
 
-func _on_work_available(site: WorkSite) -> void:
+func _on_work_available(site: Node3D) -> void:
 	if not site in _known_jobs:
 		_known_jobs.append(site)
 
-func _on_work_completed(site: WorkSite) -> void:
+func _on_work_completed(site: Node3D) -> void:
 	if site in _known_jobs:
 		_known_jobs.erase(site)
 	if _site == site:
 		_release_job(false)
 
-func get_closest_known_job() -> WorkSite:
-	var best_site: WorkSite = null
+func get_closest_known_job() -> Node3D:
+	var best_site: Node3D = null
 	var best_dist_sq: float = INF
 
 	if not is_instance_valid(agent): return null
@@ -86,8 +86,8 @@ func get_closest_known_job() -> WorkSite:
 
 	return best_site
 
-func get_known_jobs_sorted_by_distance() -> Array[WorkSite]:
-	var valid_jobs: Array[WorkSite] = []
+func get_known_jobs_sorted_by_distance() -> Array[Node3D]:
+	var valid_jobs: Array[Node3D] = []
 	if not is_instance_valid(agent): return valid_jobs
 
 	var agent_pos := agent.global_position
@@ -113,7 +113,7 @@ func get_known_jobs_sorted_by_distance() -> Array[WorkSite]:
 
 	return valid_jobs
 
-func assign_job(site: WorkSite) -> void:
+func assign_job(site: Node3D) -> void:
 	_release_job(true) # Clear old job
 	if not site:
 		return
@@ -129,13 +129,13 @@ func _release_job(release_to_board: bool) -> void:
 	_site = null
 
 # --- WORK LOGIC (Called by Advisor) ---
-func get_current_job() -> WorkSite:
+func get_current_job() -> Node3D:
 	return _site
 
 # --- HELPERS ---
 
 # DEPRECIATED
-func _is_in_work_range(site: WorkSite) -> bool:
+func _is_in_work_range(site: Node3D) -> bool:
 	if not agent: return false
 	
 	var target_pos = site.get_work_position_for(agent)

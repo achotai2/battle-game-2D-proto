@@ -15,6 +15,7 @@ signal target_lost()
 
 var current_target: Node3D = null
 var _team_memory: TeamMemory = null
+var _my_agent: AgentBase = null
 var _timer: Timer
 var _scan_shape_query: PhysicsShapeQueryParameters3D
 var _active_collision_mask: int = 0
@@ -49,6 +50,8 @@ func _ready() -> void:
 	else:
 		_on_team_changed(0)
 
+	_my_agent = ComponentFinder.get_base(self)
+
 	_update_collision_mask(_team_memory.return_team())
 
 
@@ -80,9 +83,12 @@ func _scan_for_targets() -> void:
 	for result in results:
 		var body = result["collider"]
 
-		if not is_instance_valid(body):
+		# Skip invalid bodies, and skip ourselves!
+		if not is_instance_valid(body) or body == _my_agent:
 			continue
 		if body is not Interactable:
+			continue
+		if not body.can_interact(_my_agent):
 			continue
 
 		var score = 0.0

@@ -12,7 +12,7 @@ func _ready() -> void:
 		animate = ComponentFinder.get_component(self, "AgentAnimate")
 
 
-func do_work(_site: WorkSite) -> void:
+func do_work(_site: Node3D) -> void:
 	var now = Time.get_ticks_msec()
 	var interval_ms = int(work_interval * 1000)
 	if now - _last_work_time >= interval_ms:
@@ -20,7 +20,7 @@ func do_work(_site: WorkSite) -> void:
 		_last_work_time = now
 
 
-func _perform_work_tick(_site: WorkSite) -> void:
+func _perform_work_tick(_site: Node3D) -> void:
 	if animate:
 		animate.play_work()
 

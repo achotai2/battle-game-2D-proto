@@ -34,6 +34,9 @@ signal work_applied(site: WorkSite)
 ## - repair progress to fix something
 ## - chopping progress to fell a tree
 
+@export var my_interactable: Interactable = null
+## The interactable node that triggers this worksite to become active.
+
 @export var auto_register: bool = true
 ## If true, the WorkSite automatically resolves its castle and registers with the job board in _ready().
 ## If false, you can call refresh_registration() manually after setting up parent/castle references.
@@ -70,18 +73,31 @@ var goldWallet: GoldWallet = null
 # -------------------------
 
 func _ready() -> void:
-	## Called when the node enters the scene tree.
-	## If auto_register is enabled, we locate the castle/job board and register this site as available work.
 	_collect_slots()
-	if auto_register and enabled:
-		_resolve_castle_and_register()
-
+	
+	# Automatically find our parent Boss
+	if not my_boss:
+		my_boss = ComponentFinder.get_base(self)
+		
+	# Automatically find the Gold components
 	if not goldGiver:
 		goldGiver = ComponentFinder.get_component(self, "GoldGiver")
 	if not goldWallet:
 		goldWallet = ComponentFinder.get_component(self, "GoldWallet")
-	if not my_boss:
-		my_boss = ComponentFinder.get_base(self)
+
+	# NEW: Wire up the Interactable if we have one assigned!
+	if is_instance_valid(my_interactable):
+		# We don't auto-register yet. We wait for the click.
+		auto_register = false 
+		enabled = false
+		
+		# Connect to the exact signal you created on your Interactable
+		my_interactable.interaction_finished.connect(_on_player_interacted)
+
+	# If we DON'T have an interactable (e.g. it's a naturally occurring Gold Mine), 
+	# just follow the standard auto-register logic.
+	elif auto_register and enabled:
+		_resolve_castle_and_register()
 
 
 func _exit_tree() -> void:
@@ -374,3 +390,19 @@ func _complete(worker: AgentBase) -> void:
 	## then emit a signal so the parent/building can react (upgrade, spawn loot, etc).
 	_unregister_from_job_board()
 	work_completed.emit(self, worker)
+
+
+func _on_player_interacted(interactor: AgentBase) -> void:
+	# The player clicked the building! 
+	# If we are already working on it, ignore the click.
+	if enabled and needs_work():
+		return
+		
+	# Turn the site on
+	enabled = true
+	
+	# Ping the Job Board so workers know we are ready!
+	_resolve_castle_and_register()
+	
+	# Optional: You could turn the Interactable OFF here so the player can't click it again 
+	# while it's being worked on. Or you let the BuildingDirector handle that!

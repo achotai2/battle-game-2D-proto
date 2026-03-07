@@ -1,110 +1,112 @@
-extends WorkSite
+extends Node3D
 class_name SpawnSite
-## A WorkSite variant that queues spawn/transform requests and applies roles to peasants.
+## A dedicated site that requests a single Peasant from the CastleJobBoard.
+## When the Peasant arrives and "works", it emits a signal for the ProductionQueue to transform them.
 
-signal spawn_completed(agent: AgentBase, role: StringName, player: int)
+signal unit_transformed(agent: AgentBase)
 
-@export var spawn_role: UnitRoles.UnitType = UnitRoles.UnitType.SOLDIER
-@export var work_per_spawn: float = 5.0
-@export var default_player: int = 0
-@export var clear_queue_on_disable: bool = false
-@export var spawn_location: Marker2D
+@export var my_boss: Node3D = null
+@export var spawn_location: Marker3D = null ## Note: Changed to Marker3D for 3D space!
 
-var _spawn_work_queued: int = 0
-var _peasants_qeued: int = 0
-
+var enabled: bool = false
+var kind: CastleJobBoard.JobBoardType = CastleJobBoard.JobBoardType.PEASANTS
+var _job_board: CastleJobBoard = null
+var _incoming_peasant: AgentBase = null
 
 func _ready() -> void:
-	if kind != CastleJobBoard.JobBoardType.PEASANTS:
-		kind = CastleJobBoard.JobBoardType.PEASANTS
-	super._ready()
-	total_work = 0.0
+	if not my_boss:
+		my_boss = ComponentFinder.get_base(self)
 
 
-func needs_work() -> bool:
-	if not enabled:
-		return false
+# -------------------------
+# API FOR PRODUCTION QUEUE
+# -------------------------
 
-	return _peasants_qeued > 0 and has_free_slot()
-
-
-func get_slot_count() -> int:
-	return _peasants_qeued if _peasants_qeued > 0 else 1
-
-
-func enqueue_spawn(amount: int = 1) -> void:
-# When player interacts this gets called.
-# Queue another peasant.
-	if amount <= 0:
-		return
-		
-	_spawn_work_queued += amount
-	_try_start_spawn_work()
-
-
-func _try_start_spawn_work() -> void:
-	if _spawn_work_queued > 0:
-		var boss = get_parent()
-		if is_instance_valid(boss) and boss.has_method("_activate_worker_for_spawn"):
-			boss.call("_activate_worker_for_spawn", work_per_spawn)
-
-
-func on_spawn_work_completed() -> void:
-	if _spawn_work_queued > 0:
-		_spawn_work_queued -= 1
-		_peasants_qeued += 1
-
-		if not enabled:
-			set_enabled(true)
-			refresh_registration()
-		else:
-			refresh_registration()
-
-		if _spawn_work_queued > 0:
-			_try_start_spawn_work()
-
-
-func transform_worker(agent: AgentBase) -> void:
-	if not enabled or _peasants_qeued <= 0:
-		return
-
-	_peasants_qeued -= 1
-	release_worker(agent)
-
-	if agent.has_method("apply_role"):
-		spawn_role = _resolve_spawn_role()
-		agent.call("apply_role", spawn_role, _resolve_spawn_player())
-	else:
-		print_debug("peasant does not have function apply_role.")
-
-	if _peasants_qeued <= 0:
-		set_enabled(false)
+func request_peasant() -> void:
+	# Called by ProductionQueue when the workers finish hammering
+	enabled = true
+	_incoming_peasant = null
+	_resolve_castle_and_register()
 
 
 func set_enabled(new_enabled: bool) -> void:
-	super.set_enabled(new_enabled)
-	if not new_enabled and clear_queue_on_disable:
-		_peasants_qeued = 0
-		_spawn_work_queued = 0
+	enabled = new_enabled
+	if not enabled:
+		_unregister_from_job_board()
+		_incoming_peasant = null
 
 
-func _resolve_spawn_role() -> UnitRoles.UnitType:
-	var building_type := _get_boss_property()
-	var config := BuildingDefs.get_spawn_config(building_type)
-	var unit_type: UnitRoles.UnitType = config.get("unit_type", "")
-	return unit_type
+# -------------------------
+# API FOR JOB BOARD & AI
+# -------------------------
+
+func needs_work() -> bool:
+	# We only need a peasant if we are enabled and haven't claimed one yet
+	return enabled and _incoming_peasant == null
 
 
-func _resolve_spawn_player() -> int:
-	return get_parent().player
+func assign_worker(agent: AgentBase) -> bool:
+	if not needs_work() or agent == null:
+		return false
+		
+	# Claim this peasant so the Job Board doesn't send 5 peasants for 1 job!
+	_incoming_peasant = agent
+	return true
 
 
-func _get_boss_property() -> BuildingDefs.BuildingType:
-	return get_parent().building_type
+func release_worker(agent: AgentBase) -> void:
+	if _incoming_peasant == agent:
+		_incoming_peasant = null
 
 
-func _resolve_agent(minion: MinionTasker) -> AgentBase:
-	if minion == null:
-		return null
+func get_work_position() -> Vector3:
+	# Tell the Peasant where to walk
+	if spawn_location:
+		return spawn_location.global_position
+	return global_position
 
-	return minion.get_parent()
+
+func apply_work(_amount: float, worker: AgentBase) -> void:
+	## In the AI's mind, it is "working", but for a Peasant, arriving IS the work.
+	if worker != _incoming_peasant or not enabled:
+		return
+
+	# We got our peasant! Shut down the site.
+	_unregister_from_job_board()
+	enabled = false
+	_incoming_peasant = null
+
+	# Tell the ProductionQueue to apply the specific role!
+	unit_transformed.emit(worker)
+
+
+# -------------------------
+# INTERNALS: REGISTRATION
+# -------------------------
+
+func _resolve_castle_and_register() -> void:
+	if not enabled: 
+		return
+	_unregister_from_job_board()
+
+	var _castle: Node = null
+	if is_instance_valid(my_boss) and my_boss.has_method("return_castle"):
+		_castle = my_boss.call("return_castle")
+
+	if _castle == null: 
+		return
+
+	if _castle.has_method("return_job_board"):
+		_job_board = _castle.call("return_job_board", kind)
+		if is_instance_valid(_job_board):
+			_job_board.register_site(self)
+
+
+func _unregister_from_job_board() -> void:
+	if is_instance_valid(_job_board):
+		_job_board.unregister_site(self)
+	_job_board = null
+
+
+func _exit_tree() -> void:
+	_unregister_from_job_board()
