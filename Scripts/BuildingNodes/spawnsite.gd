@@ -66,6 +66,14 @@ func get_work_position() -> Vector3:
 	return global_position
 
 
+func get_work_position_for(_agent: AgentBase) -> Vector3:
+	return get_work_position()
+
+
+func transform_worker(agent: AgentBase) -> void:
+	apply_work(1.0, agent)
+
+
 func apply_work(_amount: float, worker: AgentBase) -> void:
 	## In the AI's mind, it is "working", but for a Peasant, arriving IS the work.
 	if worker != _incoming_peasant or not enabled:
