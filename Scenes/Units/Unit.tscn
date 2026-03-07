@@ -63,7 +63,7 @@ metadata/_custom_type_script = "uid://bumqf57fkupi2"
 
 [node name="GoldWallet" type="Node" parent="Memory"]
 script = ExtResource("6_jb8h3")
-gold = 10
+gold = 100
 
 [node name="Health" type="Node" parent="Memory"]
 script = ExtResource("7_ti75h")

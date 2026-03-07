@@ -56,6 +56,7 @@ func set_state(new_state: BuildingDefs.BuildingState) -> void:
 				construct_site.total_work = BuildingDefs.get_construction_cost(building_type)
 				construct_site.reset_progress()
 				construct_site.set_enabled(true) # This auto-registers with the Job Board!
+				construct_site.refresh_registration()
 				
 			visuals.update_visuals(state, player)
 
