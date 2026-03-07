@@ -165,6 +165,12 @@ func _sync_folder(target_parent: Node, incoming_packages: Array) -> void:
 		var generated_node = package["node"]
 		
 		if clean_name in surviving_names:
+			var old_node = target_parent.get_node(clean_name)
+			# If the component has a specific setter, update the old node 
+			# using the newly manufactured node's data before we trash it!
+			if old_node.has_method("set_job_board_kind") and "kind" in generated_node:
+				old_node.set_job_board_kind(generated_node.kind)
+
 			# We already have this component, trash the duplicate
 			generated_node.free() 
 		else:

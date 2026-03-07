@@ -57,6 +57,21 @@ func set_castle(new_castle: Castle) -> void:
 
 # --- STATE MANAGEMENT ---
 
+func set_job_board_kind(new_kind: int) -> void:
+	if kind == new_kind:
+		return
+		
+	kind = new_kind
+	
+	# If we are already connected to a castle, we need to unplug from the old board 
+	# and plug into the new one. 
+	# Your set_castle() function already perfectly handles disconnecting and clearing arrays!
+	if is_instance_valid(castle):
+		var current_castle = castle
+		castle = null # Temporarily clear it so the next line doesn't trigger the "if same" return early
+		set_castle(current_castle)
+
+
 func _on_work_available(site: Node3D) -> void:
 	if not site in _known_jobs:
 		_known_jobs.append(site)

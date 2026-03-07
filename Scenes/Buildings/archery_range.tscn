@@ -111,7 +111,7 @@ icon_type = 4
 
 [node name="Sprites" type="Node3D" parent="."]
 
-[node name="Sprite2D" type="Sprite3D" parent="Sprites" groups=["sprites"]]
+[node name="Sprite3D" type="Sprite3D" parent="Sprites" groups=["sprites"]]
 offset = Vector2(0, 50)
 billboard = 2
 alpha_cut = 1
@@ -129,6 +129,7 @@ script = ExtResource("6_gw")
 [node name="TeamMemory" type="Node" parent="Memory"]
 script = ExtResource("99_team")
 
-[node name="BuildingVisuals" type="Node" parent="."]
+[node name="BuildingVisuals" type="Node" parent="." node_paths=PackedStringArray("visual")]
 script = ExtResource("10_tvgge")
+visual = NodePath("../Sprites/Sprite3D")
 metadata/_custom_type_script = "uid://cc22s0erkk06v"

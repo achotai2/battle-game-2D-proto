@@ -69,7 +69,7 @@ func set_state(new_state: BuildingDefs.BuildingState) -> void:
 				var icon = BuildingDefs.get_interact_mode(building_type, state)
 				spawn_interactable.update_interaction_state(icon, cost)
 				spawn_interactable.set_enabled(true)
-				
+
 			visuals.update_visuals(state, player)
 
 

@@ -2,7 +2,6 @@ extends Node
 class_name BuildingVisuals
 
 @export var visual: Node
-@export var shadowVisual: Node
 
 func update_visuals(state: BuildingDefs.BuildingState, player: int) -> void:
 	if not visual:
@@ -22,8 +21,6 @@ func update_visuals(state: BuildingDefs.BuildingState, player: int) -> void:
 		
 	elif visual is Sprite3D and frames is Texture2D:
 		visual.texture = frames
-		if shadowVisual: shadowVisual.texture = frames
 		
 	elif frames is Texture2D and visual.has_method("set_texture"):
 		visual.call("set_texture", frames)
-		if shadowVisual: shadowVisual.call("set_texture", frames)

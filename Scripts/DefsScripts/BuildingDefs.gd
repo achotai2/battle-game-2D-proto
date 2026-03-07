@@ -37,7 +37,34 @@ const _visuals := {
 			2: preload("res://Art/Tiny Swords (Update 010)/Factions/Knights/Buildings/House/House_Red.png"),
 		},
 	},
-	# ... (Keep your BARRACKS and ARCHERY visuals here, unchanged) ...
+	BuildingType.BARRACKS: {
+		BuildingState.DESTROYED: {
+			1: preload("res://Art/Tiny Swords (Update 010)/Factions/Knights/Buildings/Castle/Castle_Destroyed.png"),
+			2: preload("res://Art/Tiny Swords (Update 010)/Factions/Knights/Buildings/Castle/Castle_Destroyed.png"),
+		},
+		BuildingState.CONSTRUCTING: {
+			1: preload("res://Art/Tiny Swords (Update 010)/Factions/Knights/Buildings/Castle/Castle_Construction.png"),
+			2: preload("res://Art/Tiny Swords (Update 010)/Factions/Knights/Buildings/Castle/Castle_Construction.png"),
+		},
+		BuildingState.BUILT: {
+			1: preload("res://Art/Tiny Swords (Update 010)/Factions/Knights/Buildings/Castle/Castle_Blue.png"),
+			2: preload("res://Art/Tiny Swords (Update 010)/Factions/Knights/Buildings/Castle/Castle_Red.png"),
+		},
+	},
+	BuildingType.ARCHERY: {
+		BuildingState.DESTROYED: {
+			1: preload("res://Art/Tiny Swords (Update 010)/Factions/Goblins/Buildings/Wood_House/Goblin_House_Destroyed.png"),
+			2: preload("res://Art/Tiny Swords (Update 010)/Factions/Goblins/Buildings/Wood_House/Goblin_House_Destroyed.png"),
+		},
+		BuildingState.CONSTRUCTING: {
+			1: preload("res://Art/Tiny Swords (Update 010)/Factions/Knights/Buildings/House/House_Construction.png"),
+			2: preload("res://Art/Tiny Swords (Update 010)/Factions/Knights/Buildings/House/House_Construction.png"),
+		},
+		BuildingState.BUILT: {
+			1: preload("res://Art/Tiny Swords (Update 010)/Factions/Goblins/Buildings/Wood_House/Goblin_House.png"),
+			2: preload("res://Art/Tiny Swords (Update 010)/Factions/Goblins/Buildings/Wood_House/Goblin_House.png"),
+		},
+	},
 }
 
 # --- UI ICONS ---

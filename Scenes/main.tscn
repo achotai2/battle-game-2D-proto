@@ -202,13 +202,24 @@ player = 1
 castle = NodePath("../../Buildings/Castle")
 current_role = 4
 
+[node name="Unit3" parent="Environment/Units" node_paths=PackedStringArray("castle") instance=ExtResource("12_jkdf5")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.811272, -3.0013418, 2)
+player = 1
+castle = NodePath("../../Buildings/Castle")
+current_role = 1
+
+[node name="Unit4" parent="Environment/Units" node_paths=PackedStringArray("castle") instance=ExtResource("12_jkdf5")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8.245081, -3.0013418, 2)
+player = 1
+castle = NodePath("../../Buildings/Castle")
+current_role = 1
+
 [node name="Buildings" type="Node3D" parent="Environment" groups=["nav_meshes"]]
 
 [node name="ArcheryRange" parent="Environment/Buildings" node_paths=PackedStringArray("castle") instance=ExtResource("3_8gbba")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2, -3.0919619, 5)
 player = 1
 castle = NodePath("../Castle")
-state = 0
 
 [node name="Castle" parent="Environment/Buildings" instance=ExtResource("8_344ge")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.8895254, -3.2403622, -2.3954196)
@@ -267,6 +278,7 @@ script = ExtResource("7_wsu2k")
 
 [node name="CSGPolygon3D" type="CSGPolygon3D" parent="NavigationRegion3D" groups=["nav_meshes"]]
 transform = Transform3D(1, 0, 2.0726123e-16, 1.6543616e-24, -4.371139e-08, 1, 0, -1, -4.371139e-08, 9.252247e-09, -3.2418156, -1.3786922e-16)
+visible = false
 use_collision = true
 collision_mask = 0
 polygon = PackedVector2Array(-13.4825115, -19.674524, -17.277878, 6.8014574, 5.8284664, 6.0285234, 9.282732, -1.3698578, 8.913405, -6.1833954, 6.1426773, -19.695534)

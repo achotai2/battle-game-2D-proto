@@ -59,6 +59,7 @@ func _process_work_queue() -> void:
 	# Wake up the WorkSite!
 	spawn_worksite.reset_progress()
 	spawn_worksite.set_enabled(true)
+	spawn_worksite.refresh_registration()
 
 
 func _on_workers_finished(site: WorkSite, worker: AgentBase) -> void:

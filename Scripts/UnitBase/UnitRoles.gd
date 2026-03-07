@@ -163,6 +163,10 @@ func get_role_components(role: UnitType) -> Dictionary:
 				new_node = resource.new() # It's a .gd script
 			else:
 				continue
+
+			# 1b. Configure specific components
+			if new_node is MinionTasker:
+				new_node.kind = get_tasker_kind(role)
 				
 			# 2. Extract a clean name from the file path
 			# e.g., "res://Advisors/BehaviorWork.gd" -> "BehaviorWork"
@@ -176,37 +180,14 @@ func get_role_components(role: UnitType) -> Dictionary:
 			generated_components[category].append(component_package)
 			
 	return generated_components
-	
 
-# --- DEPRECIATED ---
-var weapons := {
-	UnitType.PLAYER: preload("res://Scenes/Weapons/weapon_sword.tscn"),
-	UnitType.SOLDIER: preload("res://Scenes/Weapons/weapon_sword.tscn"),
-	UnitType.ARCHER: preload("res://Scenes/Weapons/weapon_bow.tscn"),
-}
-
-# --- DEPRECIATED ---
-func get_weapon(role: UnitType) -> PackedScene:
-	return weapons.get(role)
-
-
-# --- DEPRECIATED ---
-var taskers := {
-	UnitType.PEASANT: MinionTasker,
-	UnitType.WORKER: MinionTasker,
-}
-
-# --- DEPRECIATED ---
-func get_tasker(role: UnitType) -> GDScript:
-	return taskers.get(role)
-
-
-# --- DEPRECIATED ---
-var tasker_kinds := {
+# The exact Job Board frequency each unit type should tune into
+var tasker_kinds: Dictionary = {
 	UnitType.PEASANT: CastleJobBoard.JobBoardType.PEASANTS,
 	UnitType.WORKER: CastleJobBoard.JobBoardType.WORKERS,
+	# If soldiers eventually guard things, add them here!
 }
 
-# --- DEPRECIATED ---
-func get_tasker_kind(role: UnitType) -> Variant:
-	return tasker_kinds.get(role, null)
+func get_tasker_kind(role: UnitType) -> int:
+	# Default to WORKERS (0) if not specified
+	return tasker_kinds.get(role, CastleJobBoard.JobBoardType.WORKERS)
