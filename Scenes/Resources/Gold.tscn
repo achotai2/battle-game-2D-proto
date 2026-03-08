@@ -1,6 +1,6 @@
 [gd_scene load_steps=11 format=3 uid="uid://wwdody3hxtjl"]
 
-[ext_resource type="Script" uid="uid://c0077qd2f3f1y" path="res://Scripts/Resources/game_resource.gd" id="1_n7jaf"]
+[ext_resource type="Script" uid="uid://c0077qd2f3f1y" path="res://Scripts/Resources/gold_resource.gd" id="1_n7jaf"]
 [ext_resource type="Texture2D" uid="uid://bvqb50k78co5p" path="res://Art/Tiny Swords (Update 010)/Resources/Resources/G_Spawn.png" id="2_v2e86"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_wdbla"]
@@ -60,10 +60,17 @@ animations = [{
 "speed": 10.0
 }]
 
-[node name="Gold" type="Node3D" node_paths=PackedStringArray("_sprite")]
+[node name="Gold" type="Node3D" node_paths=PackedStringArray("killMeTimer", "_sprite")]
 script = ExtResource("1_n7jaf")
+killMeTimer = NodePath("KillMeTimer")
 _sprite = NodePath("AnimatedSprite2D")
 
 [node name="AnimatedSprite2D" type="AnimatedSprite3D" parent="."]
 sprite_frames = SubResource("SpriteFrames_wrweo")
 animation = &"spawn"
+
+[node name="KillMeTimer" type="Timer" parent="."]
+wait_time = 0.5
+one_shot = true
+
+[connection signal="timeout" from="KillMeTimer" to="." method="_on_kill_me_timer_timeout"]

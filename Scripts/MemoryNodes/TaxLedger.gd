@@ -20,7 +20,7 @@ func can_be_taxed() -> bool:
 	if _min_time_between_taxation == 0.0:
 		return true
 
-	return (Time.get_ticks_msec() - _last_taxed_time) > (_min_time_between_taxation * 1000.0)
+	return (_last_taxed_time == 0 or Time.get_ticks_msec() - _last_taxed_time > (_min_time_between_taxation * 1000.0))
 
 func record_tax_paid() -> void:
 	_last_taxed_time = Time.get_ticks_msec()

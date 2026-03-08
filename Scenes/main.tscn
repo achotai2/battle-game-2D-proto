@@ -1,4 +1,4 @@
-[gd_scene load_steps=37 format=3 uid="uid://denj1nj2jkqg1"]
+[gd_scene load_steps=38 format=3 uid="uid://denj1nj2jkqg1"]
 
 [ext_resource type="Script" uid="uid://cnam6bddvgr7k" path="res://Scripts/Weather/EnvironmentController.gd" id="1_hptm8"]
 [ext_resource type="PackedScene" uid="uid://d4k6usdi8l0w0" path="res://Scenes/UI/GoldUI.tscn" id="1_k12tt"]
@@ -16,6 +16,7 @@
 [ext_resource type="Script" uid="uid://ug74v5rgn7m5" path="res://Scripts/Resources/NavRegionManager.gd" id="7_wsu2k"]
 [ext_resource type="PackedScene" uid="uid://56ng42k13bnj" path="res://Scenes/Buildings/castle.tscn" id="8_344ge"]
 [ext_resource type="PackedScene" uid="uid://so0ngwg160ke" path="res://Scenes/Buildings/house.tscn" id="8_h1bgf"]
+[ext_resource type="Script" uid="uid://dtf7sveiplgtb" path="res://Scripts/UI/camera_3d.gd" id="9_fevyy"]
 [ext_resource type="PackedScene" uid="uid://ra0fj2eqns6d" path="res://Scenes/Buildings/barracks.tscn" id="12_b3802"]
 [ext_resource type="PackedScene" uid="uid://dunt5nfaabbqv" path="res://Scenes/Units/Unit.tscn" id="12_jkdf5"]
 
@@ -179,8 +180,9 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5.5134335, -3.1981514, 3.690
 player = 1
 
 [node name="Camera3D" type="Camera3D" parent="Environment/Units/Player"]
-transform = Transform3D(1, 0, 0, 0, 0.93105584, 0.3648768, 0, -0.3648768, 0.93105584, -1.5315927, 6.648685, 8.590025)
+transform = Transform3D(1, 0, 0, 0, 0.90630776, 0.42261827, 0, -0.42261827, 0.90630776, 0, 6, 7)
 near = 0.002
+script = ExtResource("9_fevyy")
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="Environment/Units/Player/Camera3D"]
 material_override = ExtResource("2_hptm8")
@@ -217,6 +219,12 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8.245081, -3.0013418, 2)
 player = 1
 castle = NodePath("../../Buildings/Castle")
 current_role = 1
+
+[node name="Unit5" parent="Environment/Units" node_paths=PackedStringArray("castle") instance=ExtResource("12_jkdf5")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8.245081, -3.0013418, -3.59025)
+player = 1
+castle = NodePath("../../Buildings/Castle")
+current_role = 5
 
 [node name="Buildings" type="Node3D" parent="Environment" groups=["nav_meshes"]]
 

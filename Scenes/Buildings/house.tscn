@@ -1,4 +1,4 @@
-[gd_scene load_steps=11 format=3 uid="uid://so0ngwg160ke"]
+[gd_scene load_steps=12 format=3 uid="uid://so0ngwg160ke"]
 
 [ext_resource type="Script" uid="uid://cjbrsf0fmsehe" path="res://Scripts/BuildingsBase/building_base.gd" id="1_3p7p4"]
 [ext_resource type="Texture2D" uid="uid://bo1itj23k76yd" path="res://Art/Tiny Swords (Update 010)/Factions/Knights/Buildings/House/House_Construction.png" id="1_7aoon"]
@@ -8,6 +8,7 @@
 [ext_resource type="Script" uid="uid://dqu3s3kqb7wj6" path="res://Scripts/BuildingNodes/spawnsite.gd" id="5_he61m"]
 [ext_resource type="Script" uid="uid://2ssmusd0k3fn" path="res://Scripts/MemoryNodes/GoldWallet.gd" id="6_gw"]
 [ext_resource type="Script" uid="uid://cc22s0erkk06v" path="res://Scripts/BuildingNodes/BuildingVisuals.gd" id="9_7b5gy"]
+[ext_resource type="Script" uid="uid://cf8nbntvvy3iv" path="res://Scripts/AgentNodes/GoldGiver.gd" id="10_83qdm"]
 [ext_resource type="Script" uid="uid://ggpe07y6471c" path="res://Scripts/MemoryNodes/TeamMemory.gd" id="99_team"]
 
 [sub_resource type="CylinderShape3D" id="CylinderShape3D_7b5gy"]
@@ -42,12 +43,11 @@ metadata/_custom_type_script = "uid://lkh36p7gdce2"
 
 [node name="Worksites" type="Node3D" parent="."]
 
-[node name="ConstructWorkSite" type="Node3D" parent="Worksites" node_paths=PackedStringArray("my_boss", "my_interactable", "work_offset")]
+[node name="ConstructWorkSite" type="Node3D" parent="Worksites" node_paths=PackedStringArray("my_boss", "my_interactable")]
 script = ExtResource("2_coeoc")
 my_boss = NodePath("../..")
 my_interactable = NodePath("../../ConstructInteractable")
 auto_register = false
-work_offset = NodePath("")
 metadata/_custom_type_script = "uid://qumqy1omy72i"
 
 [node name="Marker2D4" type="Marker3D" parent="Worksites/ConstructWorkSite"]
@@ -62,12 +62,11 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1, 0, 0)
 [node name="Marker2D8" type="Marker3D" parent="Worksites/ConstructWorkSite"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -1)
 
-[node name="SpawnWorkSite" type="Node3D" parent="Worksites" node_paths=PackedStringArray("my_boss", "my_interactable", "work_offset")]
+[node name="SpawnWorkSite" type="Node3D" parent="Worksites" node_paths=PackedStringArray("my_boss", "my_interactable")]
 script = ExtResource("2_coeoc")
 my_boss = NodePath("../..")
 my_interactable = NodePath("../../SpawnInteractable")
 auto_register = false
-work_offset = NodePath("")
 metadata/_custom_type_script = "uid://qumqy1omy72i"
 
 [node name="Marker2D4" type="Marker3D" parent="Worksites/SpawnWorkSite"]
@@ -116,3 +115,7 @@ script = ExtResource("6_gw")
 script = ExtResource("9_7b5gy")
 visual = NodePath("../Sprites/Sprite2D")
 metadata/_custom_type_script = "uid://cc22s0erkk06v"
+
+[node name="GoldGiver" type="Node" parent="."]
+script = ExtResource("10_83qdm")
+metadata/_custom_type_script = "uid://cf8nbntvvy3iv"

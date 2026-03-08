@@ -5,6 +5,7 @@ var _gold_tracker: Tracker = null
 var _gold_wallet: GoldWallet = null
 var _tax_ledger: TaxLedger = null
 var _gold_giver: GoldGiver = null
+var unit_speed: UnitSpeed = null
 
 # Cached request we are currently fulfilling
 var _current_requester: Node = null
@@ -26,8 +27,10 @@ func _find_components() -> bool:
 		_gold_tracker = ComponentFinder.get_component(self, "Tracker")
 	if not _gold_giver:
 		_gold_giver = ComponentFinder.get_component(self, "GoldGiver")
+	if not unit_speed:
+		unit_speed = ComponentFinder.get_component(self, "UnitSpeed")
 
-	return _gold_wallet and _tax_ledger and _gold_tracker and _gold_giver
+	return _gold_wallet and _tax_ledger and _gold_tracker and _gold_giver and unit_speed
 
 
 func get_intent() -> Intent:
@@ -56,6 +59,7 @@ func get_intent() -> Intent:
 	intent.target_node = req.requester
 	return intent
 
+
 func enact_intent(intent: Intent) -> void:
 	if not is_instance_valid(_current_requester):
 		return
@@ -64,6 +68,8 @@ func enact_intent(intent: Intent) -> void:
 	var movement = ComponentFinder.get_component(self, "AgentMovement")
 
 	# Move
+	if unit_speed:
+		movement.max_speed = unit_speed.run_speed
 	if movement:
 		movement.move_to_position(_current_requester.global_position)
 

@@ -25,7 +25,7 @@ var _mode: Mode = Mode.VELOCITY
 var _desired_velocity: Vector3 = Vector3.ZERO
 var _current_velocity: Vector3 = Vector3.ZERO
 var _last_anim_velocity: Vector3 = Vector3(INF, 0, INF)
-const ANIM_JITTER_THRESHOLD_SQ: float = 0.1 
+const ANIM_JITTER_THRESHOLD_SQ: float = 0.01 
 
 # Pathfinding State
 var _last_stuck_pos: Vector3 = Vector3.ZERO
