@@ -1,0 +1,19 @@
+[gd_scene load_steps=4 format=3 uid="uid://7furu8qcmity"]
+
+[ext_resource type="Script" uid="uid://cluuuc40xekih" path="res://Scripts/SensorNodes/tracker.gd" id="1_4a0jt"]
+[ext_resource type="Script" uid="uid://bi15gddmxujcs" path="res://Scripts/SensorNodes/agent_tracking.gd" id="1_oc7qj"]
+
+[sub_resource type="CylinderShape3D" id="CylinderShape3D_4a0jt"]
+height = 0.9838867
+radius = 9.458008
+
+[node name="Tracker" type="Node3D"]
+script = ExtResource("1_4a0jt")
+
+[node name="AgentTracking" type="Area3D" parent="."]
+script = ExtResource("1_oc7qj")
+metadata/_custom_type_script = "uid://bi15gddmxujcs"
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="AgentTracking"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.043700457, 0)
+shape = SubResource("CylinderShape3D_4a0jt")

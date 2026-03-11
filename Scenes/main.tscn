@@ -200,31 +200,31 @@ material = SubResource("FogMaterial_fdnlq")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.9064436, -3.1968071, 0)
 player = 1
 castle = NodePath("../../Buildings/Castle")
-current_role = 4
+current_role = 2
 
 [node name="Unit" parent="Environment/Units" node_paths=PackedStringArray("castle") instance=ExtResource("12_jkdf5")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2, -3.0013418, 2)
-player = 1
+player = 2
 castle = NodePath("../../Buildings/Castle")
-current_role = 4
+current_role = 2
 
 [node name="Unit3" parent="Environment/Units" node_paths=PackedStringArray("castle") instance=ExtResource("12_jkdf5")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.811272, -3.0013418, 2)
-player = 1
+player = 2
 castle = NodePath("../../Buildings/Castle")
-current_role = 1
+current_role = 2
 
 [node name="Unit4" parent="Environment/Units" node_paths=PackedStringArray("castle") instance=ExtResource("12_jkdf5")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8.245081, -3.0013418, 2)
 player = 1
 castle = NodePath("../../Buildings/Castle")
-current_role = 1
+current_role = 2
 
 [node name="Unit5" parent="Environment/Units" node_paths=PackedStringArray("castle") instance=ExtResource("12_jkdf5")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8.245081, -3.0013418, -3.59025)
-player = 1
+player = 2
 castle = NodePath("../../Buildings/Castle")
-current_role = 5
+current_role = 2
 
 [node name="Buildings" type="Node3D" parent="Environment" groups=["nav_meshes"]]
 
@@ -232,7 +232,6 @@ current_role = 5
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2, -3.0919619, 5)
 player = 1
 castle = NodePath("../Castle")
-state = 2
 
 [node name="Castle" parent="Environment/Buildings" instance=ExtResource("8_344ge")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.8895254, -3.2403622, -2.3954196)

@@ -19,14 +19,14 @@ static func get_component_by_name(starter_node: Node, target_name: String) -> No
 	return null
 	
 
-static func get_component(starter_node: Node, target_class: String) -> Node:
+static func get_component(starter_node: Node, target_class: String, target_name: String = "*") -> Node:
 	var root := get_base(starter_node)
 	if root == null: 
 		print_debug("Could not find base node from ", starter_node)
 		return null
 		
 	# Search by CLASS TYPE, ignoring the node's actual name.
-	var matching_nodes = root.find_children("*", target_class, true, false)
+	var matching_nodes = root.find_children(target_name, target_class, true, false)
 	
 	# Loop through all matches and return the first one that is NOT in the trash
 	for node in matching_nodes:

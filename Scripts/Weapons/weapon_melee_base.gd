@@ -80,11 +80,11 @@ func _on_attack_delay_timeout() -> void:
 	if t == null or not is_instance_valid(t):
 		return
 
-	# Ensure target is still in range?
 	if not is_target_in_range(t):
 		return
 
-	var h: Health = t.get("health")
+	# Use the ComponentFinder to grab the enemy's Health node!
+	var h: Health = ComponentFinder.get_component(t, "Health")
 	if not is_instance_valid(h):
 		return
 

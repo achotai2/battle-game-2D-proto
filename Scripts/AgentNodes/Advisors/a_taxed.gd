@@ -1,11 +1,12 @@
 extends Advisor
 class_name AdvisorTaxed
 
-var _gold_tracker: Tracker = null
 var _gold_wallet: GoldWallet = null
 var _tax_ledger: TaxLedger = null
 var _gold_giver: GoldGiver = null
 var unit_speed: UnitSpeed = null
+var agent: AgentBase = null
+var movement: AgentMovement = null
 
 # Cached request we are currently fulfilling
 var _current_requester: Node = null
@@ -19,18 +20,20 @@ func _ready() -> void:
 
 
 func _find_components() -> bool:
+	if not agent:
+		agent = ComponentFinder.get_base(self)
+	if not movement:
+		movement = ComponentFinder.get_component(self, "AgentMovement")
 	if not _gold_wallet:
 		_gold_wallet = ComponentFinder.get_component(self, "GoldWallet")
 	if not _tax_ledger:
 		_tax_ledger = ComponentFinder.get_component(self, "TaxLedger")
-	if not _gold_tracker:
-		_gold_tracker = ComponentFinder.get_component(self, "Tracker")
 	if not _gold_giver:
 		_gold_giver = ComponentFinder.get_component(self, "GoldGiver")
 	if not unit_speed:
 		unit_speed = ComponentFinder.get_component(self, "UnitSpeed")
 
-	return _gold_wallet and _tax_ledger and _gold_tracker and _gold_giver and unit_speed
+	return agent and movement and _gold_wallet and _tax_ledger and _gold_giver and unit_speed
 
 
 func get_intent() -> Intent:
@@ -64,9 +67,6 @@ func enact_intent(intent: Intent) -> void:
 	if not is_instance_valid(_current_requester):
 		return
 
-	var agent = ComponentFinder.get_base(self)
-	var movement = ComponentFinder.get_component(self, "AgentMovement")
-
 	# Move
 	if unit_speed:
 		movement.max_speed = unit_speed.run_speed
@@ -75,7 +75,7 @@ func enact_intent(intent: Intent) -> void:
 
 	# Check range
 	# Assuming range is close enough for interaction, e.g., 2-3 meters.
-	var dist_sq = _gold_tracker.get_distance_squared_to(_current_requester)
+	var dist_sq = get_distance_squared_to(_current_requester)
 	if dist_sq <= 9.0: # 3 meters
 		var amount = _tax_ledger.get_request_amount(_current_requester)
 		# We attempt to give all requested, or what we have?
@@ -103,3 +103,10 @@ func enact_intent(intent: Intent) -> void:
 
 		if movement:
 			movement.stop()
+
+
+func get_distance_squared_to(target: Node3D) -> float:
+	if not is_instance_valid(agent) or not is_instance_valid(target):
+		return INF
+
+	return agent.global_position.distance_squared_to(target.global_position)

@@ -1,12 +1,26 @@
-extends Node
+extends Node3D
 class_name Tracker
 
+@onready var tracking: AgentTracking = $AgentTracking
 
-func get_distance_squared_to(target: Node3D) -> float:
-	if owner == null:
-		owner = ComponentFinder.get_base(self)
 
-	if not is_instance_valid(owner) or not is_instance_valid(target):
-		return INF
+# Called when the node enters the scene tree for the first time.
+func _ready() -> void:
+	# Establish connection to TeamMemory.
+	var team = ComponentFinder.get_component(self, "TeamMemory")
+	if team and not team.team_changed.is_connected(_team_changed):
+		team.team_changed.connect(_team_changed)
+	_team_changed(team.return_team())
 
-	return owner.global_position.distance_squared_to(target.global_position)
+
+# Called every frame. 'delta' is the elapsed time since the previous frame.
+func _process(delta: float) -> void:
+	pass
+
+
+func _team_changed(new_team: int) -> void:
+	tracking.setup_player(new_team)
+
+
+func get_candidates() -> Array[Node3D]:
+	return tracking.get_candidates()
