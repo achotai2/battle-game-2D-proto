@@ -7,7 +7,7 @@
 [ext_resource type="PackedScene" uid="uid://c8o4373okv5fq" path="res://Scenes/AgentNodes/HungerHolder.tscn" id="6_xvpfm"]
 [ext_resource type="Script" uid="uid://qumqy1omy72i" path="res://Scripts/BuildingNodes/worksite.gd" id="7_v65j7"]
 
-[sub_resource type="CylinderShape3D" id="CircleShape2D_2teul"]
+[sub_resource type="CylinderShape3D" id="CylinderShape3D_2teul"]
 radius = 20.0
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_4j78d"]
@@ -133,8 +133,8 @@ foodWorkSite = NodePath("FoodWorkSite")
 despawn_timer = NodePath("DespawnTimer")
 hop_radius = 300.0
 
-[node name="CollisionShape2D" type="CollisionShape3D" parent="."]
-shape = SubResource("CircleShape2D_2teul")
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+shape = SubResource("CylinderShape3D_2teul")
 
 [node name="AnimatedSprite2D" type="AnimatedSprite3D" parent="."]
 sprite_frames = SubResource("SpriteFrames_pwd00")

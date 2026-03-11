@@ -8,7 +8,7 @@
 [ext_resource type="Script" path="res://Scripts/MemoryNodes/GoldWallet.gd" id="6_gw"]
 [ext_resource type="Script" path="res://Scripts/MemoryNodes/TeamMemory.gd" id="99_team"]
 
-[sub_resource type="CylinderShape3D" id="CircleShape2D_0vwjc"]
+[sub_resource type="CylinderShape3D" id="CylinderShape3D_0vwjc"]
 radius = 16.0
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_rsuno"]
@@ -126,8 +126,8 @@ regrow_timer = NodePath("RegrowTimer")
 spawn_timer = NodePath("SpawnTimer")
 spawn_probability = 0.001
 
-[node name="CollisionShape2D" type="CollisionShape3D" parent="."]
-shape = SubResource("CircleShape2D_0vwjc")
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+shape = SubResource("CylinderShape3D_0vwjc")
 
 [node name="WorkSite" type="Node3D" parent="." node_paths=PackedStringArray("work_offset")]
 script = ExtResource("2_rsuno")
