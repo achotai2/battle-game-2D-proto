@@ -5,6 +5,7 @@ enum BuildingType {
 	BARRACKS,
 	HOUSE,
 	ARCHERY,
+	TREE,
 }
 
 enum BuildingState {
@@ -65,6 +66,20 @@ const _visuals := {
 			2: preload("res://Art/Tiny Swords (Update 010)/Factions/Goblins/Buildings/Wood_House/Goblin_House.png"),
 		},
 	},
+	BuildingType.TREE: {
+		BuildingState.DESTROYED: {
+			1: {"tex": preload("res://Art/Tree.png"), "rect": Rect2(0, 0, 192, 192)},
+			2: {"tex": preload("res://Art/Tree.png"), "rect": Rect2(0, 0, 192, 192)},
+		},
+		BuildingState.CONSTRUCTING: {
+			1: {"tex": preload("res://Art/Tree.png"), "rect": Rect2(0, 192, 192, 192)},
+			2: {"tex": preload("res://Art/Tree.png"), "rect": Rect2(0, 192, 192, 192)},
+		},
+		BuildingState.BUILT: {
+			1: {"tex": preload("res://Art/Tree.png"), "rect": Rect2(0, 384, 192, 192)},
+			2: {"tex": preload("res://Art/Tree.png"), "rect": Rect2(0, 384, 192, 192)},
+		},
+	},
 }
 
 # --- UI ICONS ---
@@ -84,6 +99,11 @@ const _interact_modes := {
 		BuildingState.CONSTRUCTING: IconType.NONE,
 		BuildingState.BUILT: IconType.ARCHER,
 	},
+	BuildingType.TREE: {
+		BuildingState.DESTROYED: IconType.CUT,
+		BuildingState.CONSTRUCTING: IconType.NONE,
+		BuildingState.BUILT: IconType.NONE,
+	},
 }
 
 # --- CONSTRUCTION PARAMS ---
@@ -92,6 +112,7 @@ const _construction_costs := {
 	BuildingType.HOUSE: 5.0,
 	BuildingType.BARRACKS: 15.0,
 	BuildingType.ARCHERY: 10.0,
+	BuildingType.TREE: 1.0,
 }
 
 # --- PRODUCTION PARAMS ---
@@ -116,9 +137,18 @@ const _unit_train_costs := {
 func get_frames(building_type: BuildingType, state: BuildingState, player: int) -> Resource:
 	if _visuals.has(building_type) and _visuals[building_type].has(state):
 		var options = _visuals[building_type][state]
+		var val = null
 		if options.has(player):
-			return options[player]
-		return options.get(1, null)
+			val = options[player]
+		else:
+			val = options.get(1, null)
+
+		if val is Dictionary and val.has("tex") and val.has("rect"):
+			var atlas = AtlasTexture.new()
+			atlas.atlas = val["tex"]
+			atlas.region = val["rect"]
+			return atlas
+		return val
 	return null
 
 func get_interact_mode(building_type: BuildingType, state: BuildingState) -> IconType:
