@@ -20,7 +20,7 @@ peasant_job_board = NodePath("PeasantJobBoard")
 worker_job_board = NodePath("WorkerJobBoard")
 food_job_board = NodePath("FoodJobBoard")
 
-[node name="CollisionShape2D" type="CollisionShape3D" parent="."]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
 transform = Transform3D(-4.371139e-08, 0, -1, 0, 1, 0, 1, 0, -4.371139e-08, 0, 1.5174832, 0)
 shape = SubResource("CylinderShape3D_hhb7p")
 

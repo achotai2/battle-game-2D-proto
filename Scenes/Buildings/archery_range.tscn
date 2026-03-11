@@ -26,7 +26,7 @@ construct_site = NodePath("Worksites/ConstructWorkSite")
 production_queue = NodePath("ProductionQueue")
 visuals = NodePath("BuildingVisuals")
 
-[node name="CollisionShape2D" type="CollisionShape3D" parent="."]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
 transform = Transform3D(-4.371139e-08, 0, -1, 0, 1, 0, 1, 0, -4.371139e-08, 0, 0.1513176, 0)
 shape = SubResource("CylinderShape3D_2yu6c")
 

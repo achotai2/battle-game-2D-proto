@@ -7,7 +7,7 @@
 [ext_resource type="Script" path="res://Scripts/MemoryNodes/TeamMemory.gd" id="99_team"]
 [ext_resource type="Script" uid="uid://cc22s0erkk06v" path="res://Scripts/BuildingNodes/BuildingVisuals.gd" id="9_7b5gy"]
 
-[sub_resource type="CylinderShape3D" id="CircleShape2D_0vwjc"]
+[sub_resource type="CylinderShape3D" id="CylinderShape3D_0vwjc"]
 radius = 16.0
 
 [node name="Tree" type="StaticBody3D" node_paths=PackedStringArray("construct_interactable", "construct_site", "visuals")]
@@ -20,8 +20,8 @@ construct_site = NodePath("WorkSite")
 visuals = NodePath("BuildingVisuals")
 state = 0
 
-[node name="CollisionShape2D" type="CollisionShape3D" parent="."]
-shape = SubResource("CircleShape2D_0vwjc")
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+shape = SubResource("CylinderShape3D_0vwjc")
 
 [node name="WorkSite" type="Node3D" parent="." node_paths=PackedStringArray("work_offset")]
 script = ExtResource("2_rsuno")

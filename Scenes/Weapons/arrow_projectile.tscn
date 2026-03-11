@@ -30,7 +30,7 @@ animations = [{
 "speed": 5.0
 }]
 
-[sub_resource type="CylinderShape3D" id="CircleShape2D_l2k8s"]
+[sub_resource type="CylinderShape3D" id="CylinderShape3D_l2k8s"]
 
 [node name="Arrow" type="Area3D"]
 collision_layer = 1024
@@ -41,9 +41,9 @@ script = ExtResource("1_k1g7c")
 sprite_frames = SubResource("SpriteFrames_xxsqv")
 animation = &"flying"
 
-[node name="CollisionShape2D" type="CollisionShape3D" parent="."]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
 position = Vector3(24, 0, 1)
-shape = SubResource("CircleShape2D_l2k8s")
+shape = SubResource("CylinderShape3D_l2k8s")
 debug_color = Color(0.97078675, 0, 0.45557922, 0.41960785)
 
 [node name="DeathTimer" type="Timer" parent="."]
