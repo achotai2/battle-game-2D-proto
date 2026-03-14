@@ -1,19 +1,11 @@
 extends Area3D
 class_name ArrowProjectileArc
 
-const GRAVITY: float = 981.0
+# 9.81 is standard Earth gravity. 
+# If your arrows float too much, increase this to ~20.0 for a snappier "video game" arc!
+const GRAVITY: float = 1.0 
 
-@export_range(-180, 180, 5) var camera_angle: int = 60
-@export var launch_height: float = 1.0
-
-# When descending and below this height, the arrow can hit bodies
-@export var hit_height: float = 10.0
-
-# Visual scaling: scale up as it gets higher
-@export var max_scale_boost: float = 0.25   # 0.25 = +25% at peak
 @export var max_lifetime: float = 4.0
-
-# Stick behavior
 @export var stick_into_target: bool = true
 
 @onready var sprite: AnimatedSprite3D = $AnimatedSprite3D
@@ -21,49 +13,51 @@ const GRAVITY: float = 981.0
 @onready var death_timer: Timer = $DeathTimer
 
 var _attack_data: AttackData
-var position2d: Vector3
-var target_position2d: Vector3
-var velocity_z: float = 0.0
-var velocity_2d: Vector3 = Vector3.ZERO
-var height: float = 0.0
-var _peak_height: float = 1.0
+var velocity: Vector3 = Vector3.ZERO
 var _age: float = 0.0
 var _landed: bool = false
-var _armed: bool = false   # “can hit bodies yet”
-
-var _tan_camera_angle: float = 0.0
 
 
 func _ready() -> void:
-	_tan_camera_angle = tan(deg_to_rad(camera_angle))
-
 	collision_layer = GamePhysics.get_mask_bit(GamePhysics.LAYER_PROJECTILE)
 	collision_mask = GamePhysics.get_projectile_mask()
 
 	body_entered.connect(_on_body_entered)
-	monitoring = true
-	monitorable = true
-	shape.disabled = false
+	
+	# Hook up the timer!
+	death_timer.timeout.connect(_on_death_timer_timeout)
+	death_timer.one_shot = true
 
 	if sprite.sprite_frames and sprite.sprite_frames.has_animation("flying"):
 		sprite.play("flying")
 
-	death_timer.one_shot = true
 
-
-func init(spawn_pos: Vector3, target_pos: Vector3, projectile_speed: float, attack_data: AttackData) -> void:
+func init(spawn_pos: Vector3, impact_pos: Vector3, speed: float, attack_data: AttackData) -> void:
 	_attack_data = attack_data
-	position2d = spawn_pos
-	target_position2d = target_pos
-
-	height = launch_height
+	global_position = spawn_pos
 	_age = 0.0
 	_landed = false
-	_armed = false
 
-	_calculate_start_values(projectile_speed)
-	global_position = _new_global_position()
-	_apply_visual_scale()
+	# 1. Calculate flat horizontal direction and distance
+	var direction = impact_pos - spawn_pos
+	var height_difference = direction.y
+	direction.y = 0.0 # Flatten it out to get pure ground distance
+	
+	var distance = direction.length()
+	var flat_direction = direction.normalized()
+	
+	# 2. Time in the air is simply ground distance divided by speed
+	var time = distance / speed
+	if time <= 0.0: time = 0.01 # Prevent divide by zero if firing point-blank
+	
+	# 3. Calculate the exact vertical velocity needed to hit the target at that time
+	var initial_vy = (height_difference + 0.5 * GRAVITY * (time * time)) / time
+	
+	# 4. Combine into a true 3D velocity vector
+	velocity = flat_direction * speed
+	velocity.y = initial_vy
+	
+	_update_rotation()
 
 
 func _process(delta: float) -> void:
@@ -75,42 +69,38 @@ func _process(delta: float) -> void:
 		queue_free()
 		return
 
-	# --- integrate Z ---
-	height += velocity_z * delta
-	velocity_z -= GRAVITY * delta
+	# Apply gravity to the Y axis
+	velocity.y -= GRAVITY * delta
+	
+	# Move the arrow through 3D space
+	global_position += velocity * delta
+	
+	# Point the arrow in the direction it is currently flying
+	_update_rotation()
 
-	# --- integrate 2D ---
-	position2d += velocity_2d * delta
-
-	# --- update world position ---
-	var new_pos := _new_global_position()
-	_change_sprite_angle(new_pos)
-	global_position = new_pos
-
-	# --- arm logic: only hittable when descending and low enough ---
-	_armed = (velocity_z < 0.0 and height <= hit_height)
-
-	# --- visuals ---
-	_apply_visual_scale()
-
-	# --- ground hit ---
-	if height <= 0.0:
+	# Ground hit fallback (assuming y=0 is your floor)
+	if global_position.y <= 0.0:
 		_land(null)
+
+
+func _update_rotation() -> void:
+	# Avoid look_at errors if the arrow is somehow perfectly still
+	if velocity.length_squared() > 0.01:
+		# look_at requires a point in space, so we add velocity to current position
+		look_at(global_position + velocity, Vector3.UP)
 
 
 func _on_body_entered(body: Node3D) -> void:
 	if _landed:
 		return
-	if not _armed:
-		return
+		
 	if body == _attack_data.attacker:
 		return
 
-	# “Hit anyone”: no team filtering here.
-	var h: Object = body.get("health")
-	if not is_instance_valid(h):
-		return
-	h.apply_hit(_attack_data)
+	# THE FIX: Use ComponentFinder exactly like the melee weapon!
+	var h: Health = ComponentFinder.get_component(body, "Health")
+	if is_instance_valid(h):
+		h.apply_hit(_attack_data)
 
 	_land(body)
 
@@ -120,86 +110,17 @@ func _land(hit_target: Node3D) -> void:
 		return
 	_landed = true
 
-	# --- FIX START ---
-	# We must use set_deferred because this function can be called from _on_body_entered
 	set_deferred("monitoring", false)
 	set_deferred("monitorable", false)
-	
-	# You must also defer disabling the collision shape
 	shape.set_deferred("disabled", true)
-	# --- FIX END ---
 
-	# Clamp height for ground
-	height = max(launch_height, 0.0)
-	_apply_visual_scale()
-
-	# Switch animation
 	if sprite.sprite_frames and sprite.sprite_frames.has_animation("landed"):
 		sprite.play("landed")
 
-	# Stick into target (keep world transform)
-	# (You already had this correct!)
 	if stick_into_target and is_instance_valid(hit_target):
 		call_deferred("reparent", hit_target, true)
 
-	# Disappear shortly
 	death_timer.start()
-
-
-func _new_global_position() -> Vector3:
-	# fake camera tilt: higher Z lifts sprite upward on screen
-	return Vector3(position2d.x, position2d.y - (height * _tan_camera_angle), launch_height)
-
-
-func _change_sprite_angle(look_to: Vector3) -> void:
-	look_at(look_to)
-
-
-func _apply_visual_scale() -> void:
-	# Smooth scale based on height relative to peak height
-	if _peak_height <= 0.001:
-		return
-
-	var t: float = clamp(height / _peak_height, 0.0, 1.0)
-	var s: float = 1.0 + max_scale_boost * t
-	scale = Vector3.ONE * s
-
-
-func _calculate_start_values(projectile_speed: float) -> void:
-	var distance_sq: float = position2d.distance_squared_to(target_position2d)
-
-	var v2 := projectile_speed * projectile_speed
-	var v4 := v2 * v2
-	var g := GRAVITY
-
-	# Discriminant for ballistic arc
-	var disc := v4 - (g * g * distance_sq) + (2.0 * g * v2 * launch_height)
-
-	# If target is too far for the speed, just shoot flat
-	if disc <= 0.0 or distance_sq <= 0.000001:
-		velocity_z = 0.0
-		velocity_2d = position2d.direction_to(target_position2d) * projectile_speed
-		_peak_height = max(launch_height, 1.0)
-		return
-
-	var distance_to: float = sqrt(distance_sq)
-	var s := sqrt(disc)
-	var n := g * distance_to
-
-	var high := atan((v2 + s) / n)
-	var low := atan((v2 - s) / n)
-
-	# Choose a reasonable arc (avoid overly high lob)
-	var start_angle_z: float = low if high > 0.785398 else high
-
-	velocity_z = sin(start_angle_z) * projectile_speed
-	var speed_2d: float = abs(cos(start_angle_z) * projectile_speed)
-	velocity_2d = position2d.direction_to(target_position2d) * speed_2d
-
-	# Estimate peak height for scaling (h_peak = h0 + vz^2 / (2g))
-	_peak_height = max(launch_height + (velocity_z * velocity_z) / (2.0 * GRAVITY), 1.0)
-
-	_change_sprite_angle(target_position2d)
 
 
 func _on_death_timer_timeout() -> void:

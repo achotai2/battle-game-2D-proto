@@ -1,11 +1,11 @@
-extends Node
+extends Node3D
 class_name WeaponRanged
 
 # --- WEAPON STATS ---
 @export_range(0, 1000, 1) var damage: int = 10
 @export_range(0, 1000, 1) var heal: int = 0
-@export_range(0.0, 100.0, 1.0) var base_accuracy: float = 50.0 # New: Base skill (0-100)
-@export_range(0.0, 5.0, 0.1) var wind_resistance: float = 1.0 # New: 0.0 = Immune to wind
+@export_range(0.0, 100.0, 1.0) var base_accuracy: float = 50.0 
+@export_range(0.0, 5.0, 0.1) var wind_resistance: float = 1.0 
 
 # --- TARGETING ---
 @export var affects_own: bool = false
@@ -14,58 +14,46 @@ class_name WeaponRanged
 
 # --- PROJECTILE SETUP ---
 @export var projectile_scene: PackedScene
-@export var muzzle: Node3D # Optional spawn point
+@export var muzzle: Node3D 
 @export var projectile_parent_path: NodePath
-@export var projectile_speed: float = 700.0
+@export var projectile_speed: float = 10.0
 @export var attack_power: int = 10
-@export var attack_priority: int = 7
 
 # --- REFS ---
-@export var movement: AgentMovement = null
 @onready var tracking: AgentTracking = $AgentTracking
 @onready var cooldown: Timer = $cooldown
 @onready var attack_delay: Timer = $AttackDelay
 
 # --- INTERNAL STATE ---
-var _owner_agent: AgentBase = null
 var _projectile_parent: Node = null
 var _attacking: bool = false
-var _temp_target: AgentBase = null
+var _temp_target: Node3D = null
+var team: TeamMemory = null
 
 # --- ACCURACY / BUFF STATE ---
-var accuracy_modifiers: Array = [] # Stores temporary buffs (floats)
+var accuracy_modifiers: Array = [] 
 
 
 func _ready() -> void:
-	# Configure tracking
 	tracking.target_same_team = affects_own
 	tracking.target_opposing = affects_opposing
 	tracking.target_neutral = affects_neutral
 
-	# tracking signals removed for passive behavior
-	# tracking.target_changed.connect(_on_target_changed)
-	# tracking.target_lost.connect(_on_target_lost)
-
-	# cooldown.timeout.connect(_try_attack)
 	attack_delay.timeout.connect(_on_attack_delay_timeout)
-
 	_projectile_parent = _resolve_projectile_parent()
 
+	# Establish connection to TeamMemory (Exactly like WeaponMelee!)
+	team = ComponentFinder.get_component(self, "TeamMemory")
+	if team and not team.team_changed.is_connected(_team_changed):
+		team.team_changed.connect(_team_changed)
+		_team_changed(team.return_team())
+	else:
+		_team_changed(0)
 
-func set_player(owner_agent: AgentBase) -> void:
-	_owner_agent = owner_agent
-	tracking.setup_player(owner_agent.player)
 
+func _team_changed(new_team: int) -> void:
+	tracking.setup_player(new_team)
 
-# --- CONTROL API ---
-
-func pause_attack(priority: int = 5) -> void:
-	# Legacy
-	pass
-
-func restart_attack(priority: int = 5) -> void:
-	# Legacy
-	pass
 
 func _cancel_attack() -> void:
 	cooldown.stop()
@@ -81,7 +69,8 @@ func is_target_in_range(target: Node3D) -> bool:
 	var candidates = tracking.get_candidates()
 	return target in candidates
 
-func perform_attack_tick(target: AgentBase) -> bool:
+
+func perform_attack_tick(target: Node3D) -> bool:
 	if not is_instance_valid(target):
 		_cancel_attack()
 		return false
@@ -92,7 +81,6 @@ func perform_attack_tick(target: AgentBase) -> bool:
 	if projectile_scene == null:
 		return false
 
-	# Assume Brain handles facing/animation via command_start_attack
 	_attacking = true
 	cooldown.start()
 	attack_delay.start()
@@ -101,46 +89,35 @@ func perform_attack_tick(target: AgentBase) -> bool:
 
 
 func _on_attack_delay_timeout() -> void:
-	# 1. Validate Target
 	var t := _temp_target
 	if t == null or not is_instance_valid(t):
 		return
 
-	# Ensure target is still a valid candidate (range check, etc)
 	if not is_target_in_range(t):
 		return
 
 	if projectile_scene == null:
 		return
-	if not _owner_agent or not _owner_agent.has_method("return_player"):
-		return
 
-	# 2. Resolve Parent
 	var parent := _projectile_parent
 	if parent == null or not is_instance_valid(parent):
 		parent = get_tree().current_scene
 		_projectile_parent = parent
 
-	# 3. Calculate Spawn & Impact Points
-	var spawn_pos := _get_spawn_position()
-	
-	# [NEW] Calculate the realistic hit position (Accuracy + Wind)
+	var boss = ComponentFinder.get_base(self)
+	var spawn_pos := _get_spawn_position(boss)
 	var impact_point := get_shot_point(spawn_pos, t.global_position)
 
-	# 4. Instantiate Projectile
 	var proj := projectile_scene.instantiate()
 	parent.add_child(proj)
 
-	# 5. Setup Attack Data
 	var atk := AttackData.new()
 	atk.attack_power = attack_power
-	atk.attacker_player = _owner_agent.return_player()
-	atk.attacker = _owner_agent
+	atk.attacker_player = team.return_team() if team else 0
+	atk.attacker = boss
 	atk.source = self
 
-	# 6. Initialize Projectile
 	if proj.has_method("init"):
-		# We pass 'impact_point' instead of 't.global_position'
 		proj.call("init", spawn_pos, impact_point, projectile_speed, atk)
 	else:
 		push_warning("Projectile does not have function init.")
@@ -157,11 +134,6 @@ func get_current_accuracy() -> float:
 	return clamp(total, 0.0, 100.0)
 
 
-func add_accuracy_buff(amount: float, duration: float) -> void:
-	accuracy_modifiers.append(amount)
-	get_tree().create_timer(duration).timeout.connect(func(): accuracy_modifiers.erase(amount))
-
-
 func get_shot_point(origin: Vector3, target_pos: Vector3) -> Vector3:
 	var dist = origin.distance_to(target_pos)
 	
@@ -169,25 +141,28 @@ func get_shot_point(origin: Vector3, target_pos: Vector3) -> Vector3:
 	var inaccuracy = (100.0 - acc_score) / 100.0 
 	var spread_factor = 0.05 
 	var deviation = dist * inaccuracy * spread_factor
-	var error_offset = Vector3(randfn(0.0, deviation), randfn(0.0, deviation), 0)
-
-	var physics_wind_speed = Weather.current_wind_speed * 10.0 
 	
-	var wind_push = Weather.current_wind_dir * physics_wind_speed * (dist / 1000.0) * wind_resistance
+	# FIXED: 3D Ground-plane error should apply to X and Z, not X and Y!
+	var error_offset = Vector3(randfn(0.0, deviation), 0, randfn(0.0, deviation))
+
+	# Weather check (Make sure your Weather singleton is loaded in Project Settings!)
+	var physics_wind_speed = 0.0
+	var wind_push = Vector3.ZERO
+	if Engine.has_singleton("Weather") or get_tree().root.has_node("Weather"):
+		physics_wind_speed = Weather.current_wind_speed * 10.0 
+		wind_push = Weather.current_wind_dir * physics_wind_speed * (dist / 1000.0) * wind_resistance
 	
 	return target_pos + error_offset + wind_push
-	
+
 
 # --- HELPERS ---
 
-func _get_spawn_position() -> Vector3:
+func _get_spawn_position(boss: Node) -> Vector3:
 	if muzzle:
 		return muzzle.global_position
-
-	if _owner_agent:
-		return _owner_agent.global_position
-
-	return Vector3.ZERO
+	if is_instance_valid(boss):
+		return boss.global_position + Vector3(0, 1.0, 0) # Fire from chest/head height
+	return global_position
 
 
 func _resolve_projectile_parent() -> Node:
@@ -200,12 +175,5 @@ func _resolve_projectile_parent() -> Node:
 
 	return scene
 
-
 func am_i_attacking() -> bool:
 	return _attacking or not cooldown.is_stopped()
-
-func attack_animation_finished() -> void:
-	pass
-
-func set_movement(m: AgentMovement) -> void:
-	movement = m

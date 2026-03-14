@@ -12,6 +12,8 @@ const LAYER_TRACKING = 9
 const LAYER_WORKSITE = 10
 const LAYER_PROJECTILE = 11
 const LAYER_PEASANTS = 12
+const LAYER_TERRAIN = 13
+const LAYER_TREES = 14
 
 static func get_mask_bit(layer: int) -> int:
 	return 1 << (layer - 1)
@@ -98,9 +100,10 @@ static func get_interacting_mask(my_player_id: int, target_neutral: bool, target
 	
 static func get_projectile_mask() -> int:
 	return get_mask_bit(LAYER_ATTACKABLE_NEUTRAL) | \
-		   get_mask_bit(LAYER_ATTACKABLE_PLAYER_1) | \
-		   get_mask_bit(LAYER_ATTACKABLE_PLAYER_2) | \
-		   get_mask_bit(LAYER_BUILDINGS)
+		get_mask_bit(LAYER_ATTACKABLE_PLAYER_1) | \
+		get_mask_bit(LAYER_ATTACKABLE_PLAYER_2) | \
+		get_mask_bit(LAYER_BUILDINGS) | \
+		get_mask_bit(LAYER_TREES)
 
 
 static func get_global_mouse_position_3d(camera: Camera3D, mouse_pos: Vector2) -> Vector3:
@@ -113,3 +116,19 @@ static func get_global_mouse_position_3d(camera: Camera3D, mouse_pos: Vector2) -
 	if intersection != null:
 		return intersection
 	return Vector3.ZERO
+
+
+static func get_all_units_mask() -> int:
+	return (
+		get_mask_bit(LAYER_ATTACKABLE_NEUTRAL) | 
+		get_mask_bit(LAYER_ATTACKABLE_PLAYER_1) | 
+		get_mask_bit(LAYER_ATTACKABLE_PLAYER_2) | 
+		get_mask_bit(LAYER_PEASANTS)
+	)
+
+static func get_all_buildings_mask() -> int:
+	return get_mask_bit(LAYER_BUILDINGS) | get_mask_bit(LAYER_TREES)
+
+static func get_castle_region_mask() -> int:
+	# The master net for the Territory Area3D
+	return get_all_buildings_mask() | get_all_units_mask()

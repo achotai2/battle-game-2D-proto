@@ -20,6 +20,8 @@ signal work_completed(site: WorkSite, worker: AgentBase)
 # Emitted when work is applied to site.
 signal work_applied(site: WorkSite)
 
+signal work_started
+
 # -------------------------
 # Editor / tuning variables
 # -------------------------
@@ -198,6 +200,9 @@ func apply_work(amount: float, worker: AgentBase) -> void:
 		return
 
 	# Apply work.
+	if _work_done == 0.0:
+		work_started.emit()
+	
 	var safe_amount: float = maxf(amount, 0.0)
 	_work_done = minf(total_work, _work_done + safe_amount)
 

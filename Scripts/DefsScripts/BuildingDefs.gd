@@ -11,6 +11,7 @@ enum BuildingType {
 enum BuildingState {
 	DESTROYED,
 	CONSTRUCTING,
+	BUILDING,
 	BUILT
 }
 
@@ -33,6 +34,10 @@ const _visuals := {
 			1: preload("res://Art/Tiny Swords (Update 010)/Factions/Knights/Buildings/House/House_Construction.png"),
 			2: preload("res://Art/Tiny Swords (Update 010)/Factions/Knights/Buildings/House/House_Construction.png"),
 		},
+		BuildingState.BUILDING: {
+			1: preload("res://Art/Tiny Swords (Update 010)/Factions/Knights/Buildings/House/House_Construction.png"),
+			2: preload("res://Art/Tiny Swords (Update 010)/Factions/Knights/Buildings/House/House_Construction.png"),
+		},
 		BuildingState.BUILT: {
 			1: preload("res://Art/Tiny Swords (Update 010)/Factions/Knights/Buildings/House/House_Blue.png"),
 			2: preload("res://Art/Tiny Swords (Update 010)/Factions/Knights/Buildings/House/House_Red.png"),
@@ -44,6 +49,10 @@ const _visuals := {
 			2: preload("res://Art/Tiny Swords (Update 010)/Factions/Knights/Buildings/Castle/Castle_Destroyed.png"),
 		},
 		BuildingState.CONSTRUCTING: {
+			1: preload("res://Art/Tiny Swords (Update 010)/Factions/Knights/Buildings/Castle/Castle_Construction.png"),
+			2: preload("res://Art/Tiny Swords (Update 010)/Factions/Knights/Buildings/Castle/Castle_Construction.png"),
+		},
+		BuildingState.BUILDING: {
 			1: preload("res://Art/Tiny Swords (Update 010)/Factions/Knights/Buildings/Castle/Castle_Construction.png"),
 			2: preload("res://Art/Tiny Swords (Update 010)/Factions/Knights/Buildings/Castle/Castle_Construction.png"),
 		},
@@ -61,23 +70,31 @@ const _visuals := {
 			1: preload("res://Art/Tiny Swords (Update 010)/Factions/Knights/Buildings/House/House_Construction.png"),
 			2: preload("res://Art/Tiny Swords (Update 010)/Factions/Knights/Buildings/House/House_Construction.png"),
 		},
+		BuildingState.BUILDING: {
+			1: preload("res://Art/Tiny Swords (Update 010)/Factions/Knights/Buildings/House/House_Construction.png"),
+			2: preload("res://Art/Tiny Swords (Update 010)/Factions/Knights/Buildings/House/House_Construction.png"),
+		},
 		BuildingState.BUILT: {
 			1: preload("res://Art/Tiny Swords (Update 010)/Factions/Goblins/Buildings/Wood_House/Goblin_House.png"),
 			2: preload("res://Art/Tiny Swords (Update 010)/Factions/Goblins/Buildings/Wood_House/Goblin_House.png"),
 		},
 	},
-	BuildingType.TREE: {
+BuildingType.TREE: {
 		BuildingState.DESTROYED: {
-			1: {"tex": preload("res://Art/Tree.png"), "rect": Rect2(0, 0, 192, 192)},
-			2: {"tex": preload("res://Art/Tree.png"), "rect": Rect2(0, 0, 192, 192)},
+			1: preload("res://Art/SpriteFrames/tree.tres"),
+			2: preload("res://Art/SpriteFrames/tree.tres"),
 		},
 		BuildingState.CONSTRUCTING: {
-			1: {"tex": preload("res://Art/Tree.png"), "rect": Rect2(0, 192, 192, 192)},
-			2: {"tex": preload("res://Art/Tree.png"), "rect": Rect2(0, 192, 192, 192)},
+			1: preload("res://Art/SpriteFrames/tree.tres"),
+			2: preload("res://Art/SpriteFrames/tree.tres"),
+		},
+		BuildingState.BUILDING: {
+			1: preload("res://Art/SpriteFrames/tree.tres"),
+			2: preload("res://Art/SpriteFrames/tree.tres"),
 		},
 		BuildingState.BUILT: {
-			1: {"tex": preload("res://Art/Tree.png"), "rect": Rect2(0, 384, 192, 192)},
-			2: {"tex": preload("res://Art/Tree.png"), "rect": Rect2(0, 384, 192, 192)},
+			1: preload("res://Art/SpriteFrames/tree.tres"),
+			2: preload("res://Art/SpriteFrames/tree.tres"),
 		},
 	},
 }
@@ -87,21 +104,25 @@ const _interact_modes := {
 	BuildingType.HOUSE: {
 		BuildingState.DESTROYED: IconType.CONSTRUCT,
 		BuildingState.CONSTRUCTING: IconType.NONE,
+		BuildingState.BUILDING: IconType.NONE,
 		BuildingState.BUILT: IconType.TAX,
 	},
 	BuildingType.BARRACKS: {
 		BuildingState.DESTROYED: IconType.CONSTRUCT,
 		BuildingState.CONSTRUCTING: IconType.NONE,
+		BuildingState.BUILDING: IconType.NONE,
 		BuildingState.BUILT: IconType.TAX,
 	},
 	BuildingType.ARCHERY: {
 		BuildingState.DESTROYED: IconType.CONSTRUCT,
 		BuildingState.CONSTRUCTING: IconType.NONE,
+		BuildingState.BUILDING: IconType.NONE,
 		BuildingState.BUILT: IconType.ARCHER,
 	},
 	BuildingType.TREE: {
 		BuildingState.DESTROYED: IconType.CUT,
 		BuildingState.CONSTRUCTING: IconType.NONE,
+		BuildingState.BUILDING: IconType.NONE,
 		BuildingState.BUILT: IconType.NONE,
 	},
 }
@@ -112,7 +133,7 @@ const _construction_costs := {
 	BuildingType.HOUSE: 5.0,
 	BuildingType.BARRACKS: 15.0,
 	BuildingType.ARCHERY: 10.0,
-	BuildingType.TREE: 1.0,
+	BuildingType.TREE: 3.0,
 }
 
 # --- PRODUCTION PARAMS ---
@@ -137,19 +158,15 @@ const _unit_train_costs := {
 func get_frames(building_type: BuildingType, state: BuildingState, player: int) -> Resource:
 	if _visuals.has(building_type) and _visuals[building_type].has(state):
 		var options = _visuals[building_type][state]
-		var val = null
+		
+		# Return the specific player's color, or default to player 1 if it's missing
 		if options.has(player):
-			val = options[player]
+			return options[player]
 		else:
-			val = options.get(1, null)
-
-		if val is Dictionary and val.has("tex") and val.has("rect"):
-			var atlas = AtlasTexture.new()
-			atlas.atlas = val["tex"]
-			atlas.region = val["rect"]
-			return atlas
-		return val
+			return options.get(1, null)
+			
 	return null
+
 
 func get_interact_mode(building_type: BuildingType, state: BuildingState) -> IconType:
 	if _interact_modes.has(building_type):

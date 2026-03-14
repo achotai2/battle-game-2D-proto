@@ -1,4 +1,4 @@
-[gd_scene load_steps=38 format=3 uid="uid://denj1nj2jkqg1"]
+[gd_scene load_steps=54 format=3 uid="uid://denj1nj2jkqg1"]
 
 [ext_resource type="Script" uid="uid://cnam6bddvgr7k" path="res://Scripts/Weather/EnvironmentController.gd" id="1_hptm8"]
 [ext_resource type="PackedScene" uid="uid://d4k6usdi8l0w0" path="res://Scenes/UI/GoldUI.tscn" id="1_k12tt"]
@@ -8,7 +8,7 @@
 [ext_resource type="Shader" uid="uid://bfepqm6v3y86q" path="res://addons/zylann.hterrain/shaders/shanshui.gdshader" id="3_d1ilt"]
 [ext_resource type="Material" uid="uid://dm5on8elqd7ro" path="res://Scripts/Shaders/cloud_upper.tres" id="3_fdnlq"]
 [ext_resource type="Script" uid="uid://bc80wnl2w5xyh" path="res://addons/zylann.hterrain/hterrain.gd" id="4_21xkr"]
-[ext_resource type="Resource" uid="uid://ouesmtjrytxl" path="res://TerrainData/data.hterrain" id="5_6bp64"]
+[ext_resource type="Resource" path="res://TerrainData/data.hterrain" id="5_6bp64"]
 [ext_resource type="Texture2D" uid="uid://d3woj2g0r8ie" path="res://Art/painted_sun.png" id="5_fdnlq"]
 [ext_resource type="Shader" uid="uid://dkf31xrxfhelr" path="res://Scripts/Shaders/cloud_shadow.gdshader" id="5_jkdf5"]
 [ext_resource type="Script" uid="uid://clrmkdo1xfbjf" path="res://addons/zylann.hterrain/util/terrain_cutout.gd" id="5_kry3j"]
@@ -17,8 +17,19 @@
 [ext_resource type="PackedScene" uid="uid://56ng42k13bnj" path="res://Scenes/Buildings/castle.tscn" id="8_344ge"]
 [ext_resource type="PackedScene" uid="uid://so0ngwg160ke" path="res://Scenes/Buildings/house.tscn" id="8_h1bgf"]
 [ext_resource type="Script" uid="uid://dtf7sveiplgtb" path="res://Scripts/UI/camera_3d.gd" id="9_fevyy"]
+[ext_resource type="PackedScene" uid="uid://bx0vujr38q8pu" path="res://Scenes/Buildings/tree.tscn" id="10_hibaj"]
 [ext_resource type="PackedScene" uid="uid://ra0fj2eqns6d" path="res://Scenes/Buildings/barracks.tscn" id="12_b3802"]
 [ext_resource type="PackedScene" uid="uid://dunt5nfaabbqv" path="res://Scenes/Units/Unit.tscn" id="12_jkdf5"]
+[ext_resource type="Script" uid="uid://duvse3u18vke" path="res://Scripts/SensorNodes/castle_region.gd" id="13_7k868"]
+[ext_resource type="Script" uid="uid://comi57q7b8i1g" path="res://addons/proton_scatter/src/scatter.gd" id="21_6vcvc"]
+[ext_resource type="Script" uid="uid://dvbgf4c1feh1i" path="res://addons/proton_scatter/src/stack/modifier_stack.gd" id="22_7k868"]
+[ext_resource type="Script" uid="uid://ps57af5fgd5v" path="res://addons/proton_scatter/src/modifiers/base_modifier.gd" id="23_hpc6h"]
+[ext_resource type="Script" uid="uid://b07u4f2qxordx" path="res://addons/proton_scatter/src/modifiers/create_inside_random.gd" id="24_kltya"]
+[ext_resource type="Script" uid="uid://cicvkrf0uokoj" path="res://addons/proton_scatter/src/modifiers/project_on_geometry.gd" id="26_6vcvc"]
+[ext_resource type="Script" uid="uid://m8popk2y4pkc" path="res://addons/proton_scatter/src/modifiers/relax.gd" id="26_neg2b"]
+[ext_resource type="Script" uid="uid://dggyiwgxbcp1o" path="res://addons/proton_scatter/src/scatter_item.gd" id="27_r33sp"]
+[ext_resource type="Script" uid="uid://c1sepuf5g1v0x" path="res://addons/proton_scatter/src/scatter_shape.gd" id="28_hdf80"]
+[ext_resource type="Script" uid="uid://dw8ehq7hdvkgx" path="res://addons/proton_scatter/src/shapes/sphere_shape.gd" id="29_jwpg7"]
 
 [sub_resource type="QuadMesh" id="QuadMesh_d1ilt"]
 
@@ -97,9 +108,34 @@ frequency = 0.0473
 noise = SubResource("FastNoiseLite_6iyac")
 
 [sub_resource type="NavigationMesh" id="NavigationMesh_jkdf5"]
+vertices = PackedVector3Array(-4.277878, -2.741816, -4.8014574, -2.7778778, -2.741816, -4.8014574, -2.7778778, -2.741816, -6.0514574, -16.777878, -2.741816, -6.3014574, -15.277878, -2.741816, 4.1985426, -10.277878, -2.741816, 4.1985426, -10.277878, -2.741816, 3.4485426, -9.527878, -2.741816, 2.6985426, -8.527878, -2.741816, 2.6985426, -5.277878, -2.741816, -1.3014574, -5.277878, -2.741816, -3.8014574, -1.5278778, -2.741816, -4.8014574, 5.722122, -2.741816, -5.5514574, 1.2221222, -2.741816, 0.9485426, 1.7221222, -2.741816, 3.6985426, 2.7221222, -2.741816, 3.6985426, -0.5278778, -2.741816, -3.8014574, -0.5278778, -2.741816, -1.0514574, 1.2221222, -2.741816, -0.8014574, 8.472122, -2.741816, 5.4485426, 8.722122, -2.741816, 0.9485426, 3.2221222, -2.741816, 5.1985426, -4.527878, -0.24181604, -2.5514574, -4.277878, -0.24181604, -1.5514574, -3.2778778, -0.24181604, -0.8014574, -2.0278778, -0.24181604, -1.0514574, -1.2778778, -0.24181604, -2.0514574, -2.0278778, -0.24181604, -3.8014574, -3.7778778, -0.24181604, -3.8014574, -0.7778778, -2.741816, 1.1985426, -1.0278778, -2.741816, -0.5514574, -2.0278778, -2.741816, 0.1985426, -2.2778778, -2.741816, 5.1985426, 0.7221222, -2.741816, 5.1985426, 0.7221222, -2.741816, 4.4485426, -3.7778778, -2.741816, 0.1985426, -4.027878, -2.741816, 4.1985426, -2.7778778, -2.741816, 4.1985426, -7.777878, -2.741816, 3.1985426, -7.777878, -2.741816, 4.6985426, -4.527878, -2.741816, 4.9485426, -4.527878, -2.741816, 6.1985426, -8.277878, -2.741816, 5.1985426, -3.5278778, -2.741816, 6.4485426, -9.777878, -2.741816, 5.1985426, -13.277878, -2.741816, 19.198544, -3.5278778, -2.741816, 19.198544, -2.5278778, -2.741816, 6.4485426, 1.2221222, -2.741816, 6.1985426, 2.7221222, -2.741816, 6.1985426, 5.972122, -2.741816, 19.198544)
+polygons = [PackedInt32Array(1, 0, 2), PackedInt32Array(2, 0, 3), PackedInt32Array(6, 5, 4), PackedInt32Array(9, 8, 7), PackedInt32Array(7, 6, 4), PackedInt32Array(9, 7, 10), PackedInt32Array(10, 7, 4), PackedInt32Array(10, 4, 3), PackedInt32Array(3, 0, 10), PackedInt32Array(1, 2, 11), PackedInt32Array(11, 2, 12), PackedInt32Array(15, 14, 13), PackedInt32Array(17, 16, 18), PackedInt32Array(18, 16, 12), PackedInt32Array(13, 18, 15), PackedInt32Array(15, 18, 19), PackedInt32Array(19, 18, 20), PackedInt32Array(20, 18, 12), PackedInt32Array(19, 21, 15), PackedInt32Array(16, 11, 12), PackedInt32Array(24, 23, 22), PackedInt32Array(25, 24, 26), PackedInt32Array(26, 24, 27), PackedInt32Array(27, 24, 28), PackedInt32Array(28, 24, 22), PackedInt32Array(31, 30, 29), PackedInt32Array(34, 33, 32), PackedInt32Array(31, 29, 35), PackedInt32Array(35, 29, 37), PackedInt32Array(35, 37, 36), PackedInt32Array(14, 34, 13), PackedInt32Array(13, 34, 29), PackedInt32Array(29, 34, 37), PackedInt32Array(37, 34, 32), PackedInt32Array(40, 39, 38), PackedInt32Array(40, 38, 36), PackedInt32Array(36, 38, 8), PackedInt32Array(36, 8, 35), PackedInt32Array(35, 8, 9), PackedInt32Array(39, 40, 42), PackedInt32Array(42, 40, 41), PackedInt32Array(41, 43, 44), PackedInt32Array(44, 43, 4), PackedInt32Array(4, 43, 45), PackedInt32Array(45, 43, 46), PackedInt32Array(44, 42, 41), PackedInt32Array(4, 5, 44), PackedInt32Array(32, 33, 47), PackedInt32Array(47, 33, 48), PackedInt32Array(46, 43, 47), PackedInt32Array(48, 49, 47), PackedInt32Array(47, 49, 46), PackedInt32Array(46, 49, 50), PackedInt32Array(21, 19, 49), PackedInt32Array(49, 19, 50)]
 geometry_collision_mask = 3
 geometry_source_geometry_mode = 1
 geometry_source_group_name = &"nav_meshes"
+
+[sub_resource type="Resource" id="Resource_7k868"]
+script = ExtResource("24_kltya")
+restrict_height = true
+reference_frame = 1
+
+[sub_resource type="Resource" id="Resource_hpc6h"]
+script = ExtResource("26_neg2b")
+offset_step = 0.2
+consecutive_step_multiplier = 0.75
+restrict_height = true
+
+[sub_resource type="Resource" id="Resource_kltya"]
+script = ExtResource("26_6vcvc")
+enabled = false
+
+[sub_resource type="Resource" id="Resource_e08e2"]
+script = ExtResource("22_7k868")
+stack = Array[ExtResource("23_hpc6h")]([SubResource("Resource_7k868"), SubResource("Resource_hpc6h"), SubResource("Resource_kltya")])
+
+[sub_resource type="Resource" id="Resource_g8bsm"]
+script = ExtResource("29_jwpg7")
+radius = 2.0
 
 [node name="World" type="Node3D"]
 
@@ -200,19 +236,19 @@ material = SubResource("FogMaterial_fdnlq")
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.9064436, -3.1968071, 0)
 player = 1
 castle = NodePath("../../Buildings/Castle")
-current_role = 2
+current_role = 4
 
 [node name="Unit" parent="Environment/Units" node_paths=PackedStringArray("castle") instance=ExtResource("12_jkdf5")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2, -3.0013418, 2)
-player = 2
+player = 1
 castle = NodePath("../../Buildings/Castle")
-current_role = 2
+current_role = 4
 
 [node name="Unit3" parent="Environment/Units" node_paths=PackedStringArray("castle") instance=ExtResource("12_jkdf5")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.811272, -3.0013418, 2)
-player = 2
+player = 1
 castle = NodePath("../../Buildings/Castle")
-current_role = 2
+current_role = 1
 
 [node name="Unit4" parent="Environment/Units" node_paths=PackedStringArray("castle") instance=ExtResource("12_jkdf5")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8.245081, -3.0013418, 2)
@@ -222,11 +258,16 @@ current_role = 2
 
 [node name="Unit5" parent="Environment/Units" node_paths=PackedStringArray("castle") instance=ExtResource("12_jkdf5")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8.245081, -3.0013418, -3.59025)
-player = 2
+player = 1
 castle = NodePath("../../Buildings/Castle")
-current_role = 2
+current_role = 3
 
 [node name="Buildings" type="Node3D" parent="Environment" groups=["nav_meshes"]]
+
+[node name="Tree" parent="Environment/Buildings" node_paths=PackedStringArray("castle") instance=ExtResource("10_hibaj")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.2000816e-24, -3.1432557, 0)
+player = 1
+castle = NodePath("../Castle")
 
 [node name="ArcheryRange" parent="Environment/Buildings" node_paths=PackedStringArray("castle") instance=ExtResource("3_8gbba")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2, -3.0919619, 5)
@@ -236,6 +277,15 @@ castle = NodePath("../Castle")
 [node name="Castle" parent="Environment/Buildings" instance=ExtResource("8_344ge")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.8895254, -3.2403622, -2.3954196)
 player = 1
+
+[node name="CastleRegion" type="Area3D" parent="Environment/Buildings/Castle" node_paths=PackedStringArray("owning_castle")]
+script = ExtResource("13_7k868")
+owning_castle = NodePath("..")
+
+[node name="CollisionPolygon3D" type="CollisionPolygon3D" parent="Environment/Buildings/Castle/CastleRegion"]
+transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 0.45740223, 0.006132126, -0.14369202)
+depth = 10.0
+polygon = PackedVector2Array(-13.4825115, -19.674524, -17.277878, 6.8014574, 5.8284664, 6.0285234, 9.282732, -1.3698578, 8.913405, -6.1833954, 6.1426773, -19.695534)
 
 [node name="House" parent="Environment/Buildings" node_paths=PackedStringArray("castle") instance=ExtResource("8_h1bgf")]
 transform = Transform3D(1, -1.6543616e-24, 0, 0, 1, 0, 0, 0, 1, -3.395352, -2.6125078, 5.380628)
@@ -304,3 +354,21 @@ visible = false
 use_collision = true
 collision_mask = 0
 polygon = PackedVector2Array(-13.4825115, -19.674524, -17.277878, 6.8014574, 5.8284664, 6.0285234, 9.282732, -1.3698578, 8.913405, -6.1833954, 6.1426773, -19.695534)
+
+[node name="ProtonScatter" type="Node3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -13.1083555, -2.9163573, 0)
+script = ExtResource("21_6vcvc")
+render_mode = 1
+modifier_stack = SubResource("Resource_e08e2")
+Performance/use_chunks = true
+Performance/chunk_dimensions = Vector3(15, 15, 15)
+metadata/_custom_type_script = "uid://comi57q7b8i1g"
+
+[node name="ScatterItem" type="Node3D" parent="ProtonScatter"]
+script = ExtResource("27_r33sp")
+path = "uid://bx0vujr38q8pu"
+
+[node name="ScatterShape" type="Node3D" parent="ProtonScatter"]
+transform = Transform3D(1, 0, -2.98023e-08, 0, 1, 0, 2.98023e-08, 0, 1, 0, 0, 0)
+script = ExtResource("28_hdf80")
+shape = SubResource("Resource_g8bsm")

@@ -198,7 +198,9 @@ func return_velocity() -> Vector3:
 #	return true
 
 
-func return_castle() -> Node:
+# --- CASTLE ASSIGNMENT ---
+
+func return_castle() -> Castle:
 	return castle
 
 

@@ -25,6 +25,6 @@ func spawn() -> void:
 		# Position nearby
 		var random_angle = randf() * TAU
 		var random_dist = randf() * spawn_radius
-		var offset = Vector3(cos(random_angle), sin(random_angle)) * random_dist
+		var offset = Vector3(cos(random_angle), sin(random_angle) * random_dist, 0.0)
 
 		instance.global_position = global_position + offset

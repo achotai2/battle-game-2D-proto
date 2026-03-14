@@ -5,7 +5,7 @@
 [ext_resource type="PackedScene" uid="uid://ddlh76nm5b4gr" path="res://Scenes/Weapons/arrow_projectile.tscn" id="2_hace3"]
 
 [sub_resource type="CylinderShape3D" id="CylinderShape3D_72ito"]
-radius = 351.0
+radius = 12.231934
 
 [node name="WeaponBow" type="Node3D"]
 script = ExtResource("1_fl1el")

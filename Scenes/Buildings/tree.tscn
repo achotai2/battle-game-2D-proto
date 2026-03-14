@@ -1,26 +1,31 @@
-[gd_scene load_steps=8 format=3 uid="uid://bx0vujr38q8pu"]
+[gd_scene load_steps=10 format=3 uid="uid://bx0vujr38q8pu"]
 
 [ext_resource type="Script" uid="uid://cjbrsf0fmsehe" path="res://Scripts/BuildingsBase/building_base.gd" id="1_l3oha"]
 [ext_resource type="Script" uid="uid://qumqy1omy72i" path="res://Scripts/BuildingNodes/worksite.gd" id="2_rsuno"]
 [ext_resource type="PackedScene" uid="uid://d1275k0u0fsn" path="res://Scenes/AgentNodes/interactable.tscn" id="3_l7sa7"]
-[ext_resource type="Script" path="res://Scripts/MemoryNodes/GoldWallet.gd" id="6_gw"]
-[ext_resource type="Script" path="res://Scripts/MemoryNodes/TeamMemory.gd" id="99_team"]
+[ext_resource type="SpriteFrames" uid="uid://dvp0sh8p51sou" path="res://Art/SpriteFrames/tree.tres" id="5_efeq4"]
+[ext_resource type="Script" uid="uid://2ssmusd0k3fn" path="res://Scripts/MemoryNodes/GoldWallet.gd" id="6_gw"]
 [ext_resource type="Script" uid="uid://cc22s0erkk06v" path="res://Scripts/BuildingNodes/BuildingVisuals.gd" id="9_7b5gy"]
+[ext_resource type="Script" uid="uid://ggpe07y6471c" path="res://Scripts/MemoryNodes/TeamMemory.gd" id="99_team"]
 
 [sub_resource type="CylinderShape3D" id="CylinderShape3D_0vwjc"]
-radius = 16.0
+height = 1.468689
+radius = 0.2055664
+
+[sub_resource type="BoxMesh" id="BoxMesh_efeq4"]
 
 [node name="Tree" type="StaticBody3D" node_paths=PackedStringArray("construct_interactable", "construct_site", "visuals")]
-collision_layer = 2
-collision_mask = 3
+collision_layer = 8192
+collision_mask = 8192
 script = ExtResource("1_l3oha")
 building_type = 3
 construct_interactable = NodePath("Interactable")
 construct_site = NodePath("WorkSite")
 visuals = NodePath("BuildingVisuals")
-state = 0
+is_tree = true
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5836487, 0)
 shape = SubResource("CylinderShape3D_0vwjc")
 
 [node name="WorkSite" type="Node3D" parent="." node_paths=PackedStringArray("work_offset")]
@@ -31,31 +36,40 @@ work_offset = NodePath("Marker2D")
 metadata/_custom_type_script = "uid://qumqy1omy72i"
 
 [node name="Marker2D" type="Marker3D" parent="WorkSite"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 72)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0.63967323)
 
 [node name="Marker2D2" type="Marker3D" parent="WorkSite"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -80, 0, 0)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.65275156, 0, 0)
 
 [node name="Marker2D3" type="Marker3D" parent="WorkSite"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 80, 0, 0)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.6648252, 0, 0)
 
 [node name="Marker2D6" type="Marker3D" parent="WorkSite"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -72)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -0.3927914)
 
 [node name="Interactable" parent="." instance=ExtResource("3_l7sa7")]
+icon_type = 3
 
 [node name="GoldWallet" type="Node" parent="."]
 script = ExtResource("6_gw")
 
 [node name="Sprites" type="Node3D" parent="."]
 
-[node name="Sprite2D" type="Sprite3D" parent="Sprites"]
-offset = Vector2(0, -60)
+[node name="AnimatedSprite3D" type="AnimatedSprite3D" parent="Sprites" groups=["sprites"]]
+offset = Vector2(0, 50)
+billboard = 2
+alpha_cut = 1
+sprite_frames = ExtResource("5_efeq4")
+animation = &"constructing"
 
 [node name="TeamMemory" type="Node" parent="."]
 script = ExtResource("99_team")
 
 [node name="BuildingVisuals" type="Node" parent="." node_paths=PackedStringArray("visual")]
 script = ExtResource("9_7b5gy")
-visual = NodePath("../Sprites/Sprite2D")
+visual = NodePath("../Sprites/AnimatedSprite3D")
 metadata/_custom_type_script = "uid://cc22s0erkk06v"
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
+visible = false
+mesh = SubResource("BoxMesh_efeq4")

@@ -1,6 +1,6 @@
 extends CanvasLayer
 
-const WeatherControlScript = preload("res://Scripts/Weather/WorldEnvironmentControl.gd")
+#const WeatherControlScript = preload("res://Scripts/Weather/WorldEnvironmentControl.gd")
 
 var weather_node: Node = null
 var panel_container: PanelContainer
@@ -11,7 +11,7 @@ var unit_scene_map = {}
 var selected_unit_label: Label
 var selected_player_label: Label
 var unit_count_label: Label
-var units_node: Nodee = null
+var units_node: Node = null
 
 func _ready():
 	# Find WeatherState node
@@ -55,18 +55,18 @@ func _build_ui():
 	grid.columns = 2
 	weather_tab.add_child(grid)
 
-	var states = {
-		"Clear": WeatherControlScript.WeatherState.CLEAR,
-		"Overcast": WeatherControlScript.WeatherState.OVERCAST,
-		"Light Rain": WeatherControlScript.WeatherState.LIGHT_RAIN,
-		"Storm": WeatherControlScript.WeatherState.STORM
-	}
+#	var states = {
+#		"Clear": WeatherControlScript.WeatherState.CLEAR,
+#		"Overcast": WeatherControlScript.WeatherState.OVERCAST,
+#		"Light Rain": WeatherControlScript.WeatherState.LIGHT_RAIN,
+#		"Storm": WeatherControlScript.WeatherState.STORM
+#	}
 
-	for state_name in states:
-		var btn = Button.new()
-		btn.text = state_name
-		btn.pressed.connect(_on_weather_btn_pressed.bind(states[state_name]))
-		grid.add_child(btn)
+#	for state_name in states:
+#		var btn = Button.new()
+#		btn.text = state_name
+#		btn.pressed.connect(_on_weather_btn_pressed.bind(states[state_name]))
+#		grid.add_child(btn)
 
 	# Time of Day
 	var time_label = Label.new()

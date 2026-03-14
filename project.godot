@@ -24,7 +24,7 @@ Weather="*res://Scripts/Weather/GlobalWeather.gd"
 
 [editor_plugins]
 
-enabled=PackedStringArray("res://addons/zylann.hterrain/plugin.cfg")
+enabled=PackedStringArray("res://addons/proton_scatter/plugin.cfg", "res://addons/zylann.hterrain/plugin.cfg")
 
 [global_group]
 
@@ -123,6 +123,7 @@ ScrollDown={
 2d_physics/layer_12="Peasants"
 3d_physics/layer_12="Peasants"
 3d_physics/layer_13="Terrain"
+3d_physics/layer_14="Trees"
 avoidance/layer_1="Tilemap"
 avoidance/layer_2="Buildings"
 avoidance/layer_3="Large Minions"

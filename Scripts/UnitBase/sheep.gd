@@ -1,8 +1,5 @@
 extends AgentBase
 
-@export var castle: Castle
-@export var movement: AgentMovement
-@export var animate: AgentAnimate
 @export var food: HungerHolder
 @export var foodWorkSite: WorkSite
 @export var despawn_timer: Timer = null
@@ -109,14 +106,6 @@ func return_position() -> Vector3:
 
 func return_castle() -> Castle:
 	return castle
-
-
-func set_castle(c: Castle) -> void:
-# Set castle and register myself with it, and apply for work.
-	castle = c
-
-	foodWorkSite._resolve_castle_and_register()
-	foodWorkSite.needs_work()
 
 
 func _unregister_self() -> void:

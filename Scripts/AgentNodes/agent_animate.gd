@@ -17,6 +17,9 @@ var _my_agent: AgentBase = null
 
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
+	if not _my_agent:
+		_my_agent = ComponentFinder.get_base(self)
+	
 	if not sprite:
 		sprite = ComponentFinder.get_component(self, "AnimatedSprite3D") as AnimatedSprite3D
 		
