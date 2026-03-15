@@ -26,6 +26,19 @@ func _sweep_territory() -> void:
 	for body in get_overlapping_bodies():
 		_try_assign_castle(body)
 
+	# Fallback: check unassigned buildings manually using the polygon shape.
+	# This fixes a Godot 4 broadphase issue with StaticBody3Ds spawned from threads.
+	var poly_node = find_child("CollisionPolygon3D", false, false) as CollisionPolygon3D
+	if poly_node:
+		var poly_2d = poly_node.polygon
+		var poly_transform = poly_node.global_transform
+		for building in get_tree().get_nodes_in_group("Buildings"):
+			if building.has_method("return_castle") and building.return_castle() == null:
+				var local_pos = poly_transform.affine_inverse() * building.global_position
+				if Geometry2D.is_point_in_polygon(Vector2(local_pos.x, local_pos.y), poly_2d):
+					if abs(local_pos.z) <= poly_node.depth / 2.0:
+						_try_assign_castle(building)
+
 
 func _try_assign_castle(body: Node3D) -> void:
 	if not is_instance_valid(owning_castle):
