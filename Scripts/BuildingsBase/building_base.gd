@@ -20,6 +20,8 @@ var _team_memory: Node = null
 
 
 func _ready() -> void:
+	add_to_group("Buildings")
+
 	# Check if we are a tree before applying the physics layer!
 	if is_tree:
 		collision_layer = GamePhysics.get_mask_bit(GamePhysics.LAYER_TREES)
@@ -42,6 +44,20 @@ func _ready() -> void:
 
 	# 2. Boot up the building
 	set_state(state)
+
+	# Force physics update on the next frame to trigger Area3D overlaps
+	# This fixes a Godot 4 broadphase issue with StaticBody3Ds spawned from threads (like ProtonScatter)
+	if not Engine.is_editor_hint():
+		get_tree().physics_frame.connect(_force_physics_update, CONNECT_ONE_SHOT)
+
+
+func _force_physics_update() -> void:
+	if not is_inside_tree(): return
+	var p = global_position
+	global_position = p + Vector3.UP * 0.001
+	force_update_transform()
+	global_position = p
+	force_update_transform()
 
 
 # --- STATE MACHINE (THE SWITCHBOARD) ---
