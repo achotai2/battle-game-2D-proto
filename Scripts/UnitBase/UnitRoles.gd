@@ -8,6 +8,7 @@ enum UnitType {
 	ARCHER,
 	WORKER,
 	LORD,
+	GOBLIN,
 }
 
 var role_groups := {
@@ -41,6 +42,11 @@ var role_groups := {
 		&"Interactable",
 		&"Workers",
 	],
+	UnitType.GOBLIN: [
+		&"Minions",
+		&"Attackable",
+		&"Interactable",
+	],
 }
 
 func get_role_groups(role: UnitType) -> Array:
@@ -54,6 +60,7 @@ var min_tax_times := {
 	UnitType.WORKER: 60.0,
 	UnitType.SOLDIER: 60.0,
 	UnitType.ARCHER: 60.0,
+	UnitType.GOBLIN: null,
 }
 
 func get_min_tax_time(role: UnitType) -> Variant:
@@ -84,6 +91,10 @@ var frames := {
 	UnitType.LORD: {
 		1: preload("res://Art/SpriteFrames/Soldier_Yellow.tres"),
 		2: preload("res://Art/SpriteFrames/Soldier_Yellow.tres"),
+	},
+	UnitType.GOBLIN: {
+		1: preload("res://Art/SpriteFrames/Peasant_Blue.tres"),
+		2: preload("res://Art/SpriteFrames/Peasant_Red.tres"),
 	},
 }
 
@@ -137,6 +148,13 @@ var role_blueprints: Dictionary = {
 		"sensors": [preload("res://Scenes/AgentNodes/Tracker.tscn")],
 		"motor": [preload("res://Scripts/AgentNodes/agent_animate.gd"), preload("res://Scripts/AgentNodes/agent_move.gd"), preload("res://Scripts/AgentNodes/GoldGiver.gd"), preload("res://Scenes/AgentNodes/MinionNavAgent.tscn")],
 		"weapons": [],
+	},
+	UnitType.GOBLIN: {
+		"advisors": [preload("res://Scripts/AgentNodes/Advisors/a_goblin_march.gd"), preload("res://Scripts/AgentNodes/Advisors/a_attack.gd")],
+		"memory": [preload("res://Scripts/MemoryNodes/health.gd"), preload("res://Scripts/MemoryNodes/TeamMemory.gd"), preload("res://Scripts/MemoryNodes/UnitSpeed.gd")],
+		"sensors": [preload("res://Scenes/AgentNodes/Tracker.tscn")],
+		"motor": [preload("res://Scripts/AgentNodes/agent_animate.gd"), preload("res://Scripts/AgentNodes/agent_move.gd"), preload("res://Scenes/AgentNodes/MinionNavAgent.tscn")],
+		"weapons": [preload("res://Scenes/Weapons/weapon_sword.tscn")],
 	}
 }
 
