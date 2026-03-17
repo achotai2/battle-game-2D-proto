@@ -42,8 +42,8 @@ func update_visuals(state: int, player: int) -> void:
 			push_warning("Animation '" + anim_name + "' missing in SpriteFrames for building type: " + str(boss.building_type))
 			
 	# Fallbacks for static textures
-	elif visual is Sprite3D and frames is Texture2D:
+	elif visual is Sprite3D and (frames is Texture2D or frames is CompressedTexture2D):
 		visual.texture = frames
 		
-	elif frames is Texture2D and visual.has_method("set_texture"):
+	elif (frames is Texture2D or frames is CompressedTexture2D) and visual.has_method("set_texture"):
 		visual.call("set_texture", frames)
