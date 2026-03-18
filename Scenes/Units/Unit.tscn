@@ -41,7 +41,7 @@ avoidance_layers = 4
 [node name="Sprites" type="Node3D" parent="."]
 
 [node name="AnimatedSprite3D" type="AnimatedSprite3D" parent="Sprites"]
-offset = Vector2(0, 10)
+offset = Vector2(0, 25)
 billboard = 2
 shaded = true
 sprite_frames = ExtResource("2_u301h")

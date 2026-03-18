@@ -99,11 +99,15 @@ static func get_interacting_mask(my_player_id: int, target_neutral: bool, target
 	
 	
 static func get_projectile_mask() -> int:
-	return get_mask_bit(LAYER_ATTACKABLE_NEUTRAL) | \
-		get_mask_bit(LAYER_ATTACKABLE_PLAYER_1) | \
-		get_mask_bit(LAYER_ATTACKABLE_PLAYER_2) | \
-		get_mask_bit(LAYER_BUILDINGS) | \
-		get_mask_bit(LAYER_TREES)
+	return (
+		get_mask_bit(LAYER_ATTACKABLE_NEUTRAL) | 
+		get_mask_bit(LAYER_ATTACKABLE_PLAYER_1) | 
+		get_mask_bit(LAYER_ATTACKABLE_PLAYER_2) | 
+		get_mask_bit(LAYER_BUILDINGS) | 
+		get_mask_bit(LAYER_TREES) |
+		get_mask_bit(LAYER_TERRAIN) | # Let the arrow see the HTerrain!
+		get_mask_bit(LAYER_TILESET)   # Just in case you use flat tiles too
+	)
 
 
 static func get_global_mouse_position_3d(camera: Camera3D, mouse_pos: Vector2) -> Vector3:

@@ -1,0 +1,8 @@
+[gd_scene format=3 uid="uid://q5sfbnsp5a3l"]
+
+[node name="Torch" type="Node3D"]
+
+[node name="OmniLight3D" type="OmniLight3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.0855247, 0.36465776)
+light_color = Color(0.9748315, 0.67029506, 0.25803494, 1)
+distance_fade_enabled = true

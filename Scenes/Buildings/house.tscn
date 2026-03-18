@@ -94,10 +94,9 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 1.0189135)
 icon_type = 1
 
 [node name="Sprites" type="Node3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.82225204, 0)
 
 [node name="Sprite2D" type="Sprite3D" parent="Sprites" groups=["sprites"]]
-offset = Vector2(0, -50)
+offset = Vector2(0, 70)
 billboard = 2
 alpha_cut = 1
 texture = ExtResource("1_7aoon")

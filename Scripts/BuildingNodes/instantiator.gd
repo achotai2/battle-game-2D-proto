@@ -6,7 +6,7 @@ class_name Instantiator
 @export var spawn_point: Marker3D 
 
 # --- NEW: Spawn Delay Settings ---
-@export var spawn_delay: float = 1.0 
+@export var spawn_delay: float = 60.0 
 var _spawn_timer: Timer
 
 @onready var building: BuildingBase = ComponentFinder.get_base(self)

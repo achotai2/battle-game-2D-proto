@@ -30,7 +30,8 @@ animations = [{
 "speed": 5.0
 }]
 
-[sub_resource type="CylinderShape3D" id="CylinderShape3D_l2k8s"]
+[sub_resource type="SphereShape3D" id="SphereShape3D_gvdh5"]
+radius = 0.068669476
 
 [node name="Arrow" type="Area3D"]
 collision_layer = 1024
@@ -38,14 +39,14 @@ collision_mask = 30
 script = ExtResource("1_k1g7c")
 
 [node name="AnimatedSprite3D" type="AnimatedSprite3D" parent="."]
-billboard = 2
-alpha_cut = 1
+transform = Transform3D(1.1924881e-08, 0, 1, 0, 1, 0, -1, 0, 1.1924881e-08, 0, 0, 0)
+shaded = true
 sprite_frames = SubResource("SpriteFrames_xxsqv")
 animation = &"flying"
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 24, 0, 1)
-shape = SubResource("CylinderShape3D_l2k8s")
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -0.25)
+shape = SubResource("SphereShape3D_gvdh5")
 debug_color = Color(0.97078675, 0, 0.45557922, 0.41960785)
 
 [node name="DeathTimer" type="Timer" parent="."]

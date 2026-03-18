@@ -3,7 +3,7 @@ class_name ArrowProjectileArc
 
 # 9.81 is standard Earth gravity. 
 # If your arrows float too much, increase this to ~20.0 for a snappier "video game" arc!
-const GRAVITY: float = 1.0 
+const GRAVITY: float = 9.0 
 
 @export var max_lifetime: float = 4.0
 @export var stick_into_target: bool = true
@@ -78,16 +78,18 @@ func _process(delta: float) -> void:
 	# Point the arrow in the direction it is currently flying
 	_update_rotation()
 
-	# Ground hit fallback (assuming y=0 is your floor)
-	if global_position.y <= 0.0:
-		_land(null)
-
 
 func _update_rotation() -> void:
-	# Avoid look_at errors if the arrow is somehow perfectly still
 	if velocity.length_squared() > 0.01:
-		# look_at requires a point in space, so we add velocity to current position
-		look_at(global_position + velocity, Vector3.UP)
+		var target_pos = global_position + velocity
+		
+		# If the arrow is pointing almost perfectly straight up or down, 
+		# use the Right vector instead of the Up vector to avoid math errors!
+		var up_dir = Vector3.UP
+		if abs(velocity.normalized().y) > 0.99:
+			up_dir = Vector3.RIGHT
+			
+		look_at(target_pos, up_dir)
 
 
 func _on_body_entered(body: Node3D) -> void:
@@ -97,7 +99,11 @@ func _on_body_entered(body: Node3D) -> void:
 	if body == _attack_data.attacker:
 		return
 
-	# THE FIX: Use ComponentFinder exactly like the melee weapon!
+	# 2. Component match (checks if the attacker component lives inside this body)
+	if body.is_ancestor_of(_attack_data.attacker):
+		return
+		
+	# Use ComponentFinder exactly like the melee weapon!
 	var h: Health = ComponentFinder.get_component(body, "Health")
 	if is_instance_valid(h):
 		h.apply_hit(_attack_data)
