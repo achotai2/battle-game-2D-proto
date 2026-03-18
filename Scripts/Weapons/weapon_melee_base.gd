@@ -94,7 +94,7 @@ func _on_attack_delay_timeout() -> void:
 	atk.attacker = ComponentFinder.get_base(self)
 	atk.source = self
 
-	h.take_hit.emit(atk)
+	h.apply_hit(atk)
 
 
 func am_i_attacking() -> bool:
