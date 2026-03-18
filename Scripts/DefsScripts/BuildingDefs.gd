@@ -6,6 +6,7 @@ enum BuildingType {
 	HOUSE,
 	ARCHERY,
 	TREE,
+	VILLAGE,
 }
 
 enum BuildingState {
@@ -95,6 +96,28 @@ BuildingType.TREE: {
 		BuildingState.BUILT: {
 			1: preload("res://Art/SpriteFrames/tree.tres"),
 			2: preload("res://Art/SpriteFrames/tree.tres"),
+		},
+	},
+	BuildingType.VILLAGE: {
+		BuildingState.DESTROYED: {
+			0: preload("res://Art/Village.png"),
+			1: preload("res://Art/Village.png"),
+			2: preload("res://Art/Village.png"),
+		},
+		BuildingState.CONSTRUCTING: {
+			0: preload("res://Art/Village.png"),
+			1: preload("res://Art/Village.png"),
+			2: preload("res://Art/Village.png"),
+		},
+		BuildingState.BUILDING: {
+			0: preload("res://Art/Village.png"),
+			1: preload("res://Art/Village.png"),
+			2: preload("res://Art/Village.png"),
+		},
+		BuildingState.BUILT: {
+			0: preload("res://Art/Village.png"),
+			1: preload("res://Art/Village.png"),
+			2: preload("res://Art/Village.png"),
 		},
 	},
 }

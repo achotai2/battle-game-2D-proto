@@ -1,4 +1,4 @@
-[gd_scene load_steps=54 format=3 uid="uid://denj1nj2jkqg1"]
+[gd_scene load_steps=55 format=3 uid="uid://denj1nj2jkqg1"]
 
 [ext_resource type="Script" uid="uid://cnam6bddvgr7k" path="res://Scripts/Weather/EnvironmentController.gd" id="1_hptm8"]
 [ext_resource type="PackedScene" uid="uid://d4k6usdi8l0w0" path="res://Scenes/UI/GoldUI.tscn" id="1_k12tt"]
@@ -30,6 +30,7 @@
 [ext_resource type="Script" uid="uid://dggyiwgxbcp1o" path="res://addons/proton_scatter/src/scatter_item.gd" id="27_r33sp"]
 [ext_resource type="Script" uid="uid://c1sepuf5g1v0x" path="res://addons/proton_scatter/src/scatter_shape.gd" id="28_hdf80"]
 [ext_resource type="Script" uid="uid://dw8ehq7hdvkgx" path="res://addons/proton_scatter/src/shapes/sphere_shape.gd" id="29_jwpg7"]
+[ext_resource type="PackedScene" uid="uid://c2e7hfbsppg4e" path="res://Scenes/Buildings/village.tscn" id="31_hpc6h"]
 
 [sub_resource type="QuadMesh" id="QuadMesh_d1ilt"]
 
@@ -114,24 +115,24 @@ geometry_collision_mask = 3
 geometry_source_geometry_mode = 1
 geometry_source_group_name = &"nav_meshes"
 
-[sub_resource type="Resource" id="Resource_7k868"]
+[sub_resource type="Resource" id="Resource_hpc6h"]
 script = ExtResource("24_kltya")
 restrict_height = true
 reference_frame = 1
 
-[sub_resource type="Resource" id="Resource_hpc6h"]
+[sub_resource type="Resource" id="Resource_kltya"]
 script = ExtResource("26_neg2b")
 offset_step = 0.2
 consecutive_step_multiplier = 0.75
 restrict_height = true
 
-[sub_resource type="Resource" id="Resource_kltya"]
+[sub_resource type="Resource" id="Resource_e08e2"]
 script = ExtResource("26_6vcvc")
 enabled = false
 
-[sub_resource type="Resource" id="Resource_e08e2"]
+[sub_resource type="Resource" id="Resource_neg2b"]
 script = ExtResource("22_7k868")
-stack = Array[ExtResource("23_hpc6h")]([SubResource("Resource_7k868"), SubResource("Resource_hpc6h"), SubResource("Resource_kltya")])
+stack = Array[ExtResource("23_hpc6h")]([SubResource("Resource_hpc6h"), SubResource("Resource_kltya"), SubResource("Resource_e08e2")])
 
 [sub_resource type="Resource" id="Resource_g8bsm"]
 script = ExtResource("29_jwpg7")
@@ -232,23 +233,26 @@ size = Vector3(70, 70, 70)
 shape = 0
 material = SubResource("FogMaterial_fdnlq")
 
+[node name="SpotLight3D" type="SpotLight3D" parent="Environment/Units/Player"]
+transform = Transform3D(0.98216933, -1.62486325e-24, 0.18799847, 0, 1, 0, -0.18799847, 3.1101746e-25, 0.98216933, 0, 0, 0.8680515)
+
 [node name="Unit2" parent="Environment/Units" node_paths=PackedStringArray("castle") instance=ExtResource("12_jkdf5")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.9064436, -3.1968071, 0)
 player = 1
 castle = NodePath("../../Buildings/Castle")
-current_role = 4
+current_role = 2
 
 [node name="Unit" parent="Environment/Units" node_paths=PackedStringArray("castle") instance=ExtResource("12_jkdf5")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2, -3.0013418, 2)
 player = 1
 castle = NodePath("../../Buildings/Castle")
-current_role = 4
+current_role = 3
 
 [node name="Unit3" parent="Environment/Units" node_paths=PackedStringArray("castle") instance=ExtResource("12_jkdf5")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.811272, -3.0013418, 2)
 player = 1
 castle = NodePath("../../Buildings/Castle")
-current_role = 1
+current_role = 2
 
 [node name="Unit4" parent="Environment/Units" node_paths=PackedStringArray("castle") instance=ExtResource("12_jkdf5")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8.245081, -3.0013418, 2)
@@ -295,6 +299,10 @@ castle = NodePath("../Castle")
 [node name="Barracks" parent="Environment/Buildings" node_paths=PackedStringArray("castle") instance=ExtResource("12_b3802")]
 transform = Transform3D(1, -1.6543616e-24, 0, 0, 1, 0, 0, 0, 1, -9, -2.716116, 4)
 player = 1
+castle = NodePath("../Castle")
+
+[node name="Village" parent="Environment/Buildings" node_paths=PackedStringArray("castle") instance=ExtResource("31_hpc6h")]
+transform = Transform3D(1, -1.6543616e-24, 0, 0, 1, 0, 0, 0, 1, -13.17589, -2.9392, -4.6027164)
 castle = NodePath("../Castle")
 
 [node name="HTerrain" type="Node3D" parent="Environment" groups=["nav_meshes"]]
@@ -359,7 +367,7 @@ polygon = PackedVector2Array(-13.4825115, -19.674524, -17.277878, 6.8014574, 5.8
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -13.1083555, -2.9163573, 0)
 script = ExtResource("21_6vcvc")
 render_mode = 1
-modifier_stack = SubResource("Resource_e08e2")
+modifier_stack = SubResource("Resource_neg2b")
 Performance/use_chunks = true
 Performance/chunk_dimensions = Vector3(15, 15, 15)
 metadata/_custom_type_script = "uid://comi57q7b8i1g"

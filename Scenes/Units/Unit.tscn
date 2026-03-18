@@ -40,10 +40,10 @@ avoidance_layers = 4
 
 [node name="Sprites" type="Node3D" parent="."]
 
-[node name="AnimatedSprite3D" type="AnimatedSprite3D" parent="Sprites" groups=["sprites"]]
+[node name="AnimatedSprite3D" type="AnimatedSprite3D" parent="Sprites"]
 offset = Vector2(0, 10)
 billboard = 2
-alpha_cut = 1
+shaded = true
 sprite_frames = ExtResource("2_u301h")
 animation = &"walk"
 
@@ -80,7 +80,6 @@ script = ExtResource("8_speed")
 [node name="Sensors" type="Node3D" parent="."]
 
 [node name="PlayerInteractor" parent="Sensors" instance=ExtResource("10_j1x40")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -1)
 
 [node name="PlayerControls" type="Node3D" parent="Sensors" node_paths=PackedStringArray("interactor", "attackNode", "movement")]
 script = ExtResource("11_0owno")

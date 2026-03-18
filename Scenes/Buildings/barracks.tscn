@@ -22,7 +22,6 @@ spawn_interactable = NodePath("SpawnInteractable")
 construct_site = NodePath("Worksites/ConstructWorkSite")
 production_queue = NodePath("ProductionQueue")
 visuals = NodePath("BuildingVisuals")
-state = 2
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="."]
 transform = Transform3D(-4.371139e-08, 0, -1, 0, 1, 0, 1, 0, -4.371139e-08, 0, 0.27355957, 0)
