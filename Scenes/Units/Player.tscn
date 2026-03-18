@@ -102,6 +102,6 @@ metadata/_custom_type_script = "uid://58qm17emnwvd"
 script = ExtResource("12_gg")
 agent = NodePath("../..")
 
-[node name="Weapons" type="Node" parent="."]
+[node name="Weapons" type="Node3D" parent="."]
 
 [node name="WeaponSword" parent="Weapons" instance=ExtResource("7_bhhdu")]

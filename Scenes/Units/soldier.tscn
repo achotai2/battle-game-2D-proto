@@ -117,6 +117,6 @@ kind = 2
 auto_get_work_when_idle = false
 metadata/_custom_type_script = "uid://d1ucmtjtmh4hm"
 
-[node name="Weapons" type="Node" parent="."]
+[node name="Weapons" type="Node3D" parent="."]
 
 [node name="WeaponSword" parent="Weapons" instance=ExtResource("6_k4v4y")]
