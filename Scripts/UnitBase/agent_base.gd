@@ -88,6 +88,13 @@ func apply_role(role: UnitRoles.UnitType, new_team: int) -> void:
 	team = ComponentFinder.get_component(self, "TeamMemory") as TeamMemory
 	animate = ComponentFinder.get_component(self, "AgentAnimate") as AgentAnimate
 
+	var health_node = ComponentFinder.get_component(self, "Health") as Health
+	if is_instance_valid(health_node):
+		if not health_node.damaged.is_connected(_im_damaged):
+			health_node.damaged.connect(_im_damaged)
+		if not health_node.died.is_connected(_im_dead):
+			health_node.died.connect(_im_dead)
+
 	# Tell the movement node to find the newly generated NavAgent.
 	if is_instance_valid(movement) and movement.has_method("refresh_components"):
 		movement.refresh_components()

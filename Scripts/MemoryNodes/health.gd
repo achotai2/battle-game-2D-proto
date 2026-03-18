@@ -1,6 +1,7 @@
 extends Node
 class_name Health
 
+signal take_hit(attack: AttackData)
 signal damaged
 signal died
 
@@ -11,6 +12,7 @@ var hp: int
 
 func _ready() -> void:
 	hp = max_hp
+	take_hit.connect(apply_hit)
 
 func return_health() -> int:
 	return hp
