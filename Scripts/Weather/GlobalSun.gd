@@ -4,6 +4,8 @@ extends Node
 signal environment_updated(sun_color: Color, fog_color: Color, ink_color: Color, sun_rot_x: float, sun_energy: float)
 signal sunrise
 signal sunset
+signal night
+signal day
 
 @export_group("Time Settings")
 @export var day_duration: float = 240.0 
@@ -50,6 +52,25 @@ func _process(delta: float) -> void:
 		_advance_time(delta)
 		_update_sun_position()
 		_calculate_environment()
+		_check_phase()
+
+
+func _check_phase() -> void:
+	var phase: int
+
+	if time_of_day >= sunrise_time and time_of_day <= sunset_time:
+		phase = 0 # Day
+	else:
+		phase = 1 # Night
+
+	if phase != _last_phase:
+		_last_phase = phase
+		if phase == 0:
+			sunrise.emit()
+			day.emit()
+		elif phase == 1:
+			sunset.emit()
+			night.emit()
 
 
 func _advance_time(delta: float) -> void:
