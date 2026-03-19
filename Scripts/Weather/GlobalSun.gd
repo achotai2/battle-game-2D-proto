@@ -8,7 +8,7 @@ signal night
 signal day
 
 @export_group("Time Settings")
-@export var day_duration: float = 240.0 
+@export var day_duration: float = 20.0 
 @export_range(0.0, 1.0) var time_of_day: float = 0.3 
 @export var pause_time: bool = false
 

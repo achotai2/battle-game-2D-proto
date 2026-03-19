@@ -237,21 +237,21 @@ material = SubResource("FogMaterial_fdnlq")
 
 [node name="Unit2" parent="Environment/Units" node_paths=PackedStringArray("castle") instance=ExtResource("12_jkdf5")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.906, 0, 0)
-player = 2
+player = 1
 castle = NodePath("../../Buildings/Castle")
 current_role = 2
 
 [node name="Unit" parent="Environment/Units" node_paths=PackedStringArray("castle") instance=ExtResource("12_jkdf5")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2, 0, 2)
-player = 2
+player = 1
 castle = NodePath("../../Buildings/Castle")
 current_role = 3
 
 [node name="Unit3" parent="Environment/Units" node_paths=PackedStringArray("castle") instance=ExtResource("12_jkdf5")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.811, 0, 2)
-player = 2
+player = 1
 castle = NodePath("../../Buildings/Castle")
-current_role = 2
+current_role = 4
 
 [node name="Unit4" parent="Environment/Units" node_paths=PackedStringArray("castle") instance=ExtResource("12_jkdf5")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8.245, 0, 2)
@@ -263,7 +263,7 @@ current_role = 2
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8.245, 0, -3.59)
 player = 1
 castle = NodePath("../../Buildings/Castle")
-current_role = 3
+current_role = 4
 
 [node name="Buildings" type="Node3D" parent="Environment" groups=["nav_meshes"]]
 

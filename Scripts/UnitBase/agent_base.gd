@@ -9,12 +9,14 @@ signal new_castle_set(new_castle: Castle)
 @export var animate: AgentAnimate = null
 @export var castle: Castle = null
 @export var current_role: UnitRoles.UnitType
+@export var death_effect_scene: PackedScene
 
 @onready var brain: AgentBrain = $Brain
 @onready var sensors: Node = $Sensors
 @onready var motor: Node = $Motor
 @onready var memory: Node = $Memory
 @onready var weapons: Node = $Weapons
+
 
 
 # Called when the node enters the scene tree for the first time.
@@ -55,6 +57,21 @@ func _im_damaged() -> void:
 func _im_dead() -> void:
 	if current_role == UnitRoles.UnitType.PEASANT or current_role == UnitRoles.UnitType.PLAYER:
 		return
+		
+	elif current_role == UnitRoles.UnitType.GOBLIN:
+		# 1. Spawn the bone pile
+		if death_effect_scene:
+			var effect = death_effect_scene.instantiate() as Node3D
+			
+			# 2. Add it to the main world so it survives the Goblin's death
+			get_tree().current_scene.add_child(effect)
+			
+			# 3. Drop it at the Goblin's exact coordinates
+			effect.global_position = self.global_position
+			
+		# 4. Destroy the Goblin
+		queue_free()
+		
 	else:
 		apply_role(UnitRoles.UnitType.PEASANT, team.return_team())
 

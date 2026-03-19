@@ -69,30 +69,37 @@ func get_min_tax_time(role: UnitType) -> Variant:
 # role -> player -> SpriteFrames
 var frames := {
 	UnitType.PLAYER: {
+		0: preload("res://Art/SpriteFrames/Player.tres"),
 		1: preload("res://Art/SpriteFrames/Player.tres"),
 		2: preload("res://Art/SpriteFrames/Player.tres"),
 	},
 	UnitType.PEASANT: {
+		0: preload("res://Art/SpriteFrames/Peasant_Yellow.tres"),
 		1: preload("res://Art/SpriteFrames/Peasant_Blue.tres"),
 		2: preload("res://Art/SpriteFrames/Peasant_Red.tres"),
 	},
 	UnitType.SOLDIER: {
+		0: preload("res://Art/SpriteFrames/Soldier_Yellow.tres"),
 		1: preload("res://Art/SpriteFrames/Soldier_Blue.tres"),
 		2: preload("res://Art/SpriteFrames/Soldier_Red.tres"),
 	},
 	UnitType.ARCHER: {
+		0: preload("res://Art/SpriteFrames/Archer_Yellow.tres"),
 		1: preload("res://Art/SpriteFrames/Archer_Blue.tres"),
 		2: preload("res://Art/SpriteFrames/Archer_Red.tres"),
 	},
 	UnitType.WORKER: {
+		0: preload("res://Art/SpriteFrames/Worker_Yellow.tres"),
 		1: preload("res://Art/SpriteFrames/Worker_Blue.tres"),
 		2: preload("res://Art/SpriteFrames/Worker_Red.tres"),
 	},
 	UnitType.LORD: {
+		0: preload("res://Art/SpriteFrames/Soldier_Yellow.tres"),
 		1: preload("res://Art/SpriteFrames/Soldier_Yellow.tres"),
 		2: preload("res://Art/SpriteFrames/Soldier_Yellow.tres"),
 	},
 	UnitType.GOBLIN: {
+		0: preload("res://Art/SpriteFrames/Peasant_Yellow.tres"),
 		1: preload("res://Art/SpriteFrames/Peasant_Blue.tres"),
 		2: preload("res://Art/SpriteFrames/Peasant_Red.tres"),
 	},

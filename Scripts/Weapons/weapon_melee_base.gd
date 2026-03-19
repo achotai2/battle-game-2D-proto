@@ -7,7 +7,7 @@ class_name WeaponMelee
 # Who can this weapon affect?
 @export var affects_own: bool = false
 @export var affects_opposing: bool = true
-@export var affects_neutral: bool = false
+@export var affects_neutral: bool = true
 @export var attack_power: int = 10
 
 @onready var tracking: AgentTracking = $AgentTracking

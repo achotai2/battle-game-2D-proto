@@ -1,0 +1,83 @@
+[gd_scene load_steps=13 format=3 uid="uid://dahjynratng2v"]
+
+[ext_resource type="Script" uid="uid://gml8djc4g6b7" path="res://Scripts/UnitBase/death.gd" id="1_lkp4x"]
+[ext_resource type="Texture2D" uid="uid://bu7isbaa2j62h" path="res://Art/Tiny Swords (Update 010)/Effects/Explosion/Explosions.png" id="2_wuy3k"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_kgpvv"]
+atlas = ExtResource("2_wuy3k")
+region = Rect2(0, 0, 192, 192)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_phkr2"]
+atlas = ExtResource("2_wuy3k")
+region = Rect2(192, 0, 192, 192)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_3uyfa"]
+atlas = ExtResource("2_wuy3k")
+region = Rect2(384, 0, 192, 192)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_tty56"]
+atlas = ExtResource("2_wuy3k")
+region = Rect2(576, 0, 192, 192)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_7dqih"]
+atlas = ExtResource("2_wuy3k")
+region = Rect2(768, 0, 192, 192)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_q8lk6"]
+atlas = ExtResource("2_wuy3k")
+region = Rect2(960, 0, 192, 192)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_pwdpo"]
+atlas = ExtResource("2_wuy3k")
+region = Rect2(1152, 0, 192, 192)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_7akt0"]
+atlas = ExtResource("2_wuy3k")
+region = Rect2(1344, 0, 192, 192)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_gco4s"]
+atlas = ExtResource("2_wuy3k")
+region = Rect2(1536, 0, 192, 192)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_fc8ib"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_kgpvv")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_phkr2")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_3uyfa")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_tty56")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_7dqih")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_q8lk6")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_pwdpo")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_7akt0")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_gco4s")
+}],
+"loop": false,
+"name": &"death",
+"speed": 5.0
+}]
+
+[node name="Death" type="Node3D" node_paths=PackedStringArray("sprite")]
+script = ExtResource("1_lkp4x")
+sprite = NodePath("AnimatedSprite3D")
+
+[node name="AnimatedSprite3D" type="AnimatedSprite3D" parent="."]
+sprite_frames = SubResource("SpriteFrames_fc8ib")
+animation = &"death"

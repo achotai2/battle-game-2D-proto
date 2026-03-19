@@ -10,7 +10,7 @@ class_name WeaponRanged
 # --- TARGETING ---
 @export var affects_own: bool = false
 @export var affects_opposing: bool = true
-@export var affects_neutral: bool = false
+@export var affects_neutral: bool = true
 
 # --- PROJECTILE SETUP ---
 @export var projectile_scene: PackedScene

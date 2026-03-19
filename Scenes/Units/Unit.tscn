@@ -1,8 +1,9 @@
-[gd_scene load_steps=19 format=3 uid="uid://dunt5nfaabbqv"]
+[gd_scene load_steps=20 format=3 uid="uid://dunt5nfaabbqv"]
 
 [ext_resource type="Script" uid="uid://b3iqpgjb0vtvl" path="res://Scripts/UnitBase/agent_base.gd" id="1_w7084"]
 [ext_resource type="PackedScene" uid="uid://tj48hg7yffl8" path="res://Scenes/AgentNodes/MinionNavAgent.tscn" id="2_baijc"]
-[ext_resource type="SpriteFrames" uid="uid://cptr2ll6cx7y0" path="res://Art/SpriteFrames/Soldier_Blue.tres" id="2_u301h"]
+[ext_resource type="PackedScene" uid="uid://dahjynratng2v" path="res://Scenes/Units/death.tscn" id="2_c2nhe"]
+[ext_resource type="SpriteFrames" uid="uid://e3ufjpl1fnxb" path="res://Art/SpriteFrames/Worker_Yellow.tres" id="2_u301h"]
 [ext_resource type="Script" uid="uid://db8bramlpehyu" path="res://Scripts/AgentNodes/agent_brain.gd" id="3_baijc"]
 [ext_resource type="Script" uid="uid://3hsle2qb2hgj" path="res://Scripts/AgentNodes/Advisors/a_player_movement.gd" id="4_u301h"]
 [ext_resource type="Script" uid="uid://bumqf57fkupi2" path="res://Scripts/AgentNodes/Advisors/a_player_interact.gd" id="5_c2nhe"]
@@ -29,6 +30,7 @@ script = ExtResource("1_w7084")
 movement = NodePath("Motor/AgentMovement")
 team = NodePath("Memory/TeamMemory")
 animate = NodePath("Motor/AgentAnimate")
+death_effect_scene = ExtResource("2_c2nhe")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.086587906, 0)
@@ -45,7 +47,7 @@ offset = Vector2(0, 25)
 billboard = 2
 shaded = true
 sprite_frames = ExtResource("2_u301h")
-animation = &"walk"
+animation = &"work"
 
 [node name="Brain" type="Node3D" parent="." node_paths=PackedStringArray("agent")]
 script = ExtResource("3_baijc")

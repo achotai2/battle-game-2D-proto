@@ -1,4 +1,4 @@
-[gd_scene load_steps=11 format=3 uid="uid://c2e7hfbsppg4e"]
+[gd_scene load_steps=12 format=3 uid="uid://c2e7hfbsppg4e"]
 
 [ext_resource type="Script" uid="uid://cjbrsf0fmsehe" path="res://Scripts/BuildingsBase/building_base.gd" id="1_o8tl3"]
 [ext_resource type="Texture2D" uid="uid://bql6vtmrfib0u" path="res://Art/Village.png" id="6_o8tl3"]
@@ -8,6 +8,7 @@
 [ext_resource type="PackedScene" uid="uid://dunt5nfaabbqv" path="res://Scenes/Units/Unit.tscn" id="8_nw35o"]
 [ext_resource type="Script" uid="uid://cc22s0erkk06v" path="res://Scripts/BuildingNodes/BuildingVisuals.gd" id="9_naddn"]
 [ext_resource type="Script" uid="uid://cf8nbntvvy3iv" path="res://Scripts/AgentNodes/GoldGiver.gd" id="10_yyqno"]
+[ext_resource type="PackedScene" uid="uid://dvvwliooj1jno" path="res://Scenes/Units/goblin.tscn" id="goblin_scene"]
 [ext_resource type="Script" uid="uid://bt0yabnd4kdm3" path="res://Scripts/BuildingNodes/night_instantiator.gd" id="night_inst_script"]
 
 [sub_resource type="CylinderShape3D" id="CylinderShape3D_7b5gy"]
@@ -65,10 +66,9 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.07546562, 1.292591)
 
 [node name="NightInstantiator" type="Node3D" parent="." node_paths=PackedStringArray("spawn_point")]
 script = ExtResource("night_inst_script")
-unit_scene = ExtResource("8_nw35o")
+unit_scene = ExtResource("goblin_scene")
 default_role = 6
 spawn_point = NodePath("Marker3D")
-spawn_delay = 1.0
 
 [node name="Marker3D" type="Marker3D" parent="NightInstantiator"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.07546562, -1.292591)

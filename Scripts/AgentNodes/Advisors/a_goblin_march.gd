@@ -25,7 +25,7 @@ func get_intent() -> Intent:
 	var target = _agent.return_castle()
 
 	# Medium priority fallback: March towards the castle
-	var intent = Intent.new(50.0, self, Intent.Type.CHASE)
+	var intent = Intent.new(10.0, self, Intent.Type.CHASE)
 	intent.target_node = target
 	intent.description = "Marching towards " + target.name
 	return intent
