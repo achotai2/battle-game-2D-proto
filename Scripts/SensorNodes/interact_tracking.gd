@@ -43,16 +43,17 @@ func _ready() -> void:
 	add_child(_timer)
 	_timer.start(scan_interval + randf() * 0.2)
 
-	_team_memory = ComponentFinder.get_component(self, "TeamMemory")
+	_my_agent = ComponentFinder.get_base(self)
+	_team_memory = _my_agent.get("team") if _my_agent.get("team") else _my_agent.get("team_memory")
+
 	if _team_memory and not _team_memory.team_changed.is_connected(_on_team_changed):
 		_team_memory.team_changed.connect(_on_team_changed)
 		_on_team_changed(_team_memory.return_team())
 	else:
 		_on_team_changed(0)
 
-	_my_agent = ComponentFinder.get_base(self)
-
-	_update_collision_mask(_team_memory.return_team())
+	if _team_memory:
+		_update_collision_mask(_team_memory.return_team())
 
 
 func _on_team_changed(new_team: int) -> void:

@@ -104,7 +104,7 @@ func _on_body_entered(body: Node3D) -> void:
 		return
 		
 	# Use ComponentFinder exactly like the melee weapon!
-	var h: Health = ComponentFinder.get_component(body, "Health")
+	var h: Health = body.get("health")
 	if is_instance_valid(h):
 		h.apply_hit(_attack_data)
 

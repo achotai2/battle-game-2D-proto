@@ -16,11 +16,43 @@ signal new_castle_set(new_castle: Castle)
 @export var state: BuildingDefs.BuildingState = BuildingDefs.BuildingState.DESTROYED
 @export var is_tree: bool = false
 
-var _team_memory: Node = null
-
+@export var building_visuals: BuildingVisuals = null
+@export var construct_work_site: WorkSite = null
+@export var food_job_board: Node = null
+@export var gold_giver: GoldGiver = null
+@export var gold_wallet: GoldWallet = null
+@export var instantiator: Instantiator = null
+@export var interactable: Interactable = null
+@export var night_instantiator: NightInstantiator = null
+@export var peasant_job_board: Node = null
+@export var spawn_site: SpawnSite = null
+@export var spawn_work_site: WorkSite = null
+@export var team_memory: TeamMemory = null
+@export var work_site: WorkSite = null
+@export var worker_job_board: Node = null
+@export var health: Health = null
+@export var animated_sprite_3d: AnimatedSprite3D = null
 
 func _ready() -> void:
 	add_to_group("Buildings")
+
+	# Initialize components
+	building_visuals = ComponentFinder.get_component(self, "BuildingVisuals")
+	construct_work_site = ComponentFinder.get_component_by_name(self, "ConstructWorkSite")
+	food_job_board = ComponentFinder.get_component_by_name(self, "FoodJobBoard")
+	gold_giver = ComponentFinder.get_component(self, "GoldGiver")
+	gold_wallet = ComponentFinder.get_component(self, "GoldWallet")
+	instantiator = ComponentFinder.get_component(self, "Instantiator")
+	interactable = ComponentFinder.get_component(self, "Interactable")
+	night_instantiator = ComponentFinder.get_component(self, "NightInstantiator")
+	peasant_job_board = ComponentFinder.get_component_by_name(self, "PeasantJobBoard")
+	spawn_site = ComponentFinder.get_component(self, "SpawnSite")
+	spawn_work_site = ComponentFinder.get_component_by_name(self, "SpawnWorkSite")
+	team_memory = ComponentFinder.get_component(self, "TeamMemory")
+	work_site = ComponentFinder.get_component(self, "WorkSite")
+	worker_job_board = ComponentFinder.get_component_by_name(self, "WorkerJobBoard")
+	health = ComponentFinder.get_component(self, "Health")
+	animated_sprite_3d = ComponentFinder.get_component(self, "AnimatedSprite3D")
 
 	# Check if we are a tree before applying the physics layer!
 	if is_tree:
@@ -28,9 +60,8 @@ func _ready() -> void:
 	else:
 		collision_layer = GamePhysics.get_building_layer()
 	
-	_team_memory = ComponentFinder.get_component(self, "TeamMemory")
-	if _team_memory:
-		_team_memory.current_team = player
+	if team_memory:
+		team_memory.current_team = player
 
 	# 1. Wire up the Construction Pipeline
 	if construct_interactable:
@@ -142,8 +173,8 @@ func return_castle() -> Castle:
 	
 func set_player(p: int) -> void:
 	player = p
-	if _team_memory:
-		_team_memory.current_team = p
+	if team_memory:
+		team_memory.current_team = p
 	set_state(state) 
 
 

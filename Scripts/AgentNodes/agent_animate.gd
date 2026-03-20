@@ -21,7 +21,8 @@ func _ready() -> void:
 		_my_agent = ComponentFinder.get_base(self)
 	
 	if not sprite:
-		sprite = ComponentFinder.get_component(self, "AnimatedSprite3D") as AnimatedSprite3D
+		var base = ComponentFinder.get_base(self)
+		sprite = base.get("animated_sprite_3d")
 		
 	# The damage flash timer.
 	damageTimer.wait_time = damageVisualTime

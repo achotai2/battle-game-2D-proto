@@ -12,7 +12,7 @@ func give_gold(target: Node3D, amount: int) -> bool:
 		return false
 		
 	# Find target wallet
-	var target_wallet: GoldWallet = ComponentFinder.get_component(target, "GoldWallet")
+	var target_wallet: GoldWallet = target.get("gold_wallet")
 
 	if target_wallet:
 		# 1. THE MATH: Do the logical transfer instantly so the economy is perfectly accurate

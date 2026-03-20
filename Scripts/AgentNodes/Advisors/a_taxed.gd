@@ -23,15 +23,15 @@ func _find_components() -> bool:
 	if not agent:
 		agent = ComponentFinder.get_base(self)
 	if not movement:
-		movement = ComponentFinder.get_component(self, "AgentMovement")
+		movement = agent.get("movement")
 	if not _gold_wallet:
-		_gold_wallet = ComponentFinder.get_component(self, "GoldWallet")
+		_gold_wallet = agent.get("gold_wallet")
 	if not _tax_ledger:
-		_tax_ledger = ComponentFinder.get_component(self, "TaxLedger")
+		_tax_ledger = agent.get("tax_ledger")
 	if not _gold_giver:
-		_gold_giver = ComponentFinder.get_component(self, "GoldGiver")
+		_gold_giver = agent.get("gold_giver")
 	if not unit_speed:
-		unit_speed = ComponentFinder.get_component(self, "UnitSpeed")
+		unit_speed = agent.get("unit_speed")
 
 	return agent and movement and _gold_wallet and _tax_ledger and _gold_giver and unit_speed
 

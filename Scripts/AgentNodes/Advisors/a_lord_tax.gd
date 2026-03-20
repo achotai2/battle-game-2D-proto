@@ -49,8 +49,8 @@ func get_intent() -> Intent:
 		if not is_instance_valid(minion) or minion == _agent:
 			continue
 
-		var minion_ledger: TaxLedger = ComponentFinder.get_component(minion, "TaxLedger")
-		var minion_wallet: GoldWallet = ComponentFinder.get_component(minion, "GoldWallet")
+		var minion_ledger: TaxLedger = minion.get("tax_ledger")
+		var minion_wallet: GoldWallet = minion.get("gold_wallet")
 
 		if not minion_ledger or not minion_wallet:
 			continue

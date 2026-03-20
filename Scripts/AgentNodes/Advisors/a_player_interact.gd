@@ -12,14 +12,15 @@ func _ready() -> void:
 
 
 func initialize() -> void:
+	var base = ComponentFinder.get_base(self)
 	if not interactor:
-		interactor = ComponentFinder.get_component(self, "PlayerInteractor")
+		interactor = base.get("player_interactor")
 	if not movement:
-		movement = ComponentFinder.get_component(self, "AgentMovement")
+		movement = base.get("movement")
 	if not goldWallet:
-		goldWallet = ComponentFinder.get_component(self, "GoldWallet")
+		goldWallet = base.get("gold_wallet")
 	if not goldGiver:
-		goldGiver = ComponentFinder.get_component(self, "GoldGiver")
+		goldGiver = base.get("gold_giver")
 
 	if interactor and not interactor.interaction_started.is_connected(_on_interaction_started):
 		interactor.interaction_started.connect(_on_interaction_started)

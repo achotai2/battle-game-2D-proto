@@ -26,7 +26,8 @@ func _ready() -> void:
 	_setup_prompt()
 
 	# Establish connection to TeamMemory.
-	var team := ComponentFinder.get_component(self, "TeamMemory")
+	var base = ComponentFinder.get_base(self)
+	var team = base.get("team") if base.get("team") else base.get("team_memory")
 	if team and not team.team_changed.is_connected(_team_changed):
 		team.team_changed.connect(_team_changed)
 	_team_changed(team.return_team())

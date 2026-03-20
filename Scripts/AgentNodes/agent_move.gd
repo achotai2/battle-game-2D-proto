@@ -47,10 +47,10 @@ func refresh_components() -> void:
 		
 	# 2. Automatically find the Animation component
 	if not is_instance_valid(animation):
-		animation = ComponentFinder.get_component(self, "AgentAnimate")
+		animation = agent.get("animate")
 
 	# 3. Look for the dynamically generated Nav Agent.
-	nav_agent = ComponentFinder.get_component_by_name(self, "MinionNavAgent")
+	nav_agent = agent.get("minion_nav_agent")
 
 	# 4. Handle Navigation Setup safely
 	if is_instance_valid(nav_agent):

@@ -8,14 +8,14 @@ var agent: AgentBase = null
 var arrived: bool = false
 
 func initialize() -> void:
-	if not movement:
-		movement = ComponentFinder.get_component(self, "AgentMovement")
-	if not work_tasker:
-		work_tasker = ComponentFinder.get_component(self, "MinionTasker")
-	if not unit_speed:
-		unit_speed = ComponentFinder.get_component(self, "UnitSpeed")
 	if not agent:
 		agent = ComponentFinder.get_base(self)
+	if not movement:
+		movement = agent.get("movement")
+	if not work_tasker:
+		work_tasker = agent.get("minion_tasker")
+	if not unit_speed:
+		unit_speed = agent.get("unit_speed")
 
 
 func get_intent() -> Intent:

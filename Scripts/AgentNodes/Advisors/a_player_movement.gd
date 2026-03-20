@@ -10,10 +10,11 @@ func _ready() -> void:
 
 
 func initialize() -> void:
+	var base = ComponentFinder.get_base(self)
 	if not controls:
-		controls = ComponentFinder.get_component(self, "PlayerControls")
+		controls = base.get("player_controls")
 	if not movement:
-		movement = ComponentFinder.get_component(self, "AgentMovement")
+		movement = base.get("movement")
 	
 	if controls and not controls.input_changed.is_connected(_on_input_changed):
 		controls.input_changed.connect(_on_input_changed)
