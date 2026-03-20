@@ -1,6 +1,8 @@
 extends Advisor
 class_name AdvisorWork
 
+var _agent: AgentBase = null
+
 var work_action: WorkAction = null
 var movement: AgentMovement = null
 var work_tasker: MinionTasker = null
@@ -9,28 +11,28 @@ var unit_speed: UnitSpeed = null
 var arrived: bool = false
 
 func initialize() -> void:
-	var base = ComponentFinder.get_base(self)
-	if not work_action:
-		work_action = base.get("work_action")
-	if not movement:
-		movement = base.get("movement")
-	if not work_tasker:
-		work_tasker = base.get("minion_tasker")
-	if not unit_speed:
-		unit_speed = base.get("unit_speed")
+	# 1. Safely grab the root agent once
+	_agent = _find_root_base(self) as AgentBase
+	
+	if is_instance_valid(_agent):
+		# 2. Directly grab all components from the agent
+		work_action = _agent.get("work_action")
+		movement = _agent.get("movement")
+		work_tasker = _agent.get("minion_tasker")
+		unit_speed = _agent.get("unit_speed")
+		animate = _agent.get("animate")
 
 
 func get_intent() -> Intent:
-	if not work_tasker: return
+	if not work_tasker or not is_instance_valid(_agent): return null
 	
 	var job = work_tasker.get_current_job()
 
 	if not job or not job.needs_work():
 		work_tasker.clear_task()
-		var agent = ComponentFinder.get_base(self)
 		var jobs = work_tasker.get_known_jobs_sorted_by_distance()
 		for candidate in jobs:
-			if candidate.assign_worker(agent):
+			if candidate.assign_worker(_agent):
 				job = candidate
 				work_tasker.assign_job(job)
 				arrived = false
@@ -48,7 +50,7 @@ func get_intent() -> Intent:
 
 
 func enact_intent(intent: Intent) -> void:
-	if not work_action or not movement: return
+	if not work_action or not movement or not is_instance_valid(_agent): return
 
 	if not intent.type == Intent.Type.WORK: return
 
@@ -57,23 +59,42 @@ func enact_intent(intent: Intent) -> void:
 		return
 
 	if not arrived:
-		var agent = ComponentFinder.get_base(self)
-		var target_pos = job.get_work_position_for(agent)
+		var target_pos = job.get_work_position_for(_agent)
 		var range_sq = work_tasker.work_range * work_tasker.work_range
-		var dist_sq = agent.global_position.distance_squared_to(target_pos)
+		var dist_sq = _agent.global_position.distance_squared_to(target_pos)
 
 		if dist_sq <= range_sq:
 			arrived = true
 		else:
-			# Move to work
+			# Move to work (AgentMovement will handle the play_walk() visuals automatically!)
 			if unit_speed and movement:
 				movement.max_speed = unit_speed.run_speed
 				movement.move_to_position(target_pos)
 
 	if arrived:
-		# In range, do work
+		# In range, stop walking
 		if movement:
 			movement.stop()
 
+		# EXPLICIT ANIMATION COMMAND: Face the tree/building
+		if is_instance_valid(animate) and animate.has_method("face_target"):
+			animate.face_target(job.global_position)
+
+		# Execute the mechanical work logic
 		if work_action:
 			work_action.do_work(intent.target_node)
+			
+		# EXPLICIT ANIMATION COMMAND: Swing the tool!
+		if is_instance_valid(animate) and animate.has_method("play_work"):
+			animate.play_work()
+
+
+# --- HELPERS ---
+
+func _find_root_base(start_node: Node) -> Node3D:
+	var current = start_node
+	while current and current != start_node.get_tree().root:
+		if current is AgentBase:
+			return current as Node3D
+		current = current.get_parent()
+	return null

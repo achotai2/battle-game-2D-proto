@@ -8,116 +8,82 @@ signal attackAnimationFinished
 @export_range(0, 3, 0.1) var damageVisualTime: float = 0.2
 
 var damageTimer := Timer.new()
-var attacking: bool = false
-var working: bool = false
-
+var _my_agent: Node3D = null
 var _move_anim: StringName = &""
-var _my_agent: AgentBase = null
 
 
-# Called when the node enters the scene tree for the first time.
 func _ready() -> void:
+	# 1. Grab the base using the ComponentFinder
 	if not _my_agent:
 		_my_agent = ComponentFinder.get_base(self)
 	
-	if not sprite:
-		var base = ComponentFinder.get_base(self)
-		sprite = base.get("animated_sprite_3d")
-		
-	# The damage flash timer.
+	# 2. THE FIX: Use ComponentFinder to grab the node directly! 
+	# Do not rely on AgentBase's cached variables here because they don't exist yet!
+	if not sprite and is_instance_valid(_my_agent):
+		sprite = ComponentFinder.get_component(_my_agent, "AnimatedSprite3D") as AnimatedSprite3D
+
+	# 3. Setup Damage Timer
 	damageTimer.wait_time = damageVisualTime
 	damageTimer.one_shot = true
 	damageTimer.timeout.connect(_on_timer_timeout)
 	add_child(damageTimer)
 
-	if sprite:
+	# 4. Connect Signals and Cache Move Anim
+	if is_instance_valid(sprite):
 		_update_move_anim_cache()
-		sprite.animation_finished.connect(_animation_finished)
-		_animation_finished()
+		if not sprite.animation_finished.is_connected(_animation_finished):
+			sprite.animation_finished.connect(_animation_finished)
 
 
-# Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(_delta: float) -> void:
 	if !damageTimer.is_stopped():
 		_update_damage_visual()
 
 
-func _update_damage_visual() -> void:
-	if sprite:
-		var percent: float = float(damageTimer.wait_time - damageTimer.time_left) / damageTimer.wait_time
-		sprite.set_instance_shader_parameter(&"progress", percent)
-#		animation.position = Vector3(randi_range(-1, 1), randi_range(-1, 1))
-
-
-func _animation_finished() -> void:
-	if attacking:
-		attackAnimationFinished.emit()
-
-	if working:
-		interactAnimationFinished.emit()
-
-	if sprite:
-		attacking = false
-		# working = false # Removed to allow looping work animation
-		_update_idle_walk_anim()
-	
-
-func _on_timer_timeout() -> void:
-	if sprite:
-		sprite.set_instance_shader_parameter(&"progress", 0.0)
-#		animation.position = Vector3(0, 0, 0)
-
-
-func _update_idle_walk_anim() -> void:
-	var vel = Vector3.ZERO
-	if is_instance_valid(_my_agent) and "velocity" in _my_agent:
-		vel = _my_agent.velocity
-	agent_moved(vel)
-
-
-func set_my_agent(ag: AgentBase) -> void:
+func set_my_agent(ag: Node3D) -> void:
 	_my_agent = ag
 
 
-#func _health_connect() -> void:
-	#if is_instance_valid(health):
-		#health.tookDamage.connect(_show_damage)
-		#health.tookHeal.connect(_show_heal)
+# ==========================================
+# EXPLICIT API (CALL THESE FROM ADVISORS!)
+# ==========================================
 
-
-func agent_moved(velocity: Vector3) -> void:
-# Called by Agent when movement occurs, to run animation.
-	if not sprite:
-		return 
-
-	if not attacking and not working:
-		if velocity != Vector3(0, 0, 0):
-			if _move_anim != &"":
-				sprite.play(_move_anim)
-
-			if velocity.x < 0:
-				sprite.flip_h = true
-			elif velocity.x > 0:
-				sprite.flip_h = false
-			
-		else:
+func play_idle() -> void:
+	if not is_instance_valid(sprite): return
+	
+	if not _is_playing_action():
+		if sprite.sprite_frames and sprite.sprite_frames.has_animation("idle"):
 			sprite.play("idle")
 
 
-func _show_damage() -> void:
-	damageTimer.start()
+func play_walk(velocity: Vector3) -> void:
+	if not is_instance_valid(sprite): return
+	
+	if _is_playing_action(): return 
+	
+	if velocity.length_squared() > 0.1:
+		if _move_anim != &"":
+			sprite.play(_move_anim)
+			
+		if velocity.x < 0:
+			sprite.flip_h = true
+		elif velocity.x > 0:
+			sprite.flip_h = false
+	else:
+		play_idle()
 
 
-func _show_heal() -> void:
-	pass
+func face_target(target_pos: Vector3) -> void:
+	if not is_instance_valid(sprite) or not is_instance_valid(_my_agent): return
+	sprite.flip_h = target_pos.x < _my_agent.global_position.x
 
 
 func play_attack(target: Node3D) -> bool:
-	if not sprite or sprite.sprite_frames == null:
-		return false
+	if not is_instance_valid(sprite) or sprite.sprite_frames == null: return false
 
-	attacking = true
-	working = false
+	if _is_playing_action() and sprite.animation.begins_with("attack"):
+		return true 
+
 	var dir: Vector3 = _my_agent.global_position.direction_to(target.global_position)
 	var frames := sprite.sprite_frames
 
@@ -127,90 +93,86 @@ func play_attack(target: Node3D) -> bool:
 
 	var anim := variant
 	
-	# THE FIX: Check Z (depth) instead of Y (height) for screen Up/Down!
 	if abs(dir.z) > abs(dir.x):
 		anim = variant + ("Up" if dir.z < 0 else "Down")
 		sprite.flip_h = false
 	else:
 		sprite.flip_h = dir.x < 0
 
-	# Fallbacks if a unit lacks Up/Down
-	if not frames.has_animation(anim):
-		anim = variant
-	if not frames.has_animation(anim):
-		anim = "attack1" if frames.has_animation("attack1") else ""
+	if not frames.has_animation(anim): anim = variant
+	if not frames.has_animation(anim): anim = "attack1" if frames.has_animation("attack1") else ""
 
 	if anim != "":
 		sprite.play(anim)
 		return true
-	return false
-
-
-func set_sprite_frames(frames: SpriteFrames) -> void:
-	if not sprite:
-		push_warning("AgentAnimate.set_sprite_frames(): sprite not bound")
-		return
-
-	if sprite.sprite_frames == frames:
-		return
-
-	# Stop current animation cleanly
-	sprite.stop()
-
-	sprite.sprite_frames = frames
-	_update_move_anim_cache()
-
-	# Reset animation state safely
-	attacking = false
-	working = false
-	#sprite.flip_h = false
-
-	# Pick a safe default animation
-	if sprite.sprite_frames.has_animation("idle"):
-		sprite.play("idle")
-	elif sprite.sprite_frames.get_animation_names().size() > 0:
-		sprite.play(sprite.sprite_frames.get_animation_names()[0])
-
-func _update_move_anim_cache() -> void:
-	_move_anim = &""
-	if not sprite or sprite.sprite_frames == null:
-		return
-
-	if sprite.sprite_frames.has_animation("walk"):
-		_move_anim = &"walk"
-	elif sprite.sprite_frames.has_animation("run"):
-		_move_anim = &"run"
-
-
-func cancel_action_state() -> void:
-	# Called by apply_role in agent, or when movement overrides an action.
-	attacking = false
-	working = false
-	
-	if is_instance_valid(sprite):
-		sprite.stop()
 		
-	# Instantly fall back to Idle or Walk based on current speed!
-	_update_idle_walk_anim()
+	return false
 
 
 func play_work() -> bool:
-	# Called by tactical worker / interaction when work is performed.
-	if not sprite or sprite.sprite_frames == null:
-		return false
+	if not is_instance_valid(sprite) or sprite.sprite_frames == null: return false
+	
+	if _is_playing_action() and sprite.animation == "work":
+		return true
 
-	var frames := sprite.sprite_frames
-	if frames.has_animation("work"):
-		working = true
-		attacking = false
+	if sprite.sprite_frames.has_animation("work"):
 		sprite.play("work")
 		return true
+		
 	return false
 
 
-func face_target(target_pos: Vector3) -> void:
-	if not is_instance_valid(sprite) or not is_instance_valid(_my_agent):
-		return
-		
-	# In 3D space, compare the X coordinates to find left/right
-	sprite.flip_h = target_pos.x < _my_agent.global_position.x
+# ==========================================
+# INTERNAL HELPERS
+# ==========================================
+
+func _is_playing_action() -> bool:
+	if not is_instance_valid(sprite): return false
+	var current = sprite.animation
+	return sprite.is_playing() and (current.begins_with("attack") or current == "work")
+
+
+func _animation_finished() -> void:
+	if not is_instance_valid(sprite): return
+	var current = sprite.animation
+	if current.begins_with("attack"):
+		attackAnimationFinished.emit()
+	elif current == "work":
+		interactAnimationFinished.emit()
+
+
+func cancel_action_state() -> void:
+	if is_instance_valid(sprite):
+		sprite.stop()
+		play_idle()
+
+
+func _update_damage_visual() -> void:
+	if is_instance_valid(sprite):
+		var percent: float = float(damageTimer.wait_time - damageTimer.time_left) / damageTimer.wait_time
+		sprite.set_instance_shader_parameter(&"progress", percent)
+
+
+func _on_timer_timeout() -> void:
+	if is_instance_valid(sprite):
+		sprite.set_instance_shader_parameter(&"progress", 0.0)
+
+
+func _show_damage() -> void:
+	damageTimer.start()
+
+
+func set_sprite_frames(frames: SpriteFrames) -> void:
+	if not is_instance_valid(sprite): return
+	if sprite.sprite_frames == frames: return
+	sprite.stop()
+	sprite.sprite_frames = frames
+	_update_move_anim_cache()
+	play_idle()
+
+
+func _update_move_anim_cache() -> void:
+	_move_anim = &""
+	if not is_instance_valid(sprite) or sprite.sprite_frames == null: return
+	if sprite.sprite_frames.has_animation("walk"): _move_anim = &"walk"
+	elif sprite.sprite_frames.has_animation("run"): _move_anim = &"run"
