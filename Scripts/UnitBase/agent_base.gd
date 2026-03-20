@@ -11,6 +11,32 @@ signal new_castle_set(new_castle: Castle)
 @export var current_role: UnitRoles.UnitType
 @export var death_effect_scene: PackedScene
 
+@export var gold_giver: GoldGiver = null
+@export var gold_wallet: GoldWallet = null
+@export var minion_nav_agent: NavigationAgent3D = null
+@export var tax_ledger: TaxLedger = null
+@export var tracker: Node3D = null
+@export var unit_speed: UnitSpeed = null
+@export var a_attack: AdvisorAttack = null
+@export var a_goblin_march: AdvisorGoblinMarch = null
+@export var a_lord_tax: AdvisorLordTax = null
+@export var a_player_interact: AdvisorPlayerInteract = null
+@export var a_player_movement: AdvisorPlayerMovement = null
+@export var a_taxed: AdvisorTaxed = null
+@export var a_transform: AdvisorTransform = null
+@export var a_wander: AdvisorWander = null
+@export var a_work: AdvisorWork = null
+@export var health: Health = null
+@export var hunger_holder: HungerHolder = null
+@export var minion_tasker: MinionTasker = null
+@export var player_controls: PlayerControls = null
+@export var player_interactor: Node3D = null
+@export var weapon_bow: Node3D = null
+@export var weapon_sword: Node3D = null
+@export var work_action: WorkAction = null
+@export var animated_sprite_3d: AnimatedSprite3D = null
+@export var weapons_node: Node3D = null
+
 @onready var brain: AgentBrain = $Brain
 @onready var sensors: Node = $Sensors
 @onready var motor: Node = $Motor
@@ -22,17 +48,42 @@ signal new_castle_set(new_castle: Castle)
 # Called when the node enters the scene tree for the first time.
 func _ready() -> void:
 	if not movement:
-		movement = find_child("AgentMovement")
-
+		movement = ComponentFinder.get_component(self, "AgentMovement")
 	if not animate:
-		animate = find_child("AgentAnimate")
-
+		animate = ComponentFinder.get_component(self, "AgentAnimate")
 	if not team:
-		team = find_child("TeamMemory")
+		team = ComponentFinder.get_component(self, "TeamMemory")
+
+	gold_giver = ComponentFinder.get_component(self, "GoldGiver")
+	gold_wallet = ComponentFinder.get_component(self, "GoldWallet")
+	minion_nav_agent = ComponentFinder.get_component_by_name(self, "MinionNavAgent")
+	tax_ledger = ComponentFinder.get_component(self, "TaxLedger")
+	tracker = ComponentFinder.get_component_by_name(self, "Tracker")
+	unit_speed = ComponentFinder.get_component(self, "UnitSpeed")
+	a_attack = ComponentFinder.get_component(self, "AdvisorAttack")
+	a_goblin_march = ComponentFinder.get_component(self, "AdvisorGoblinMarch")
+	a_lord_tax = ComponentFinder.get_component(self, "AdvisorLordTax")
+	a_player_interact = ComponentFinder.get_component(self, "AdvisorPlayerInteract")
+	a_player_movement = ComponentFinder.get_component(self, "AdvisorPlayerMovement")
+	a_taxed = ComponentFinder.get_component(self, "AdvisorTaxed")
+	a_transform = ComponentFinder.get_component(self, "AdvisorTransform")
+	a_wander = ComponentFinder.get_component(self, "AdvisorWander")
+	a_work = ComponentFinder.get_component(self, "AdvisorWork")
+	health = ComponentFinder.get_component(self, "Health")
+	hunger_holder = ComponentFinder.get_component(self, "HungerHolder")
+	minion_tasker = ComponentFinder.get_component(self, "MinionTasker")
+	player_controls = ComponentFinder.get_component(self, "PlayerControls")
+	player_interactor = ComponentFinder.get_component_by_name(self, "player_interactor")
+	weapon_bow = ComponentFinder.get_component_by_name(self, "weapon_bow")
+	weapon_sword = ComponentFinder.get_component_by_name(self, "weapon_sword")
+	work_action = ComponentFinder.get_component(self, "WorkAction")
+	animated_sprite_3d = ComponentFinder.get_component(self, "AnimatedSprite3D")
+	weapons_node = ComponentFinder.get_component(self, "Node3D", "Weapons")
+
 	if team:
 		team.current_team = player
 	
-	apply_role(current_role, team.return_team())
+	apply_role(current_role, team.return_team() if team else player)
 	
 	_register_myself_with_castle()
 
@@ -105,12 +156,37 @@ func apply_role(role: UnitRoles.UnitType, new_team: int) -> void:
 	team = ComponentFinder.get_component(self, "TeamMemory") as TeamMemory
 	animate = ComponentFinder.get_component(self, "AgentAnimate") as AgentAnimate
 
-	var health_node = ComponentFinder.get_component(self, "Health") as Health
-	if is_instance_valid(health_node):
-		if not health_node.damaged.is_connected(_im_damaged):
-			health_node.damaged.connect(_im_damaged)
-		if not health_node.died.is_connected(_im_dead):
-			health_node.died.connect(_im_dead)
+	gold_giver = ComponentFinder.get_component(self, "GoldGiver") as GoldGiver
+	gold_wallet = ComponentFinder.get_component(self, "GoldWallet") as GoldWallet
+	minion_nav_agent = ComponentFinder.get_component_by_name(self, "MinionNavAgent") as NavigationAgent3D
+	tax_ledger = ComponentFinder.get_component(self, "TaxLedger") as TaxLedger
+	tracker = ComponentFinder.get_component_by_name(self, "Tracker") as Node3D
+	unit_speed = ComponentFinder.get_component(self, "UnitSpeed") as UnitSpeed
+	a_attack = ComponentFinder.get_component(self, "AdvisorAttack") as AdvisorAttack
+	a_goblin_march = ComponentFinder.get_component(self, "AdvisorGoblinMarch") as AdvisorGoblinMarch
+	a_lord_tax = ComponentFinder.get_component(self, "AdvisorLordTax") as AdvisorLordTax
+	a_player_interact = ComponentFinder.get_component(self, "AdvisorPlayerInteract") as AdvisorPlayerInteract
+	a_player_movement = ComponentFinder.get_component(self, "AdvisorPlayerMovement") as AdvisorPlayerMovement
+	a_taxed = ComponentFinder.get_component(self, "AdvisorTaxed") as AdvisorTaxed
+	a_transform = ComponentFinder.get_component(self, "AdvisorTransform") as AdvisorTransform
+	a_wander = ComponentFinder.get_component(self, "AdvisorWander") as AdvisorWander
+	a_work = ComponentFinder.get_component(self, "AdvisorWork") as AdvisorWork
+	health = ComponentFinder.get_component(self, "Health") as Health
+	hunger_holder = ComponentFinder.get_component(self, "HungerHolder") as HungerHolder
+	minion_tasker = ComponentFinder.get_component(self, "MinionTasker") as MinionTasker
+	player_controls = ComponentFinder.get_component(self, "PlayerControls") as PlayerControls
+	player_interactor = ComponentFinder.get_component_by_name(self, "player_interactor") as Node3D
+	weapon_bow = ComponentFinder.get_component_by_name(self, "weapon_bow") as Node3D
+	weapon_sword = ComponentFinder.get_component_by_name(self, "weapon_sword") as Node3D
+	work_action = ComponentFinder.get_component(self, "WorkAction") as WorkAction
+	animated_sprite_3d = ComponentFinder.get_component(self, "AnimatedSprite3D") as AnimatedSprite3D
+	weapons_node = ComponentFinder.get_component(self, "Node3D", "Weapons") as Node3D
+
+	if is_instance_valid(health):
+		if not health.damaged.is_connected(_im_damaged):
+			health.damaged.connect(_im_damaged)
+		if not health.died.is_connected(_im_dead):
+			health.died.connect(_im_dead)
 
 	# Tell the movement node to find the newly generated NavAgent.
 	if is_instance_valid(movement) and movement.has_method("refresh_components"):

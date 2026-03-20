@@ -100,7 +100,8 @@ func _on_peasant_transformed(new_unit: AgentBase) -> void:
 	
 	# Pop the unit out of the Spawn Queue and apply the role
 	var unit_to_apply = _spawn_queue.pop_front()
-	var team_memory = ComponentFinder.get_component(self, "TeamMemory")
+	var base = ComponentFinder.get_base(self)
+	var team_memory = base.get("team") if base.get("team") else base.get("team_memory")
 	var my_team = team_memory.return_team() if team_memory else 0
 
 	new_unit.apply_role(unit_to_apply, my_team)

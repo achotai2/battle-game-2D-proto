@@ -14,13 +14,13 @@ func initialize() -> void:
 	if _agent:
 		# 1. Grab the main vision sensor and speed
 		if not _vision_tracker:
-			_vision_tracker = ComponentFinder.get_component(self, "Tracker")
+			_vision_tracker = _agent.tracker
 
 		if not _unitSpeed:
-			_unitSpeed = ComponentFinder.get_component(self, "UnitSpeed")
+			_unitSpeed = _agent.unit_speed
 		
 		# 2. Grab the equipped weapon
-		var _weapon_folder: Node3D = ComponentFinder.get_component(self, "Node3D", "Weapons")
+		var _weapon_folder: Node3D = _agent.get("weapons_node")
 		if is_instance_valid(_weapon_folder):
 			for child in _weapon_folder.get_children():
 				if child.has_method("perform_attack_tick"):

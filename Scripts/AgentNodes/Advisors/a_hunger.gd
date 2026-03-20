@@ -12,7 +12,8 @@ var max_priority: float = 100.0
 
 func initialize() -> void:
 	if not hunger:
-		ComponentFinder.get_component(self, "HungerHolder")
+		var base = ComponentFinder.get_base(self)
+		hunger = base.get("hunger_holder")
 
 
 func get_intent() -> Intent:

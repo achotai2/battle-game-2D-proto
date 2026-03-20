@@ -15,14 +15,14 @@ var _needs_new_point: bool = true
 
 
 func initialize() -> void:
-	if not movement:
-		movement = ComponentFinder.get_component(self, "AgentMovement")
-
-	if not unit_speed:
-		unit_speed = ComponentFinder.get_component(self, "UnitSpeed")
-
 	if not _base_agent:
 		_base_agent = ComponentFinder.get_base(self)
+
+	if not movement:
+		movement = _base_agent.get("movement")
+
+	if not unit_speed:
+		unit_speed = _base_agent.get("unit_speed")
 	
 	# Wire up the movement signal so we know when we arrive
 	if movement and not movement.move_to_pos_finished.is_connected(_on_move_finished):

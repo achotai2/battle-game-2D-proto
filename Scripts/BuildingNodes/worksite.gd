@@ -83,9 +83,9 @@ func _ready() -> void:
 		
 	# Automatically find the Gold components
 	if not goldGiver:
-		goldGiver = ComponentFinder.get_component(self, "GoldGiver")
+		goldGiver = my_boss.get("gold_giver")
 	if not goldWallet:
-		goldWallet = ComponentFinder.get_component(self, "GoldWallet")
+		goldWallet = my_boss.get("gold_wallet")
 
 	# NEW: Wire up the Interactable if we have one assigned!
 	if is_instance_valid(my_interactable):

@@ -21,7 +21,9 @@ func _ready() -> void:
 	call_deferred("_late_ready")
 
 func _late_ready() -> void:
-	_team_memory = ComponentFinder.get_component(self, "TeamMemory")
+	var base = ComponentFinder.get_base(self)
+	_team_memory = base.get("team") if base.get("team") else base.get("team_memory")
+
 	if _team_memory and not _team_memory.team_changed.is_connected(_on_team_changed):
 		_team_memory.team_changed.connect(_on_team_changed)
 		_on_team_changed(_team_memory.return_team())

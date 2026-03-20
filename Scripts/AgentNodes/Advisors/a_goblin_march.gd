@@ -12,10 +12,10 @@ func initialize() -> void:
 
 	if _agent:
 		if not movement:
-			movement = ComponentFinder.get_component(self, "AgentMovement")
+			movement = _agent.movement
 
 		if not unitSpeed:
-			unitSpeed = ComponentFinder.get_component(self, "UnitSpeed")
+			unitSpeed = _agent.unit_speed
 
 
 func get_intent() -> Intent:

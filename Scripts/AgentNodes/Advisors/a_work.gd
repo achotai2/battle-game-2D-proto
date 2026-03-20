@@ -9,14 +9,15 @@ var unit_speed: UnitSpeed = null
 var arrived: bool = false
 
 func initialize() -> void:
+	var base = ComponentFinder.get_base(self)
 	if not work_action:
-		work_action = ComponentFinder.get_component(self, "WorkAction")
+		work_action = base.get("work_action")
 	if not movement:
-		movement = ComponentFinder.get_component(self, "AgentMovement")
+		movement = base.get("movement")
 	if not work_tasker:
-		work_tasker = ComponentFinder.get_component(self, "MinionTasker")
+		work_tasker = base.get("minion_tasker")
 	if not unit_speed:
-		unit_speed = ComponentFinder.get_component(self, "UnitSpeed")
+		unit_speed = base.get("unit_speed")
 
 
 func get_intent() -> Intent:

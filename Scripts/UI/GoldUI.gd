@@ -7,7 +7,7 @@ func _ready() -> void:
 	var player = get_tree().get_first_node_in_group("Player")
 	if not player: return
 
-	var goldWallet: GoldWallet = ComponentFinder.get_component(player, "GoldWallet")
+	var goldWallet: GoldWallet = player.get("gold_wallet")
 	if not goldWallet: return
 
 	if not goldWallet.gold_changed.is_connected(_update_gold_display):

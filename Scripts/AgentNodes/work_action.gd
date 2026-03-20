@@ -9,7 +9,8 @@ var work_amount: float = 1.0
 
 func _ready() -> void:
 	if not animate:
-		animate = ComponentFinder.get_component(self, "AgentAnimate")
+		var base = ComponentFinder.get_base(self)
+		animate = base.get("animate")
 
 
 func do_work(_site: Node3D) -> void:

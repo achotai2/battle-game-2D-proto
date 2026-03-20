@@ -27,7 +27,8 @@ func _ready() -> void:
 	attack_delay.timeout.connect(_on_attack_delay_timeout)
 	
 	# Establish connection to TeamMemory.
-	team = ComponentFinder.get_component(self, "TeamMemory")
+	var base = ComponentFinder.get_base(self)
+	team = base.get("team") if base.get("team") else base.get("team_memory")
 	if team and not team.team_changed.is_connected(_team_changed):
 		team.team_changed.connect(_team_changed)
 	_team_changed(team.return_team())
@@ -84,7 +85,7 @@ func _on_attack_delay_timeout() -> void:
 		return
 
 	# Use the ComponentFinder to grab the enemy's Health node!
-	var h: Health = ComponentFinder.get_component(t, "Health")
+	var h: Health = t.get("health")
 	if not is_instance_valid(h):
 		return
 

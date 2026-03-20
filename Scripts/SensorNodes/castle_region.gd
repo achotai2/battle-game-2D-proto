@@ -65,7 +65,7 @@ func _try_assign_castle(body: Node3D) -> void:
 			
 		var unit_team = -1
 		
-		var team_mem = ComponentFinder.get_component(body, "TeamMemory")
+		var team_mem = body.get("team") if body.get("team") else body.get("team_memory")
 		if team_mem:
 			unit_team = team_mem.return_team()
 		elif body.get("player") != null:
