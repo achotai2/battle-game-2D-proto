@@ -1,11 +1,7 @@
-[gd_scene load_steps=5 format=3 uid="uid://o3i1hye0kspv"]
+[gd_scene load_steps=3 format=3 uid="uid://o3i1hye0kspv"]
 
 [ext_resource type="Script" uid="uid://c06uw4lac84hb" path="res://Scripts/Weapons/weapon_ranged_base.gd" id="1_fl1el"]
-[ext_resource type="Script" uid="uid://bi15gddmxujcs" path="res://Scripts/SensorNodes/agent_tracking.gd" id="2_6nb2j"]
 [ext_resource type="PackedScene" uid="uid://ddlh76nm5b4gr" path="res://Scenes/Weapons/arrow_projectile.tscn" id="2_hace3"]
-
-[sub_resource type="CylinderShape3D" id="CylinderShape3D_72ito"]
-radius = 12.231934
 
 [node name="WeaponBow" type="Node3D"]
 script = ExtResource("1_fl1el")
@@ -13,15 +9,6 @@ projectile_scene = ExtResource("2_hace3")
 
 [node name="cooldown" type="Timer" parent="."]
 one_shot = true
-
-[node name="AgentTracking" type="Area3D" parent="."]
-collision_layer = 256
-collision_mask = 28
-script = ExtResource("2_6nb2j")
-
-[node name="CollisionShape3D" type="CollisionShape3D" parent="AgentTracking"]
-shape = SubResource("CylinderShape3D_72ito")
-debug_color = Color(0.949976, 0.0836959, 0.327913, 0.419608)
 
 [node name="AttackDelay" type="Timer" parent="."]
 wait_time = 0.5

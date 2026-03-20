@@ -55,10 +55,10 @@ script = ExtResource("6_gw")
 
 [node name="Sprites" type="Node3D" parent="."]
 
-[node name="AnimatedSprite3D" type="AnimatedSprite3D" parent="Sprites" groups=["sprites"]]
+[node name="AnimatedSprite3D" type="AnimatedSprite3D" parent="Sprites"]
 offset = Vector2(0, 100)
 billboard = 2
-alpha_cut = 1
+shaded = true
 sprite_frames = ExtResource("5_efeq4")
 animation = &"constructing"
 

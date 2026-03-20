@@ -30,11 +30,11 @@ carve_navigation_mesh = true
 
 [node name="Sprites" type="Node3D" parent="."]
 
-[node name="Sprite2D" type="Sprite3D" parent="Sprites" groups=["sprites"]]
+[node name="Sprite2D" type="Sprite3D" parent="Sprites"]
 transform = Transform3D(0.1, 0, 0, 0, 0.1, 0, 0, 0, 0.1, 0, 0, 0)
 offset = Vector2(0, 500)
 billboard = 2
-alpha_cut = 1
+shaded = true
 texture = ExtResource("6_o8tl3")
 
 [node name="Memory" type="Node3D" parent="."]

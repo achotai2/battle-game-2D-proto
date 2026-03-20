@@ -125,8 +125,10 @@ func play_attack(target: Node3D) -> bool:
 		variant = "attack2"
 
 	var anim := variant
-	if abs(dir.y) > abs(dir.x):
-		anim = variant + ("Up" if dir.y < 0 else "Down")
+	
+	# THE FIX: Check Z (depth) instead of Y (height) for screen Up/Down!
+	if abs(dir.z) > abs(dir.x):
+		anim = variant + ("Up" if dir.z < 0 else "Down")
 		sprite.flip_h = false
 	else:
 		sprite.flip_h = dir.x < 0
@@ -203,3 +205,11 @@ func play_work() -> bool:
 		sprite.play("work")
 		return true
 	return false
+
+
+func face_target(target_pos: Vector3) -> void:
+	if not is_instance_valid(sprite) or not is_instance_valid(_my_agent):
+		return
+		
+	# In 3D space, compare the X coordinates to find left/right
+	sprite.flip_h = target_pos.x < _my_agent.global_position.x

@@ -115,9 +115,9 @@ func get_frames(role: UnitType, player: int) -> SpriteFrames:
 # The Blueprint
 var role_blueprints: Dictionary = {
 	UnitType.PLAYER: {
-		"advisors": [preload("res://Scripts/AgentNodes/Advisors/a_player_interact.gd"), preload("res://Scripts/AgentNodes/Advisors/a_player_movement.gd")],
+		"advisors": [preload("res://Scripts/AgentNodes/Advisors/a_player_interact.gd"), preload("res://Scripts/AgentNodes/Advisors/a_player_movement.gd"), preload("res://Scripts/AgentNodes/Advisors/a_player_attack.gd")],
 		"memory": [preload("res://Scripts/MemoryNodes/GoldWallet.gd"), preload("res://Scripts/MemoryNodes/health.gd"), preload("res://Scripts/MemoryNodes/TeamMemory.gd"), preload("res://Scripts/MemoryNodes/UnitSpeed.gd"), preload("res://Scripts/MemoryNodes/TaxLedger.gd")],
-		"sensors": [preload("res://Scenes/AgentNodes/player_interactor.tscn"), preload("res://Scripts/SensorNodes/player_controls.gd")],
+		"sensors": [preload("res://Scenes/AgentNodes/Tracker.tscn"), preload("res://Scenes/AgentNodes/player_interactor.tscn"), preload("res://Scripts/SensorNodes/player_controls.gd")],
 		"motor": [preload("res://Scripts/AgentNodes/agent_animate.gd"), preload("res://Scripts/AgentNodes/agent_move.gd"), preload("res://Scripts/AgentNodes/GoldGiver.gd")],
 		"weapons": [preload("res://Scenes/Weapons/weapon_sword.tscn")],
 	},

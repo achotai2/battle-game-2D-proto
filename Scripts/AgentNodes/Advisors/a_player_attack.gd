@@ -1,24 +1,20 @@
 extends Advisor
-class_name AdvisorAttack
+class_name AdvisorPlayerAttack
 
 var _agent: AgentBase = null
 var _vision_tracker: Tracker = null
 var _weapon: Node = null
-var _unitSpeed: UnitSpeed = null
-var _current_target: Node3D = null
 
+var _current_target: Node3D = null
 
 func initialize() -> void:
 	if not _agent:
 		_agent = ComponentFinder.get_base(self)
 		
 	if _agent:
-		# 1. Grab the main vision sensor and speed
+		# 1. Grab the main vision sensor (No need for UnitSpeed since we don't move!)
 		if not _vision_tracker:
 			_vision_tracker = ComponentFinder.get_component(self, "Tracker")
-
-		if not _unitSpeed:
-			_unitSpeed = ComponentFinder.get_component(self, "UnitSpeed")
 		
 		# 2. Grab the equipped weapon
 		var _weapon_folder: Node3D = ComponentFinder.get_component(self, "Node3D", "Weapons")
@@ -43,11 +39,10 @@ func get_intent() -> Intent:
 
 	var best_target: Node3D = null
 
-	# STICKY TARGETING: If we already have a target, and they are still in our vision ring, keep hitting them!
+	# Sticky Targeting: Keep focusing the same enemy if they are still around
 	if is_instance_valid(_current_target) and enemies.has(_current_target):
 		best_target = _current_target
 	else:
-		# Otherwise, find the new closest enemy
 		var min_dist_sq: float = INF
 		var agent_pos = _agent.global_position
 
@@ -60,24 +55,20 @@ func get_intent() -> Intent:
 				min_dist_sq = dist_sq
 				best_target = e
 				
-		# Memorize the new target
 		_current_target = best_target
 
-	# If we somehow still failed to find a target, bail out
 	if not best_target:
 		return null
 
-	# 2. Ask the weapon if the target has entered the physical strike range
+	# ONLY return an intent if the target is already in physical strike range
 	if _weapon.is_target_in_range(best_target):
-		var intent = Intent.new(80.0, self, Intent.Type.ATTACK) 
+		var intent = Intent.new(50.0, self, Intent.Type.ATTACK) 
 		intent.target_node = best_target
-		intent.description = "Attacking " + best_target.name
+		intent.description = "Auto-Attacking " + best_target.name
 		return intent
-	else:
-		var intent = Intent.new(70.0, self, Intent.Type.CHASE) 
-		intent.target_node = best_target
-		intent.description = "Chasing " + best_target.name
-		return intent
+	
+	# If they are out of range, do absolutely nothing. The player must walk closer manually.
+	return null
 
 
 func enact_intent(intent: Intent) -> void:
@@ -86,13 +77,7 @@ func enact_intent(intent: Intent) -> void:
 
 	var target = intent.target_node
 
-	if intent.type == Intent.Type.CHASE:
-		if _agent.movement:
-			if _unitSpeed:
-				_agent.movement.max_speed = _unitSpeed.run_speed
-			_agent.movement.move_to_position(target.global_position)
-			
-	elif intent.type == Intent.Type.ATTACK:
+	if intent.type == Intent.Type.ATTACK:
 		if _agent.movement:
 			_agent.movement.stop()
 
@@ -104,6 +89,5 @@ func enact_intent(intent: Intent) -> void:
 		if is_instance_valid(_weapon):
 			var attack_started = _weapon.perform_attack_tick(target)
 			
-			# Only play the animation if the weapon isn't on cooldown!
 			if attack_started and _agent.animate and _agent.animate.has_method("play_attack"):
 				_agent.animate.play_attack(target)
