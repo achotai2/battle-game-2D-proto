@@ -95,10 +95,10 @@ icon_type = 1
 
 [node name="Sprites" type="Node3D" parent="."]
 
-[node name="Sprite2D" type="Sprite3D" parent="Sprites" groups=["sprites"]]
+[node name="Sprite2D" type="Sprite3D" parent="Sprites"]
 offset = Vector2(0, 70)
 billboard = 2
-alpha_cut = 1
+shaded = true
 texture = ExtResource("1_7aoon")
 
 [node name="Memory" type="Node3D" parent="."]

@@ -98,11 +98,11 @@ icon_type = 1
 [node name="Sprites" type="Node3D" parent="."]
 transform = Transform3D(0.359375, 0, 0, 0, 1, 0, 0, 0, 0.359375, 0, 1.0022817, 0)
 
-[node name="Sprite2D" type="Sprite3D" parent="Sprites" groups=["sprites"]]
+[node name="Sprite2D" type="Sprite3D" parent="Sprites"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.4781952e-05, 0, 0)
 offset = Vector2(0, 20)
 billboard = 2
-alpha_cut = 1
+shaded = true
 texture = ExtResource("6_0ywlv")
 
 [node name="Memory" type="Node3D" parent="."]

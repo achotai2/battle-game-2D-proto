@@ -4,6 +4,7 @@ class_name WeaponRanged
 # --- WEAPON STATS ---
 @export_range(0, 1000, 1) var damage: int = 10
 @export_range(0, 1000, 1) var heal: int = 0
+@export var attack_range: float = 15.0 # Replaces the AgentTracking radius
 @export_range(0.0, 100.0, 1.0) var base_accuracy: float = 50.0 
 @export_range(0.0, 5.0, 0.1) var wind_resistance: float = 1.0 
 
@@ -20,7 +21,6 @@ class_name WeaponRanged
 @export var attack_power: int = 10
 
 # --- REFS ---
-@onready var tracking: AgentTracking = $AgentTracking
 @onready var cooldown: Timer = $cooldown
 @onready var attack_delay: Timer = $AttackDelay
 
@@ -35,10 +35,6 @@ var accuracy_modifiers: Array = []
 
 
 func _ready() -> void:
-	tracking.target_same_team = affects_own
-	tracking.target_opposing = affects_opposing
-	tracking.target_neutral = affects_neutral
-
 	attack_delay.timeout.connect(_on_attack_delay_timeout)
 	_projectile_parent = _resolve_projectile_parent()
 
@@ -54,6 +50,8 @@ func _ready() -> void:
 
 func _team_changed(new_team: int) -> void:
 	tracking.setup_player(new_team)
+	# Establish connection to TeamMemory to assign damage ownership.
+	team = ComponentFinder.get_component(self, "TeamMemory")
 
 
 func _cancel_attack() -> void:
@@ -66,9 +64,15 @@ func _cancel_attack() -> void:
 # --- API FOR ADVISOR ---
 
 func is_target_in_range(target: Node3D) -> bool:
-	if not is_instance_valid(target): return false
-	var candidates = tracking.get_candidates()
-	return target in candidates
+	if not is_instance_valid(target): 
+		return false
+		
+	var my_base = ComponentFinder.get_base(self)
+	if not is_instance_valid(my_base):
+		return false
+		
+	var dist = my_base.global_position.distance_to(target.global_position)
+	return dist <= attack_range
 
 
 func perform_attack_tick(target: Node3D) -> bool:
@@ -143,10 +147,8 @@ func get_shot_point(origin: Vector3, target_pos: Vector3) -> Vector3:
 	var spread_factor = 0.05 
 	var deviation = dist * inaccuracy * spread_factor
 	
-	# FIXED: 3D Ground-plane error should apply to X and Z, not X and Y!
 	var error_offset = Vector3(randfn(0.0, deviation), 0, randfn(0.0, deviation))
 
-	# Weather check (Make sure your Weather singleton is loaded in Project Settings!)
 	var physics_wind_speed = 0.0
 	var wind_push = Vector3.ZERO
 	if Engine.has_singleton("Weather") or get_tree().root.has_node("Weather"):
@@ -162,7 +164,7 @@ func _get_spawn_position(boss: Node) -> Vector3:
 	if muzzle:
 		return muzzle.global_position
 	if is_instance_valid(boss):
-		return boss.global_position + Vector3(0, 1.0, 0) # Fire from chest/head height
+		return boss.global_position + Vector3(0, 1.0, 0)
 	return global_position
 
 
