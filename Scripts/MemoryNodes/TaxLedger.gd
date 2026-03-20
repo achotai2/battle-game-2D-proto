@@ -1,6 +1,10 @@
 extends Node
 class_name TaxLedger
 
+signal request_added
+signal request_cleared
+signal tax_paid
+
 # request_id -> {requester: Node, amount: int, timestamp: int, urgency: float}
 var _requests: Dictionary = {}
 var _next_id: int = 0
@@ -24,6 +28,7 @@ func can_be_taxed() -> bool:
 
 func record_tax_paid() -> void:
 	_last_taxed_time = Time.get_ticks_msec()
+	tax_paid.emit()
 
 func request_tax(requester: Node, amount: int, urgency: float = 50.0) -> void:
 	if not is_instance_valid(requester):
@@ -37,6 +42,7 @@ func request_tax(requester: Node, amount: int, urgency: float = 50.0) -> void:
 		"timestamp": Time.get_ticks_msec(),
 		"urgency": urgency
 	}
+	request_added.emit()
 
 func get_requests() -> Array:
 	_cleanup_expired()
@@ -64,6 +70,7 @@ func clear_request(requester: Node) -> void:
 
 	for id in keys_to_remove:
 		_requests.erase(id)
+		request_cleared.emit()
 
 func _cleanup_expired() -> void:
 	var now = Time.get_ticks_msec()

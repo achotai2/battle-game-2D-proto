@@ -22,8 +22,20 @@ func initialize() -> void:
 		unit_speed = _agent.get("unit_speed")
 		animate = _agent.get("animate")
 
+		if is_instance_valid(work_tasker):
+			if not work_tasker.task_changed.is_connected(_on_task_changed):
+				work_tasker.task_changed.connect(_on_task_changed)
 
-func get_intent() -> Intent:
+		var timer = Timer.new()
+		timer.wait_time = 0.5
+		timer.autostart = true
+		timer.timeout.connect(request_intent_update)
+		add_child(timer)
+
+func _on_task_changed() -> void:
+	request_intent_update()
+
+func _calculate_intent() -> Intent:
 	if not work_tasker or not is_instance_valid(_agent): return null
 	
 	var job = work_tasker.get_current_job()

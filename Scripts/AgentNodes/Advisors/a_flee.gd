@@ -3,7 +3,7 @@ class_name AdvisorFlee
 
 @export var flee_distance: float = 10.0
 
-#func get_intent() -> Intent:
+#func _calculate_intent() -> Intent:
 #	if not agent or not agent.detection: return null
 #
 #	var enemies = agent.detection.get_candidates()

@@ -33,10 +33,21 @@ func _find_components() -> bool:
 	if not unit_speed:
 		unit_speed = agent.get("unit_speed")
 
+	if is_instance_valid(_tax_ledger):
+		if not _tax_ledger.request_added.is_connected(_on_request_added):
+			_tax_ledger.request_added.connect(_on_request_added)
+		if not _tax_ledger.request_cleared.is_connected(_on_request_cleared):
+			_tax_ledger.request_cleared.connect(_on_request_cleared)
+
 	return agent and movement and _gold_wallet and _tax_ledger and _gold_giver and unit_speed
 
+func _on_request_added() -> void:
+	request_intent_update()
 
-func get_intent() -> Intent:
+func _on_request_cleared() -> void:
+	request_intent_update()
+
+func _calculate_intent() -> Intent:
 	if not _find_components():
 		return null
 

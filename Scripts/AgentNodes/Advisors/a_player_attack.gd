@@ -24,8 +24,25 @@ func initialize() -> void:
 					_weapon = child
 					break
 
+		if _vision_tracker:
+			if not _vision_tracker.target_changed.is_connected(_on_target_changed):
+				_vision_tracker.target_changed.connect(_on_target_changed)
+			if not _vision_tracker.target_lost.is_connected(_on_target_lost):
+				_vision_tracker.target_lost.connect(_on_target_lost)
 
-func get_intent() -> Intent:
+		var timer = Timer.new()
+		timer.wait_time = 0.25
+		timer.autostart = true
+		timer.timeout.connect(request_intent_update)
+		add_child(timer)
+
+func _on_target_changed(target: Node3D) -> void:
+	request_intent_update()
+
+func _on_target_lost() -> void:
+	request_intent_update()
+
+func _calculate_intent() -> Intent:
 	if not is_instance_valid(_agent) or not is_instance_valid(_weapon):
 		return null
 		

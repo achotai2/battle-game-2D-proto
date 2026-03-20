@@ -20,7 +20,7 @@ func initialize() -> void:
 		controls.input_changed.connect(_on_input_changed)
 
 
-func get_intent() -> Intent:
+func _calculate_intent() -> Intent:
 	if not controls: return null
 
 	var dir = controls.get_input_vector()
@@ -37,7 +37,7 @@ func get_intent() -> Intent:
 
 
 func _on_input_changed() -> void:
-	intent_changed.emit()
+	request_intent_update()
 
 
 func enact_intent(intent: Intent) -> void:

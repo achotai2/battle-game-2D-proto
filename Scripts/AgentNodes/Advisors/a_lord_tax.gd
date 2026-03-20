@@ -11,8 +11,13 @@ func initialize() -> void:
 	if not _agent:
 		_agent = ComponentFinder.get_base(self)
 
+	var timer = Timer.new()
+	timer.wait_time = 1.0
+	timer.autostart = true
+	timer.timeout.connect(request_intent_update)
+	add_child(timer)
 
-func get_intent() -> Intent:
+func _calculate_intent() -> Intent:
 	if not _agent:
 		return null
 

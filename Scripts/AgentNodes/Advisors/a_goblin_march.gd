@@ -17,8 +17,14 @@ func initialize() -> void:
 		if not unitSpeed:
 			unitSpeed = _agent.unit_speed
 
+		if not _agent.new_castle_set.is_connected(_castle_updated):
+			_agent.new_castle_set.connect(_castle_updated)
 
-func get_intent() -> Intent:
+func _castle_updated(new_castle: Node3D) -> void:
+	request_intent_update()
+
+
+func _calculate_intent() -> Intent:
 	if not is_instance_valid(_agent) or not is_instance_valid(_agent.return_castle()):
 		return null
 

@@ -1,6 +1,8 @@
 extends Node
 class_name MinionTasker
 
+signal task_changed
+
 # --- CONFIGURATION ---
 @export var agent: AgentBase = null # Strict type
 @export var movement: AgentMovement = null
@@ -134,7 +136,7 @@ func assign_job(site: Node3D) -> void:
 		return
 
 	_site = site
-	# We don't command movement here.
+	task_changed.emit()
 
 
 func _release_job(release_to_board: bool) -> void:
@@ -142,6 +144,7 @@ func _release_job(release_to_board: bool) -> void:
 		_site.release_worker(agent)
 
 	_site = null
+	task_changed.emit()
 
 # --- WORK LOGIC (Called by Advisor) ---
 func get_current_job() -> Node3D:

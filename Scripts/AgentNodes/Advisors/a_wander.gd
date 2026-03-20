@@ -38,7 +38,7 @@ func initialize() -> void:
 			_base_agent.new_castle_set.connect(_castle_updated)
 
 
-func get_intent() -> Intent:
+func _calculate_intent() -> Intent:
 	if not _current_target or not _base_agent:
 		return null
 
@@ -78,19 +78,22 @@ func _generate_new_wander_point() -> void:
 	# 3. SAFETY CHECK: Ask the Navigation Server to snap this raw coordinate to the nearest valid NavMesh polygon
 	var map_rid: RID = _base_agent.get_world_3d().navigation_map
 	_wander_target_pos = NavigationServer3D.map_get_closest_point(map_rid, raw_target)
-
+	request_intent_update()
 
 func _on_move_finished(agent: AgentBase) -> void:
 	# Only flip the flag if THIS agent is the one that finished moving
 	if agent == _base_agent:
 		_needs_new_point = true
+		request_intent_update()
 
 
 func _meander_stuck(agent: AgentBase) -> void:
 	if agent == _base_agent:
 		_needs_new_point = true
+		request_intent_update()
 
 
 func _castle_updated(new_castle: Node3D) -> void:
 	_current_target = new_castle
 	_needs_new_point = true # Force a new point to be generated around the new castle
+	request_intent_update()
