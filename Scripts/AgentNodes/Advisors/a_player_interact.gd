@@ -32,7 +32,7 @@ func initialize() -> void:
 
 func _on_interaction_started(target: Interactable) -> void:
 	_interaction_target = target
-	intent_changed.emit()
+	request_intent_update()
 
 
 func _on_interaction_finished(target: Interactable) -> void:
@@ -43,15 +43,15 @@ func _on_interaction_finished(target: Interactable) -> void:
 		target.finish_interact(ComponentFinder.get_base(self))
 		
 	_interaction_target = null
-	intent_changed.emit()
+	request_intent_update()
 
 
 func _on_interaction_suspended(target: Interactable) -> void:
 	_interaction_target = null
-	intent_changed.emit()
+	request_intent_update()
 
 
-func get_intent() -> Intent:
+func _calculate_intent() -> Intent:
 	if not interactor: return null
 
 	# Deadzone control feature, for joysticks.

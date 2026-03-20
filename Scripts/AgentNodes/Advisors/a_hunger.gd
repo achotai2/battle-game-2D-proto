@@ -11,12 +11,29 @@ var max_priority: float = 100.0
 
 
 func initialize() -> void:
+	var base = ComponentFinder.get_base(self)
+
 	if not hunger:
-		var base = ComponentFinder.get_base(self)
 		hunger = base.get("hunger_holder")
 
+	if not tasker:
+		tasker = base.get("minion_tasker")
 
-func get_intent() -> Intent:
+	if is_instance_valid(hunger):
+		if hunger.has_signal("food_changed") and not hunger.food_changed.is_connected(_on_food_changed):
+			hunger.food_changed.connect(_on_food_changed)
+
+	if is_instance_valid(tasker):
+		if not tasker.task_changed.is_connected(_on_task_changed):
+			tasker.task_changed.connect(_on_task_changed)
+
+func _on_food_changed(_food: int) -> void:
+	request_intent_update()
+
+func _on_task_changed() -> void:
+	request_intent_update()
+
+func _calculate_intent() -> Intent:
 	if not is_instance_valid(hunger) or not is_instance_valid(tasker):
 		return null
 
