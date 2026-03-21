@@ -13,6 +13,9 @@ func _ready() -> void:
 	if not goldWallet.gold_changed.is_connected(_update_gold_display):
 		goldWallet.gold_changed.connect(_update_gold_display)
 
+	# Call it once to initialize the display
+	_update_gold_display(goldWallet.get_gold())
+
 
 func _update_gold_display(gold: int) -> void:
 	text = "Gold: %d" % gold
