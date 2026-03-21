@@ -14,9 +14,10 @@ func deactivate() -> void:
 	pass
 
 func activate() -> void:
-	if not animate:
+	if not is_instance_valid(animate):
 		var base = ComponentFinder.get_base(self)
-		animate = base.get("animate")
+		if is_instance_valid(base):
+			animate = ComponentFinder.get_component(base, "AgentAnimate") as AgentAnimate
 
 
 func do_work(_site: Node3D) -> void:

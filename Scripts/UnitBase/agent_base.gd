@@ -136,17 +136,17 @@ func _deferred_apply_role(role: UnitRoles.UnitType, new_team: int) -> void:
 	# and sync the NavigationServer for the new MinionNavAgent.
 	await get_tree().physics_frame
 
-	# 2b. Re-activate logic BEFORE recaching
-	# This ensures new timers start, states reset, and physics enables properly
-	# before ComponentFinder grabs references.
+	# 3. Re-cache the variables
+	# Now that the dust has settled, ComponentFinder will grab the correct, newly added nodes.
+	_cache_components()
+
+	# 3b. Re-activate logic AFTER recaching
+	# This ensures new components have access to the correctly cached variables on the AgentBase
+	# when their activate() logic runs (preventing "Trying to assign invalid previously freed instance" errors).
 	_activate_folder(memory)
 	_activate_folder(sensors)
 	_activate_folder(weapons)
 	_activate_folder(motor)
-
-	# 3. Re-cache the variables
-	# Now that the dust has settled, ComponentFinder will grab the correct, newly added nodes.
-	_cache_components()
 
 	# 4. Refresh Internal Components (The Advisor Fix)
 	if brain and brain.has_method("refresh_advisors"):
