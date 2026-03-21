@@ -19,6 +19,18 @@ var _known_jobs: Array[Node3D] = []
 var _work_range_sq: float = 0.0
 
 func _ready() -> void:
+	pass
+
+func deactivate() -> void:
+	if is_instance_valid(agent) and agent.new_castle_set.is_connected(set_castle):
+		agent.new_castle_set.disconnect(set_castle)
+	if is_instance_valid(_job_board):
+		if _job_board.work_available.is_connected(_on_work_available):
+			_job_board.work_available.disconnect(_on_work_available)
+		if _job_board.work_completed.is_connected(_on_work_completed):
+			_job_board.work_completed.disconnect(_on_work_completed)
+
+func activate() -> void:
 	_work_range_sq = work_range * work_range
 	
 	if not is_instance_valid(agent):

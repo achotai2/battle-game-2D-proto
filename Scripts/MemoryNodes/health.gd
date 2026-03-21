@@ -12,6 +12,12 @@ var hp: int
 func _ready() -> void:
 	hp = max_hp
 
+func deactivate() -> void:
+	pass
+
+func activate() -> void:
+	pass
+
 func return_health() -> int:
 	return hp
 

@@ -22,19 +22,13 @@ var _scan_shape_query: PhysicsShapeQueryParameters3D
 var _active_collision_mask: int = 0
 
 func _ready() -> void:
-	# [OPTIMIZATION] 1. Turn off the Area3D.
-	# We will not use the built-in overlapping signals.
-	# This stops the engine from calculating overlaps every frame.
 	monitoring = false
 	monitorable = false
 	
-	# 2. Prepare the Shape Query (Re-usable object)
 	_scan_shape_query = PhysicsShapeQueryParameters3D.new()
 	_scan_shape_query.collide_with_bodies = true
-	_scan_shape_query.collide_with_areas = false # Unless you target Areas?
+	_scan_shape_query.collide_with_areas = false
 	
-	# Grab the shape from our child CollisionShape3D
-	# (Assumes you have a CollisionShape3D child)
 	var shape_node = find_child("CollisionShape3D")
 	if shape_node and shape_node.shape:
 		_scan_shape_query.shape = shape_node.shape
@@ -46,10 +40,19 @@ func _ready() -> void:
 	# 3. Setup Timer
 	_timer = Timer.new()
 	_timer.wait_time = scan_interval
-	_timer.autostart = true
-	_timer.timeout.connect(_scan_for_targets)
+	_timer.autostart = false
 	add_child(_timer)
-	_timer.start(scan_interval + randf() * 0.2)
+
+func deactivate() -> void:
+	if _timer:
+		_timer.stop()
+
+func activate() -> void:
+	if not _timer.timeout.is_connected(_scan_for_targets):
+		_timer.timeout.connect(_scan_for_targets)
+
+	if _timer:
+		_timer.start(scan_interval + randf() * 0.2)
 	
 	# 4. Setup Mask
 	_update_collision_mask()

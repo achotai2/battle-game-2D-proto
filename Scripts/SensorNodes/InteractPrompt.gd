@@ -19,6 +19,12 @@ const ICONS := {
 var _time: float = 0.0
 
 func _ready() -> void:
+	pass
+
+func deactivate() -> void:
+	pass
+
+func activate() -> void:
 	if visuals == null:
 		push_warning("InteractPrompt: 'visuals' Node3D export is not set.")
 	if circle == null:

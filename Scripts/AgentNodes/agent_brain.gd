@@ -11,6 +11,12 @@ var _evaluation_queued: bool = false
 
 
 func _ready() -> void:
+	pass
+
+func deactivate() -> void:
+	pass
+
+func activate() -> void:
 	if not is_instance_valid(agent):
 		agent = _find_root_base(self)
 

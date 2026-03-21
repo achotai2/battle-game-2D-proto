@@ -22,10 +22,12 @@ func _ready() -> void:
 	collision_layer = GamePhysics.get_mask_bit(GamePhysics.LAYER_PROJECTILE)
 	collision_mask = GamePhysics.get_projectile_mask()
 
-	body_entered.connect(_on_body_entered)
+	if not body_entered.is_connected(_on_body_entered):
+		body_entered.connect(_on_body_entered)
 	
 	# Hook up the timer!
-	death_timer.timeout.connect(_on_death_timer_timeout)
+	if not death_timer.timeout.is_connected(_on_death_timer_timeout):
+		death_timer.timeout.connect(_on_death_timer_timeout)
 	death_timer.one_shot = true
 
 	if sprite.sprite_frames and sprite.sprite_frames.has_animation("flying"):

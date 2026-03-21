@@ -9,12 +9,27 @@ signal target_lost()
 var _my_team = null
 
 func _ready() -> void:
+	pass
+
+func deactivate() -> void:
+	if is_instance_valid(tracking):
+		if tracking.has_signal("target_changed") and tracking.target_changed.is_connected(_on_tracking_target_changed):
+			tracking.target_changed.disconnect(_on_tracking_target_changed)
+		if tracking.has_signal("target_lost") and tracking.target_lost.is_connected(_on_tracking_target_lost):
+			tracking.target_lost.disconnect(_on_tracking_target_lost)
+
+	if is_instance_valid(_my_team) and _my_team.team_changed.is_connected(_team_changed):
+		_my_team.team_changed.disconnect(_team_changed)
+
+func activate() -> void:
 	# 2. Wire up the Signal Forwarding
 	if is_instance_valid(tracking):
 		if tracking.has_signal("target_changed"):
-			tracking.target_changed.connect(_on_tracking_target_changed)
+			if not tracking.target_changed.is_connected(_on_tracking_target_changed):
+				tracking.target_changed.connect(_on_tracking_target_changed)
 		if tracking.has_signal("target_lost"):
-			tracking.target_lost.connect(_on_tracking_target_lost)
+			if not tracking.target_lost.is_connected(_on_tracking_target_lost):
+				tracking.target_lost.connect(_on_tracking_target_lost)
 
 	# 3. Safely grab the team without the ComponentFinder
 	var base = _find_root_base(self)

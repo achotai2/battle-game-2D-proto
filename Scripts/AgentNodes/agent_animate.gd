@@ -13,22 +13,32 @@ var _move_anim: StringName = &""
 
 
 func _ready() -> void:
-	# 1. Grab the base using the ComponentFinder
 	if not _my_agent:
 		_my_agent = ComponentFinder.get_base(self)
-	
-	# 2. THE FIX: Use ComponentFinder to grab the node directly! 
-	# Do not rely on AgentBase's cached variables here because they don't exist yet!
+
+	damageTimer.wait_time = damageVisualTime
+	damageTimer.one_shot = true
+	add_child(damageTimer)
+
+func deactivate() -> void:
+	if damageTimer:
+		damageTimer.stop()
+	set_process(false)
+	set_physics_process(false)
+
+func activate() -> void:
+	set_process(true)
+	set_physics_process(true)
+
+	if not _my_agent:
+		_my_agent = ComponentFinder.get_base(self)
+
 	if not sprite and is_instance_valid(_my_agent):
 		sprite = ComponentFinder.get_component(_my_agent, "AnimatedSprite3D") as AnimatedSprite3D
 
-	# 3. Setup Damage Timer
-	damageTimer.wait_time = damageVisualTime
-	damageTimer.one_shot = true
-	damageTimer.timeout.connect(_on_timer_timeout)
-	add_child(damageTimer)
+	if not damageTimer.timeout.is_connected(_on_timer_timeout):
+		damageTimer.timeout.connect(_on_timer_timeout)
 
-	# 4. Connect Signals and Cache Move Anim
 	if is_instance_valid(sprite):
 		_update_move_anim_cache()
 		if not sprite.animation_finished.is_connected(_animation_finished):

@@ -35,6 +35,12 @@ const PATH_UPDATE_INTERVAL: int = 4
 
 
 func _ready() -> void:
+	pass
+
+func deactivate() -> void:
+	pass
+
+func activate() -> void:
 	# Sleep immediately. We wait for AgentBase to wake us up.
 	set_physics_process(false)
 

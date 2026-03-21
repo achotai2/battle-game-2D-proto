@@ -4,19 +4,33 @@ class_name CastleRegion
 @export var owning_castle: Castle
 
 
+var sweep_timer: Timer
+
 func _ready() -> void:
+	sweep_timer = Timer.new()
+	sweep_timer.wait_time = 2.0
+	sweep_timer.autostart = false
+	add_child(sweep_timer)
+
+func deactivate() -> void:
+	if sweep_timer:
+		sweep_timer.stop()
+	if body_entered.is_connected(_try_assign_castle):
+		body_entered.disconnect(_try_assign_castle)
+
+func activate() -> void:
 	collision_layer = 0 
 	collision_mask = GamePhysics.get_castle_region_mask()
 	
 	# Catch any units that physically walk into the zone
-	body_entered.connect(_try_assign_castle)
+	if not body_entered.is_connected(_try_assign_castle):
+		body_entered.connect(_try_assign_castle)
 	
 	# Create a recurring radar sweep to catch Static objects that pop into existence!
-	var sweep_timer = Timer.new()
-	sweep_timer.wait_time = 2.0
-	sweep_timer.autostart = true
-	sweep_timer.timeout.connect(_sweep_territory)
-	add_child(sweep_timer)
+	if sweep_timer:
+		if not sweep_timer.timeout.is_connected(_sweep_territory):
+			sweep_timer.timeout.connect(_sweep_territory)
+		sweep_timer.start()
 	
 	# Do one immediate sweep just in case
 	_sweep_territory()

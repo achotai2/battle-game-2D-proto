@@ -17,9 +17,30 @@ var _is_interacting: bool = false
 
 
 func _ready() -> void:
+	pass
+
+func deactivate() -> void:
+	if interaction_timer:
+		interaction_timer.stop()
+	set_process(false)
+	set_process_unhandled_input(false)
+	_hide_prompt()
+	_current_target = null
+
 	if is_instance_valid(sensor):
-		sensor.target_changed.connect(_target_changed)
-		sensor.target_lost.connect(_target_lost)
+		if sensor.target_changed.is_connected(_target_changed):
+			sensor.target_changed.disconnect(_target_changed)
+		if sensor.target_lost.is_connected(_target_lost):
+			sensor.target_lost.disconnect(_target_lost)
+
+func activate() -> void:
+	set_process(true)
+	set_process_unhandled_input(true)
+	if is_instance_valid(sensor):
+		if not sensor.target_changed.is_connected(_target_changed):
+			sensor.target_changed.connect(_target_changed)
+		if not sensor.target_lost.is_connected(_target_lost):
+			sensor.target_lost.connect(_target_lost)
 
 	prompt_parent = ComponentFinder.get_base(self)
 
