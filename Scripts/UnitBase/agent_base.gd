@@ -136,6 +136,14 @@ func _deferred_apply_role(role: UnitRoles.UnitType, new_team: int) -> void:
 	# and sync the NavigationServer for the new MinionNavAgent.
 	await get_tree().physics_frame
 
+	# 2b. Re-activate logic BEFORE recaching
+	# This ensures new timers start, states reset, and physics enables properly
+	# before ComponentFinder grabs references.
+	_activate_folder(memory)
+	_activate_folder(sensors)
+	_activate_folder(weapons)
+	_activate_folder(motor)
+
 	# 3. Re-cache the variables
 	# Now that the dust has settled, ComponentFinder will grab the correct, newly added nodes.
 	_cache_components()
@@ -189,6 +197,10 @@ func _sync_folder(target_parent: Node, incoming_packages: Array) -> void:
 	for existing_child in target_parent.get_children():
 		if existing_child is Timer:
 			continue
+
+		if existing_child.has_method("deactivate"):
+			existing_child.deactivate()
+
 		if not existing_child.name in incoming_names:
 			# Prevent ComponentFinder from accidentally grabbing a dying ghost!
 			existing_child.name = existing_child.name + "_DELETED"
@@ -240,3 +252,9 @@ func _register_myself_with_castle() -> void:
 func _unregister_myself_with_castle() -> void:
 	if is_instance_valid(castle):
 		castle.unregister_minion(self)
+
+func _activate_folder(target_parent: Node) -> void:
+	if target_parent == null: return
+	for child in target_parent.get_children():
+		if not child.is_queued_for_deletion() and child.has_method("activate"):
+			child.activate()
