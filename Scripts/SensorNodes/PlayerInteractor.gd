@@ -32,6 +32,8 @@ func deactivate() -> void:
 			sensor.target_changed.disconnect(_target_changed)
 		if sensor.target_lost.is_connected(_target_lost):
 			sensor.target_lost.disconnect(_target_lost)
+		if sensor.has_method("deactivate"):
+			sensor.deactivate()
 
 func activate() -> void:
 	set_process(true)
@@ -41,6 +43,8 @@ func activate() -> void:
 			sensor.target_changed.connect(_target_changed)
 		if not sensor.target_lost.is_connected(_target_lost):
 			sensor.target_lost.connect(_target_lost)
+		if sensor.has_method("activate"):
+			sensor.activate()
 
 	prompt_parent = ComponentFinder.get_base(self)
 
