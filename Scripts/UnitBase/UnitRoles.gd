@@ -122,14 +122,14 @@ var role_blueprints: Dictionary = {
 		"weapons": [preload("res://Scenes/Weapons/weapon_sword.tscn")],
 	},
 	UnitType.PEASANT: {
-		"advisors": [preload("res://Scripts/AgentNodes/Advisors/a_transform.gd"), preload("res://Scripts/AgentNodes/Advisors/a_wander.gd"), preload("res://Scripts/AgentNodes/Advisors/a_taxed.gd"),],
+		"advisors": [preload("res://Scripts/AgentNodes/Advisors/a_flee.gd"), preload("res://Scripts/AgentNodes/Advisors/a_transform.gd"), preload("res://Scripts/AgentNodes/Advisors/a_wander.gd"), preload("res://Scripts/AgentNodes/Advisors/a_taxed.gd"),],
 		"memory": [preload("res://Scripts/MemoryNodes/GoldWallet.gd"), preload("res://Scripts/MemoryNodes/health.gd"), preload("res://Scripts/MemoryNodes/TeamMemory.gd"), preload("res://Scripts/MemoryNodes/minion_tasker.gd"), preload("res://Scripts/MemoryNodes/UnitSpeed.gd"), preload("res://Scripts/MemoryNodes/TaxLedger.gd")],
 		"sensors": [preload("res://Scenes/AgentNodes/Tracker.tscn")],
 		"motor": [preload("res://Scripts/AgentNodes/agent_animate.gd"), preload("res://Scripts/AgentNodes/agent_move.gd"), preload("res://Scripts/AgentNodes/GoldGiver.gd"), preload("res://Scenes/AgentNodes/MinionNavAgent.tscn")],
 		"weapons": [],
 	},
 	UnitType.WORKER: {
-		"advisors": [preload("res://Scripts/AgentNodes/Advisors/a_work.gd"), preload("res://Scripts/AgentNodes/Advisors/a_wander.gd"), preload("res://Scripts/AgentNodes/Advisors/a_taxed.gd"),],
+		"advisors": [preload("res://Scripts/AgentNodes/Advisors/a_flee.gd"), preload("res://Scripts/AgentNodes/Advisors/a_work.gd"), preload("res://Scripts/AgentNodes/Advisors/a_wander.gd"), preload("res://Scripts/AgentNodes/Advisors/a_taxed.gd"),],
 		"memory": [preload("res://Scripts/MemoryNodes/GoldWallet.gd"), preload("res://Scripts/MemoryNodes/health.gd"), preload("res://Scripts/MemoryNodes/TeamMemory.gd"), preload("res://Scripts/MemoryNodes/minion_tasker.gd"), preload("res://Scripts/MemoryNodes/UnitSpeed.gd"), preload("res://Scripts/MemoryNodes/TaxLedger.gd")],
 		"sensors": [preload("res://Scenes/AgentNodes/Tracker.tscn")],
 		"motor": [preload("res://Scripts/AgentNodes/agent_animate.gd"), preload("res://Scripts/AgentNodes/agent_move.gd"), preload("res://Scripts/AgentNodes/GoldGiver.gd"), preload("res://Scenes/AgentNodes/MinionNavAgent.tscn"), preload("res://Scripts/AgentNodes/work_action.gd")],
@@ -150,7 +150,7 @@ var role_blueprints: Dictionary = {
 		"weapons": [preload("res://Scenes/Weapons/weapon_bow.tscn")],
 	},
 	UnitType.LORD: {
-		"advisors": [preload("res://Scripts/AgentNodes/Advisors/a_wander.gd"), preload("res://Scripts/AgentNodes/Advisors/a_taxed.gd"), preload("res://Scripts/AgentNodes/Advisors/a_lord_tax.gd")],
+		"advisors": [preload("res://Scripts/AgentNodes/Advisors/a_flee.gd"), preload("res://Scripts/AgentNodes/Advisors/a_wander.gd"), preload("res://Scripts/AgentNodes/Advisors/a_taxed.gd"), preload("res://Scripts/AgentNodes/Advisors/a_lord_tax.gd")],
 		"memory": [preload("res://Scripts/MemoryNodes/GoldWallet.gd"), preload("res://Scripts/MemoryNodes/health.gd"), preload("res://Scripts/MemoryNodes/TeamMemory.gd"), preload("res://Scripts/MemoryNodes/UnitSpeed.gd"), preload("res://Scripts/MemoryNodes/TaxLedger.gd")],
 		"sensors": [preload("res://Scenes/AgentNodes/Tracker.tscn")],
 		"motor": [preload("res://Scripts/AgentNodes/agent_animate.gd"), preload("res://Scripts/AgentNodes/agent_move.gd"), preload("res://Scripts/AgentNodes/GoldGiver.gd"), preload("res://Scenes/AgentNodes/MinionNavAgent.tscn")],
