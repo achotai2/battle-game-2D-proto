@@ -84,4 +84,8 @@ func update_icon(_icon_type: BuildingDefs.IconType) -> void:
 
 func update_cost(_cost: int) -> void:
 	if costLabel:
-		costLabel.text = str(_cost)
+		if _cost > 0:
+			costLabel.show()
+			costLabel.text = str(_cost)
+		else:
+			costLabel.hide()
