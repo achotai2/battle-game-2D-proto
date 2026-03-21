@@ -1,7 +1,6 @@
 extends Advisor
 class_name AdvisorFlee
 
-var _agent: AgentBase = null
 var _tracker: Tracker = null
 var _movement: AgentMovement = null
 var _unit_speed: UnitSpeed = null

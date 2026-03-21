@@ -5,7 +5,6 @@ class_name AdvisorWander
 @export var min_wander_distance: float = 2.0
 @export var pause_time: float = 2.0 # Wait 2 seconds between walks!
 
-var _base_agent: AgentBase = null
 var movement: Node = null
 var unit_speed: Node = null
 
@@ -18,13 +17,13 @@ var _pause_timer: Timer = null
 
 func initialize() -> void:
 	# 1. Safely grab the root agent
-	if not is_instance_valid(_base_agent):
-		_base_agent = _find_root_base(self)
+	if not is_instance_valid(_agent):
+		_agent = _find_root_base(self)
 
-	if is_instance_valid(_base_agent):
+	if is_instance_valid(_agent):
 		# 2. Grab components directly
-		movement = _base_agent.get("movement")
-		unit_speed = _base_agent.get("unit_speed")
+		movement = _agent.get("movement")
+		unit_speed = _agent.get("unit_speed")
 		
 		# 3. Connect to Discrete Navigation Signals
 		if is_instance_valid(movement):
@@ -34,10 +33,10 @@ func initialize() -> void:
 				movement.stuck.connect(_meander_stuck)
 		
 		# 4. Setup Castle Target
-		if _base_agent.has_method("return_castle"):
-			_current_target = _base_agent.return_castle()
-		if _base_agent.has_signal("new_castle_set") and not _base_agent.new_castle_set.is_connected(_castle_updated):
-			_base_agent.new_castle_set.connect(_castle_updated)
+		if _agent.has_method("return_castle"):
+			_current_target = _agent.return_castle()
+		if _agent.has_signal("new_castle_set") and not _agent.new_castle_set.is_connected(_castle_updated):
+			_agent.new_castle_set.connect(_castle_updated)
 
 		# 5. Setup the Pause Timer
 		if not is_instance_valid(_pause_timer):
@@ -50,7 +49,7 @@ func initialize() -> void:
 # --- EVENT TRIGGERS ---
 
 func _on_move_finished(agent: Node) -> void:
-	if agent == _base_agent:
+	if agent == _agent:
 		# Take a breath! Add a tiny bit of random variance so crowd movement looks natural
 		if is_instance_valid(_pause_timer):
 			_pause_timer.start(pause_time + randf_range(-0.5, 0.5))
@@ -64,7 +63,7 @@ func _on_pause_finished() -> void:
 
 
 func _meander_stuck(agent: Node) -> void:
-	if agent == _base_agent:
+	if agent == _agent:
 		_needs_new_point = true
 		request_intent_update()
 
@@ -78,7 +77,7 @@ func _castle_updated(new_castle: Node3D) -> void:
 # --- INTENT LOGIC ---
 
 func _calculate_intent() -> Intent:
-	if not is_instance_valid(_current_target) or not is_instance_valid(_base_agent):
+	if not is_instance_valid(_current_target) or not is_instance_valid(_agent):
 		return null
 
 	# If we arrived and are currently pausing, return an IDLE intent
@@ -121,7 +120,7 @@ func _generate_new_wander_point() -> void:
 	
 	var raw_target = _current_target.global_position + Vector3(random_dir.x, 0.0, random_dir.y) * distance
 	
-	var map_rid: RID = _base_agent.get_world_3d().navigation_map
+	var map_rid: RID = _agent.get_world_3d().navigation_map
 	_wander_target_pos = NavigationServer3D.map_get_closest_point(map_rid, raw_target)
 	
 	# THE FIX: No request_intent_update() here!

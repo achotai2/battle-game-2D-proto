@@ -1,7 +1,6 @@
 extends Advisor
 class_name AdvisorTaxed
 
-var _agent: AgentBase = null
 var _gold_wallet: Node = null
 var _tax_ledger: Node = null
 var _gold_giver: Node = null

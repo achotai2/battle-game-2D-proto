@@ -4,7 +4,6 @@ class_name AdvisorLordTax
 # --- CONFIGURATION ---
 @export var tax_check_interval: float = 2.0 # Slightly slower poll saves massive CPU in big kingdoms
 
-var _agent: AgentBase = null
 var _current_target: Node = null
 var _currentLedger: Node = null # Weak typed in case the class isn't loaded globally
 var _currentWallet: Node = null

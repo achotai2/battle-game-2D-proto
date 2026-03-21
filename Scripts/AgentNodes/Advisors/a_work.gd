@@ -1,8 +1,6 @@
 extends Advisor
 class_name AdvisorWork
 
-var _agent: AgentBase = null
-
 var work_action: Node = null
 var movement: AgentMovement = null
 var work_tasker: Node = null

@@ -1,8 +1,6 @@
 extends Advisor
 class_name AdvisorTransform
 
-var _agent: AgentBase = null
-
 var movement: AgentMovement = null
 var work_tasker: Node = null
 var unit_speed: Node = null

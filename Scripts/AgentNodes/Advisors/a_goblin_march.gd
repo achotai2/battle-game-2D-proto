@@ -1,7 +1,6 @@
 extends Advisor
 class_name AdvisorGoblinMarch
 
-var _agent: AgentBase = null
 var movement: AgentMovement = null
 var unitSpeed: UnitSpeed = null
 var _castle: Node3D = null

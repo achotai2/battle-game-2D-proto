@@ -1,7 +1,6 @@
 extends Advisor
 class_name AdvisorPlayerAttack
 
-var _agent: AgentBase = null
 var _vision_tracker: Tracker = null
 var _weapon: Node = null
 var _current_target: Node3D = null

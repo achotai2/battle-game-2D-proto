@@ -32,10 +32,25 @@ func _physics_process(_delta: float) -> void:
 		current_advisor.enact_intent(current_intent)
 
 
-func refresh_advisors() -> void:
+# We now accept the 'passed_agent' from the _deferred_apply_role call
+func refresh_advisors(passed_agent: AgentBase = null) -> void:
+	# 1. Secure the Agent Reference
+	if is_instance_valid(passed_agent):
+		agent = passed_agent
+	elif not is_instance_valid(agent):
+		agent = _find_root_base(self)
+		
+	# 2. Hand it down to the kids!
 	for child in get_children():
 		if child is Advisor:
+			# INJECT THE DEPENDENCY: 
+			# We force the reference into the child before initializing it.
+			child.set_agent(self.agent)
+				
+			# (If your Advisor's initialize function expects the agent as an argument, 
+			# you can change this to: child.initialize(self.agent) )
 			child.initialize()
+			
 			# Wire up the new queue system
 			if not child.intent_changed.is_connected(_queue_evaluation):
 				child.intent_changed.connect(_queue_evaluation)

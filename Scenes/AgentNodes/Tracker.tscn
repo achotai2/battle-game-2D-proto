@@ -1,6 +1,6 @@
 [gd_scene load_steps=4 format=3 uid="uid://7furu8qcmity"]
 
-[ext_resource type="Script" uid="uid://cluuuc40xekih" path="res://Scripts/SensorNodes/tracker.gd" id="1_4a0jt"]
+[ext_resource type="Script" uid="uid://bomovmpkv0koe" path="res://Scripts/SensorNodes/Tracker.gd" id="1_4a0jt"]
 [ext_resource type="Script" uid="uid://bi15gddmxujcs" path="res://Scripts/SensorNodes/agent_tracking.gd" id="1_oc7qj"]
 
 [sub_resource type="CylinderShape3D" id="CylinderShape3D_4a0jt"]

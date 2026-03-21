@@ -11,10 +11,10 @@
 [ext_resource type="Script" uid="uid://2ssmusd0k3fn" path="res://Scripts/MemoryNodes/GoldWallet.gd" id="10_gw"]
 [ext_resource type="PackedScene" uid="uid://c8o4373okv5fq" path="res://Scenes/AgentNodes/HungerHolder.tscn" id="10_t6mam"]
 [ext_resource type="Script" uid="uid://dbf3h02qxxxao" path="res://Scripts/MemoryNodes/TaxLedger.gd" id="11_tl"]
-[ext_resource type="Script" uid="uid://c5ixb1wens7mc" path="res://Scripts/SensorNodes/Tracker.gd" id="12_gt"]
+[ext_resource type="Script" uid="uid://bomovmpkv0koe" path="res://Scripts/SensorNodes/Tracker.gd" id="12_gt"]
 [ext_resource type="Script" uid="uid://cf8nbntvvy3iv" path="res://Scripts/AgentNodes/GoldGiver.gd" id="13_gg"]
 [ext_resource type="Script" uid="uid://dgco637g5esju" path="res://Scripts/AgentNodes/Advisors/a_taxed.gd" id="14_at"]
-[ext_resource type="Script" path="res://Scripts/MemoryNodes/TeamMemory.gd" id="99_team"]
+[ext_resource type="Script" uid="uid://ggpe07y6471c" path="res://Scripts/MemoryNodes/TeamMemory.gd" id="99_team"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_bomk7"]
 radius = 0.42871094

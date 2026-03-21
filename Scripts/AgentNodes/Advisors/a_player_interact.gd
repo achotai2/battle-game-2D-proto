@@ -1,8 +1,6 @@
 extends Advisor
 class_name AdvisorPlayerInteract
 
-var _agent: AgentBase = null
-
 var interactor: Node = null
 var movement: AgentMovement = null
 var goldWallet: Node = null

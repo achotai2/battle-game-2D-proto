@@ -120,7 +120,9 @@ func apply_role(role: UnitRoles.UnitType, new_team: int) -> void:
 
 func _deferred_apply_role(role: UnitRoles.UnitType, new_team: int) -> void:
 	print("BREADCRUMB 3: Role swap initiated!")
+	
 	# 1. Sync the Component Folders
+	# We swap out the old logic blocks for the new ones.
 	var components = UnitRoles.get_role_components(role)
 	_sync_folder(memory, components["memory"])
 	_sync_folder(sensors, components["sensors"])
@@ -128,23 +130,33 @@ func _deferred_apply_role(role: UnitRoles.UnitType, new_team: int) -> void:
 	_sync_folder(motor, components["motor"])
 	_sync_folder(brain, components["advisors"])
 
-	# 2. Re-cache the variables using our new unified function!
+	# 2. THE CRITICAL PAUSE
+	# We must wait exactly one physics frame. This gives Godot time to actually 
+	# execute the queue_free() on the old nodes, add the new nodes to the scene tree,
+	# and sync the NavigationServer for the new MinionNavAgent.
+	await get_tree().physics_frame
+
+	# 3. Re-cache the variables
+	# Now that the dust has settled, ComponentFinder will grab the correct, newly added nodes.
 	_cache_components()
 
+	# 4. Refresh Internal Components (The Advisor Fix)
 	if brain and brain.has_method("refresh_advisors"):
-		brain.refresh_advisors()
+		# Passing 'self' here is crucial so the brain can hand the AgentBase 
+		# reference down to the new advisors, allowing them to access unit_speed!
+		brain.refresh_advisors(self)
 
 	if is_instance_valid(movement) and movement.has_method("refresh_components"):
 		movement.refresh_components()
 
-	# 3. Team & Physics
+	# 5. Team & Physics
 	if team != null:
 		team.current_team = new_team
 
 	collision_layer = GamePhysics.get_minion_layer(new_team, role == UnitRoles.UnitType.PEASANT)
 	collision_mask = GamePhysics.get_minion_movement_mask()
 
-	# 4. Group Membership
+	# 6. Group Membership
 	if current_role != null:
 		for g: StringName in UnitRoles.get_role_groups(current_role):
 			if is_in_group(g):
@@ -155,18 +167,16 @@ func _deferred_apply_role(role: UnitRoles.UnitType, new_team: int) -> void:
 	for g: StringName in UnitRoles.get_role_groups(current_role):
 		add_to_group(g)
 
-	# 5. Visuals
+	# 7. Visuals
 	var frames: SpriteFrames = UnitRoles.get_frames(current_role, new_team)
 	if frames != null and animate:
 		animate.set_sprite_frames(frames)
 
-	# 6. State Refresh
-	if movement:
+	# 8. State Refresh
+	if is_instance_valid(movement):
 		movement.stop()
-	if animate:
+	if is_instance_valid(animate):
 		animate.cancel_action_state()
-	if brain:
-		brain._ready()
 
 
 func _sync_folder(target_parent: Node, incoming_packages: Array) -> void:

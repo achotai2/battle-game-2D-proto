@@ -5,6 +5,8 @@ signal intent_changed
 
 var _current_intent: Intent = null
 var _intent_needs_update: bool = true
+var _agent: AgentBase = null
+
 
 # Called by the Brain to get the current intent
 func get_intent() -> Intent:
@@ -36,3 +38,7 @@ func on_gain_control() -> void:
 # Called when this advisor loses control of the agent
 func on_lose_control() -> void:
 	pass
+
+
+func set_agent(newAgent: Node) -> void:
+	_agent = newAgent

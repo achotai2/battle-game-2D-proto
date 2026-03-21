@@ -7,7 +7,6 @@ class_name AdvisorHunger
 @export var max_priority: float = 100.0
 
 # --- COMPONENTS ---
-var _agent: AgentBase = null
 var hunger: Node = null
 var tasker: Node = null
 var movement: AgentMovement = null

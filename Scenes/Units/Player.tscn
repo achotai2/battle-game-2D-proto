@@ -13,7 +13,7 @@
 [ext_resource type="Script" uid="uid://ggpe07y6471c" path="res://Scripts/MemoryNodes/TeamMemory.gd" id="7_udi2h"]
 [ext_resource type="Script" uid="uid://2ssmusd0k3fn" path="res://Scripts/MemoryNodes/GoldWallet.gd" id="9_gw"]
 [ext_resource type="PackedScene" uid="uid://by5ppm4d4bxev" path="res://Scenes/AgentNodes/player_interactor.tscn" id="9_yoq75"]
-[ext_resource type="Script" uid="uid://c5ixb1wens7mc" path="res://Scripts/SensorNodes/Tracker.gd" id="11_gt"]
+[ext_resource type="Script" uid="uid://bomovmpkv0koe" path="res://Scripts/SensorNodes/Tracker.gd" id="11_gt"]
 [ext_resource type="Script" uid="uid://cf8nbntvvy3iv" path="res://Scripts/AgentNodes/GoldGiver.gd" id="12_gg"]
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_jokor"]

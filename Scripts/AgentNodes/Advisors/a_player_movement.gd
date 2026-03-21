@@ -1,8 +1,6 @@
 extends Advisor
 class_name AdvisorPlayerMovement
 
-var _agent: AgentBase = null
-
 var controls: Node = null
 var movement: AgentMovement = null
 var unit_speed: Node = null
