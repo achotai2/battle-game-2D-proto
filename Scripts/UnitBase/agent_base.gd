@@ -119,8 +119,6 @@ func apply_role(role: UnitRoles.UnitType, new_team: int) -> void:
 
 
 func _deferred_apply_role(role: UnitRoles.UnitType, new_team: int) -> void:
-	print("BREADCRUMB 3: Role swap initiated!")
-	
 	# 1. Sync the Component Folders
 	# We swap out the old logic blocks for the new ones.
 	var components = UnitRoles.get_role_components(role)

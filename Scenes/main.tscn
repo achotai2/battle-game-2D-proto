@@ -218,6 +218,7 @@ transform = Transform3D(1, 1.6543616e-24, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
 [node name="Player" parent="Environment/Units" instance=ExtResource("12_jkdf5")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5.513, 0, 3.69)
 player = 1
+current_role = 0
 
 [node name="Torch" parent="Environment/Units/Player" instance=ExtResource("9_kltya")]
 

@@ -126,10 +126,8 @@ func enact_intent(intent: Intent) -> void:
 				animate.play_idle()
 		
 		# Trigger the transformation
-		print("BREADCRUMB 1: Attempting to apply work...")
 		if job.has_method("apply_work"):
 			job.apply_work(1.0, _agent)
-		print("BREADCRUMB 2: Work applied successfully!")
 
 
 # --- HELPERS ---
