@@ -114,6 +114,12 @@ func _agent_moved(vel: Vector3) -> void:
 
 
 func apply_role(role: UnitRoles.UnitType, new_team: int) -> void:
+	# Forces the role swap to wait until the current frame finishes, preventing physics deadlocks!
+	call_deferred("_deferred_apply_role", role, new_team)
+
+
+func _deferred_apply_role(role: UnitRoles.UnitType, new_team: int) -> void:
+	print("BREADCRUMB 3: Role swap initiated!")
 	# 1. Sync the Component Folders
 	var components = UnitRoles.get_role_components(role)
 	_sync_folder(memory, components["memory"])
@@ -174,8 +180,10 @@ func _sync_folder(target_parent: Node, incoming_packages: Array) -> void:
 		if existing_child is Timer:
 			continue
 		if not existing_child.name in incoming_names:
+			# Prevent ComponentFinder from accidentally grabbing a dying ghost!
+			existing_child.name = existing_child.name + "_DELETED"
 			existing_child.queue_free()
-			
+				
 	var surviving_names: Array[String] = []
 	for child in target_parent.get_children():
 		if not child.is_queued_for_deletion(): 
