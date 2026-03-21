@@ -122,11 +122,11 @@ func apply_role(role: UnitRoles.UnitType, new_team: int) -> void:
 	_sync_folder(motor, components["motor"])
 	_sync_folder(brain, components["advisors"])
 
-	if brain and brain.has_method("refresh_advisors"):
-		brain.refresh_advisors()
-
 	# 2. Re-cache the variables using our new unified function!
 	_cache_components()
+
+	if brain and brain.has_method("refresh_advisors"):
+		brain.refresh_advisors()
 
 	if is_instance_valid(movement) and movement.has_method("refresh_components"):
 		movement.refresh_components()
