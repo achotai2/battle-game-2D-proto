@@ -31,6 +31,17 @@ var _food_sensor: Node = null
 
 
 func _ready() -> void:
+	pass
+
+func deactivate() -> void:
+	if _hunger_timer:
+		_hunger_timer.stop()
+	if _patience_timer:
+		_patience_timer.stop()
+	if _food_gone_timer:
+		_food_gone_timer.stop()
+
+func activate() -> void:
 	# 1. Safely grab the root agent
 	_agent = _find_root_base(self)
 
@@ -44,7 +55,8 @@ func _ready() -> void:
 	# 4. Setup the continuous hunger tick (Discrete event generator!)
 	if is_instance_valid(_hunger_timer):
 		_hunger_timer.wait_time = time_tick
-		_hunger_timer.timeout.connect(_on_hunger_timer_timeout)
+		if not _hunger_timer.timeout.is_connected(_on_hunger_timer_timeout):
+			_hunger_timer.timeout.connect(_on_hunger_timer_timeout)
 		
 		# Stagger start times so 100 peasants don't all get hungry on the exact same frame
 		var stagger_time = randf_range(0.1, time_tick)

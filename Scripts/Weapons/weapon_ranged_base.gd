@@ -37,7 +37,16 @@ var accuracy_modifiers: Array = []
 
 
 func _ready() -> void:
-	attack_delay.timeout.connect(_on_attack_delay_timeout)
+	pass
+
+func deactivate() -> void:
+	if cooldown: cooldown.stop()
+	if attack_delay: attack_delay.stop()
+	_cancel_attack()
+
+func activate() -> void:
+	if not attack_delay.timeout.is_connected(_on_attack_delay_timeout):
+		attack_delay.timeout.connect(_on_attack_delay_timeout)
 	_projectile_parent = _resolve_projectile_parent()
 
 	# 1. Traverse up the tree to find the root AgentBase or BuildingBase

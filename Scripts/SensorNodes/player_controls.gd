@@ -22,6 +22,12 @@ var _is_moving: bool = false
 func _ready() -> void:
 	pass
 
+func deactivate() -> void:
+	set_physics_process(false)
+
+func activate() -> void:
+	set_physics_process(true)
+
 
 func _physics_process(_delta: float) -> void:
 	# Continuous movement belongs in physics tick

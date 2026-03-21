@@ -10,6 +10,12 @@ signal gold_changed(current_gold: int)
 
 
 func _ready() -> void:
+	pass
+
+func deactivate() -> void:
+	pass
+
+func activate() -> void:
 	gold_changed.emit(gold)
 
 

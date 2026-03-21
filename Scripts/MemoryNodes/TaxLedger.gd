@@ -13,6 +13,12 @@ var _last_taxed_time: int = 0
 var _min_time_between_taxation: Variant = null
 
 func _ready() -> void:
+	pass
+
+func deactivate() -> void:
+	pass
+
+func activate() -> void:
 	var agent = ComponentFinder.get_base(self)
 	if agent and "current_role" in agent:
 		_min_time_between_taxation = UnitRoles.get_min_tax_time(agent.current_role)

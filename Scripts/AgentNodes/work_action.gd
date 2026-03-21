@@ -8,6 +8,12 @@ var work_amount: float = 1.0
 
 
 func _ready() -> void:
+	pass
+
+func deactivate() -> void:
+	pass
+
+func activate() -> void:
 	if not animate:
 		var base = ComponentFinder.get_base(self)
 		animate = base.get("animate")

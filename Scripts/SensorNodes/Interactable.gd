@@ -18,6 +18,12 @@ var _interaction_cost: int = 0
 var _team_memory: TeamMemory = null
 
 func _ready() -> void:
+	pass
+
+func deactivate() -> void:
+	pass
+
+func activate() -> void:
 	call_deferred("_late_ready")
 
 func _late_ready() -> void:

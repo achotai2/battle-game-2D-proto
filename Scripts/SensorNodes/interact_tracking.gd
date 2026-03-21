@@ -38,10 +38,18 @@ func _ready() -> void:
 
 	_timer = Timer.new()
 	_timer.wait_time = scan_interval
-	_timer.autostart = true
-	_timer.timeout.connect(_scan_for_targets)
+	_timer.autostart = false
 	add_child(_timer)
-	_timer.start(scan_interval + randf() * 0.2)
+
+func deactivate() -> void:
+	if _timer:
+		_timer.stop()
+
+func activate() -> void:
+	if not _timer.timeout.is_connected(_scan_for_targets):
+		_timer.timeout.connect(_scan_for_targets)
+	if _timer:
+		_timer.start(scan_interval + randf() * 0.2)
 
 	_my_agent = ComponentFinder.get_base(self)
 	_team_memory = _my_agent.get("team") if _my_agent.get("team") else _my_agent.get("team_memory")
