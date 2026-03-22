@@ -21,9 +21,10 @@ func _ready() -> void:
 	pass
 
 func deactivate() -> void:
-	pass
+	set_enabled(false)
 
 func activate() -> void:
+	set_enabled(true)
 	call_deferred("_late_ready")
 
 func _late_ready() -> void:
