@@ -159,6 +159,7 @@ func _on_construct_finished(_site: WorkSite, _worker: AgentBase) -> void:
 # --- PUBLIC GETTERS / SETTERS ---
 
 func set_castle(new_castle: Castle) -> void:
+	print(new_castle)
 	castle = new_castle
 	new_castle_set.emit(new_castle)
 	

@@ -39,6 +39,10 @@ func initialize() -> void:
 			_distance_timer.timeout.connect(request_intent_update)
 			add_child(_distance_timer)
 
+		if is_instance_valid(_vision_tracker) and not _vision_tracker.get_candidates().is_empty():
+			_distance_timer.start()
+			request_intent_update()
+
 
 # --- EVENT TRIGGERS ---
 

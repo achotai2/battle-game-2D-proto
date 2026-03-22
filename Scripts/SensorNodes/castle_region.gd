@@ -3,37 +3,28 @@ class_name CastleRegion
 
 @export var owning_castle: Castle
 
-
 var sweep_timer: Timer
 
 func _ready() -> void:
-	sweep_timer = Timer.new()
-	sweep_timer.wait_time = 2.0
-	sweep_timer.autostart = false
-	add_child(sweep_timer)
-
-func deactivate() -> void:
-	if sweep_timer:
-		sweep_timer.stop()
-	if body_entered.is_connected(_try_assign_castle):
-		body_entered.disconnect(_try_assign_castle)
-
-func activate() -> void:
+	# 1. Setup Physics
 	collision_layer = 0 
 	collision_mask = GamePhysics.get_castle_region_mask()
 	
-	# Catch any units that physically walk into the zone
+	# 2. Connect physical entry
 	if not body_entered.is_connected(_try_assign_castle):
 		body_entered.connect(_try_assign_castle)
 	
-	# Create a recurring radar sweep to catch Static objects that pop into existence!
-	if sweep_timer:
-		if not sweep_timer.timeout.is_connected(_sweep_territory):
-			sweep_timer.timeout.connect(_sweep_territory)
-		sweep_timer.start()
+	# 3. Setup and start the radar sweep
+	sweep_timer = Timer.new()
+	sweep_timer.wait_time = 2.0
+	sweep_timer.autostart = true # Now it starts on its own!
+	sweep_timer.timeout.connect(_sweep_territory)
+	add_child(sweep_timer)
 	
-	# Do one immediate sweep just in case
-	_sweep_territory()
+	# 4. Do one immediate sweep on boot
+	# We defer this to the end of the frame to ensure all other nodes (like Proton Scatter trees) 
+	# have finished their own _ready() functions and are in the "Buildings" group.
+	call_deferred("_sweep_territory")
 
 
 func _sweep_territory() -> void:
@@ -41,11 +32,12 @@ func _sweep_territory() -> void:
 		_try_assign_castle(body)
 
 	# Fallback: check unassigned buildings manually using the polygon shape.
-	# This fixes a Godot 4 broadphase issue with StaticBody3Ds spawned from threads.
 	var poly_node = find_child("CollisionPolygon3D", false, false) as CollisionPolygon3D
 	if poly_node:
 		var poly_2d = poly_node.polygon
 		var poly_transform = poly_node.global_transform
+		
+		# Loops over "Buildings" (which includes Trees, thanks to BuildingBase._ready!)
 		for building in get_tree().get_nodes_in_group("Buildings"):
 			if building.has_method("return_castle") and building.return_castle() == null:
 				var local_pos = poly_transform.affine_inverse() * building.global_position

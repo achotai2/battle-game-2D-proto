@@ -248,7 +248,7 @@ current_role = 2
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2, 0, 2)
 player = 1
 castle = NodePath("../../Buildings/Castle")
-current_role = 3
+current_role = 2
 
 [node name="Unit3" parent="Environment/Units" node_paths=PackedStringArray("castle") instance=ExtResource("12_jkdf5")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.811, 0, 2)
@@ -266,11 +266,12 @@ current_role = 1
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8.245, 0, -3.59)
 player = 1
 castle = NodePath("../../Buildings/Castle")
-current_role = 4
+current_role = 3
 
 [node name="Buildings" type="Node3D" parent="Environment" groups=["nav_meshes"]]
 
 [node name="Tree" parent="Environment/Buildings" node_paths=PackedStringArray("castle") instance=ExtResource("10_hibaj")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 1.895618)
 player = 1
 castle = NodePath("../Castle")
 
