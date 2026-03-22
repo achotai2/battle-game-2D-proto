@@ -1,4 +1,4 @@
-extends Node
+extends Node3D
 class_name WeaponMelee
 
 @export_range(0, 1000, 1) var damage: int = 10
@@ -12,18 +12,25 @@ class_name WeaponMelee
 @export var attack_power: int = 10
 @export var attack_range: float = 1.5 
 
-@onready var cooldown: Timer = $cooldown
-@onready var attack_delay: Timer = $AttackDelay
+var cooldown: Timer
+var attack_delay: Timer
 
 var _attacking: bool = false
-var _temp_target: AgentBase = null
+var _temp_target: Node3D = null
 
 var _my_base: Node3D = null
 var _my_team = null
 
 
 func _ready() -> void:
-	pass
+	cooldown = Timer.new()
+	cooldown.one_shot = true
+	add_child(cooldown)
+
+	attack_delay = Timer.new()
+	attack_delay.one_shot = true
+	attack_delay.wait_time = 0.25
+	add_child(attack_delay)
 
 func deactivate() -> void:
 	if cooldown: cooldown.stop()
@@ -61,7 +68,7 @@ func is_target_in_range(target: Node3D) -> bool:
 	return dist <= attack_range
 
 
-func perform_attack_tick(target: AgentBase) -> bool:
+func perform_attack_tick(target: Node3D) -> bool:
 	if not is_instance_valid(target):
 		_cancel_attack()
 		return false
