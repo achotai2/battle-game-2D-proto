@@ -21,8 +21,8 @@ class_name WeaponRanged
 @export var attack_power: int = 10
 
 # --- REFS ---
-@onready var cooldown: Timer = $cooldown
-@onready var attack_delay: Timer = $AttackDelay
+var cooldown: Timer
+var attack_delay: Timer
 
 # --- INTERNAL STATE ---
 var _projectile_parent: Node = null
@@ -37,7 +37,14 @@ var accuracy_modifiers: Array = []
 
 
 func _ready() -> void:
-	pass
+	cooldown = Timer.new()
+	cooldown.one_shot = true
+	add_child(cooldown)
+
+	attack_delay = Timer.new()
+	attack_delay.one_shot = true
+	attack_delay.wait_time = 0.25
+	add_child(attack_delay)
 
 func deactivate() -> void:
 	if cooldown: cooldown.stop()
