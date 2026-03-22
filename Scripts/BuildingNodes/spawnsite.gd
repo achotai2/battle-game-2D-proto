@@ -13,6 +13,12 @@ var kind: CastleJobBoard.JobBoardType = CastleJobBoard.JobBoardType.PEASANTS
 var _job_board: CastleJobBoard = null
 var _incoming_peasant: AgentBase = null
 
+func activate() -> void:
+	set_enabled(true)
+
+func deactivate() -> void:
+	set_enabled(false)
+
 func _ready() -> void:
 	if not my_boss:
 		my_boss = ComponentFinder.get_base(self)

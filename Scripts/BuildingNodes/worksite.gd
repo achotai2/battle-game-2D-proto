@@ -74,6 +74,12 @@ var goldWallet: GoldWallet = null
 # Lifecycle
 # -------------------------
 
+func activate() -> void:
+	set_enabled(true)
+
+func deactivate() -> void:
+	set_enabled(false)
+
 func _ready() -> void:
 	_collect_slots()
 	

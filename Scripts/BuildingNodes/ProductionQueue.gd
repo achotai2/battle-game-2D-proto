@@ -16,6 +16,13 @@ var _is_spawning: bool = false
 var _produced_unit_type: UnitRoles.UnitType
 
 
+func activate() -> void:
+	set_process(true)
+
+func deactivate() -> void:
+	set_process(false)
+
+
 func _ready() -> void:
 	# 1. OPTIMIZATION: Figure out what this building makes exactly once.
 	var boss = ComponentFinder.get_base(self)
