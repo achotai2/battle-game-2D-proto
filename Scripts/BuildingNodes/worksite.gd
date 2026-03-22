@@ -81,6 +81,11 @@ func _ready() -> void:
 	if not my_boss:
 		my_boss = ComponentFinder.get_base(self)
 		
+	# Watch for castle re-assignments
+	if is_instance_valid(my_boss) and my_boss.has_signal("new_castle_set"):
+		if not my_boss.new_castle_set.is_connected(_on_new_castle_set):
+			my_boss.new_castle_set.connect(_on_new_castle_set)
+
 	# Automatically find the Gold components
 	if not goldGiver:
 		goldGiver = my_boss.get("gold_giver")
@@ -395,6 +400,10 @@ func _complete(worker: AgentBase) -> void:
 	## then emit a signal so the parent/building can react (upgrade, spawn loot, etc).
 	_unregister_from_job_board()
 	work_completed.emit(self, worker)
+
+
+func _on_new_castle_set(_new_castle: Node) -> void:
+	refresh_registration()
 
 
 func _on_player_interacted(interactor: AgentBase) -> void:
