@@ -99,9 +99,22 @@ func set_state(new_state: BuildingDefs.BuildingState) -> void:
 	state = new_state
 
 	match state:
+		BuildingDefs.BuildingState.DESTROYED:
+			if construct_interactable: construct_interactable.set_enabled(true)
+			if spawn_interactable: spawn_interactable.set_enabled(false)
+			if construct_site: construct_site.set_enabled(true)
+			if spawn_work_site: spawn_work_site.set_enabled(false)
+			if spawn_site: spawn_site.set_enabled(false)
+			if work_site: work_site.set_enabled(false)
+			if production_queue: production_queue.set_process(false)
+
 		BuildingDefs.BuildingState.CONSTRUCTING:
 			if construct_interactable: construct_interactable.set_enabled(false)
 			if spawn_interactable: spawn_interactable.set_enabled(false)
+			if spawn_work_site: spawn_work_site.set_enabled(false)
+			if spawn_site: spawn_site.set_enabled(false)
+			if work_site: work_site.set_enabled(false)
+			if production_queue: production_queue.set_process(false)
 			
 			if construct_site:
 				construct_site.total_work = BuildingDefs.get_construction_cost(building_type)
@@ -115,6 +128,8 @@ func set_state(new_state: BuildingDefs.BuildingState) -> void:
 		BuildingDefs.BuildingState.BUILT:
 			if construct_interactable: construct_interactable.set_enabled(false)
 			if construct_site: construct_site.set_enabled(false)
+			if work_site: work_site.set_enabled(true)
+			if production_queue: production_queue.set_process(true)
 			
 			if spawn_interactable:
 				var config = BuildingDefs.get_spawn_config(building_type)
