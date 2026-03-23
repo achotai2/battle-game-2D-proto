@@ -39,23 +39,29 @@ func spawn_unit() -> void:
 
 
 func _on_spawn_timer_timeout() -> void:
-	# 1. Create the new unit
+	# 1. Create the new unit in memory
 	var new_unit = unit_scene.instantiate() as AgentBase
 	
 	if not new_unit:
 		push_error("Instantiator: Assigned scene does not inherit from AgentBase!")
 		return
 
-	# 2. Add to the main game world
-	get_tree().current_scene.add_child(new_unit)
-
-	# 3. Position the unit
+	# 2. CONFIGURE BEFORE ADDING TO SCENE
+	# Tell the unit who it belongs to so its _ready() function uses the right team!
+	new_unit.player = building.player
+	
+	# Set position before adding to the scene to prevent 1-frame teleports
 	if spawn_point:
 		new_unit.global_position = spawn_point.global_position
 	else:
 		new_unit.global_position = self.global_position
 
-	# 4. Sync the Team and Role
+	# 3. NOW add it to the main game world
+	# (This instantly triggers new_unit._ready(), which will now use the correct player team)
+	get_tree().current_scene.add_child(new_unit)
+
+	# 4. Sync the Role (Team is already handled by _ready now)
+	# We still call this in case default_role is different from the scene's base role
 	new_unit.apply_role(default_role, building.player)
 
 	# 5. Inherit the Castle

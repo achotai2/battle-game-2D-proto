@@ -158,7 +158,7 @@ var role_blueprints: Dictionary = {
 	},
 	UnitType.GOBLIN: {
 		"advisors": [preload("res://Scripts/AgentNodes/Advisors/a_goblin_march.gd"), preload("res://Scripts/AgentNodes/Advisors/a_attack.gd")],
-		"memory": [preload("res://Scripts/MemoryNodes/health.gd"), preload("res://Scripts/MemoryNodes/TeamMemory.gd"), preload("res://Scripts/MemoryNodes/UnitSpeed.gd")],
+		"memory": [preload("res://Scripts/MemoryNodes/target_location.gd"), preload("res://Scripts/MemoryNodes/health.gd"), preload("res://Scripts/MemoryNodes/TeamMemory.gd"), preload("res://Scripts/MemoryNodes/UnitSpeed.gd")],
 		"sensors": [preload("res://Scenes/AgentNodes/Tracker.tscn")],
 		"motor": [preload("res://Scripts/AgentNodes/agent_animate.gd"), preload("res://Scripts/AgentNodes/agent_move.gd"), preload("res://Scenes/AgentNodes/MinionNavAgent.tscn")],
 		"weapons": [preload("res://Scenes/Weapons/weapon_sword.tscn")],

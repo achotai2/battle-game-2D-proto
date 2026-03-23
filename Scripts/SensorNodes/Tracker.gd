@@ -1,42 +1,72 @@
-extends Node3D
+extends Area3D
 class_name Tracker
 
-# 1. Declare the missing signals so Advisors can connect to them!
-signal target_changed(target: Node3D)
+signal target_changed(new_target: Node3D)
 signal target_lost()
 
-@onready var tracking: AgentTracking = $AgentTracking
+# --- Tracking Logic ---
+@export var target_same_team: bool = false
+@export var target_opposing: bool = true
+@export var target_neutral: bool = true
+
+# --- Tuning ---
+@export_enum("Nearest", "Lowest Health") var target_bias: String = "Nearest"
+@export_range(0.1, 2.0) var scan_interval: float = 0.5
+
+var current_target: Node3D = null
+var _timer: Timer
+var _scan_shape_query: PhysicsShapeQueryParameters3D
+var _active_collision_mask: int = 0
+
+var _my_base: Node3D = null
 var _my_team = null
 
+
 func _ready() -> void:
-	pass
+	# We turn off standard Area3D monitoring because we use manual server queries!
+	monitoring = false
+	monitorable = false
+	
+	_scan_shape_query = PhysicsShapeQueryParameters3D.new()
+	_scan_shape_query.collide_with_bodies = true
+	_scan_shape_query.collide_with_areas = false
+	
+	var shape_node = find_child("CollisionShape3D")
+	if shape_node and shape_node.shape:
+		_scan_shape_query.shape = shape_node.shape
+	else:
+		push_warning("Tracker: No CollisionShape3D found!")
+		set_physics_process(false)
+		return
+
+	# Setup Timer
+	_timer = Timer.new()
+	_timer.wait_time = scan_interval
+	_timer.autostart = false
+	add_child(_timer)
+
 
 func deactivate() -> void:
-	if is_instance_valid(tracking):
-		if tracking.has_signal("target_changed") and tracking.target_changed.is_connected(_on_tracking_target_changed):
-			tracking.target_changed.disconnect(_on_tracking_target_changed)
-		if tracking.has_signal("target_lost") and tracking.target_lost.is_connected(_on_tracking_target_lost):
-			tracking.target_lost.disconnect(_on_tracking_target_lost)
+	if _timer:
+		_timer.stop()
+	if _timer.timeout.is_connected(_scan_for_targets):
+		_timer.timeout.disconnect(_scan_for_targets)
 
-	if is_instance_valid(_my_team) and _my_team.team_changed.is_connected(_team_changed):
-		_my_team.team_changed.disconnect(_team_changed)
+	if is_instance_valid(_my_team) and _my_team.has_signal("team_changed"):
+		if _my_team.team_changed.is_connected(_team_changed):
+			_my_team.team_changed.disconnect(_team_changed)
+
 
 func activate() -> void:
-	# 2. Wire up the Signal Forwarding
-	if is_instance_valid(tracking):
-		if tracking.has_signal("target_changed"):
-			if not tracking.target_changed.is_connected(_on_tracking_target_changed):
-				tracking.target_changed.connect(_on_tracking_target_changed)
-		if tracking.has_signal("target_lost"):
-			if not tracking.target_lost.is_connected(_on_tracking_target_lost):
-				tracking.target_lost.connect(_on_tracking_target_lost)
+	if not _timer.timeout.is_connected(_scan_for_targets):
+		_timer.timeout.connect(_scan_for_targets)
 
-	# 3. Safely grab the team without the ComponentFinder
-	var base = _find_root_base(self)
-	if is_instance_valid(base):
-		_my_team = base.get("team")
+	# 1. Safely grab the team without ComponentFinder
+	_my_base = _find_root_base(self)
+	if is_instance_valid(_my_base):
+		_my_team = _my_base.get("team")
 		if not _my_team:
-			_my_team = base.get("team_memory")
+			_my_team = _my_base.get("team_memory")
 
 		if is_instance_valid(_my_team):
 			if not _my_team.team_changed.is_connected(_team_changed):
@@ -45,25 +75,73 @@ func activate() -> void:
 			if _my_team.has_method("return_team"):
 				_team_changed(_my_team.return_team())
 
+	# 2. Start the physics sweep heartbeat
+	if _timer:
+		# Adding a slight random offset prevents all units from sweeping on the exact same frame!
+		_timer.start(scan_interval + randf() * 0.2) 
+
 
 func _team_changed(new_team: int) -> void:
-	if is_instance_valid(tracking) and tracking.has_method("setup_player"):
-		tracking.setup_player(new_team)
+	# Calculate and cache the collision mask whenever the team changes
+	var mask = GamePhysics.get_tracking_mask(new_team, target_neutral, target_opposing, target_same_team)
+	_active_collision_mask = mask
+	_scan_shape_query.collision_mask = _active_collision_mask
+
+
+func _scan_for_targets() -> void:
+	_scan_shape_query.transform = global_transform
+	var space_state = get_world_3d().direct_space_state
+	var results = space_state.intersect_shape(_scan_shape_query, 32)
+	
+	if results.is_empty():
+		if current_target != null:
+			current_target = null
+			target_lost.emit()
+		return
+
+	var best_target = null
+	var best_score = INF
+	var my_pos = global_position
+	
+	for result in results:
+		var body = result["collider"]
+		
+		# Ignore ourselves and deleted bodies
+		if body == _my_base or not is_instance_valid(body):
+			continue
+			
+		var score = 0.0
+		
+		if target_bias == "Nearest":
+			score = my_pos.distance_squared_to(body.global_position)
+		elif target_bias == "Lowest Health":
+			if body.has_method("get_health_percent"):
+				score = body.get_health_percent()
+			else:
+				score = 100.0
+		
+		if score < best_score:
+			best_score = score
+			best_target = body
+
+	# Update State
+	if best_target != current_target:
+		current_target = best_target
+		target_changed.emit(current_target)
 
 
 func get_candidates() -> Array[Node3D]:
-	if is_instance_valid(tracking) and tracking.has_method("get_candidates"):
-		return tracking.get_candidates()
-	return []
-
-
-# --- SIGNAL FORWARDERS ---
-
-func _on_tracking_target_changed(target: Node3D) -> void:
-	target_changed.emit(target)
-
-func _on_tracking_target_lost() -> void:
-	target_lost.emit()
+	_scan_shape_query.transform = global_transform
+	var space_state = get_world_3d().direct_space_state
+	var results = space_state.intersect_shape(_scan_shape_query, 32)
+	
+	var candidates: Array[Node3D] = []
+	for result in results:
+		var body = result["collider"]
+		if body != _my_base and is_instance_valid(body):
+			candidates.append(body)
+			
+	return candidates
 
 
 # --- HELPERS ---
@@ -75,3 +153,6 @@ func _find_root_base(start_node: Node) -> Node3D:
 			return current as Node3D
 		current = current.get_parent()
 	return null
+
+func force_scan() -> void:
+	_scan_for_targets()

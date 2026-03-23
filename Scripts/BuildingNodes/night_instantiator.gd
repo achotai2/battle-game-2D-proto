@@ -39,27 +39,35 @@ func _on_spawn_timer_timeout() -> void:
 		_spawn_timer.stop()
 		return
 	
-	# Override base behavior to change player assignment
 	var new_unit = unit_scene.instantiate() as AgentBase
 
 	if not new_unit:
 		push_error("NightInstantiator: Assigned scene does not inherit from AgentBase!")
 		return
 
-	get_tree().current_scene.add_child(new_unit)
+	# --- 1. PERFECT PRE-CONFIG (Night Edition) ---
+	# Goblins ALWAYS belong to Player 0 (Neutral/Enemy)
+	new_unit.player = 0
+	new_unit.current_role = default_role
+	
+	# Lock in the Neutral physics layer before they wake up!
+	var is_peasant = (default_role == UnitRoles.UnitType.PEASANT)
+	new_unit.collision_layer = GamePhysics.get_minion_layer(0, is_peasant)
 
 	if spawn_point:
 		new_unit.global_position = spawn_point.global_position
 	else:
 		new_unit.global_position = self.global_position
 
-	# Goblins always belong to team 0 (Neutral/Enemy)
-	new_unit.apply_role(default_role, 0)
+	# --- 2. WAKE IT UP ---
+	# _ready() runs, permanently cementing them as Player 0 enemies
+	get_tree().current_scene.add_child(new_unit)
 
-	# Inherit the Castle
+	# --- 3. GIVE MARCHING ORDERS ---
 	var my_castle = building.return_castle()
 	if is_instance_valid(my_castle):
-		new_unit.set_castle(my_castle)
-
+		# Just hand the order directly to the base! It handles the rest.
+		new_unit.assign_target(my_castle) 
+			
 	_spawned += 1
-	print("NightInstantiator: Have spawned ", _spawned, " ", new_unit.name, " for Team 0 (Night Only)")
+	print("NightInstantiator: Have spawned ", _spawned, " ", new_unit.name, " for Team 0 (Wild)")

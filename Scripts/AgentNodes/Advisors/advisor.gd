@@ -33,7 +33,6 @@ func initialize() -> void:
 # Called when this advisor takes control of the agent
 func on_gain_control() -> void:
 	pass
-	# print("Advisor ", name, " gained control.")
 
 # Called when this advisor loses control of the agent
 func on_lose_control() -> void:
