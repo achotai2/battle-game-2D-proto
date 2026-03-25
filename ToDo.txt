@@ -1,3 +1,1 @@
-- Goblins attack sheep
-- Peasants spawned by villages don't join get transformed by spawnsites, they seem to just freeze by the castle, probably because their other advisors have gone to sleep.
 - The goldgiver animation no longer works, and the players gold does not decrease when interacting.

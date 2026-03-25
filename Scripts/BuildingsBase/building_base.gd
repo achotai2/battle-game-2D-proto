@@ -100,14 +100,18 @@ func set_state(new_state: BuildingDefs.BuildingState) -> void:
 
 	match state:
 		BuildingDefs.BuildingState.DESTROYED:
-			if construct_interactable: construct_interactable.activate()
+			if construct_interactable: 
+				var cost = BuildingDefs.get_building_gold_cost(building_type) 
+				construct_interactable.update_interaction_state(BuildingDefs.IconType.CONSTRUCT, cost) 
+				construct_interactable.activate()
+			
 			if spawn_interactable: spawn_interactable.deactivate()
 			if construct_site: construct_site.activate()
 			if spawn_work_site: spawn_work_site.deactivate()
 			if spawn_site: spawn_site.deactivate()
 			if work_site: work_site.deactivate()
 			if production_queue: production_queue.deactivate()
-
+			
 		BuildingDefs.BuildingState.CONSTRUCTING:
 			if construct_interactable: construct_interactable.deactivate()
 			if spawn_interactable: spawn_interactable.deactivate()
@@ -117,7 +121,8 @@ func set_state(new_state: BuildingDefs.BuildingState) -> void:
 			if production_queue: production_queue.deactivate()
 			
 			if construct_site:
-				construct_site.total_work = BuildingDefs.get_construction_cost(building_type)
+				# --- THE FIX: Using the 'Work' getter so it doesn't crash! ---
+				construct_site.total_work = BuildingDefs.get_construction_work(building_type)
 				construct_site.reset_progress()
 				construct_site.activate()
 				construct_site.refresh_registration()
@@ -134,11 +139,12 @@ func set_state(new_state: BuildingDefs.BuildingState) -> void:
 			if spawn_interactable:
 				var config = BuildingDefs.get_spawn_config(building_type)
 				var unit_type = config.get("unit_type", 0)
-				var cost = BuildingDefs.get_unit_train_cost(unit_type)
+				var cost = BuildingDefs.get_unit_gold_cost(unit_type)
 				var icon = BuildingDefs.get_interact_mode(building_type, state)
+				
 				spawn_interactable.update_interaction_state(icon, cost)
 				spawn_interactable.activate()
-
+	
 	if visuals:
 		visuals.update_visuals(state, player)
 

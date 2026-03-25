@@ -10,7 +10,6 @@ var _interaction_target: Node3D = null
 
 
 func initialize() -> void:
-	# 1. Safely grab the root agent
 	if not is_instance_valid(_agent):
 		_agent = _find_root_base(self)
 
@@ -39,20 +38,37 @@ func _on_interaction_started(target: Node3D) -> void:
 
 
 func _on_interaction_finished(target: Node3D) -> void:
-	if is_instance_valid(goldWallet) and is_instance_valid(goldGiver):
-		var interaction_cost = 0
-		if target.has_method("return_interaction_cost"):
-			interaction_cost = target.return_interaction_cost()
-			
-		if goldWallet.has_method("get_gold") and goldWallet.get_gold() >= interaction_cost:
-			goldWallet.subtract_gold(interaction_cost)
-			
-			var target_base = _find_root_base(target)
-			goldGiver.give_gold(target_base, interaction_cost)
-			
-			if target.has_method("finish_interact"):
-				target.finish_interact(_agent)
+	var interaction_cost = 0
+	if target.has_method("return_interaction_cost"):
+		interaction_cost = target.return_interaction_cost()
 		
+	var can_afford = true
+	
+	# --- 1. HANDLE PAYMENT (If it costs anything) ---
+	if interaction_cost > 0:
+		if is_instance_valid(goldWallet) and goldWallet.has_method("get_gold"):
+			if goldWallet.get_gold() >= interaction_cost:
+				# We have the money! Spend it.
+				goldWallet.subtract_gold(interaction_cost)
+				
+				# Optional: Use GoldGiver if the player actually has one
+				if is_instance_valid(goldGiver) and goldGiver.has_method("give_gold"):
+					var target_base = _find_root_base(target)
+					if is_instance_valid(target_base):
+						goldGiver.give_gold(target_base, interaction_cost)
+			else:
+				can_afford = false # Broke!
+				print("Player Interact: Not enough gold! Cost: ", interaction_cost)
+		else:
+			can_afford = false # No wallet to pay with!
+			push_warning("Player Interact: Target costs gold, but Player has no Wallet!")
+
+	# --- 2. FINISH INTERACTION ---
+	if can_afford:
+		if target.has_method("finish_interact"):
+			target.finish_interact(_agent)
+	
+	# 3. Clean up the state
 	_interaction_target = null
 	request_intent_update()
 
@@ -66,10 +82,8 @@ func _on_interaction_suspended(_target: Node3D) -> void:
 
 func _calculate_intent() -> Intent:
 	if not is_instance_valid(interactor) or not is_instance_valid(_interaction_target):
-		# Returning null lets the Brain cleanly fall back to Attack or Idle
 		return null
 
-	# Max priority! The player explicitly wants to do this.
 	var intent = Intent.new(100.0, self, Intent.Type.PLAYER_INTERACT)
 	intent.target_node = _interaction_target
 	intent.description = "Player interacting with " + _interaction_target.name
@@ -79,11 +93,9 @@ func _calculate_intent() -> Intent:
 func enact_intent(intent: Intent) -> void:
 	if not is_instance_valid(_agent): return
 
-	# 1. Halt all movement immediately
 	if is_instance_valid(movement):
 		movement.stop()
 
-	# 2. Explicit Visuals: Face the object and animate!
 	var animate = _agent.get("animate")
 	if is_instance_valid(animate):
 		if is_instance_valid(intent.target_node) and animate.has_method("face_target"):
@@ -94,8 +106,6 @@ func enact_intent(intent: Intent) -> void:
 
 
 func on_lose_control() -> void:
-	# If a high-priority event (like a boss knockback) rips control away from us,
-	# make sure the interaction progress bar is cancelled!
 	if is_instance_valid(_interaction_target):
 		if is_instance_valid(interactor) and interactor.has_method("suspend_interaction"):
 			interactor.suspend_interaction()
@@ -105,5 +115,11 @@ func on_lose_control() -> void:
 
 # --- HELPERS ---
 
+# Replaced ComponentFinder with the safe hierarchy loop!
 func _find_root_base(start_node: Node) -> Node:
-	return ComponentFinder.get_base(start_node)
+	var current = start_node
+	while current and current != start_node.get_tree().root:
+		if current is AgentBase or current.has_method("return_castle"):
+			return current
+		current = current.get_parent()
+	return null

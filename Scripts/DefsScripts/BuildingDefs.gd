@@ -1,5 +1,5 @@
 extends Node
-# Assuming this is an Autoload named 'BuildingDefs'
+# Autoload named 'BuildingDefs'
 
 enum BuildingType {
 	BARRACKS,
@@ -80,7 +80,7 @@ const _visuals := {
 			2: preload("res://Art/Buildings_RTS/OBJ/GuardsBarracks_RedTeam.obj"),
 		},
 	},
-BuildingType.TREE: {
+	BuildingType.TREE: {
 		BuildingState.DESTROYED: {
 			1: preload("res://Art/SpriteFrames/tree.tres"),
 			2: preload("res://Art/SpriteFrames/tree.tres"),
@@ -150,29 +150,51 @@ const _interact_modes := {
 	},
 }
 
-# --- CONSTRUCTION PARAMS ---
+
+# ==========================================
+# --- TIMERS & PROGRESS (Floats) ---
+# ==========================================
+
 # How much "work" it takes to build the building from the DESTROYED state
-const _construction_costs := {
+const _construction_work_time := {
 	BuildingType.HOUSE: 5.0,
 	BuildingType.BARRACKS: 15.0,
 	BuildingType.ARCHERY: 10.0,
 	BuildingType.TREE: 3.0,
 }
 
-# --- PRODUCTION PARAMS ---
-# What does the building spawn?
+# How much "work" does the specific unit take to train before it spawns? 
+const _unit_train_work_time := {
+	UnitRoles.UnitType.WORKER: 5.0,
+	UnitRoles.UnitType.SOLDIER: 6.0,
+	UnitRoles.UnitType.ARCHER: 5.0,
+}
+
+
+# ==========================================
+# --- ECONOMY (Integers/Gold) ---
+# ==========================================
+
+# How much GOLD it costs the Player to start constructing this building
+const _building_gold_costs := {
+	BuildingType.HOUSE: 10,
+	BuildingType.BARRACKS: 25,
+	BuildingType.ARCHERY: 30,
+	BuildingType.TREE: 3,
+	BuildingType.VILLAGE: 0,
+}
+
+# How much GOLD it costs the Player to click the building and spawn a unit
+const _unit_gold_costs := {
+	UnitRoles.UnitType.WORKER: 5,
+	UnitRoles.UnitType.SOLDIER: 15,
+	UnitRoles.UnitType.ARCHER: 20,
+}
+
 const _spawn_configs := {
 	BuildingType.HOUSE: { "unit_type": UnitRoles.UnitType.WORKER },
 	BuildingType.BARRACKS: { "unit_type": UnitRoles.UnitType.SOLDIER },
 	BuildingType.ARCHERY: { "unit_type": UnitRoles.UnitType.ARCHER },
-}
-
-# How much "work" does the specific unit take to train? 
-# (You could also put this in UnitRoles, but keeping it here centralizes building logic)
-const _unit_train_costs := {
-	UnitRoles.UnitType.WORKER: 5.0,
-	UnitRoles.UnitType.SOLDIER: 6.0,
-	UnitRoles.UnitType.ARCHER: 5.0,
 }
 
 
@@ -181,26 +203,30 @@ const _unit_train_costs := {
 func get_frames(building_type: BuildingType, state: BuildingState, player: int) -> Resource:
 	if _visuals.has(building_type) and _visuals[building_type].has(state):
 		var options = _visuals[building_type][state]
-		
-		# Return the specific player's color, or default to player 1 if it's missing
 		if options.has(player):
 			return options[player]
 		else:
 			return options.get(1, null)
-			
 	return null
-
 
 func get_interact_mode(building_type: BuildingType, state: BuildingState) -> IconType:
 	if _interact_modes.has(building_type):
 		return _interact_modes[building_type].get(state, IconType.CONSTRUCT)
 	return IconType.CONSTRUCT
 
-func get_construction_cost(building_type: BuildingType) -> float:
-	return _construction_costs.get(building_type, 100.0)
-
 func get_spawn_config(building_type: BuildingType) -> Dictionary:
 	return _spawn_configs.get(building_type, {})
-	
-func get_unit_train_cost(unit_type: UnitRoles.UnitType) -> float:
-	return _unit_train_costs.get(unit_type, 50.0)
+
+# --- WORK GETTERS (Floats) ---
+func get_construction_work(building_type: BuildingType) -> float:
+	return _construction_work_time.get(building_type, 10.0)
+
+func get_unit_train_work(unit_type: UnitRoles.UnitType) -> float:
+	return _unit_train_work_time.get(unit_type, 5.0)
+
+# --- GOLD GETTERS (Ints) ---
+func get_building_gold_cost(building_type: BuildingType) -> int:
+	return _building_gold_costs.get(building_type, 0)
+
+func get_unit_gold_cost(unit_type: UnitRoles.UnitType) -> int:
+	return _unit_gold_costs.get(unit_type, 0)
