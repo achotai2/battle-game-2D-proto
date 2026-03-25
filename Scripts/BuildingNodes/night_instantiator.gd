@@ -51,8 +51,8 @@ func _on_spawn_timer_timeout() -> void:
 	new_unit.current_role = default_role
 	
 	# Lock in the Neutral physics layer before they wake up!
-	var is_peasant = (default_role == UnitRoles.UnitType.PEASANT)
-	new_unit.collision_layer = GamePhysics.get_minion_layer(0, is_peasant)
+	var is_non_attackable = not UnitRoles.get_role_groups(default_role).has(&"Attackable")
+	new_unit.collision_layer = GamePhysics.get_minion_layer(0, is_non_attackable)
 
 	if spawn_point:
 		new_unit.global_position = spawn_point.global_position

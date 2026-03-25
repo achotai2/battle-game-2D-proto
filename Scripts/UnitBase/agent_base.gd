@@ -145,7 +145,8 @@ func _deferred_apply_role(role: UnitRoles.UnitType, new_team: int) -> void:
 
 	player = new_team 
 
-	collision_layer = GamePhysics.get_minion_layer(new_team, role == UnitRoles.UnitType.PEASANT)
+	var is_non_attackable = not UnitRoles.get_role_groups(role).has(&"Attackable")
+	collision_layer = GamePhysics.get_minion_layer(new_team, is_non_attackable)
 	collision_mask = GamePhysics.get_minion_movement_mask()
 
 	_activate_folder(memory)

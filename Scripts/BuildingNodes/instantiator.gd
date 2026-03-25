@@ -48,8 +48,8 @@ func _on_spawn_timer_timeout() -> void:
 	new_unit.player = building.player
 	new_unit.current_role = default_role
 	
-	var is_peasant = (default_role == UnitRoles.UnitType.PEASANT)
-	new_unit.collision_layer = GamePhysics.get_minion_layer(building.player, is_peasant)
+	var is_non_attackable = not UnitRoles.get_role_groups(default_role).has(&"Attackable")
+	new_unit.collision_layer = GamePhysics.get_minion_layer(building.player, is_non_attackable)
 
 	# --- 2. POSITION ---
 	if spawn_point:
