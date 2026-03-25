@@ -11,7 +11,7 @@ const LAYER_INTERACTABLE_PLAYER_2 = 8
 const LAYER_TRACKING = 9
 const LAYER_WORKSITE = 10
 const LAYER_PROJECTILE = 11
-const LAYER_PEASANTS = 12
+const LAYER_NON_ATTACKABLE_MINIONS = 12
 const LAYER_TERRAIN = 13
 const LAYER_TREES = 14
 
@@ -19,9 +19,9 @@ static func get_mask_bit(layer: int) -> int:
 	return 1 << (layer - 1)
 
 
-static func get_minion_layer(player_id: int, is_peasant: bool = false) -> int:
-	if is_peasant:
-		return get_mask_bit(LAYER_PEASANTS)
+static func get_minion_layer(player_id: int, is_non_attackable: bool = false) -> int:
+	if is_non_attackable:
+		return get_mask_bit(LAYER_NON_ATTACKABLE_MINIONS)
 	match player_id:
 		0: return get_mask_bit(LAYER_ATTACKABLE_NEUTRAL)
 		1: return get_mask_bit(LAYER_ATTACKABLE_PLAYER_1)
@@ -127,7 +127,7 @@ static func get_all_units_mask() -> int:
 		get_mask_bit(LAYER_ATTACKABLE_NEUTRAL) | 
 		get_mask_bit(LAYER_ATTACKABLE_PLAYER_1) | 
 		get_mask_bit(LAYER_ATTACKABLE_PLAYER_2) | 
-		get_mask_bit(LAYER_PEASANTS)
+		get_mask_bit(LAYER_NON_ATTACKABLE_MINIONS)
 	)
 
 static func get_all_buildings_mask() -> int:
