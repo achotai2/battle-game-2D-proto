@@ -16,9 +16,17 @@ var _sites: Array[Node3D] = []
 signal work_available(site: Node3D)
 signal work_completed(site: Node3D)
 
+var _broadcast_timer: Timer
+
 func _ready() -> void:
 	if castle == null:
 		castle = get_parent() as Castle
+
+	_broadcast_timer = Timer.new()
+	_broadcast_timer.wait_time = 1.0
+	_broadcast_timer.autostart = true
+	_broadcast_timer.timeout.connect(_on_broadcast_timer_timeout)
+	add_child.call_deferred(_broadcast_timer)
 
 # -------------------------
 # Work sites
@@ -54,3 +62,9 @@ func unregister_site(site: Node3D) -> void:
 
 func _on_site_exited(site: Node3D) -> void:
 	unregister_site(site)
+
+func _on_broadcast_timer_timeout() -> void:
+	for site in _sites:
+		if is_instance_valid(site):
+			if site.has_method("needs_work") and site.needs_work() and site.has_method("has_free_slot") and site.has_free_slot():
+				work_available.emit(site)
