@@ -1,4 +1,4 @@
-[gd_scene load_steps=57 format=3 uid="uid://denj1nj2jkqg1"]
+[gd_scene load_steps=58 format=3 uid="uid://denj1nj2jkqg1"]
 
 [ext_resource type="Script" uid="uid://cnam6bddvgr7k" path="res://Scripts/Weather/EnvironmentController.gd" id="1_hptm8"]
 [ext_resource type="PackedScene" uid="uid://d4k6usdi8l0w0" path="res://Scenes/UI/GoldUI.tscn" id="1_k12tt"]
@@ -32,6 +32,7 @@
 [ext_resource type="Script" uid="uid://c1sepuf5g1v0x" path="res://addons/proton_scatter/src/scatter_shape.gd" id="28_hdf80"]
 [ext_resource type="Script" uid="uid://dw8ehq7hdvkgx" path="res://addons/proton_scatter/src/shapes/sphere_shape.gd" id="29_jwpg7"]
 [ext_resource type="PackedScene" uid="uid://c2e7hfbsppg4e" path="res://Scenes/Buildings/village.tscn" id="31_hpc6h"]
+[ext_resource type="PackedScene" uid="uid://bq43nslels8vk" path="res://Scenes/Buildings/wall.tscn" id="33_e08e2"]
 
 [sub_resource type="QuadMesh" id="QuadMesh_d1ilt"]
 
@@ -116,24 +117,24 @@ geometry_collision_mask = 3
 geometry_source_geometry_mode = 1
 geometry_source_group_name = &"nav_meshes"
 
-[sub_resource type="Resource" id="Resource_kltya"]
+[sub_resource type="Resource" id="Resource_e08e2"]
 script = ExtResource("24_kltya")
 restrict_height = true
 reference_frame = 1
 
-[sub_resource type="Resource" id="Resource_e08e2"]
+[sub_resource type="Resource" id="Resource_neg2b"]
 script = ExtResource("26_neg2b")
 offset_step = 0.2
 consecutive_step_multiplier = 0.75
 restrict_height = true
 
-[sub_resource type="Resource" id="Resource_neg2b"]
+[sub_resource type="Resource" id="Resource_r33sp"]
 script = ExtResource("26_6vcvc")
 enabled = false
 
-[sub_resource type="Resource" id="Resource_r33sp"]
+[sub_resource type="Resource" id="Resource_hdf80"]
 script = ExtResource("22_7k868")
-stack = Array[ExtResource("23_hpc6h")]([SubResource("Resource_kltya"), SubResource("Resource_e08e2"), SubResource("Resource_neg2b")])
+stack = Array[ExtResource("23_hpc6h")]([SubResource("Resource_e08e2"), SubResource("Resource_neg2b"), SubResource("Resource_r33sp")])
 
 [sub_resource type="Resource" id="Resource_g8bsm"]
 script = ExtResource("29_jwpg7")
@@ -238,6 +239,11 @@ size = Vector3(70, 70, 70)
 shape = 0
 material = SubResource("FogMaterial_fdnlq")
 
+[node name="Unit" parent="Environment/Units" node_paths=PackedStringArray("castle") instance=ExtResource("12_jkdf5")]
+player = 1
+castle = NodePath("../../Buildings/Castle")
+current_role = 4
+
 [node name="Buildings" type="Node3D" parent="Environment" groups=["nav_meshes"]]
 
 [node name="Tree" parent="Environment/Buildings" node_paths=PackedStringArray("castle") instance=ExtResource("10_hibaj")]
@@ -272,6 +278,12 @@ castle = NodePath("../Castle")
 transform = Transform3D(1, -1.6543616e-24, 0, 0, 1, 0, 0, 0, 1, -9, 0, 4)
 player = 1
 castle = NodePath("../Castle")
+
+[node name="Wall2" parent="Environment/Buildings" instance=ExtResource("33_e08e2")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -11.328, 0, 0.899)
+
+[node name="Wall" parent="Environment/Buildings" instance=ExtResource("33_e08e2")]
+transform = Transform3D(1, -1.6543616e-24, 0, 0, 1, 0, 0, 0, 1, -11.281, 0, 2.327)
 
 [node name="Village" parent="Environment/Buildings" node_paths=PackedStringArray("castle") instance=ExtResource("31_hpc6h")]
 transform = Transform3D(1, -1.6543616e-24, 0, 0, 1, 0, 0, 0, 1, -13.176, 0, -4.603)
@@ -336,10 +348,10 @@ collision_mask = 0
 polygon = PackedVector2Array(-13.4825115, -19.674524, -17.277878, 6.8014574, 5.8284664, 6.0285234, 9.282732, -1.3698578, 8.913405, -6.1833954, 6.1426773, -19.695534)
 
 [node name="ProtonScatter" type="Node3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -13.108, 0, 0)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -13.801156, 0, 0)
 script = ExtResource("21_6vcvc")
 render_mode = 1
-modifier_stack = SubResource("Resource_r33sp")
+modifier_stack = SubResource("Resource_hdf80")
 Performance/use_chunks = true
 Performance/chunk_dimensions = Vector3(15, 15, 15)
 metadata/_custom_type_script = "uid://comi57q7b8i1g"

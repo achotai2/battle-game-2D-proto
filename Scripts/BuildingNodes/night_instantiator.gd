@@ -63,11 +63,19 @@ func _on_spawn_timer_timeout() -> void:
 	# _ready() runs, permanently cementing them as Player 0 enemies
 	get_tree().current_scene.add_child(new_unit)
 
-	# --- 3. GIVE MARCHING ORDERS ---
+	# --- NO CASTLE REGISTRATION ---
+	# (Goblins remain wild and don't pay taxes!)
+
+	# --- 3. SMART RALLY POINT ---
+	# Use the variables inherited from the base Instantiator
+	var final_target: Node3D = rally_point
 	var my_castle = building.return_castle()
-	if is_instance_valid(my_castle):
-		# Just hand the order directly to the base! It handles the rest.
-		new_unit.assign_target(my_castle) 
+	
+	if rally_to_castle and is_instance_valid(my_castle):
+		final_target = my_castle
+		
+	if is_instance_valid(final_target):
+		new_unit.assign_target(final_target) 
 			
 	_spawned += 1
 	print("NightInstantiator: Have spawned ", _spawned, " ", new_unit.name, " for Team 0 (Wild)")

@@ -46,9 +46,9 @@ script = ExtResource("7_fiv50")
 [node name="GoldWallet" type="Node" parent="Memory"]
 script = ExtResource("8_lc655")
 
-[node name="BuildingVisuals" type="Node" parent="." node_paths=PackedStringArray("visual")]
+[node name="BuildingVisuals" type="Node" parent="." node_paths=PackedStringArray("visual_sprite")]
 script = ExtResource("9_naddn")
-visual = NodePath("../Sprites/Sprite2D")
+visual_sprite = NodePath("../Sprites/Sprite2D")
 metadata/_custom_type_script = "uid://cc22s0erkk06v"
 
 [node name="GoldGiver" type="Node" parent="."]

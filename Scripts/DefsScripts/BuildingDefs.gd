@@ -40,8 +40,8 @@ const _visuals := {
 			2: preload("res://Art/Tiny Swords (Update 010)/Factions/Knights/Buildings/House/House_Construction.png"),
 		},
 		BuildingState.BUILT: {
-			1: preload("res://Art/Tiny Swords (Update 010)/Factions/Knights/Buildings/House/House_Blue.png"),
-			2: preload("res://Art/Tiny Swords (Update 010)/Factions/Knights/Buildings/House/House_Red.png"),
+			1: preload("res://Art/Buildings_RTS/OBJ/House_Level1_BlueTeam.obj"),
+			2: preload("res://Art/Buildings_RTS/OBJ/House_Level1_RedTeam.obj"),
 		},
 	},
 	BuildingType.BARRACKS: {
@@ -58,8 +58,8 @@ const _visuals := {
 			2: preload("res://Art/Tiny Swords (Update 010)/Factions/Knights/Buildings/Castle/Castle_Construction.png"),
 		},
 		BuildingState.BUILT: {
-			1: preload("res://Art/Tiny Swords (Update 010)/Factions/Knights/Buildings/Castle/Castle_Blue.png"),
-			2: preload("res://Art/Tiny Swords (Update 010)/Factions/Knights/Buildings/Castle/Castle_Red.png"),
+			1: preload("res://Art/Buildings_RTS/OBJ/Blacksmith_BlueTeam.obj"),
+			2: preload("res://Art/Buildings_RTS/OBJ/Blacksmith_RedTeam.obj"),
 		},
 	},
 	BuildingType.ARCHERY: {
@@ -76,8 +76,8 @@ const _visuals := {
 			2: preload("res://Art/Tiny Swords (Update 010)/Factions/Knights/Buildings/House/House_Construction.png"),
 		},
 		BuildingState.BUILT: {
-			1: preload("res://Art/Tiny Swords (Update 010)/Factions/Goblins/Buildings/Wood_House/Goblin_House.png"),
-			2: preload("res://Art/Tiny Swords (Update 010)/Factions/Goblins/Buildings/Wood_House/Goblin_House.png"),
+			1: preload("res://Art/Buildings_RTS/OBJ/GuardsBarracks_BlueTeam.obj"),
+			2: preload("res://Art/Buildings_RTS/OBJ/GuardsBarracks_RedTeam.obj"),
 		},
 	},
 BuildingType.TREE: {

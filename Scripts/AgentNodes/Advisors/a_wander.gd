@@ -7,6 +7,7 @@ class_name AdvisorWander
 
 var movement: Node = null
 var unit_speed: Node = null
+var target_memory: Node = null
 
 var _current_target: Node3D = null
 var _wander_target_pos: Vector3 = Vector3.ZERO
@@ -21,9 +22,10 @@ func initialize() -> void:
 		_agent = _find_root_base(self)
 
 	if is_instance_valid(_agent):
-		# 2. Grab components directly
+		# 2. Grab components directly using the Facade Pattern
 		movement = _agent.get("movement")
 		unit_speed = _agent.get("unit_speed")
+		target_memory = _agent.get("target_memory")
 		
 		# 3. Connect to Discrete Navigation Signals
 		if is_instance_valid(movement):
@@ -32,11 +34,11 @@ func initialize() -> void:
 			if movement.has_signal("stuck") and not movement.stuck.is_connected(_meander_stuck):
 				movement.stuck.connect(_meander_stuck)
 		
-		# 4. Setup Castle Target
-		if _agent.has_method("return_castle"):
-			_current_target = _agent.return_castle()
-		if _agent.has_signal("new_castle_set") and not _agent.new_castle_set.is_connected(_castle_updated):
-			_agent.new_castle_set.connect(_castle_updated)
+		# 4. Setup Target Tracking (Replacing Castle)
+		if is_instance_valid(target_memory):
+			_current_target = target_memory.get("current_target")
+			if target_memory.has_signal("target_changed") and not target_memory.target_changed.is_connected(_on_target_updated):
+				target_memory.target_changed.connect(_on_target_updated)
 
 		# 5. Setup the Pause Timer
 		if not is_instance_valid(_pause_timer):
@@ -68,8 +70,9 @@ func _meander_stuck(agent: Node) -> void:
 		request_intent_update()
 
 
-func _castle_updated(new_castle: Node3D) -> void:
-	_current_target = new_castle
+# --- THE FIX: Listen for generalized target changes ---
+func _on_target_updated(new_target: Node3D) -> void:
+	_current_target = new_target
 	_needs_new_point = true 
 	request_intent_update()
 
@@ -122,8 +125,6 @@ func _generate_new_wander_point() -> void:
 	
 	var map_rid: RID = _agent.get_world_3d().navigation_map
 	_wander_target_pos = NavigationServer3D.map_get_closest_point(map_rid, raw_target)
-	
-	# THE FIX: No request_intent_update() here!
 
 
 func _find_root_base(start_node: Node) -> Node3D:

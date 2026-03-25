@@ -50,16 +50,18 @@ var _pending_target: Node3D = null
 func _ready() -> void:
 	_cache_components()
 
-	# Because of our new setter, we push the Editor's initial 'player' value directly into TeamMemory
 	if team:
 		team.current_team = player
 	
 	apply_role(current_role, player)
 	
 	_register_myself_with_castle()
+	
+	# --- NEW: DEFAULT TO CASTLE ON BOOT ---
+	if is_instance_valid(castle):
+		assign_target(castle)
 
 
-# --- NEW: Single Source of Truth for Variables ---
 func _cache_components() -> void:
 	movement = ComponentFinder.get_component(self, "AgentMovement") as AgentMovement
 	animate = ComponentFinder.get_component(self, "AgentAnimate") as AgentAnimate
@@ -82,14 +84,12 @@ func _cache_components() -> void:
 	weapons_node = ComponentFinder.get_component(self, "Node3D", "Weapons") as Node3D
 	target_memory = ComponentFinder.get_component(self, "TargetMemory") as TargetMemory
 
-	# Wire up health signals immediately after finding the health component
 	if is_instance_valid(health):
 		if not health.damaged.is_connected(_im_damaged):
 			health.damaged.connect(_im_damaged)
 		if not health.died.is_connected(_im_dead):
 			health.died.connect(_im_dead)
 	
-	# Explicitly setup the movement node so it doesn't have to search!
 	if is_instance_valid(movement) and movement.has_method("setup"):
 		movement.setup(self, animate, minion_nav_agent)
 
@@ -128,13 +128,10 @@ func _agent_moved(vel: Vector3) -> void:
 
 
 func apply_role(role: UnitRoles.UnitType, new_team: int) -> void:
-	# Forces the role swap to wait until the current frame finishes, preventing physics deadlocks!
 	call_deferred("_deferred_apply_role", role, new_team)
 
 
 func _deferred_apply_role(role: UnitRoles.UnitType, new_team: int) -> void:
-	# 1. Sync the Component Folders
-	# We swap out the old logic blocks for the new ones.
 	var components = UnitRoles.get_role_components(role)
 	_sync_folder(memory, components["memory"])
 	_sync_folder(sensors, components["sensors"])
@@ -142,43 +139,26 @@ func _deferred_apply_role(role: UnitRoles.UnitType, new_team: int) -> void:
 	_sync_folder(motor, components["motor"])
 	_sync_folder(brain, components["advisors"])
 
-	# 2. THE CRITICAL PAUSE
-	# We must wait exactly one physics frame. This gives Godot time to actually 
-	# execute the queue_free() on the old nodes, add the new nodes to the scene tree,
-	# and sync the NavigationServer for the new MinionNavAgent.
 	await get_tree().physics_frame
 
-	# 3. Re-cache the variables
-	# Now that the dust has settled, ComponentFinder will grab the correct, newly added nodes.
 	_cache_components()
 
-	# --- THE TIMELINE FIX (MOVED UP) ---
-	# 4. Team & Physics
-	# Set the truth BEFORE waking up the components!
-	player = new_team # This triggers our setter, automatically updating TeamMemory!
+	player = new_team 
 
 	collision_layer = GamePhysics.get_minion_layer(new_team, role == UnitRoles.UnitType.PEASANT)
 	collision_mask = GamePhysics.get_minion_movement_mask()
 
-	# 5. Re-activate logic AFTER recaching & setting the team
-	# This ensures new components have access to the correctly cached variables on the AgentBase
-	# and that they know exactly what team they are on.
 	_activate_folder(memory)
 	_activate_folder(sensors)
 	_activate_folder(weapons)
 	_activate_folder(motor)
-	# ------------------------------------
 
-	# 6. Refresh Internal Components (The Advisor Fix)
 	if brain and brain.has_method("refresh_advisors"):
-		# Passing 'self' here is crucial so the brain can hand the AgentBase 
-		# reference down to the new advisors, allowing them to access unit_speed!
 		brain.refresh_advisors(self)
 
 	if is_instance_valid(movement) and movement.has_method("refresh_components"):
 		movement.refresh_components()
 
-	# 7. Group Membership
 	if current_role != null:
 		for g: StringName in UnitRoles.get_role_groups(current_role):
 			if is_in_group(g):
@@ -189,22 +169,21 @@ func _deferred_apply_role(role: UnitRoles.UnitType, new_team: int) -> void:
 	for g: StringName in UnitRoles.get_role_groups(current_role):
 		add_to_group(g)
 
-	# 8. Visuals
 	var frames: SpriteFrames = UnitRoles.get_frames(current_role, new_team)
 	if frames != null and animate:
 		animate.set_sprite_frames(frames)
 
-# 9. State Refresh
 	if is_instance_valid(movement):
 		movement.stop()
 	if is_instance_valid(animate):
 		animate.cancel_action_state()
 		
-	# --- 10. FLUSH THE INBOX ---
-	# Now that we are fully awake, check if anyone gave us orders while we slept!
+	# --- 10. FLUSH INBOX & FALLBACK TO CASTLE ---
 	if _pending_target != null:
 		assign_target(_pending_target)
 		_pending_target = null
+	elif is_instance_valid(castle):
+		assign_target(castle)
 		
 
 func _sync_folder(target_parent: Node, incoming_packages: Array) -> void:
@@ -222,7 +201,6 @@ func _sync_folder(target_parent: Node, incoming_packages: Array) -> void:
 			existing_child.deactivate()
 
 		if not existing_child.name in incoming_names:
-			# Prevent ComponentFinder from accidentally grabbing a dying ghost!
 			existing_child.name = existing_child.name + "_DELETED"
 			existing_child.queue_free()
 				
@@ -262,6 +240,10 @@ func set_castle(new_castle: Node) -> void:
 	castle = new_castle
 	_register_myself_with_castle()
 	new_castle_set.emit(new_castle)
+	
+	# --- NEW: UPDATE TARGET WHEN CLAIMED ---
+	if is_instance_valid(castle):
+		assign_target(castle)
 
 func _register_myself_with_castle() -> void:
 	if is_instance_valid(castle):
@@ -278,9 +260,7 @@ func _activate_folder(target_parent: Node) -> void:
 			child.activate()
 
 func assign_target(target: Node3D) -> void:
-	# If we are fully awake and have the memory node, do it instantly.
 	if is_instance_valid(target_memory) and target_memory.has_method("set_target"):
 		target_memory.set_target(target)
 	else:
-		# If we are still building ourselves, put it in the inbox for later!
 		_pending_target = target
