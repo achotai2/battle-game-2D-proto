@@ -18,11 +18,9 @@ func give_gold(target: Node3D, amount: int) -> bool:
 		# 1. THE MATH: Do the logical transfer instantly so the economy is perfectly accurate
 		target_wallet.add_gold(amount)
 		
-		# 2. THE VISUALS: Start the asynchronous visual fountain
-		_cascade_visuals(target, amount)
-		return true
-
-	return false
+	# 2. THE VISUALS: Start the asynchronous visual fountain
+	_cascade_visuals(target, amount)
+	return true
 
 
 func _cascade_visuals(target: Node3D, amount: int) -> void:
