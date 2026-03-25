@@ -89,6 +89,10 @@ func set_job_board_kind(new_kind: int) -> void:
 func _on_work_available(site: Node3D) -> void:
 	if not site in _known_jobs:
 		_known_jobs.append(site)
+		task_changed.emit()
+	elif _site == null:
+		# If we already knew about it but have no job, an update might mean a slot opened up!
+		task_changed.emit()
 
 func _on_work_completed(site: Node3D) -> void:
 	if site in _known_jobs:
