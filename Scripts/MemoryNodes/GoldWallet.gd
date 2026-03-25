@@ -20,11 +20,11 @@ func activate() -> void:
 
 
 func add_gold(amount: int) -> void:
-	gold += amount
+	self.gold += amount
 
 
 func subtract_gold(amount: int) -> void:
-	gold -= amount
+	self.gold -= amount
 
 
 func get_gold() -> int:

@@ -105,10 +105,5 @@ func on_lose_control() -> void:
 
 # --- HELPERS ---
 
-func _find_root_base(start_node: Node) -> AgentBase:
-	var current = start_node
-	while current and current != get_tree().root:
-		if current is AgentBase:
-			return current as AgentBase
-		current = current.get_parent()
-	return null
+func _find_root_base(start_node: Node) -> Node:
+	return ComponentFinder.get_base(start_node)
