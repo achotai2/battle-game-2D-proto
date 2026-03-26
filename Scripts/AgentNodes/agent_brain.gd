@@ -5,6 +5,7 @@ class_name AgentBrain
 
 var current_advisor: Advisor = null
 var current_intent: Intent = null
+var _advisors: Array[Advisor] = []
 
 # The shield against infinite loops!
 var _evaluation_queued: bool = false 
@@ -41,8 +42,10 @@ func refresh_advisors(passed_agent: AgentBase = null) -> void:
 		agent = _find_root_base(self)
 		
 	# 2. Hand it down to the kids!
+	_advisors.clear()
 	for child in get_children():
 		if child is Advisor:
+			_advisors.append(child)
 			# INJECT THE DEPENDENCY: 
 			# We force the reference into the child before initializing it.
 			child.set_agent(self.agent)
@@ -78,14 +81,13 @@ func _evaluate_intents() -> void:
 
 	# 1. EVALUATION PHASE: Ask everyone for their cached intent
 	# This is virtually free on the CPU because Jules' dirty flags prevent math recalculations!
-	for child in get_children():
-		if child is Advisor:
-			var intent = child.get_intent()
-			
-			if intent:
-				# If this is the first valid intent, or it beats the current best priority
-				if best_intent == null or intent.priority > best_intent.priority:
-					best_intent = intent
+	for advisor in _advisors:
+		var intent = advisor.get_intent()
+
+		if intent:
+			# If this is the first valid intent, or it beats the current best priority
+			if best_intent == null or intent.priority > best_intent.priority:
+				best_intent = intent
 
 	# 2. HANDOVER PHASE: Give the wheel to the winner
 	if best_intent:
