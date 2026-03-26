@@ -89,7 +89,7 @@ func _setup_components() -> void:
 		_food_receiver.setup(_agent, _food_storage, food_display, _food_gone_timer)
 	add_child(_food_receiver)
 	
-	# THE FIX: We deleted the entire _setup_advisor() function! 
+	# We deleted the entire _setup_advisor() function! 
 	# The Brain manages the AdvisorHunger script now.
 
 

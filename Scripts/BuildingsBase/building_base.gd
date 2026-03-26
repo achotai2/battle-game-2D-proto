@@ -121,7 +121,7 @@ func set_state(new_state: BuildingDefs.BuildingState) -> void:
 			if production_queue: production_queue.deactivate()
 			
 			if construct_site:
-				# --- THE FIX: Using the 'Work' getter so it doesn't crash! ---
+				# --- Using the 'Work' getter so it doesn't crash! ---
 				construct_site.total_work = BuildingDefs.get_construction_work(building_type)
 				construct_site.reset_progress()
 				construct_site.activate()
