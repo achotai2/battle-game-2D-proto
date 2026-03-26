@@ -75,7 +75,7 @@ func _calculate_intent() -> Intent:
 					arrived = false
 					break
 
-	# THE FIX: If no job exists, return null and keep the search timer running!
+	# If no job exists, return null and keep the search timer running!
 	if not is_instance_valid(job):
 		if is_instance_valid(_job_search_timer) and _job_search_timer.is_stopped():
 			_job_search_timer.start()
