@@ -35,14 +35,17 @@ func _sweep_territory() -> void:
 	var poly_node = find_child("CollisionPolygon3D", false, false) as CollisionPolygon3D
 	if poly_node:
 		var poly_2d = poly_node.polygon
-		var poly_transform = poly_node.global_transform
+		var inverse_transform = poly_node.global_transform.affine_inverse()
+		var half_depth = poly_node.depth / 2.0
+
+		var buildings = get_tree().get_nodes_in_group("Buildings")
 		
 		# Loops over "Buildings" (which includes Trees, thanks to BuildingBase._ready!)
-		for building in get_tree().get_nodes_in_group("Buildings"):
+		for building in buildings:
 			if building.has_method("return_castle") and building.return_castle() == null:
-				var local_pos = poly_transform.affine_inverse() * building.global_position
-				if Geometry2D.is_point_in_polygon(Vector2(local_pos.x, local_pos.y), poly_2d):
-					if abs(local_pos.z) <= poly_node.depth / 2.0:
+				var local_pos = inverse_transform * building.global_position
+				if abs(local_pos.z) <= half_depth:
+					if Geometry2D.is_point_in_polygon(Vector2(local_pos.x, local_pos.y), poly_2d):
 						_try_assign_castle(building)
 
 
