@@ -124,7 +124,7 @@ func get_known_jobs_sorted_by_distance() -> Array[Node3D]:
 	if not is_instance_valid(agent): return valid_jobs
 
 	var agent_pos := agent.global_position
-	var distance_pairs: Array[Dictionary] = []
+	var distance_pairs: Array = []
 
 	for i in range(_known_jobs.size() - 1, -1, -1):
 		var site = _known_jobs[i]
@@ -133,16 +133,14 @@ func get_known_jobs_sorted_by_distance() -> Array[Node3D]:
 			continue
 
 		var dist_sq := agent_pos.distance_squared_to(site.global_position)
-		distance_pairs.append({"site": site, "dist": dist_sq})
+		distance_pairs.append([dist_sq, i, site])
 
-	# Sort the pairs by pre-computed distance
-	distance_pairs.sort_custom(func(a: Dictionary, b: Dictionary):
-		return a.dist < b.dist
-	)
+	# Sort the pairs by pre-computed distance natively
+	distance_pairs.sort()
 
 	# Extract sites
 	for pair in distance_pairs:
-		valid_jobs.append(pair.site)
+		valid_jobs.append(pair[2])
 
 	return valid_jobs
 
