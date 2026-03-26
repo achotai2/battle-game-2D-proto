@@ -45,7 +45,7 @@ func _calculate_intent() -> Intent:
 		intent.description = "Player Input Move"
 		return intent
 
-	# THE FIX: Return null instead of a 1.0 IDLE Intent!
+	# Return null instead of a 1.0 IDLE Intent!
 	# By returning null, the Brain instantly falls back to checking lower-priority 
 	# advisors, allowing the 50.0 Auto-Attack to seamlessly take over.
 	return null
