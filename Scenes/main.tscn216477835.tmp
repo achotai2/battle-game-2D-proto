@@ -1,4 +1,4 @@
-[gd_scene load_steps=58 format=3 uid="uid://denj1nj2jkqg1"]
+[gd_scene load_steps=61 format=3 uid="uid://denj1nj2jkqg1"]
 
 [ext_resource type="Script" uid="uid://cnam6bddvgr7k" path="res://Scripts/Weather/EnvironmentController.gd" id="1_hptm8"]
 [ext_resource type="PackedScene" uid="uid://d4k6usdi8l0w0" path="res://Scenes/UI/GoldUI.tscn" id="1_k12tt"]
@@ -26,6 +26,9 @@
 [ext_resource type="Script" uid="uid://dvbgf4c1feh1i" path="res://addons/proton_scatter/src/stack/modifier_stack.gd" id="22_7k868"]
 [ext_resource type="Script" uid="uid://ps57af5fgd5v" path="res://addons/proton_scatter/src/modifiers/base_modifier.gd" id="23_hpc6h"]
 [ext_resource type="Script" uid="uid://b07u4f2qxordx" path="res://addons/proton_scatter/src/modifiers/create_inside_random.gd" id="24_kltya"]
+[ext_resource type="Script" uid="uid://82hj2tej256b" path="res://addons/zylann.hterrain/hterrain_detail_layer.gd" id="24_r33sp"]
+[ext_resource type="Texture2D" uid="uid://6jmdwj3vn6m0" path="res://addons/zylann.hterrain/tools/icons/icon_detail_layer_node.svg" id="25_hdf80"]
+[ext_resource type="Texture2D" uid="uid://dtwaqyggoifo3" path="res://Art/Tree1Detail.png" id="25_jwpg7"]
 [ext_resource type="Script" uid="uid://cicvkrf0uokoj" path="res://addons/proton_scatter/src/modifiers/project_on_geometry.gd" id="26_6vcvc"]
 [ext_resource type="Script" uid="uid://m8popk2y4pkc" path="res://addons/proton_scatter/src/modifiers/relax.gd" id="26_neg2b"]
 [ext_resource type="Script" uid="uid://dggyiwgxbcp1o" path="res://addons/proton_scatter/src/scatter_item.gd" id="27_r33sp"]
@@ -119,7 +122,6 @@ geometry_source_group_name = &"nav_meshes"
 
 [sub_resource type="Resource" id="Resource_e08e2"]
 script = ExtResource("24_kltya")
-amount = 40
 restrict_height = true
 reference_frame = 1
 
@@ -137,10 +139,9 @@ enabled = false
 script = ExtResource("22_7k868")
 stack = Array[ExtResource("23_hpc6h")]([SubResource("Resource_e08e2"), SubResource("Resource_neg2b"), SubResource("Resource_r33sp")])
 
-[sub_resource type="Resource" id="Resource_jwpg7"]
+[sub_resource type="Resource" id="Resource_g8bsm"]
 script = ExtResource("29_jwpg7")
-radius = 4.5357113
-metadata/_custom_type_script = "uid://dw8ehq7hdvkgx"
+radius = 2.0
 
 [sub_resource type="BoxMesh" id="BoxMesh_hdf80"]
 
@@ -282,13 +283,13 @@ player = 1
 castle = NodePath("../Castle")
 
 [node name="Wall2" parent="Environment/Buildings" instance=ExtResource("33_e08e2")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -7.757742, 0, -1.916971)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -11.328, 0, 0.899)
 
 [node name="Wall" parent="Environment/Buildings" instance=ExtResource("33_e08e2")]
-transform = Transform3D(1, -1.6543616e-24, 0, 0, 1, 0, 0, 0, 1, -7.710742, 0, -0.488971)
+transform = Transform3D(1, -1.6543616e-24, 0, 0, 1, 0, 0, 0, 1, -11.281, 0, 2.327)
 
 [node name="Village" parent="Environment/Buildings" node_paths=PackedStringArray("castle") instance=ExtResource("31_hpc6h")]
-transform = Transform3D(1, -1.6543616e-24, 0, 0, 1, 0, 0, 0, 1, -9.853549, 0, -4.603)
+transform = Transform3D(1, -1.6543616e-24, 0, 0, 1, 0, 0, 0, 1, -13.176, 0, -4.603)
 player = 1
 castle = NodePath("../Castle")
 
@@ -317,10 +318,6 @@ shader_params/u_shadow_color = Color(0.049996994, 0.049980476, 0.12726104, 1)
 shader_params/u_shadow_noise = SubResource("NoiseTexture2D_fdnlq")
 shader_params/u_shadow_edge_size = 0.5
 shader_params/u_shadow_noise_scale = 1.0
-shader_params/u_cutout_player_position = Vector3(0, 0, 0)
-shader_params/u_cutout_camera_position = Vector3(0, 0, 0)
-shader_params/u_cutout_radius = 0.0
-shader_params/u_cutout_softness = 1.0
 shader_params/u_cutout_slope_cos_range = Vector2(-1, 1)
 shader_params/u_stroke_scale = 8.0
 shader_params/u_stroke_length = 0.03
@@ -330,13 +327,21 @@ shader_params/u_stroke_wobble_strength = 0.08
 shader_params/u_stroke_wobble_scale = 10.0
 metadata/_custom_type_script = "uid://bc80wnl2w5xyh"
 
-[node name="CameraTerrainWindow" type="Node" parent="Environment/HTerrain" node_paths=PackedStringArray("terrain", "player", "camera")]
+[node name="CameraTerrainWindow" type="Node" parent="Environment/HTerrain" node_paths=PackedStringArray("player", "camera")]
 script = ExtResource("5_kry3j")
-terrain = NodePath("..")
+cutout_radius = 1.0
 player = NodePath("../../Units/Player")
 camera = NodePath("../../Units/Player/Camera3D")
-cutout_radius = 1.0
-cutout_slope_min = 15.0
+
+[node name="HTerrainDetailLayer" type="Node3D" parent="Environment/HTerrain"]
+script = ExtResource("24_r33sp")
+texture = ExtResource("25_jwpg7")
+shader_params/u_globalmap_tint_bottom = 0.0
+shader_params/u_globalmap_tint_top = 0.0
+shader_params/u_bottom_ao = 0.0
+shader_params/u_instance_scale = Vector3(1, 1, 1)
+shader_params/u_roughness = 0.9
+metadata/_editor_icon = ExtResource("25_hdf80")
 
 [node name="NavigationRegion3D" type="NavigationRegion3D" parent="."]
 transform = Transform3D(1, 7.450581e-09, 1.4901161e-08, 7.450581e-09, 0.99999994, 0, 1.4901161e-08, 0, 0.9999999, 0, 0, 0)
@@ -351,7 +356,7 @@ collision_mask = 0
 polygon = PackedVector2Array(-13.4825115, -19.674524, -17.277878, 6.8014574, 5.8284664, 6.0285234, 9.282732, -1.3698578, 8.913405, -6.1833954, 6.1426773, -19.695534)
 
 [node name="ProtonScatter" type="Node3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -13.758158, 0, 0.57115495)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -13.801156, 0, 0)
 script = ExtResource("21_6vcvc")
 render_mode = 1
 modifier_stack = SubResource("Resource_hdf80")
@@ -364,10 +369,10 @@ script = ExtResource("27_r33sp")
 path = "uid://bx0vujr38q8pu"
 
 [node name="ScatterShape" type="Node3D" parent="ProtonScatter"]
-transform = Transform3D(1, 0, -2.98023e-08, 0, 1, 0, 2.98023e-08, 0, 1, 0.035289764, 0, -0.7882018)
+transform = Transform3D(1, 0, -2.98023e-08, 0, 1, 0, 2.98023e-08, 0, 1, 0, 0, 0)
 script = ExtResource("28_hdf80")
-shape = SubResource("Resource_jwpg7")
+shape = SubResource("Resource_g8bsm")
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="."]
-transform = Transform3D(100, 0, 0, 0, 1, 0, 0, 0, 100, -0.026626587, -0.7574527, -0.009159088)
+transform = Transform3D(100, 0, 0, 0, 1, 0, 0, 0, 100, 0, -0.7803104, 0)
 mesh = SubResource("BoxMesh_hdf80")

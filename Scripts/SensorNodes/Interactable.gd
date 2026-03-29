@@ -16,20 +16,25 @@ var _disabled: bool = false
 var _active_interactor: AgentBase = null
 var _interaction_cost: int = 0
 var _team_memory: TeamMemory = null
+var _boss: Node = null
+
 
 func _ready() -> void:
-	pass
+	_boss = ComponentFinder.get_base(self)
+
 
 func deactivate() -> void:
 	set_enabled(false)
+
 
 func activate() -> void:
 	set_enabled(true)
 	call_deferred("_late_ready")
 
+
 func _late_ready() -> void:
-	var base = ComponentFinder.get_base(self)
-	_team_memory = base.get("team") if base.get("team") else base.get("team_memory")
+	var _boss = ComponentFinder.get_base(self)
+	_team_memory = _boss.get("team") if _boss.get("team") else _boss.get("team_memory")
 
 	if _team_memory and not _team_memory.team_changed.is_connected(_on_team_changed):
 		_team_memory.team_changed.connect(_on_team_changed)
@@ -54,6 +59,8 @@ func can_interact(interactor: AgentBase) -> bool:
 	if _disabled:
 		return false
 	if _active_interactor != null and _active_interactor != interactor:
+		return false
+	if _boss and _boss.environmentRadar and _boss.environmentRadar.force_scan():
 		return false
 
 	return true

@@ -1,4 +1,4 @@
-[gd_scene load_steps=11 format=3 uid="uid://c2e7hfbsppg4e"]
+[gd_scene load_steps=13 format=3 uid="uid://c2e7hfbsppg4e"]
 
 [ext_resource type="Script" uid="uid://cjbrsf0fmsehe" path="res://Scripts/BuildingsBase/building_base.gd" id="1_o8tl3"]
 [ext_resource type="Texture2D" uid="uid://bql6vtmrfib0u" path="res://Art/Village.png" id="6_o8tl3"]
@@ -7,18 +7,22 @@
 [ext_resource type="Script" uid="uid://2ssmusd0k3fn" path="res://Scripts/MemoryNodes/GoldWallet.gd" id="8_lc655"]
 [ext_resource type="PackedScene" uid="uid://dunt5nfaabbqv" path="res://Scenes/Units/Unit.tscn" id="8_nw35o"]
 [ext_resource type="Script" uid="uid://cc22s0erkk06v" path="res://Scripts/BuildingNodes/BuildingVisuals.gd" id="9_naddn"]
+[ext_resource type="Script" uid="uid://d28nigd2q3xq3" path="res://Scripts/BuildingNodes/EnvironmentRadar.gd" id="10_o8tl3"]
 [ext_resource type="Script" uid="uid://cf8nbntvvy3iv" path="res://Scripts/AgentNodes/GoldGiver.gd" id="10_yyqno"]
+[ext_resource type="Script" uid="uid://c0viulytyjlhp" path="res://Scripts/BuildingNodes/tree_death.gd" id="11_mx7h5"]
 [ext_resource type="Script" uid="uid://bt0yabnd4kdm3" path="res://Scripts/BuildingNodes/night_instantiator.gd" id="night_inst_script"]
 
 [sub_resource type="CylinderShape3D" id="CylinderShape3D_7b5gy"]
 height = 1.8567963
 radius = 1.1274414
 
-[node name="Village" type="StaticBody3D" node_paths=PackedStringArray("visuals")]
+[node name="Village" type="StaticBody3D" node_paths=PackedStringArray("visuals", "environmentRadar", "buildingDeath")]
 script = ExtResource("1_o8tl3")
 building_type = 4
 visuals = NodePath("BuildingVisuals")
+environmentRadar = NodePath("EnvironmentRadar")
 state = 3
+buildingDeath = NodePath("BuildingDeath")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="."]
 transform = Transform3D(-4.371139e-08, 0, -1, 0, 1, 0, 1, 0, -4.371139e-08, 0, 0.45130157, 0)
@@ -73,3 +77,13 @@ spawn_delay = 1.0
 
 [node name="Marker3D" type="Marker3D" parent="NightInstantiator"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.07546562, -1.292591)
+
+[node name="EnvironmentRadar" type="Node3D" parent="."]
+script = ExtResource("10_o8tl3")
+scan_radius = 3.0
+auto_scan = true
+metadata/_custom_type_script = "uid://d28nigd2q3xq3"
+
+[node name="BuildingDeath" type="Node3D" parent="."]
+script = ExtResource("11_mx7h5")
+metadata/_custom_type_script = "uid://c0viulytyjlhp"

@@ -13,8 +13,9 @@ signal new_castle_set(new_castle: Castle)
 @export var construct_site: WorkSite
 @export var production_queue: ProductionQueue
 @export var visuals: BuildingVisuals 
+@export var environmentRadar: EnvironmentRadar
 @export var state: BuildingDefs.BuildingState = BuildingDefs.BuildingState.DESTROYED
-@export var is_tree: bool = false
+@export var buildingDeath: BuildingDeath
 
 var building_visuals: BuildingVisuals = null
 var construct_work_site: WorkSite = null
@@ -40,7 +41,7 @@ func _ready() -> void:
 	_cache_components()
 
 	# Check if we are a tree before applying the physics layer!
-	if is_tree:
+	if building_type == BuildingDefs.BuildingType.TREE:
 		collision_layer = GamePhysics.get_mask_bit(GamePhysics.LAYER_TREES)
 	else:
 		collision_layer = GamePhysics.get_building_layer()
@@ -100,13 +101,13 @@ func set_state(new_state: BuildingDefs.BuildingState) -> void:
 
 	match state:
 		BuildingDefs.BuildingState.DESTROYED:
-			if construct_interactable: 
+			if construct_interactable:
 				var cost = BuildingDefs.get_building_gold_cost(building_type) 
 				construct_interactable.update_interaction_state(BuildingDefs.IconType.CONSTRUCT, cost) 
 				construct_interactable.activate()
-			
+
+			if construct_site: construct_site.activate()			
 			if spawn_interactable: spawn_interactable.deactivate()
-			if construct_site: construct_site.activate()
 			if spawn_work_site: spawn_work_site.deactivate()
 			if spawn_site: spawn_site.deactivate()
 			if work_site: work_site.deactivate()
@@ -144,7 +145,15 @@ func set_state(new_state: BuildingDefs.BuildingState) -> void:
 				
 				spawn_interactable.update_interaction_state(icon, cost)
 				spawn_interactable.activate()
-	
+
+			# Check radar immediately upon finishing construction (Crucial for Trees!)
+			if is_instance_valid(environmentRadar):
+				environmentRadar.force_scan()
+				
+			# If I am a tree, tell all radars across the entire map exactly where I died
+			if building_type == BuildingDefs.BuildingType.TREE and buildingDeath:
+				buildingDeath.trigger_death()
+				
 	if visuals:
 		visuals.update_visuals(state, player)
 

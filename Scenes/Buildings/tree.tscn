@@ -1,4 +1,4 @@
-[gd_scene load_steps=12 format=3 uid="uid://bx0vujr38q8pu"]
+[gd_scene load_steps=14 format=3 uid="uid://bx0vujr38q8pu"]
 
 [ext_resource type="Script" uid="uid://cjbrsf0fmsehe" path="res://Scripts/BuildingsBase/building_base.gd" id="1_l3oha"]
 [ext_resource type="Script" uid="uid://qumqy1omy72i" path="res://Scripts/BuildingNodes/worksite.gd" id="2_rsuno"]
@@ -8,6 +8,8 @@
 [ext_resource type="Script" uid="uid://x1bw8qb4ilbg" path="res://Scripts/BuildingNodes/instantiator.gd" id="8_rg3ib"]
 [ext_resource type="Script" uid="uid://cc22s0erkk06v" path="res://Scripts/BuildingNodes/BuildingVisuals.gd" id="9_7b5gy"]
 [ext_resource type="PackedScene" uid="uid://dunt5nfaabbqv" path="res://Scenes/Units/Unit.tscn" id="9_qkh5c"]
+[ext_resource type="Script" uid="uid://c0viulytyjlhp" path="res://Scripts/BuildingNodes/tree_death.gd" id="10_f2dg2"]
+[ext_resource type="Script" uid="uid://d28nigd2q3xq3" path="res://Scripts/BuildingNodes/EnvironmentRadar.gd" id="11_ih7i8"]
 [ext_resource type="Script" uid="uid://ggpe07y6471c" path="res://Scripts/MemoryNodes/TeamMemory.gd" id="99_team"]
 
 [sub_resource type="CylinderShape3D" id="CylinderShape3D_0vwjc"]
@@ -16,7 +18,7 @@ radius = 0.2055664
 
 [sub_resource type="BoxMesh" id="BoxMesh_efeq4"]
 
-[node name="Tree" type="StaticBody3D" node_paths=PackedStringArray("construct_interactable", "construct_site", "visuals") groups=["Trees"]]
+[node name="Tree" type="StaticBody3D" node_paths=PackedStringArray("construct_interactable", "construct_site", "visuals", "environmentRadar", "buildingDeath") groups=["Trees"]]
 collision_layer = 8192
 collision_mask = 8192
 script = ExtResource("1_l3oha")
@@ -24,7 +26,8 @@ building_type = 3
 construct_interactable = NodePath("Interactable")
 construct_site = NodePath("WorkSite")
 visuals = NodePath("BuildingVisuals")
-is_tree = true
+environmentRadar = NodePath("EnvironmentRadar")
+buildingDeath = NodePath("BuildingDeath")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5836487, 0)
@@ -86,3 +89,13 @@ rally_to_castle = false
 metadata/_custom_type_script = "uid://x1bw8qb4ilbg"
 
 [node name="Marker3D" type="Marker3D" parent="Instantiator"]
+
+[node name="EnvironmentRadar" type="Node3D" parent="."]
+script = ExtResource("11_ih7i8")
+scan_radius = 2.0
+threshold = 6
+metadata/_custom_type_script = "uid://d28nigd2q3xq3"
+
+[node name="BuildingDeath" type="Node3D" parent="."]
+script = ExtResource("10_f2dg2")
+metadata/_custom_type_script = "uid://c0viulytyjlhp"
