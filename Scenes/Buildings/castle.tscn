@@ -11,9 +11,9 @@
 height = 2.0526266
 radius = 1.9042969
 
-[node name="Castle" type="StaticBody3D" node_paths=PackedStringArray("peasant_job_board", "worker_job_board", "food_job_board") groups=["Attackable", "Buildings", "Interactable"]]
+[node name="Castle" type="StaticBody3D" node_paths=PackedStringArray("peasant_job_board", "worker_job_board", "food_job_board") groups=["Attackable", "Buildings", "Interactable", "nav_meshes"]]
 collision_layer = 2
-collision_mask = 3
+collision_mask = 2
 physics_material_override = SubResource("PhysicsMaterial_r1mkv")
 script = ExtResource("1_p6e6l")
 peasant_job_board = NodePath("PeasantJobBoard")
@@ -38,12 +38,6 @@ metadata/_custom_type_script = "uid://ba0yfy3sv1ht2"
 script = ExtResource("2_r1mkv")
 castle = NodePath("..")
 metadata/_custom_type_script = "uid://ba0yfy3sv1ht2"
-
-[node name="NavigationObstacle2D2" type="NavigationObstacle3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.8767499, 0)
-radius = 2.0
-affect_navigation_mesh = true
-carve_navigation_mesh = true
 
 [node name="Sprites" type="Node3D" parent="."]
 

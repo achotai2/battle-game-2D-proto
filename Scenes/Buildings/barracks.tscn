@@ -1,4 +1,4 @@
-[gd_scene load_steps=13 format=3 uid="uid://ra0fj2eqns6d"]
+[gd_scene load_steps=14 format=3 uid="uid://ra0fj2eqns6d"]
 
 [ext_resource type="Script" uid="uid://cjbrsf0fmsehe" path="res://Scripts/BuildingsBase/building_base.gd" id="1_24hde"]
 [ext_resource type="Script" uid="uid://lkh36p7gdce2" path="res://Scripts/BuildingNodes/ProductionQueue.gd" id="2_ua3nw"]
@@ -10,27 +10,26 @@
 [ext_resource type="Script" uid="uid://cc22s0erkk06v" path="res://Scripts/BuildingNodes/BuildingVisuals.gd" id="9_krvd1"]
 [ext_resource type="Script" uid="uid://cf8nbntvvy3iv" path="res://Scripts/AgentNodes/GoldGiver.gd" id="10_8jqml"]
 [ext_resource type="ArrayMesh" uid="uid://blxd4gacbpuhp" path="res://Art/Buildings_RTS/OBJ/Blacksmith_BlueTeam.obj" id="11_hcvrl"]
+[ext_resource type="Script" uid="uid://d28nigd2q3xq3" path="res://Scripts/BuildingNodes/EnvironmentRadar.gd" id="12_x6p71"]
 [ext_resource type="Script" uid="uid://ggpe07y6471c" path="res://Scripts/MemoryNodes/TeamMemory.gd" id="99_team"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_hcvrl"]
 size = Vector3(1.1264648, 1.2252197, 1.9492188)
 
-[node name="Barracks" type="StaticBody3D" node_paths=PackedStringArray("construct_interactable", "spawn_interactable", "construct_site", "production_queue", "visuals")]
+[node name="Barracks" type="StaticBody3D" node_paths=PackedStringArray("construct_interactable", "spawn_interactable", "construct_site", "production_queue", "visuals", "environmentRadar") groups=["nav_meshes"]]
+collision_layer = 2
+collision_mask = 2
 script = ExtResource("1_24hde")
 construct_interactable = NodePath("ConstructInteractable")
 spawn_interactable = NodePath("SpawnInteractable")
 construct_site = NodePath("Worksites/ConstructWorkSite")
 production_queue = NodePath("ProductionQueue")
 visuals = NodePath("BuildingVisuals")
+environmentRadar = NodePath("EnvironmentRadar")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="."]
 transform = Transform3D(-4.371139e-08, 0, -1, 0, 1, 0, 1, 0, -4.371139e-08, -0.13769531, 0.55462646, -0.13598633)
 shape = SubResource("BoxShape3D_hcvrl")
-
-[node name="NavigationObstacle2D" type="NavigationObstacle3D" parent="."]
-radius = 0.92
-affect_navigation_mesh = true
-carve_navigation_mesh = true
 
 [node name="ProductionQueue" type="Node" parent="." node_paths=PackedStringArray("spawnInteractable", "spawn_worksite", "spawn_site")]
 script = ExtResource("2_ua3nw")
@@ -126,3 +125,9 @@ metadata/_custom_type_script = "uid://cf8nbntvvy3iv"
 [node name="MeshInstance3D" type="MeshInstance3D" parent="."]
 transform = Transform3D(0.1, 0, 0, 0, 0.1, 0, 0, 0, 0.1, 0, 0.46468133, 0)
 mesh = ExtResource("11_hcvrl")
+
+[node name="EnvironmentRadar" type="Node3D" parent="."]
+script = ExtResource("12_x6p71")
+scan_radius = 2.0
+threshold = 0
+metadata/_custom_type_script = "uid://d28nigd2q3xq3"

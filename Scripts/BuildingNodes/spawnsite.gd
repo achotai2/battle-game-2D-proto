@@ -21,7 +21,16 @@ func deactivate() -> void:
 
 func _ready() -> void:
 	if not my_boss:
-		my_boss = ComponentFinder.get_base(self)
+		# Use singleton, or fallback to parent if the singleton misses it
+		if has_node("/root/ComponentFinder"): 
+			my_boss = ComponentFinder.get_base(self)
+		if not my_boss:
+			my_boss = get_parent()
+
+	# --- NEW: Listen for Castle changes! ---
+	if is_instance_valid(my_boss) and my_boss.has_signal("new_castle_set"):
+		if not my_boss.is_connected("new_castle_set", _on_new_castle_set):
+			my_boss.connect("new_castle_set", _on_new_castle_set)
 
 
 # -------------------------
@@ -36,10 +45,15 @@ func request_peasant() -> void:
 
 
 func set_enabled(new_enabled: bool) -> void:
+	if enabled == new_enabled:
+		return
 	enabled = new_enabled
+	
 	if not enabled:
 		_unregister_from_job_board()
 		_incoming_peasant = null
+	else:
+		_resolve_castle_and_register()
 
 
 # -------------------------
@@ -47,22 +61,17 @@ func set_enabled(new_enabled: bool) -> void:
 # -------------------------
 
 func needs_work() -> bool:
-	# It needs work as long as it is turned on. It doesn't finish 
-	# until the peasant physically arrives and shuts it down!
 	return enabled
 
 
 func has_free_slot() -> bool:
-	# It only has a free slot if no one has claimed it yet
 	return _incoming_peasant == null
 
 
 func assign_worker(agent: AgentBase) -> bool:
-	# Check if it's open AND if it has a slot
 	if not enabled or not has_free_slot() or agent == null:
 		return false
 		
-	# Claim this peasant so the Job Board doesn't send 5 peasants for 1 job!
 	_incoming_peasant = agent
 	return true
 
@@ -73,7 +82,6 @@ func release_worker(agent: AgentBase) -> void:
 
 
 func get_work_position() -> Vector3:
-	# Tell the Peasant where to walk
 	if spawn_location:
 		return spawn_location.global_position
 	return global_position
@@ -88,39 +96,54 @@ func transform_worker(agent: AgentBase) -> void:
 
 
 func apply_work(_amount: float, worker: AgentBase) -> void:
-	## In the AI's mind, it is "working", but for a Peasant, arriving IS the work.
 	if worker != _incoming_peasant or not enabled:
 		return
 
-	# We got our peasant! Shut down the site.
 	_unregister_from_job_board()
 	enabled = false
 	_incoming_peasant = null
 
-	# Tell the ProductionQueue to apply the specific role!
 	unit_transformed.emit(worker)
 
 
 # -------------------------
-# INTERNALS: REGISTRATION
+# INTERNALS: REGISTRATION & SIGNALS
 # -------------------------
 
-func _resolve_castle_and_register() -> void:
-	if not enabled: 
+# --- NEW: The Signal Handler ---
+func _on_new_castle_set(new_castle: Node) -> void:
+	if not new_castle is Castle:
 		return
+		
+	# 1. Unregister from the old board immediately
+	_unregister_from_job_board()
+	
+	# 2. Cache the new job board (even if we don't need a peasant right now)
+	if new_castle.has_method("return_job_board"):
+		_job_board = new_castle.call("return_job_board", kind)
+	
+	# 3. If we ARE actively waiting for a peasant, post the job to the new Castle!
+	if enabled and is_instance_valid(_job_board):
+		_job_board.register_site(self)
+
+
+func _resolve_castle_and_register() -> void:
 	_unregister_from_job_board()
 
 	var _castle: Node = null
 	if is_instance_valid(my_boss) and my_boss.has_method("return_castle"):
 		_castle = my_boss.call("return_castle")
 
-	if _castle == null: 
+	if not _castle is Castle: 
 		return
 
+	# Cache the board
 	if _castle.has_method("return_job_board"):
 		_job_board = _castle.call("return_job_board", kind)
-		if is_instance_valid(_job_board):
-			_job_board.register_site(self)
+		
+	# Register if active
+	if enabled and is_instance_valid(_job_board):
+		_job_board.register_site(self)
 
 
 func _unregister_from_job_board() -> void:

@@ -3,9 +3,7 @@
 class_name ProtonScatter
 extends Node3D
 
-
 signal build_completed
-
 
 # Includes
 const ProtonScatterDomain := preload("./common/domain.gd")

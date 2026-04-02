@@ -3,15 +3,17 @@ class_name NightInstantiator
 
 @export var max_spawn: int = 10
 
-var _spawned: int 
+var _spawned: int = 0
 
 
 func _ready() -> void:
+	# This runs the base class _ready(), which creates and starts the _tick_timer
 	super._ready()
 
 	_spawned = 0
 	
-	_spawn_timer.stop() # Only spawn at night!
+	# Stop the base class's new organic timer! Only spawn at night!
+	_tick_timer.stop() 
 
 	# GlobalSun is an Autoload (Sun)
 	if Sun:
@@ -24,19 +26,25 @@ func _ready() -> void:
 
 
 func _on_night() -> void:
-	print("NightInstantiator: Night has fallen. Spawning begins.")
-	_spawn_timer.start()
+	if _spawned < max_spawn:
+		print("NightInstantiator: Night has fallen. Spawning begins.")
+		_tick_timer.start()
 
 
 func _on_sunrise() -> void:
 	print("NightInstantiator: Sun is rising. Spawning stops.")
-	_spawn_timer.stop()
+	_tick_timer.stop()
 	_spawned = 0
+	
+	# Reset the base class's organic spawn math so it's fresh for tomorrow night!
+	_reset_cycle() 
 
 
-func _on_spawn_timer_timeout() -> void:
+# --- OVERRIDE THE BASE CLASS SPAWN FUNCTION ---
+func _execute_spawn() -> void:
+	# Double check the cap just in case
 	if _spawned >= max_spawn:
-		_spawn_timer.stop()
+		_tick_timer.stop()
 		return
 	
 	var new_unit = unit_scene.instantiate() as AgentBase
@@ -54,14 +62,14 @@ func _on_spawn_timer_timeout() -> void:
 	var is_non_attackable = not UnitRoles.get_role_groups(default_role).has(&"Attackable")
 	new_unit.collision_layer = GamePhysics.get_minion_layer(0, is_non_attackable)
 
+	# --- 2. WAKE IT UP (CRITICAL PHYSICS FIX) ---
+	# Add to tree BEFORE setting global_position
+	get_tree().current_scene.add_child(new_unit)
+
 	if spawn_point:
 		new_unit.global_position = spawn_point.global_position
 	else:
 		new_unit.global_position = self.global_position
-
-	# --- 2. WAKE IT UP ---
-	# _ready() runs, permanently cementing them as Player 0 enemies
-	get_tree().current_scene.add_child(new_unit)
 
 	# --- NO CASTLE REGISTRATION ---
 	# (Goblins remain wild and don't pay taxes!)
@@ -78,4 +86,9 @@ func _on_spawn_timer_timeout() -> void:
 		new_unit.assign_target(final_target) 
 			
 	_spawned += 1
-	print("NightInstantiator: Have spawned ", _spawned, " ", new_unit.name, " for Team 0 (Wild)")
+	print("NightInstantiator: Spawned ", _spawned, "/", max_spawn, " ", new_unit.name, " for Team 0 (Wild)")
+	
+	# Turn off the organic timer if we hit the limit tonight
+	if _spawned >= max_spawn:
+		_tick_timer.stop()
+		print("NightInstantiator: Max spawn reached for tonight.")

@@ -15,9 +15,9 @@
 [sub_resource type="BoxShape3D" id="BoxShape3D_p0via"]
 size = Vector3(0.8859863, 0.48736572, 1.8430176)
 
-[node name="ArcheryRange" type="StaticBody3D" node_paths=PackedStringArray("construct_interactable", "spawn_interactable", "construct_site", "production_queue", "visuals")]
+[node name="ArcheryRange" type="StaticBody3D" node_paths=PackedStringArray("construct_interactable", "spawn_interactable", "construct_site", "production_queue", "visuals") groups=["nav_meshes"]]
 collision_layer = 2
-collision_mask = 3
+collision_mask = 2
 script = ExtResource("1_aww4k")
 building_type = 2
 construct_interactable = NodePath("Interactables/ConstructInteractable")
@@ -29,11 +29,6 @@ visuals = NodePath("BuildingVisuals")
 [node name="CollisionShape3D" type="CollisionShape3D" parent="."]
 transform = Transform3D(-4.371139e-08, 0, -1, 0, 1, 0, 1, 0, -4.371139e-08, -0.0030517578, 0.37064743, -0.0592041)
 shape = SubResource("BoxShape3D_p0via")
-
-[node name="NavigationObstacle2D" type="NavigationObstacle3D" parent="."]
-radius = 1.0
-affect_navigation_mesh = true
-carve_navigation_mesh = true
 
 [node name="ProductionQueue" type="Node" parent="." node_paths=PackedStringArray("spawnInteractable", "spawn_worksite", "spawn_site")]
 script = ExtResource("2_6hpmx")

@@ -20,7 +20,6 @@ one_shot = true
 script = ExtResource("3_mbap8")
 target_same_team = true
 target_opposing = false
-target_neutral = true
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="InteractTracking"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.021850586, 0)

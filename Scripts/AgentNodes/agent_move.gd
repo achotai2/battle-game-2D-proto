@@ -92,8 +92,14 @@ func _process_pathfinding(delta: float) -> void:
 		_stuck_timer = 0.0
 		var dist_sq = agent.global_position.distance_squared_to(_last_stuck_pos)
 		var min_dist = min_progress_per_sec * repath_interval
+		
 		if dist_sq < (min_dist * min_dist):
 			move_with_velocity(Vector3.ZERO, delta)
+			
+			# --- NEW: Teleport back to safety! ---
+			nudge_to_navmesh()
+			# -------------------------------------
+			
 			stuck.emit(agent)
 			return 
 
@@ -195,6 +201,23 @@ func stop() -> void:
 
 func clear_movement() -> void:
 	stop()
+
+
+func nudge_to_navmesh() -> void:
+	if not is_instance_valid(agent) or not is_instance_valid(nav_agent):
+		return
+		
+	# Ask the server for the closest guaranteed safe spot
+	var map = nav_agent.get_navigation_map()
+	var closest_point = NavigationServer3D.map_get_closest_point(map, agent.global_position)
+	
+	# Teleport the agent
+	agent.global_position = closest_point
+	
+	# Reset the stuck tracker so we don't immediately trigger stuck again
+	_last_stuck_pos = agent.global_position
+	
+	print("AgentMovement: ", agent.name, " was nudged back to the NavMesh!")
 
 
 # --- COMPATIBILITY ---

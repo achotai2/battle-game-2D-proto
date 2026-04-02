@@ -1,0 +1,14 @@
+[gd_scene load_steps=3 format=3 uid="uid://ys68tn4wyka3"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_cg80n"]
+transparency = 1
+albedo_color = Color(0.30298662, 1, 0.91442573, 0.34117648)
+
+[sub_resource type="BoxMesh" id="BoxMesh_cg80n"]
+material = SubResource("StandardMaterial3D_cg80n")
+size = Vector3(2, 2, 2)
+
+[node name="CastleZone" type="Node3D"]
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
+mesh = SubResource("BoxMesh_cg80n")

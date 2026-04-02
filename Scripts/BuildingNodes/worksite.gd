@@ -239,9 +239,7 @@ func refresh_registration() -> void:
 	## - you created this node with auto_register=false and now want to register it
 	##
 	## It ensures we unregister from any previous job board, then re-register on the new one.
-	_unregister_from_job_board()
-	if enabled:
-		_resolve_castle_and_register()
+	_resolve_castle_and_register()
 
 
 func get_progress_ratio() -> float:
@@ -343,20 +341,22 @@ func _on_agent_exited(agent: AgentBase) -> void:
 # -------------------------
 
 func _resolve_castle_and_register() -> void:
-	if not enabled:
-		return
-	# First make sure we unregister if board was already registered.
+	# Clean slate
 	_unregister_from_job_board()
 
-	## Finds the castle reference from our parent and registers this WorkSite with the castle's JobBoard.
+	# Grab the castle directly using your guaranteed method
 	var _castle: Node = null
 	if is_instance_valid(my_boss) and my_boss.has_method("return_castle"):
-		_castle = my_boss.return_castle()
-	if _castle == null:
+		_castle = my_boss.call("return_castle")
+		
+	if not _castle is Castle:
 		return
 
+	# Cache the board
 	_job_board = _resolve_job_board(_castle)
-	if is_instance_valid(_job_board):
+	
+	# Register if active
+	if enabled and is_instance_valid(_job_board):
 		_job_board.register_site(self)
 
 
@@ -408,8 +408,16 @@ func _complete(worker: AgentBase) -> void:
 	work_completed.emit(self, worker)
 
 
-func _on_new_castle_set(_new_castle: Node) -> void:
-	refresh_registration()
+func _on_new_castle_set(new_castle: Castle) -> void:
+	# 1. Unregister from the old board (just in case we were active)
+	_unregister_from_job_board()
+	
+	# 2. ALWAYS resolve and cache the new job board, even if disabled
+	_job_board = _resolve_job_board(new_castle)
+	
+	# 3. ONLY post ourselves for work if we are actively enabled
+	if enabled and is_instance_valid(_job_board):
+		_job_board.register_site(self)
 
 
 func _on_player_interacted(interactor: AgentBase) -> void:

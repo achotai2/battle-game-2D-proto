@@ -79,12 +79,6 @@ func _scan_for_targets() -> void:
 	var space_state = get_world_3d().direct_space_state
 	var results = space_state.intersect_shape(_scan_shape_query, 32)
 
-	if results.is_empty():
-		if current_target != null:
-			current_target = null
-			target_lost.emit()
-		return
-
 	var best_target = null
 	var best_score = INF
 	var my_pos = global_position
@@ -114,7 +108,15 @@ func _scan_for_targets() -> void:
 			best_score = score
 			best_target = body
 
-	if best_target != current_target:
+	# --- NEW: Consolidated Target Logic ---
+	if best_target == null:
+		# If we found nothing valid, but we used to have a target, drop it!
+		if current_target != null:
+			current_target = null
+			target_lost.emit()
+			
+	elif best_target != current_target:
+		# If we found a NEW valid target, switch to it!
 		current_target = best_target
 		target_changed.emit(current_target)
 

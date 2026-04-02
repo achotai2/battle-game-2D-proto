@@ -1,4 +1,4 @@
-[gd_scene load_steps=14 format=3 uid="uid://bx0vujr38q8pu"]
+[gd_scene load_steps=13 format=3 uid="uid://bx0vujr38q8pu"]
 
 [ext_resource type="Script" uid="uid://cjbrsf0fmsehe" path="res://Scripts/BuildingsBase/building_base.gd" id="1_l3oha"]
 [ext_resource type="Script" uid="uid://qumqy1omy72i" path="res://Scripts/BuildingNodes/worksite.gd" id="2_rsuno"]
@@ -15,8 +15,6 @@
 [sub_resource type="CylinderShape3D" id="CylinderShape3D_0vwjc"]
 height = 1.468689
 radius = 0.2055664
-
-[sub_resource type="BoxMesh" id="BoxMesh_efeq4"]
 
 [node name="Tree" type="StaticBody3D" node_paths=PackedStringArray("construct_interactable", "construct_site", "visuals", "environmentRadar", "buildingDeath") groups=["Trees"]]
 collision_layer = 8192
@@ -61,7 +59,7 @@ script = ExtResource("6_gw")
 [node name="Sprites" type="Node3D" parent="."]
 
 [node name="AnimatedSprite3D" type="AnimatedSprite3D" parent="Sprites"]
-offset = Vector2(0, 100)
+offset = Vector2(0, 70)
 billboard = 2
 shaded = true
 sprite_frames = ExtResource("5_efeq4")
@@ -75,10 +73,6 @@ script = ExtResource("9_7b5gy")
 visual_sprite = NodePath("../Sprites/AnimatedSprite3D")
 metadata/_custom_type_script = "uid://cc22s0erkk06v"
 
-[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
-visible = false
-mesh = SubResource("BoxMesh_efeq4")
-
 [node name="Instantiator" type="Node3D" parent="." node_paths=PackedStringArray("spawn_point", "rally_point")]
 script = ExtResource("8_rg3ib")
 unit_scene = ExtResource("9_qkh5c")
@@ -86,6 +80,8 @@ default_role = 7
 spawn_point = NodePath("Marker3D")
 rally_point = NodePath("Marker3D")
 rally_to_castle = false
+spawn_delay = 1000.0
+check_interval = 5.0
 metadata/_custom_type_script = "uid://x1bw8qb4ilbg"
 
 [node name="Marker3D" type="Marker3D" parent="Instantiator"]
@@ -93,7 +89,7 @@ metadata/_custom_type_script = "uid://x1bw8qb4ilbg"
 [node name="EnvironmentRadar" type="Node3D" parent="."]
 script = ExtResource("11_ih7i8")
 scan_radius = 2.0
-threshold = 6
+threshold = 10
 metadata/_custom_type_script = "uid://d28nigd2q3xq3"
 
 [node name="BuildingDeath" type="Node3D" parent="."]

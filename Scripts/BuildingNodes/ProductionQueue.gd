@@ -60,7 +60,7 @@ func _process_work_queue() -> void:
 	
 	# Peek at the current unit and set the cost
 	var current_unit = _work_queue[0]
-	spawn_worksite.total_work = BuildingDefs.get_unit_train_cost(current_unit)
+	spawn_worksite.total_work = BuildingDefs.get_unit_train_work(current_unit)
 	
 	# Wake up the WorkSite!
 	spawn_worksite.reset_progress()

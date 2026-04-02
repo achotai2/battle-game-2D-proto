@@ -1,7 +1,7 @@
 extends Advisor
 class_name AdvisorDespawn
 
-@export var time_until_flee: float = 60.0
+@export var time_until_flee: float = 30.0
 
 var movement: Node = null
 var unit_speed: Node = null

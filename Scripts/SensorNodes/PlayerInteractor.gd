@@ -187,7 +187,10 @@ func am_i_interacting() -> bool:
 
 
 func _target_changed(target: Node3D) -> void:
-	if target is Interactable:
+	# If the sensor handed us nothing, treat it as a lost target!
+	if target == null:
+		_target_lost()
+	elif target is Interactable:
 		_set_target(target)
 
 
