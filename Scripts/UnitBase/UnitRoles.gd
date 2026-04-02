@@ -233,3 +233,20 @@ var tasker_kinds: Dictionary = {
 func get_tasker_kind(role: UnitType) -> int:
 	# Default to WORKERS (0) if not specified
 	return tasker_kinds.get(role, CastleJobBoard.JobBoardType.WORKERS)
+
+
+# --- ECONOMY ---
+var starting_gold_amounts := {
+	UnitType.PLAYER: 0,
+	UnitType.PEASANT: 0,
+	UnitType.SOLDIER: 0,
+	UnitType.ARCHER: 0,
+	UnitType.WORKER: 0,
+	UnitType.LORD: 50,
+	UnitType.GOBLIN: 5, # Maybe goblins drop loot!
+	UnitType.SHEEP: 0,
+}
+
+
+func get_starting_gold(role: UnitType) -> int:
+	return starting_gold_amounts.get(role, 0)
