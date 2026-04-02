@@ -39,6 +39,7 @@ var animated_sprite_3d: AnimatedSprite3D = null
 var weapons_node: Node3D = null
 var target_memory: Node = null
 var _pending_target: Node3D = null
+var _is_first_role: bool = true
 
 @onready var brain: AgentBrain = $Brain
 @onready var sensors: Node = $Sensors
@@ -132,6 +133,12 @@ func apply_role(role: UnitRoles.UnitType, new_team: int) -> void:
 
 
 func _deferred_apply_role(role: UnitRoles.UnitType, new_team: int) -> void:
+	var saved_gold: int = 0
+	var has_saved_gold: bool = false
+	if not _is_first_role and is_instance_valid(gold_wallet):
+		saved_gold = gold_wallet.gold
+		has_saved_gold = true
+
 	var components = UnitRoles.get_role_components(role)
 	_sync_folder(memory, components["memory"])
 	_sync_folder(sensors, components["sensors"])
@@ -142,6 +149,14 @@ func _deferred_apply_role(role: UnitRoles.UnitType, new_team: int) -> void:
 	await get_tree().physics_frame
 
 	_cache_components()
+
+	if is_instance_valid(gold_wallet):
+		if _is_first_role:
+			gold_wallet.gold = UnitRoles.get_starting_gold(role)
+		elif has_saved_gold:
+			gold_wallet.gold = saved_gold
+
+	_is_first_role = false
 
 	player = new_team 
 
