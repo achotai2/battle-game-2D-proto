@@ -33,6 +33,7 @@ var work_site: WorkSite = null
 var worker_job_board: Node = null
 var health: Health = null
 var animated_sprite_3d: AnimatedSprite3D = null
+var collision_shape_3d: CollisionShape3D = null
 
 func _ready() -> void:
 	add_to_group("Buildings")
@@ -83,6 +84,7 @@ func _cache_components() -> void:
 	worker_job_board = ComponentFinder.get_component_by_name(self, "WorkerJobBoard")
 	health = ComponentFinder.get_component(self, "Health") as Health
 	animated_sprite_3d = ComponentFinder.get_component(self, "AnimatedSprite3D") as AnimatedSprite3D
+	collision_shape_3d = find_child("CollisionShape3D") as CollisionShape3D
 
 
 func _force_physics_update() -> void:
@@ -94,6 +96,17 @@ func _force_physics_update() -> void:
 	force_update_transform()
 
 
+func _trigger_nav_rebake() -> void:
+	if not is_inside_tree():
+		return
+	var nav_region = get_tree().current_scene.find_child("NavigationRegion3D", true, false)
+	if is_instance_valid(nav_region):
+		if nav_region.has_method("rebake_map"):
+			nav_region.call_deferred("rebake_map")
+		elif nav_region.has_method("bake_navigation_mesh"):
+			nav_region.call_deferred("bake_navigation_mesh", true)
+
+
 # --- STATE MACHINE (THE SWITCHBOARD) ---
 
 func set_state(new_state: BuildingDefs.BuildingState) -> void:
@@ -101,6 +114,9 @@ func set_state(new_state: BuildingDefs.BuildingState) -> void:
 
 	match state:
 		BuildingDefs.BuildingState.DESTROYED:
+			if collision_shape_3d and not collision_shape_3d.disabled:
+				collision_shape_3d.set_deferred("disabled", true)
+
 			if construct_interactable:
 				var cost = BuildingDefs.get_building_gold_cost(building_type) 
 				construct_interactable.update_interaction_state(BuildingDefs.IconType.CONSTRUCT, cost) 
@@ -114,6 +130,10 @@ func set_state(new_state: BuildingDefs.BuildingState) -> void:
 			if production_queue: production_queue.deactivate()
 			
 		BuildingDefs.BuildingState.CONSTRUCTING:
+			if collision_shape_3d and collision_shape_3d.disabled:
+				collision_shape_3d.set_deferred("disabled", false)
+				_trigger_nav_rebake()
+
 			if construct_interactable: construct_interactable.deactivate()
 			if spawn_interactable: spawn_interactable.deactivate()
 			if spawn_work_site: spawn_work_site.deactivate()
@@ -132,6 +152,10 @@ func set_state(new_state: BuildingDefs.BuildingState) -> void:
 			pass
 
 		BuildingDefs.BuildingState.BUILT:
+			if collision_shape_3d and collision_shape_3d.disabled:
+				collision_shape_3d.set_deferred("disabled", false)
+				_trigger_nav_rebake()
+
 			if construct_interactable: construct_interactable.deactivate()
 			if construct_site: construct_site.deactivate()
 			if work_site: work_site.activate()
