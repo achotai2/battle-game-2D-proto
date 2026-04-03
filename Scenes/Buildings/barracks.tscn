@@ -129,5 +129,5 @@ mesh = ExtResource("11_hcvrl")
 [node name="EnvironmentRadar" type="Node3D" parent="."]
 script = ExtResource("12_x6p71")
 scan_radius = 2.0
-threshold = 0
+threshold = 1
 metadata/_custom_type_script = "uid://d28nigd2q3xq3"

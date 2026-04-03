@@ -239,7 +239,7 @@ player = 1
 castle = NodePath("../Castle")
 
 [node name="Barracks" parent="Environment/Buildings" node_paths=PackedStringArray("castle") instance=ExtResource("12_b3802")]
-transform = Transform3D(1, -1.6543616e-24, 0, 0, 1, 0, 0, 0, 1, -12.772346, 0, 1.7816212)
+transform = Transform3D(1, -1.6543616e-24, 0, 0, 1, 0, 0, 0, 1, -11.540632, 0, 2.56913)
 player = 1
 castle = NodePath("../Castle")
 

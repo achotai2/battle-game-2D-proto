@@ -1,13 +1,27 @@
-[gd_scene load_steps=3 format=3 uid="uid://bq43nslels8vk"]
+[gd_scene load_steps=12 format=3 uid="uid://bq43nslels8vk"]
 
 [ext_resource type="ArrayMesh" uid="uid://c8arkvv6p2u4u" path="res://Art/Buildings_RTS/OBJ/Wall_Level1_BlueTeam.obj" id="1_afcx7"]
+[ext_resource type="Script" uid="uid://cjbrsf0fmsehe" path="res://Scripts/BuildingsBase/building_base.gd" id="1_gbcuk"]
+[ext_resource type="Script" uid="uid://qumqy1omy72i" path="res://Scripts/BuildingNodes/worksite.gd" id="2_xd3bf"]
+[ext_resource type="PackedScene" uid="uid://d1275k0u0fsn" path="res://Scenes/AgentNodes/interactable.tscn" id="3_gbcuk"]
+[ext_resource type="Texture2D" uid="uid://d4hqu3k4e8pts" path="res://Art/Tiny Swords (Update 010)/Factions/Knights/Buildings/Castle/Castle_Blue.png" id="5_prlrt"]
+[ext_resource type="Script" uid="uid://ggpe07y6471c" path="res://Scripts/MemoryNodes/TeamMemory.gd" id="6_7s2ne"]
+[ext_resource type="Script" uid="uid://2ssmusd0k3fn" path="res://Scripts/MemoryNodes/GoldWallet.gd" id="7_0gm1u"]
+[ext_resource type="Script" uid="uid://cc22s0erkk06v" path="res://Scripts/BuildingNodes/BuildingVisuals.gd" id="8_joshr"]
+[ext_resource type="Script" uid="uid://cf8nbntvvy3iv" path="res://Scripts/AgentNodes/GoldGiver.gd" id="9_qqrqd"]
+[ext_resource type="Script" uid="uid://d28nigd2q3xq3" path="res://Scripts/BuildingNodes/EnvironmentRadar.gd" id="10_tt81l"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_afcx7"]
 size = Vector3(0.98376465, 0.8451843, 1.460083)
 
-[node name="Wall" type="StaticBody3D" groups=["nav_meshes"]]
+[node name="Wall" type="StaticBody3D" node_paths=PackedStringArray("construct_interactable", "construct_site", "visuals", "environmentRadar") groups=["nav_meshes"]]
 collision_layer = 2
 collision_mask = 2
+script = ExtResource("1_gbcuk")
+construct_interactable = NodePath("ConstructInteractable")
+construct_site = NodePath("ConstructWorkSite")
+visuals = NodePath("BuildingVisuals")
+environmentRadar = NodePath("EnvironmentRadar")
 
 [node name="WallLevel1BlueTeam" type="MeshInstance3D" parent="."]
 transform = Transform3D(0.1, 0, 0, 0, 0.1, 0, 0, 0, 0.1, 0, 0.5614118, 0)
@@ -16,3 +30,53 @@ mesh = ExtResource("1_afcx7")
 [node name="CollisionShape3D" type="CollisionShape3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.0010375977, 0.41862488, 0.008850098)
 shape = SubResource("BoxShape3D_afcx7")
+
+[node name="ConstructWorkSite" type="Node3D" parent="." node_paths=PackedStringArray("my_boss", "my_interactable", "work_offset")]
+script = ExtResource("2_xd3bf")
+my_boss = NodePath("")
+my_interactable = NodePath("")
+auto_register = false
+work_offset = NodePath("")
+metadata/_custom_type_script = "uid://qumqy1omy72i"
+
+[node name="Marker2D2" type="Marker3D" parent="ConstructWorkSite"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.1301906, 0, 0)
+
+[node name="Marker2D3" type="Marker3D" parent="ConstructWorkSite"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1, 0, 0)
+
+[node name="ConstructInteractable" parent="." instance=ExtResource("3_gbcuk")]
+
+[node name="Sprites" type="Node3D" parent="."]
+
+[node name="Sprite2D" type="Sprite3D" parent="Sprites"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.4781952e-05, 0, 0)
+visible = false
+offset = Vector2(0, 80)
+billboard = 2
+shaded = true
+texture = ExtResource("5_prlrt")
+
+[node name="Memory" type="Node3D" parent="."]
+
+[node name="TeamMemory" type="Node" parent="Memory"]
+script = ExtResource("6_7s2ne")
+
+[node name="GoldWallet" type="Node" parent="Memory"]
+script = ExtResource("7_0gm1u")
+
+[node name="BuildingVisuals" type="Node" parent="." node_paths=PackedStringArray("visual_sprite", "visual_mesh")]
+script = ExtResource("8_joshr")
+visual_sprite = NodePath("../Sprites/Sprite2D")
+visual_mesh = NodePath("../WallLevel1BlueTeam")
+metadata/_custom_type_script = "uid://cc22s0erkk06v"
+
+[node name="GoldGiver" type="Node" parent="."]
+script = ExtResource("9_qqrqd")
+metadata/_custom_type_script = "uid://cf8nbntvvy3iv"
+
+[node name="EnvironmentRadar" type="Node3D" parent="."]
+script = ExtResource("10_tt81l")
+scan_radius = 2.0
+threshold = 1
+metadata/_custom_type_script = "uid://d28nigd2q3xq3"

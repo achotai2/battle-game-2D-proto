@@ -1,4 +1,4 @@
-[gd_scene load_steps=13 format=3 uid="uid://boksm60la2s5a"]
+[gd_scene load_steps=14 format=3 uid="uid://boksm60la2s5a"]
 
 [ext_resource type="Script" uid="uid://cjbrsf0fmsehe" path="res://Scripts/BuildingsBase/building_base.gd" id="1_aww4k"]
 [ext_resource type="Script" uid="uid://lkh36p7gdce2" path="res://Scripts/BuildingNodes/ProductionQueue.gd" id="2_6hpmx"]
@@ -10,6 +10,7 @@
 [ext_resource type="Script" uid="uid://cf8nbntvvy3iv" path="res://Scripts/AgentNodes/GoldGiver.gd" id="8_0214s"]
 [ext_resource type="Script" uid="uid://cc22s0erkk06v" path="res://Scripts/BuildingNodes/BuildingVisuals.gd" id="10_tvgge"]
 [ext_resource type="ArrayMesh" uid="uid://b4rqex0nrasmw" path="res://Art/Buildings_RTS/OBJ/GuardsBarracks_BlueTeam.obj" id="11_qfp8b"]
+[ext_resource type="Script" uid="uid://d28nigd2q3xq3" path="res://Scripts/BuildingNodes/EnvironmentRadar.gd" id="12_p0via"]
 [ext_resource type="Script" uid="uid://ggpe07y6471c" path="res://Scripts/MemoryNodes/TeamMemory.gd" id="99_team"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_p0via"]
@@ -124,3 +125,9 @@ metadata/_custom_type_script = "uid://cc22s0erkk06v"
 [node name="MeshInstance3D" type="MeshInstance3D" parent="."]
 transform = Transform3D(0.1, 0, 0, 0, 0.1, 0, 0, 0, 0.1, 0, 0.4347487, 0.49097383)
 mesh = ExtResource("11_qfp8b")
+
+[node name="EnvironmentRadar" type="Node3D" parent="."]
+script = ExtResource("12_p0via")
+scan_radius = 2.0
+threshold = 1
+metadata/_custom_type_script = "uid://d28nigd2q3xq3"

@@ -1,4 +1,4 @@
-[gd_scene load_steps=13 format=3 uid="uid://so0ngwg160ke"]
+[gd_scene load_steps=14 format=3 uid="uid://so0ngwg160ke"]
 
 [ext_resource type="Script" uid="uid://cjbrsf0fmsehe" path="res://Scripts/BuildingsBase/building_base.gd" id="1_3p7p4"]
 [ext_resource type="Texture2D" uid="uid://bo1itj23k76yd" path="res://Art/Tiny Swords (Update 010)/Factions/Knights/Buildings/House/House_Construction.png" id="1_7aoon"]
@@ -10,6 +10,7 @@
 [ext_resource type="Script" uid="uid://cc22s0erkk06v" path="res://Scripts/BuildingNodes/BuildingVisuals.gd" id="9_7b5gy"]
 [ext_resource type="Script" uid="uid://cf8nbntvvy3iv" path="res://Scripts/AgentNodes/GoldGiver.gd" id="10_83qdm"]
 [ext_resource type="ArrayMesh" uid="uid://dcovk3pca6c8f" path="res://Art/Buildings_RTS/OBJ/House_Level1_BlueTeam.obj" id="11_rnqq7"]
+[ext_resource type="Script" uid="uid://d28nigd2q3xq3" path="res://Scripts/BuildingNodes/EnvironmentRadar.gd" id="12_l5k3r"]
 [ext_resource type="Script" uid="uid://ggpe07y6471c" path="res://Scripts/MemoryNodes/TeamMemory.gd" id="99_team"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_rnqq7"]
@@ -119,3 +120,9 @@ metadata/_custom_type_script = "uid://cf8nbntvvy3iv"
 [node name="MeshInstance3D" type="MeshInstance3D" parent="."]
 transform = Transform3D(0.1, 0, 0, 0, 0.1, 0, 0, 0, 0.1, 0, 0.53046334, 0)
 mesh = ExtResource("11_rnqq7")
+
+[node name="EnvironmentRadar" type="Node3D" parent="."]
+script = ExtResource("12_l5k3r")
+scan_radius = 2.0
+threshold = 1
+metadata/_custom_type_script = "uid://d28nigd2q3xq3"

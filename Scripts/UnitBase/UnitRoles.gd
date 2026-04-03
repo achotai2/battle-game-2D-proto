@@ -237,13 +237,13 @@ func get_tasker_kind(role: UnitType) -> int:
 
 # --- ECONOMY ---
 var starting_gold_amounts := {
-	UnitType.PLAYER: 0,
+	UnitType.PLAYER: 10000,
 	UnitType.PEASANT: 0,
 	UnitType.SOLDIER: 0,
 	UnitType.ARCHER: 0,
 	UnitType.WORKER: 0,
 	UnitType.LORD: 50,
-	UnitType.GOBLIN: 5, # Maybe goblins drop loot!
+	UnitType.GOBLIN: 0, # Maybe goblins drop loot!
 	UnitType.SHEEP: 0,
 }
 

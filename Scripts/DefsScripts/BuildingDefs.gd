@@ -7,6 +7,7 @@ enum BuildingType {
 	ARCHERY,
 	TREE,
 	VILLAGE,
+	WALL,
 }
 
 enum BuildingState {
@@ -120,6 +121,24 @@ const _visuals := {
 			2: preload("res://Art/Village.png"),
 		},
 	},
+	BuildingType.WALL: {
+		BuildingState.DESTROYED: {
+			1: preload("res://Art/Tiny Swords (Update 010)/Factions/Knights/Buildings/Castle/Castle_Destroyed.png"),
+			2: preload("res://Art/Tiny Swords (Update 010)/Factions/Knights/Buildings/Castle/Castle_Destroyed.png"),
+		},
+		BuildingState.CONSTRUCTING: {
+			1: preload("res://Art/Tiny Swords (Update 010)/Factions/Knights/Buildings/Castle/Castle_Construction.png"),
+			2: preload("res://Art/Tiny Swords (Update 010)/Factions/Knights/Buildings/Castle/Castle_Construction.png"),
+		},
+		BuildingState.BUILDING: {
+			1: preload("res://Art/Tiny Swords (Update 010)/Factions/Knights/Buildings/Castle/Castle_Construction.png"),
+			2: preload("res://Art/Tiny Swords (Update 010)/Factions/Knights/Buildings/Castle/Castle_Construction.png"),
+		},
+		BuildingState.BUILT: {
+			1: preload("res://Art/Buildings_RTS/OBJ/Wall_Level1_BlueTeam.obj"),
+			2: preload("res://Art/Buildings_RTS/BLEND/Wall_Level1_RedTeam.blend"),
+		},
+	},
 }
 
 # --- UI ICONS ---
@@ -148,6 +167,12 @@ const _interact_modes := {
 		BuildingState.BUILDING: IconType.NONE,
 		BuildingState.BUILT: IconType.NONE,
 	},
+	BuildingType.WALL: {
+		BuildingState.DESTROYED: IconType.CONSTRUCT,
+		BuildingState.CONSTRUCTING: IconType.NONE,
+		BuildingState.BUILDING: IconType.NONE,
+		BuildingState.BUILT: IconType.NONE,
+	},
 }
 
 
@@ -161,6 +186,7 @@ const _construction_work_time := {
 	BuildingType.BARRACKS: 15.0,
 	BuildingType.ARCHERY: 10.0,
 	BuildingType.TREE: 3.0,
+	BuildingType.WALL: 5.0,
 }
 
 # How much "work" does the specific unit take to train before it spawns? 
@@ -182,6 +208,7 @@ const _building_gold_costs := {
 	BuildingType.ARCHERY: 30,
 	BuildingType.TREE: 3,
 	BuildingType.VILLAGE: 0,
+	BuildingType.WALL: 5,
 }
 
 # How much GOLD it costs the Player to click the building and spawn a unit
