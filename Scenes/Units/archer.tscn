@@ -1,4 +1,4 @@
-[gd_scene load_steps=17 format=3 uid="uid://dvgilnkmeqdfu"]
+[gd_scene load_steps=18 format=3 uid="uid://dvgilnkmeqdfu"]
 
 [ext_resource type="Script" uid="uid://b3iqpgjb0vtvl" path="res://Scripts/UnitBase/agent_base.gd" id="1_0r5lf"]
 [ext_resource type="SpriteFrames" uid="uid://bgouc0jxjgtus" path="res://Art/SpriteFrames/Archer_Red.tres" id="2_xbs6w"]
@@ -12,6 +12,7 @@
 [ext_resource type="PackedScene" uid="uid://c4n5elrxg64hp" path="res://Scenes/AgentNodes/GoldHolder.tscn" id="11_yp0bp"]
 [ext_resource type="Script" uid="uid://d1ucmtjtmh4hm" path="res://Scripts/AgentNodes/minion_tasker.gd" id="12_1wuid"]
 [ext_resource type="Shader" uid="uid://cmsuxok158t72" path="res://Scripts/Shaders/shadow.gdshader" id="12_xbs6w"]
+[ext_resource type="SpriteFrames" uid="uid://bil0wffnbxvvm" path="res://Art/SpriteFrames/Archer_Blue.tres" id="14_6oxgn"]
 [ext_resource type="Script" uid="uid://bts71s2mlomuh" path="res://Scripts/AgentNodes/shadow_sprite.gd" id="14_22n53"]
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_ta2g1"]
@@ -114,6 +115,6 @@ script = ExtResource("14_22n53")
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="Sprites"]
 y_sort_enabled = true
-sprite_frames = ExtResource("2_xbs6w")
-animation = &"walk"
+sprite_frames = ExtResource("14_6oxgn")
+animation = &"attack1"
 offset = Vector2(0, -20)

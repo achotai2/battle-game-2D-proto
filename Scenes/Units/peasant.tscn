@@ -1,4 +1,4 @@
-[gd_scene load_steps=16 format=3 uid="uid://ctx2ge4w4wad7"]
+[gd_scene load_steps=17 format=3 uid="uid://ctx2ge4w4wad7"]
 
 [ext_resource type="Script" uid="uid://b3iqpgjb0vtvl" path="res://Scripts/UnitBase/agent_base.gd" id="1_wen5c"]
 [ext_resource type="SpriteFrames" uid="uid://b16w7vlo5c8qt" path="res://Art/SpriteFrames/Peasant_Red.tres" id="2_7mdye"]
@@ -12,6 +12,7 @@
 [ext_resource type="PackedScene" uid="uid://c8o4373okv5fq" path="res://Scenes/AgentNodes/HungerHolder.tscn" id="10_t6mam"]
 [ext_resource type="Shader" uid="uid://cmsuxok158t72" path="res://Scripts/Shaders/shadow.gdshader" id="11_oe5x5"]
 [ext_resource type="Script" uid="uid://bts71s2mlomuh" path="res://Scripts/AgentNodes/shadow_sprite.gd" id="12_sug2v"]
+[ext_resource type="SpriteFrames" uid="uid://rc30dymytbcd" path="res://Art/SpriteFrames/Soldier_Red.tres" id="13_oe5x5"]
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_ta2g1"]
 radius = 23.0
@@ -109,6 +110,6 @@ script = ExtResource("12_sug2v")
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="Sprites"]
 y_sort_enabled = true
-sprite_frames = ExtResource("2_7mdye")
-animation = &"idle"
+sprite_frames = ExtResource("13_oe5x5")
+animation = &"walk"
 offset = Vector2(0, -20)

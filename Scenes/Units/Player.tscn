@@ -88,7 +88,6 @@ gold = 100
 
 [node name="Sprites" type="Node2D" parent="."]
 position = Vector2(0.499996, -0.499995)
-scale = Vector2(2.81, 2.81)
 
 [node name="ShadowSprite" type="AnimatedSprite2D" parent="Sprites"]
 modulate = Color(0.32941177, 0.32941177, 0.32941177, 1)
@@ -112,6 +111,7 @@ position = Vector2(0, -5.9604645e-08)
 occluder = SubResource("OccluderPolygon2D_u2egk")
 
 [node name="PointLight2D" type="PointLight2D" parent="."]
+visible = false
 position = Vector2(4, -53.000004)
 scale = Vector2(7.546876, 7.546876)
 shadow_enabled = true

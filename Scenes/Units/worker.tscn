@@ -1,4 +1,4 @@
-[gd_scene load_steps=16 format=3 uid="uid://mvfvmj8qom4v"]
+[gd_scene load_steps=17 format=3 uid="uid://mvfvmj8qom4v"]
 
 [ext_resource type="Script" uid="uid://b3iqpgjb0vtvl" path="res://Scripts/UnitBase/agent_base.gd" id="1_r0ip0"]
 [ext_resource type="SpriteFrames" uid="uid://iwhusndso2py" path="res://Art/SpriteFrames/Worker_Blue.tres" id="2_r0ip0"]
@@ -11,6 +11,7 @@
 [ext_resource type="PackedScene" uid="uid://c4n5elrxg64hp" path="res://Scenes/AgentNodes/GoldHolder.tscn" id="10_cwsst"]
 [ext_resource type="PackedScene" uid="uid://c8o4373okv5fq" path="res://Scenes/AgentNodes/HungerHolder.tscn" id="10_r0j7o"]
 [ext_resource type="Shader" uid="uid://cmsuxok158t72" path="res://Scripts/Shaders/shadow.gdshader" id="11_16r2s"]
+[ext_resource type="SpriteFrames" uid="uid://c6s4civsu8axa" path="res://Art/SpriteFrames/Worker_Red.tres" id="13_16r2s"]
 [ext_resource type="Script" uid="uid://bts71s2mlomuh" path="res://Scripts/AgentNodes/shadow_sprite.gd" id="13_d0fno"]
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_ta2g1"]
@@ -115,6 +116,6 @@ script = ExtResource("13_d0fno")
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="Sprites"]
 y_sort_enabled = true
-sprite_frames = ExtResource("2_r0ip0")
-animation = &"work"
+sprite_frames = ExtResource("13_16r2s")
+animation = &"carryWalk"
 offset = Vector2(0, -20)

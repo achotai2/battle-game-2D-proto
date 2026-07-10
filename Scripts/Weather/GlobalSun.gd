@@ -7,9 +7,9 @@ signal sunset
 
 # --- CONFIGURATION ---
 @export_group("Time Settings")
-@export var day_duration: float = 10.0 # Seconds per day
-@export_range(0.0, 1.0) var time_of_day: float = 0.3 # 0.0=Midnight, 0.5=Noon
-@export var pause_time: bool = false
+@export var day_duration: float = 120.0 # Seconds per day
+@export_range(0.0, 1.0) var time_of_day: float = 0.5 # 0.0=Midnight, 0.5=Noon
+@export var pause_time: bool = true
 
 @export_group("Sun Cycle")
 @export_range(0.0, 1.0) var sunrise_time: float = 0.25 
@@ -44,6 +44,15 @@ var current_shadow_color: Color = Color.WHITE
 
 # --- INTERNAL ---
 var _last_phase: int = -1 
+
+
+func _ready() -> void:
+	# Wait for the engine to finish the current frame.
+	# This gives all other nodes time to enter the tree and connect to our signals.
+	await get_tree().process_frame
+	
+	_update_sun_position()
+	_calculate_colors()
 
 
 func _process(delta: float) -> void:

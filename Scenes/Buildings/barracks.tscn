@@ -4,7 +4,7 @@
 [ext_resource type="Script" uid="uid://qumqy1omy72i" path="res://Scripts/BuildingNodes/worksite.gd" id="3_0ywlv"]
 [ext_resource type="Script" uid="uid://dqu3s3kqb7wj6" path="res://Scripts/BuildingNodes/spawnsite.gd" id="4_ua3nw"]
 [ext_resource type="PackedScene" uid="uid://d1275k0u0fsn" path="res://Scenes/AgentNodes/interactable.tscn" id="5_krvd1"]
-[ext_resource type="Texture2D" uid="uid://d4hqu3k4e8pts" path="res://Art/Tiny Swords (Update 010)/Factions/Knights/Buildings/Castle/Castle_Blue.png" id="6_0ywlv"]
+[ext_resource type="Texture2D" uid="uid://c6e70qrtv5al1" path="res://Art/Tiny Swords (Update 010)/Factions/Knights/Buildings/Castle/Castle_Blue.png" id="6_0ywlv"]
 [ext_resource type="PackedScene" uid="uid://c4n5elrxg64hp" path="res://Scenes/AgentNodes/GoldHolder.tscn" id="6_2u44n"]
 [ext_resource type="Shader" uid="uid://cmsuxok158t72" path="res://Scripts/Shaders/shadow.gdshader" id="6_ua3nw"]
 [ext_resource type="Script" uid="uid://bts71s2mlomuh" path="res://Scripts/AgentNodes/shadow_sprite.gd" id="8_ua3nw"]
