@@ -34,6 +34,9 @@ signal work_applied(site: WorkSite)
 ## - repair progress to fix something
 ## - chopping progress to fell a tree
 
+@export var interaction_cost: int = 0
+## The cost required for the player to instigate the work.
+
 @export var auto_register: bool = true
 ## If true, the WorkSite automatically resolves its castle and registers with the job board in _ready().
 ## If false, you can call refresh_registration() manually after setting up parent/castle references.
