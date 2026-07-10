@@ -119,7 +119,7 @@ func _configure_interactable() -> void:
 	
 	var _interaction_cost: int = 0
 	if state == BuildingDefs.BuildingState.DESTROYED:
-		_interaction_cost = worksite.total_work
+		_interaction_cost = worksite.interaction_cost
 	elif state == BuildingDefs.BuildingState.BUILT:
 		_interaction_cost = spawnsite.work_per_spawn
 		
