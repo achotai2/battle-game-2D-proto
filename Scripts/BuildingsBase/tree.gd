@@ -69,9 +69,17 @@ func return_position() -> Vector2:
 
 
 func _on_interacted(interactor: Node2D) -> void:
-	if state == TreeState.NORMAL and is_instance_valid(interactor.gold) and interactor.gold.gold >= worksite.interaction_cost:
-		interactor.gold.give_gold(self, worksite.interaction_cost)
-		set_state(TreeState.MARKED)
+	if state == TreeState.NORMAL:
+		if worksite.interaction_cost > 0:
+			if is_instance_valid(interactor.gold) and interactor.gold.gold >= worksite.interaction_cost:
+				interactor.gold.give_gold(self, worksite.interaction_cost)
+				if is_instance_valid(worksite):
+					worksite.instigator = interactor
+				set_state(TreeState.MARKED)
+		else:
+			if is_instance_valid(worksite):
+				worksite.instigator = interactor
+			set_state(TreeState.MARKED)
 
 
 func _on_work_completed(_site: WorkSite, _worker: MinionTasker) -> void:

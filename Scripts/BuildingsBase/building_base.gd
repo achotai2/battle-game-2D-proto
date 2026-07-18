@@ -74,9 +74,13 @@ func return_position() -> Vector2:
 func _on_interacted(interactor: CharacterBody2D) -> void:
 	if state == BuildingDefs.BuildingState.DESTROYED:
 		# If DESTROYED then Player gives building gold (to give to Workers) and sets state to CONSTRUCTING.
+		if is_instance_valid(worksite):
+			worksite.instigator = interactor
 		set_state(BuildingDefs.BuildingState.CONSTRUCTING)
 	elif state == BuildingDefs.BuildingState.BUILT:
 		# If BUILT then Player gives building gold (to give to Workers) and sets state to SPAWNING.
+		if is_instance_valid(spawnsite):
+			spawnsite.instigator = interactor
 		_activate_spawnsite()
 
 
