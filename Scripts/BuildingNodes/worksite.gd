@@ -55,6 +55,9 @@ signal work_applied(site: WorkSite)
 # Runtime state
 # -------------------------
 
+var instigator: Node2D = null
+## The player who instigated this work (if applicable).
+
 var _work_done: float = 0.0
 ## Current accumulated work.
 
@@ -388,4 +391,8 @@ func _complete(worker: MinionTasker) -> void:
 	## We unregister from the job board so new workers won't be assigned here,
 	## then emit a signal so the parent/building can react (upgrade, spawn loot, etc).
 	_unregister_from_job_board()
+
+	if interaction_cost < 0 and is_instance_valid(instigator) and is_instance_valid(instigator.gold):
+		instigator.gold.receive_gold(-interaction_cost)
+
 	work_completed.emit(self, worker)

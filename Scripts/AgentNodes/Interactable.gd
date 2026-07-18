@@ -56,9 +56,16 @@ func finish_interact(interactor: Node2D) -> void:
 		return
 
 	# Order interacting Player to give gold equal to interaction cost.
-	if is_instance_valid(interactor.gold) and interactor.gold.gold >= _interaction_cost:
-		interactor.gold.give_gold(get_parent(), _interaction_cost)
+	if _interaction_cost > 0:
+		if is_instance_valid(interactor.gold) and interactor.gold.gold >= _interaction_cost:
+			interactor.gold.give_gold(get_parent(), _interaction_cost)
 
+			_active_interactor = null
+			if one_shot:
+				_disable_interaction()
+
+			interaction_finished.emit(interactor)
+	else:
 		_active_interactor = null
 		if one_shot:
 			_disable_interaction()
