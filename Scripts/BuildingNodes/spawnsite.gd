@@ -15,8 +15,6 @@ var _task_work: float = 0.0
 
 
 func _ready() -> void:
-	if kind != CastleJobBoard.JobBoardType.WORKERS:
-		kind = CastleJobBoard.JobBoardType.WORKERS
 	super._ready()
 	total_work = 0.0
 
@@ -30,15 +28,11 @@ func enqueue_spawn(amount: int = 1) -> void:
 	if not enabled:
 		set_enabled(true)
 		reset_progress()
-		refresh_registration()
 		total_work = 0.0
 		_task_work = 0.0
-	else:
-		refresh_registration()
-
 	total_work += work_per_spawn
 
-func apply_work(amount: float, worker: MinionTasker) -> void:
+func apply_work(amount: float, worker: Node = null) -> void:
 # Extends the worksite.gd apply work function for spawnsite logic:
 	if not enabled or not needs_work():
 		return
@@ -103,7 +97,7 @@ func _get_boss_property() -> BuildingDefs.BuildingType:
 	return get_parent().building_type
 
 
-func _resolve_agent(minion: MinionTasker) -> Node2D:
+func _resolve_agent(minion: Node) -> Node2D:
 	if minion == null:
 		return null
 
